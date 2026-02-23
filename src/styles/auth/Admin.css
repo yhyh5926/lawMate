@@ -1,0 +1,130 @@
+/* ── 관리자 컨테이너 ── */
+.admin-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 24px;
+  min-height: 80vh;
+}
+
+/* ── 관리자 헤더 ── */
+.admin-header {
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #dce8f5; /* 헤더 border-bottom과 통일 */
+}
+
+.admin-title {
+  font-size: 26px;
+  color: #1e3a5f; /* 헤더 메인 블루 */
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+/* ── 섹션 타이틀 ── */
+.section-title {
+  font-size: 18px;
+  color: #1e3a5f;
+  font-weight: 600;
+  margin: 40px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── 테이블 디자인 (헤더 보더 스타일 적용) ── */
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #ffffff;
+  border: 1px solid #dce8f5;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(30, 80, 150, 0.04);
+}
+
+.admin-table th {
+  background-color: #f8fafc;
+  color: #4a6a8a; /* 헤더 auth-link 색상 */
+  font-weight: 600;
+  padding: 14px 20px;
+  font-size: 14px;
+  border-bottom: 2px solid #dce8f5;
+  text-align: left;
+}
+
+.admin-table td {
+  padding: 16px 20px;
+  font-size: 14px;
+  color: #1e3a5f;
+  border-bottom: 1px solid #edf2f7;
+  vertical-align: middle;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ── 버튼 공통 (헤더 버튼 스타일 응용) ── */
+.admin-btn {
+  padding: 8px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+/* 승인 버튼 (헤더 mypage-link 스타일) */
+.btn-approve {
+  background-color: rgba(74, 144, 217, 0.08);
+  color: #4a90d9;
+  border-color: rgba(74, 144, 217, 0.3);
+}
+
+.btn-approve:hover {
+  background-color: #4a90d9;
+  color: #ffffff;
+}
+
+/* 정지 버튼 (헤더 admin-link 스타일) */
+.btn-ban {
+  background-color: rgba(192, 57, 43, 0.05);
+  color: #c0392b;
+  border-color: rgba(192, 57, 43, 0.2);
+}
+
+.btn-ban:hover {
+  background-color: #c0392b;
+  color: #ffffff;
+}
+
+/* ── 상태 배지 ── */
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge.pending {
+  background-color: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fdba74;
+}
+
+.badge.approved {
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .admin-table {
+    display: block;
+    overflow-x: auto;
+  }
+}

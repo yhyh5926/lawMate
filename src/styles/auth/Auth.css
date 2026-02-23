@@ -1,0 +1,207 @@
+/* ── [1] 베이스 레이아웃 (헤더와 동일한 배경 감성) ── */
+.auth-outer-layout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: calc(100vh - 70px); /* 헤더 높이 제외 */
+  background-color: #fcfdfe; /* 헤더 배경과 일치 */
+  padding: 20px;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    sans-serif;
+}
+
+/* ── [2] 카드 디자인 (헤더의 shadow & border 적용) ── */
+.auth-card-mini,
+.auth-card-wide {
+  background: #ffffff;
+  border: 2px solid #dce8f5; /* 헤더의 border-bottom과 동일 */
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(30, 80, 150, 0.08); /* 헤더 shadow 계승 */
+}
+
+.auth-card-mini {
+  width: 100%;
+  max-width: 380px;
+  padding: 40px 32px;
+}
+
+.auth-card-wide {
+  width: 100%;
+  max-width: 540px;
+  padding: 35px 40px;
+}
+
+/* ── [3] 타이틀 및 탭 (헤더 네이비 색상 사용) ── */
+.auth-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e3a5f; /* 헤더 메인 컬러 */
+  text-align: center;
+  margin-bottom: 28px;
+  letter-spacing: -0.5px;
+}
+
+.auth-tab-pill {
+  display: flex;
+  background: #f8fafc;
+  padding: 4px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  border: 1px solid #dce8f5;
+}
+
+.auth-tab-pill button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a6a8a; /* 헤더 auth-link 컬러 */
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.auth-tab-pill button.active {
+  background: #ffffff;
+  color: #4a90d9; /* 헤더 포인트 컬러 */
+  box-shadow: 0 2px 8px rgba(30, 80, 150, 0.1);
+}
+
+/* ── [4] 입력 시스템 (헤더 스타일 계승) ── */
+.auth-form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+  margin-bottom: 8px;
+}
+
+.span-2 {
+  grid-column: span 2;
+}
+
+.auth-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e3a5f;
+  margin-left: 2px;
+}
+
+.auth-input {
+  padding: 12px 14px;
+  border: 1px solid #dce8f5;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1e3a5f;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: #4a90d9;
+  background-color: rgba(74, 144, 217, 0.02);
+  box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.1);
+}
+
+/* ── [5] 버튼 디자인 (헤더 Nav Link & Logout Btn 스타일 조합) ── */
+.auth-main-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: #1e3a5f;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 10px;
+}
+
+.auth-main-btn:hover {
+  background-color: #4a90d9; /* 포인트 컬러로 변화 */
+  box-shadow: 0 4px 12px rgba(74, 144, 217, 0.2);
+}
+
+/* ── [6] 기타 요소 (변호사 박스 & 푸터) ── */
+.lawyer-nested-box {
+  background: rgba(220, 232, 245, 0.2);
+  border: 1px solid #dce8f5;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 10px 0 15px 0;
+}
+
+.box-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4a90d9;
+  margin-bottom: 12px;
+}
+
+.auth-footer-links {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #d0dce8;
+}
+
+.auth-footer-links span {
+  color: #4a6a8a;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.auth-footer-links span:hover {
+  color: #4a90d9;
+  text-decoration: underline;
+}
+
+.divider {
+  width: 1px;
+  height: 12px;
+  background: #d0dce8;
+}
+
+.result-box {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f0f7ff;
+  border: 1px dashed #4a90d9;
+  border-radius: 8px;
+  color: #1e3a5f;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* 반응형 */
+@media (max-width: 540px) {
+  .auth-card-wide {
+    padding: 30px 20px;
+  }
+  .auth-grid {
+    grid-template-columns: 1fr;
+  }
+  .span-2 {
+    grid-column: span 1;
+  }
+}

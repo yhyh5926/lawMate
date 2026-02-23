@@ -1,0 +1,145 @@
+/* 채팅 페이지 전체 컨테이너 */
+.chat-page {
+  display: flex;
+  max-width: 1280px; /* 헤더의 max-width와 통일 */
+  height: calc(100vh - 120px); /* 헤더 높이와 여백 고려 */
+  margin: 20px auto;
+  background-color: #ffffff;
+  border: 2px solid #dce8f5; /* 헤더의 border-bottom과 통일 */
+  border-radius: 8px; /* 헤더의 버튼 radius 스타일 반영 */
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(30, 80, 150, 0.08); /* 헤더의 box-shadow와 통일 */
+}
+
+/* ── 왼쪽 채팅방 목록 ── */
+.chat-room-list {
+  width: 360px;
+  border-right: 2px solid #dce8f5; /* 일관된 보더 두께 */
+  display: flex;
+  flex-direction: column;
+  background-color: #fcfdfe; /* 헤더의 깔끔한 배경톤 반영 */
+}
+
+.chat-room-list-header {
+  height: 70px; /* 헤더 높이와 맞춤 */
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #dce8f5;
+  background-color: #ffffff;
+}
+
+.chat-room-list-header h2 {
+  font-size: 18px;
+  color: #1e3a5f;
+  font-weight: 700;
+  margin: 0;
+}
+
+.chat-room-list-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* 채팅방 아이템 */
+.chat-room-item {
+  display: flex;
+  align-items: center;
+  padding: 18px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(220, 232, 245, 0.5);
+  transition: background-color 0.2s ease;
+}
+
+.chat-room-item:hover {
+  background-color: rgba(
+    74,
+    144,
+    217,
+    0.05
+  ); /* 헤더 nav-link hover 효과 응용 */
+}
+
+.chat-room-item.active {
+  background-color: #eef5ff;
+  border-left: 4px solid #4a90d9; /* 포인트 컬러로 활성화 표시 */
+}
+
+.chat-room-avatar {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #1e3a5f 0%, #4a90d9 100%);
+  color: #ffffff;
+  border-radius: 8px; /* 헤더 admin-link 느낌의 radius */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+
+.chat-room-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-room-top-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.chat-room-name {
+  font-weight: 600;
+  color: #1e3a5f;
+  font-size: 15px;
+}
+
+.chat-room-time {
+  font-size: 12px;
+  color: #a0aec0;
+}
+
+.chat-room-last-message {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── 오른쪽 채팅 메인 영역 ── */
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+}
+
+.chat-main-header {
+  height: 70px; /* 헤더 높이와 통일 */
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #dce8f5;
+  gap: 16px;
+}
+
+.chat-back-btn {
+  display: none; /* 데스크톱 기본 숨김 */
+  background: none;
+  border: 1px solid #dce8f5;
+  border-radius: 4px;
+  padding: 4px 8px;
+  color: #4a6a8a;
+  cursor: pointer;
+}
+
+.chat-main-header h3 {
+  font-size: 17px;
+  color: #1e3a5f;
+  font-weight: 700;
+  margin: 0;
+}

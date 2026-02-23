@@ -1,0 +1,107 @@
+/* ── 메시지 전체 래퍼 ── */
+.message-bubble-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  max-width: 80%;
+}
+
+.message-bubble-wrapper.mine {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.message-bubble-wrapper.other {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+
+/* ── 상대방 프로필 (헤더 admin-link/mypage-link 느낌 반영) ── */
+.message-profile {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  gap: 8px;
+}
+
+.message-avatar {
+  width: 32px;
+  height: 32px;
+  background-color: #fcfdfe; /* 헤더 배경색 */
+  border: 1px solid #dce8f5; /* 헤더 보더색 */
+  color: #1e3a5f; /* 헤더 메인 텍스트 컬러 */
+  border-radius: 8px; /* 헤더 버튼 radius와 통일 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(30, 80, 150, 0.04);
+}
+
+.message-sender-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a6a8a; /* 헤더 auth-link 컬러 */
+}
+
+/* ── 메시지 행 (말풍선 + 시간) ── */
+.message-content-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* ── 말풍선 공통 (헤더 nav-link의 부드러운 곡률 반영) ── */
+.message-bubble {
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  line-height: 1.6;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+/* ── 내 메시지 (헤더 로고 & 포인트 컬러 그라데이션) ── */
+.message-bubble.mine {
+  background: linear-gradient(135deg, #1e3a5f 0%, #4a90d9 100%);
+  color: #ffffff;
+  border-top-right-radius: 2px; /* 엣지 포인트 */
+  box-shadow: 0 4px 12px rgba(30, 58, 95, 0.15);
+}
+
+/* ── 상대방 메시지 (헤더 화이트 테마 & 보더 적용) ── */
+.message-bubble.other {
+  background-color: #ffffff;
+  color: #1e3a5f;
+  border: 1.5px solid #dce8f5; /* 헤더 보더 두께와 유사하게 설정 */
+  border-top-left-radius: 2px;
+  box-shadow: 0 2px 8px rgba(30, 80, 150, 0.05);
+}
+
+.message-text {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ── 시간 표시 (헤더의 보조 텍스트 톤) ── */
+.message-time {
+  font-size: 11px;
+  color: #a0aec0;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* ── 반응형 모바일 ── */
+@media (max-width: 768px) {
+  .message-bubble-wrapper {
+    max-width: 90%;
+  }
+
+  .message-bubble {
+    font-size: 14px;
+    padding: 10px 14px;
+  }
+}
