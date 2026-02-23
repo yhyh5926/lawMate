@@ -69,7 +69,7 @@ const MOCK_ROOMS_BY_ROLE = {
 const ChatPage = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
-  const { user, logout, loginAs } = useAuthStore();
+  const { user } = useAuthStore();
 
   const handleRoomClick = (id) => {
     navigate(`/chat/${id}`);
@@ -187,15 +187,6 @@ const ChatPage = () => {
               </div>
             ))
           )}
-        </div>
-
-        {/* ★ 테스트용 역할 전환 바 (나중에 삭제) */}
-        <div className="chat-test-bar">
-          <span>테스트:</span>
-          <button onClick={() => loginAs('USER')}>일반</button>
-          <button onClick={() => loginAs('LAWYER')}>변호사</button>
-          <button onClick={() => loginAs('ADMIN')}>관리자</button>
-          <button onClick={logout}>로그아웃</button>
         </div>
       </aside>
 
