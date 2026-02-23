@@ -3,196 +3,205 @@
 /* src/pages/mypage/MyPageMain.jsx */
 
 /* ========================================= */
-/* Auth Pages Styles */
+/* Shared Auth Container (MyPageEdit 등 공용) */
 /* ========================================= */
 .login-container {
   max-width: 520px;
-  margin: 80px auto;
-  padding: 50px 40px;
+  margin: 60px auto;
+  padding: 40px;
   background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  border: 1px solid #dce8f5;
+  box-shadow: 0 2px 12px rgba(30, 80, 150, 0.08);
 }
 
 .login-title {
-  font-size: 32px;
-  font-weight: 700;
-  color: #1a1a1a;
+  font-size: 24px;
+  font-weight: 800;
+  color: #1e3a5f;
   text-align: center;
-  margin-bottom: 40px;
-  letter-spacing: -0.5px;
+  margin-bottom: 32px;
+  letter-spacing: -0.3px;
 }
 
 .join-tab-group {
   display: flex;
-  gap: 12px;
-  margin-bottom: 32px;
-  background: #f5f5f5;
-  padding: 6px;
-  border-radius: 12px;
+  gap: 4px;
+  margin-bottom: 24px;
+  background: #eef4fb;
+  padding: 5px;
+  border-radius: 8px;
+  border: 1.5px solid #dce8f5;
 }
 
 .join-tab-btn {
   flex: 1;
-  padding: 12px 20px;
-  font-size: 15px;
+  padding: 11px 20px;
+  font-size: 14px;
   font-weight: 600;
-  color: #666;
+  color: #4a6a8a;
   background: transparent;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  font-family: inherit;
 }
 
 .join-tab-btn:hover {
-  color: #333;
+  color: #1e3a5f;
   background: rgba(255, 255, 255, 0.5);
 }
 
 .join-tab-btn.active {
-  color: #4a90e2;
+  color: #4a90d9;
   background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  font-weight: 700;
+  box-shadow: 0 1px 6px rgba(30, 80, 150, 0.12);
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
 }
 
 .login-form > div {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .input-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #334155;
-  padding-left: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #4a6a8a;
+  padding-left: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
 
 .login-input {
   width: 100%;
-  padding: 14px 18px;
-  font-size: 15px;
-  color: #333;
-  background: #fafafa;
-  border: 2px solid #e8e8e8;
-  border-radius: 10px;
-  transition: all 0.3s ease;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #1e3a5f;
+  background: #fcfdfe;
+  border: 1.5px solid #dce8f5;
+  border-radius: 8px;
+  transition: all 0.2s ease;
   box-sizing: border-box;
+  font-family: inherit;
+  box-shadow: 0 2px 6px rgba(30, 80, 150, 0.04);
 }
 
 .login-input:focus {
   outline: none;
   background: #ffffff;
-  border-color: #4a90e2;
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  border-color: #4a90d9;
+  box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.1);
 }
 
 .login-input:disabled {
   cursor: not-allowed;
   opacity: 0.7;
+  background: #eef4fb;
 }
 
 .login-input::placeholder {
-  color: #999;
+  color: #a0b8d0;
 }
 
 .login-btn {
   width: 100%;
-  padding: 16px;
-  margin-top: 8px;
-  font-size: 16px;
+  padding: 13px;
+  margin-top: 4px;
+  font-size: 15px;
   font-weight: 600;
   color: #ffffff;
-  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+  background-color: #1e3a5f;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(30, 80, 150, 0.2);
+  font-family: inherit;
 }
 
 .login-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(74, 144, 226, 0.4);
+  background-color: #4a90d9;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(74, 144, 217, 0.3);
 }
 
 .login-btn:active {
-  transform: translateY(0);
+  transform: scale(0.97);
 }
 
 .login-btn.primary {
-  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
-  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+  background-color: #1e3a5f;
+  box-shadow: 0 4px 12px rgba(30, 80, 150, 0.2);
 }
 
 .login-btn.primary:hover {
-  box-shadow: 0 6px 16px rgba(74, 144, 226, 0.4);
+  background-color: #4a90d9;
+  box-shadow: 0 6px 16px rgba(74, 144, 217, 0.3);
 }
 
 .login-btn.secondary {
-  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-  box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+  background-color: #eef4fb;
+  color: #4a6a8a;
+  box-shadow: none;
 }
 
 .login-btn.secondary:hover {
-  box-shadow: 0 6px 16px rgba(100, 116, 139, 0.4);
+  background-color: #dce8f5;
+  color: #1e3a5f;
+  transform: translateY(-1px);
 }
 
 .login-links {
-  margin-top: 28px;
+  margin-top: 20px;
   text-align: center;
   font-size: 14px;
-  color: #666;
+  color: #4a6a8a;
 }
 
 .login-links span {
-  color: #4a90e2;
+  color: #4a90d9;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 600;
   transition: color 0.2s ease;
   padding: 0 8px;
 }
 
 .login-links span:hover {
-  color: #357abd;
+  color: #1e3a5f;
   text-decoration: underline;
 }
 
 .result-box {
-  margin-top: 28px;
-  padding: 20px;
-  font-size: 15px;
+  margin-top: 20px;
+  padding: 14px 20px;
+  font-size: 14px;
   font-weight: 500;
-  color: #2c5aa0;
+  color: #2a5298;
   text-align: center;
-  background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%);
-  border: 2px solid #4a90e2;
-  border-radius: 12px;
-  animation: slideIn 0.4s ease;
+  background: #eef4fb;
+  border: 1.5px solid #4a90d9;
+  border-radius: 8px;
+  animation: slideIn 0.3s ease;
 }
 
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ========================================= */
@@ -200,62 +209,83 @@
 /* ========================================= */
 .mypage-container {
   max-width: 680px;
-  margin: 60px auto;
+  margin: 48px auto;
   padding: 0 20px;
 }
 
 .mypage-header {
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-  border-radius: 24px;
+  background: linear-gradient(135deg, #1e3a5f 0%, #2a5298 60%, #4a90d9 100%);
+  border-radius: 16px;
   padding: 40px;
   color: white;
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.mypage-header::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 200px;
+  height: 200px;
+  background: rgba(74, 144, 217, 0.15);
+  border-radius: 50%;
+  pointer-events: none;
 }
 
 .mypage-avatar {
-  width: 72px;
-  height: 72px;
-  background: rgba(255,255,255,0.15);
-  border: 2px solid rgba(255,255,255,0.3);
-  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
-  margin: 0 auto 16px;
+  font-size: 28px;
+  margin: 0 auto 14px;
+  position: relative;
+  z-index: 1;
 }
 
 .mypage-title {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   color: white;
   margin: 0 0 6px 0;
   letter-spacing: -0.3px;
+  position: relative;
+  z-index: 1;
 }
 
 .mypage-subtitle {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  color: rgba(220, 232, 245, 0.7);
   margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 /* ========================================= */
-/* 정보 카드들 (기본정보, 태그, 작성글) */
+/* 정보 카드들 */
 /* ========================================= */
 .mypage-info-card {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 24px;
-  padding: 32px;
-  margin-bottom: 16px;
+  border: 1px solid #dce8f5;
+  border-radius: 12px;
+  padding: 28px 32px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 10px rgba(30, 80, 150, 0.05);
 }
 
 .info-row {
   display: flex;
   align-items: center;
-  padding: 14px 0;
-  border-bottom: 1px solid #f1f5f9;
+  padding: 13px 0;
+  border-bottom: 1px solid #eef4fb;
 }
 
 .info-row:last-child {
@@ -268,9 +298,9 @@
 }
 
 .info-row-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+  color: #a0b8d0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   width: 90px;
@@ -278,9 +308,9 @@
 }
 
 .info-row-value {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
-  color: #1e293b;
+  color: #1e3a5f;
   flex: 1;
 }
 
@@ -290,21 +320,22 @@
 .mypage-actions {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 14px;
 }
 
 .action-btn {
   width: 100%;
-  padding: 16px;
+  padding: 14px;
   font-size: 15px;
   font-weight: 700;
   color: #ffffff;
   border: none;
-  border-radius: 14px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: center;
+  font-family: inherit;
 }
 
 .action-btn:hover {
@@ -312,93 +343,126 @@
 }
 
 .action-btn:active {
-  transform: translateY(0);
+  transform: scale(0.97);
 }
 
 .btn-edit {
-  background: #2563eb;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  background-color: #1e3a5f;
+  box-shadow: 0 4px 12px rgba(30, 80, 150, 0.2);
 }
 
 .btn-edit:hover {
-  background: #1d4ed8;
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+  background-color: #4a90d9;
+  box-shadow: 0 6px 16px rgba(74, 144, 217, 0.3);
 }
 
 .btn-logout {
-  background: #f1f5f9;
-  color: #475569;
+  background: #eef4fb;
+  color: #4a6a8a;
   box-shadow: none;
 }
 
 .btn-logout:hover {
-  background: #e2e8f0;
-  color: #1e293b;
+  background: #dce8f5;
+  color: #1e3a5f;
 }
 
 .btn-leave {
   background: transparent;
-  color: #ef4444;
-  font-size: 14px;
+  color: #e05252;
+  font-size: 13px;
   font-weight: 600;
   padding: 10px;
   text-align: center;
   cursor: pointer;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   transition: all 0.2s ease;
+  font-family: inherit;
 }
 
 .btn-leave:hover {
-  background: #fee2e2;
+  background: #fce8e8;
 }
 
 /* ========================================= */
-/* 리스트 아이템 UI (글 목록 등) */
+/* 리스트 아이템 UI */
 /* ========================================= */
-.mypage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-.mypage-card { background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 8px; }
+.mypage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.mypage-card {
+  background: #f8fbff;
+  padding: 18px;
+  border-radius: 10px;
+  border: 1px solid #dce8f5;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .area-profile { grid-column: 1; }
-.area-email { grid-column: 2; }
-.area-full { grid-column: 1 / 3; }
-.text-left { text-align: left; }
-.card-label { font-size: 12px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
-.card-content { font-size: 15px; font-weight: 500; color: #1e293b; }
+.area-email   { grid-column: 2; }
+.area-full    { grid-column: 1 / 3; }
+.text-left    { text-align: left; }
+
+.card-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #a0b8d0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-content {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e3a5f;
+}
 
 .list-item {
-  padding: 14px 18px;
-  margin-bottom: 8px;
+  padding: 13px 16px;
+  margin-bottom: 6px;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  font-size: 15px;
-  color: #334155;
+  border: 1px solid #dce8f5;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1e3a5f;
   transition: all 0.2s ease;
+  box-shadow: 0 1px 4px rgba(30, 80, 150, 0.04);
 }
 
 .list-item:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  transform: translateX(4px);
+  background: #f8fbff;
+  border-color: #4a90d9;
 }
 
-.list-item:last-child { margin-bottom: 0; }
+.list-item:last-child {
+  margin-bottom: 0;
+}
 
-.list-item.clickable { cursor: pointer; }
+.list-item.clickable {
+  cursor: pointer;
+}
 
 .list-item.clickable:hover {
-  background-color: #eff6ff;
-  border-color: #3b82f6;
-  color: #1e293b;
+  background-color: #eef4fb;
+  border-color: #4a90d9;
+  transform: translateX(3px);
 }
 
 /* ========================================= */
-/* MyPage 인라인 스타일 추출본 */
+/* MyPage 기타 유틸리티 */
 /* ========================================= */
 .require-login-msg {
   text-align: center;
   margin-top: 100px;
-  font-size: 18px;
+  font-size: 16px;
+  color: #4a6a8a;
 }
 
 .full-width {
@@ -406,31 +470,33 @@
 }
 
 .mypage-section-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
-  margin-bottom: 15px;
-  color: #1e293b;
+  margin-bottom: 14px;
+  color: #1e3a5f;
 }
 
 .tag-container {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .tag-item {
-  padding: 6px 14px;
-  background: #eff6ff;
-  color: #2563eb;
+  padding: 5px 12px;
+  background: #eef4fb;
+  color: #4a90d9;
   border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  border: 1px solid #bfdbfe;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid #dce8f5;
+  letter-spacing: 0.2px;
 }
 
 .empty-text {
-  color: #94a3b8;
+  color: #a0b8d0;
   font-size: 14px;
+  font-style: italic;
 }
 
 .clean-list {
@@ -440,8 +506,8 @@
 }
 
 .list-index {
-  color: #3b82f6;
-  font-weight: bold;
+  color: #4a90d9;
+  font-weight: 700;
   margin-right: 8px;
 }
 
@@ -453,5 +519,5 @@
 
 .list-item-date {
   font-size: 12px;
-  color: #94a3b8;
+  color: #a0b8d0;
 }
