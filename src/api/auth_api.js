@@ -1,4 +1,4 @@
-import { AUTH_USERS, AUTH_REPORTS } from '../mocks/auth/auth_mockData';
+import { AUTH_USERS, AUTH_REPORTS } from "../mocks/auth/auth_mockData";
 
 // 메모리상에서 데이터 조작을 위해 로컬 변수에 복사
 let users = [...AUTH_USERS];
@@ -9,18 +9,23 @@ export const authApi = {
   login: async (id, password) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const user = users.find(u => u.id === id && u.password === password && u.is_deleted === 'N');
+        const user = users.find(
+          (u) => u.id === id && u.password === password && u.is_deleted === "N",
+        );
         if (user) {
-          if (user.role === 'LAWYER' && user.status === 'PENDING') {
-            reject('관리자 승인 대기 중인 변호사 계정입니다.');
-          } else if (user.status === 'BANNED') {
-            reject('관리자에 의해 정지된 계정입니다.');
+          if (user.role === "LAWYER" && user.status === "PENDING") {
+            reject("관리자 승인 대기 중인 변호사 계정입니다.");
+          } else if (user.status === "BANNED") {
+            reject("관리자에 의해 정지된 계정입니다.");
           } else {
             // 토큰 발급 시늉
-            resolve({ ...user, token: 'mock-jwt-token-12345' });
+            const result = { ...user, token: "mock-jwt-token-12345" };
+            // ✅ 토큰을 localStorage에 저장
+            localStorage.setItem("token", result.token);
+            resolve(result);
           }
         } else {
-          reject('아이디 또는 비밀번호가 일치하지 않습니다.');
+          reject("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
       }, 500);
     });
@@ -32,16 +37,16 @@ export const authApi = {
       setTimeout(() => {
         const newUser = {
           ...userData,
-          status: userData.role === 'LAWYER' ? 'PENDING' : 'APPROVED', // 변호사는 승인 대기
-          is_deleted: 'N',
+          status: userData.role === "LAWYER" ? "PENDING" : "APPROVED", // 변호사는 승인 대기
+          is_deleted: "N",
           myCases: [],
           myPosts: [],
           scraps: [],
-          myAnswers: []
+          myAnswers: [],
         };
         users.push(newUser);
-        console.log("Current DB Users:", users); 
-        resolve({ success: true, message: '가입 완료' });
+        console.log("Current DB Users:", users);
+        resolve({ success: true, message: "가입 완료" });
       }, 500);
     });
   },
@@ -50,8 +55,12 @@ export const authApi = {
   findId: async (email) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const user = users.find(u => u.email === email && u.is_deleted === 'N');
-        user ? resolve(user.id) : reject('해당 이메일로 가입된 사용자가 없습니다.');
+        const user = users.find(
+          (u) => u.email === email && u.is_deleted === "N",
+        );
+        user
+          ? resolve(user.id)
+          : reject("해당 이메일로 가입된 사용자가 없습니다.");
       }, 500);
     });
   },
@@ -60,8 +69,10 @@ export const authApi = {
   findPw: async (id, email) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const user = users.find(u => u.id === id && u.email === email && u.is_deleted === 'N');
-        user ? resolve(user.password) : reject('정보가 일치하지 않습니다.');
+        const user = users.find(
+          (u) => u.id === id && u.email === email && u.is_deleted === "N",
+        );
+        user ? resolve(user.password) : reject("정보가 일치하지 않습니다.");
       }, 500);
     });
   },
@@ -70,11 +81,11 @@ export const authApi = {
   updateUser: async (updatedData) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const index = users.findIndex(u => u.id === updatedData.id);
+        const index = users.findIndex((u) => u.id === updatedData.id);
         if (index !== -1) {
           // 기존 데이터에 새로운 데이터 덮어쓰기
           users[index] = { ...users[index], ...updatedData };
-          resolve(users[index]); 
+          resolve(users[index]);
         } else {
           reject("사용자를 찾을 수 없습니다.");
         }
@@ -86,12 +97,14 @@ export const authApi = {
 
   // 승인 대기 변호사 조회
   getPendingLawyers: async () => {
-    return users.filter(u => u.role === 'LAWYER' && u.status === 'PENDING');
+    return users.filter((u) => u.role === "LAWYER" && u.status === "PENDING");
   },
 
   // 변호사 승인
   approveLawyer: async (userId) => {
-    users = users.map(u => u.id === userId ? { ...u, status: 'APPROVED' } : u);
+    users = users.map((u) =>
+      u.id === userId ? { ...u, status: "APPROVED" } : u,
+    );
     return true;
   },
 
@@ -102,13 +115,15 @@ export const authApi = {
 
   // 유저 정지
   banUser: async (targetId) => {
-    users = users.map(u => u.id === targetId ? { ...u, status: 'BANNED' } : u);
+    users = users.map((u) =>
+      u.id === targetId ? { ...u, status: "BANNED" } : u,
+    );
     return true;
   },
 
   // 회원 탈퇴 (Soft Delete)
   leaveUser: async (userId) => {
-     users = users.map(u => u.id === userId ? { ...u, is_deleted: 'Y' } : u);
-     return true;
-  }
+    users = users.map((u) => (u.id === userId ? { ...u, is_deleted: "Y" } : u));
+    return true;
+  },
 };
