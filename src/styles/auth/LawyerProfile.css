@@ -6,115 +6,153 @@
 .lawyer-profile-container {
   max-width: 1100px;
   margin: 40px auto;
-  padding: 0 20px;
+  padding: 0 24px;
   user-select: none;
 }
 
 .lawyer-mode-tabs {
   display: flex;
-  background: #f1f5f9;
-  padding: 6px;
-  border-radius: 16px;
-  margin-bottom: 30px;
-  gap: 8px;
-  border: 1px solid #e2e8f0;
+  background: #eef4fb;
+  padding: 5px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  gap: 4px;
+  border: 1.5px solid #dce8f5;
 }
 
 .mode-tab {
   flex: 1;
-  padding: 14px;
+  padding: 12px;
   border: none;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 700;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  color: #64748b;
+  color: #4a6a8a;
   background: transparent;
   transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.mode-tab:hover {
+  color: #1e3a5f;
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .mode-tab.active {
   background: #ffffff;
-  color: #2563eb;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  color: #4a90d9;
+  font-weight: 700;
+  box-shadow: 0 1px 6px rgba(30, 80, 150, 0.12);
 }
 
 /* ========================================= */
 /* 프로필 헤더 카드 */
 /* ========================================= */
 .profile-header-card {
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-  border-radius: 24px;
-  padding: 40px;
+  background: linear-gradient(135deg, #1e3a5f 0%, #2a5298 60%, #4a90d9 100%);
+  border-radius: 16px;
+  padding: 40px 48px;
   color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-header-card::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 260px;
+  height: 260px;
+  background: rgba(74, 144, 217, 0.15);
+  border-radius: 50%;
+  pointer-events: none;
 }
 
 .header-main {
   flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .lawmate-badges {
   display: flex;
   gap: 8px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .badge-item {
   background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 5px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 4px 12px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  color: #fbbf24;
+  color: #ffd77a;
+  backdrop-filter: blur(4px);
+  letter-spacing: 0.3px;
 }
 
 .lawyer-name-title {
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 800;
   margin: 0 0 8px 0;
   color: white;
+  letter-spacing: -0.5px;
 }
 
 .lawyer-intro {
-  font-size: 15px;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  color: rgba(220, 232, 245, 0.8);
   margin: 0;
+  line-height: 1.6;
 }
 
 .header-stats-group {
   display: flex;
-  gap: 16px;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
 }
 
 .stat-box.yellow {
-  background: #fffbeb;
-  border: 2px solid #fbbf24;
-  padding: 24px 35px;
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 215, 122, 0.5);
+  padding: 22px 32px;
+  border-radius: 12px;
   text-align: center;
-  min-width: 150px;
-  box-shadow: 0 4px 15px rgba(251, 191, 36, 0.2);
+  min-width: 140px;
+  backdrop-filter: blur(8px);
+  transition: background-color 0.2s ease;
+}
+
+.stat-box.yellow:hover {
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .stat-box.yellow .stat-label {
   display: block;
-  color: #b45309;
-  font-weight: 700;
-  font-size: 14px;
+  color: rgba(220, 232, 245, 0.7);
+  font-weight: 600;
+  font-size: 12px;
   margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
 
 .stat-box.yellow .stat-value {
   display: block;
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 900;
-  color: #d97706;
+  color: #ffd77a;
   line-height: 1;
+  letter-spacing: -0.5px;
 }
 
 /* ========================================= */
@@ -122,124 +160,130 @@
 /* ========================================= */
 .consultation-service-section {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 24px;
-  padding: 35px;
-  margin-bottom: 30px;
+  border: 1px solid #dce8f5;
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 10px rgba(30, 80, 150, 0.06);
 }
 
 .panel-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 24px 0;
+  color: #1e3a5f;
+  margin: 0 0 20px 0;
 }
 
 .consult-card-group {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 16px;
 }
 
 .consult-card {
-  padding: 32px 24px;
-  border-radius: 24px;
-  border: 2px solid #f1f5f9;
+  padding: 28px 20px;
+  border-radius: 10px;
+  border: 1.5px solid #dce8f5;
   text-align: center;
-  background: white;
-  transition: all 0.3s ease;
+  background: #fcfdfe;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(30, 80, 150, 0.04);
 }
 
 .consult-card.highlight {
-  border-color: #bfdbfe;
-  background: #eff6ff;
+  border-color: #4a90d9;
+  background: #eef4fb;
 }
 
 .consult-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 20px rgba(30, 80, 150, 0.1);
 }
 
 .consult-icon {
-  font-size: 28px;
-  margin-bottom: 12px;
+  font-size: 26px;
+  margin-bottom: 10px;
 }
 
 .consult-info {
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .consult-type {
   display: block;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  color: #475569;
-  margin-bottom: 6px;
+  color: #4a6a8a;
+  margin-bottom: 4px;
 }
 
 .consult-price {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 800;
-  color: #2563eb;
-  margin: 10px 0;
+  color: #1e3a5f;
+  margin: 8px 0;
+  letter-spacing: -0.5px;
 }
 
 .reserve-btn-preview {
   width: 100%;
-  padding: 14px;
-  border-radius: 12px;
-  background: #2563eb;
+  padding: 12px;
+  border-radius: 8px;
+  background: #1e3a5f;
   color: white;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 14px;
   border: none;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
+  font-family: inherit;
 }
 
 .reserve-btn-preview:hover {
-  background: #1d4ed8;
+  background: #4a90d9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 144, 217, 0.3);
 }
 
 .reserve-btn-preview.active {
-  background: #2563eb;
+  background: #4a90d9;
   color: white;
 }
 
 .reserve-btn-preview.active:hover {
-  background: #1d4ed8;
+  background: #1e3a5f;
 }
 
 .consult-card.editing .reserve-btn-preview,
 .consult-card.editing .reserve-btn-preview.active {
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);
+  background: linear-gradient(135deg, #2a9d6e 0%, #1e7d55 100%);
+  box-shadow: 0 4px 12px rgba(42, 157, 110, 0.3);
   color: white;
 }
 
 .consult-card.editing .reserve-btn-preview:hover,
 .consult-card.editing .reserve-btn-preview.active:hover {
-  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  background: linear-gradient(135deg, #1e7d55 0%, #176643 100%);
 }
 
 .consult-card.editing {
-  border-color: #86efac;
-  background: #f0fdf4;
-  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+  border-color: #2a9d6e;
+  background: #f0f9f5;
+  box-shadow: 0 0 0 2px rgba(42, 157, 110, 0.15);
 }
 
 .manage-notice-small {
   font-size: 13px;
-  color: #94a3b8;
-  margin: 16px 0 0 0;
+  color: #a0b8d0;
+  margin: 14px 0 0 0;
 }
 
 /* ========================================= */
-/* 달력 및 일정 스케줄러 영역 (연속 스크롤) */
+/* 달력 및 일정 스케줄러 영역 */
 /* ========================================= */
 .scheduler-wrapper {
   display: flex;
-  gap: 40px;
+  gap: 32px;
   margin-top: 20px;
 }
 
@@ -248,26 +292,26 @@
 }
 
 .calendar-scroll-area {
-  height: 480px; /* 윈도우 캘린더처럼 보이도록 세로 높이 지정 */
+  height: 480px;
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 0 8px 8px 8px; /* 스크롤바와 여백 조절 */
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.02);
+  border: 1.5px solid #dce8f5;
+  border-radius: 10px;
+  padding: 0 8px 8px 8px;
+  box-shadow: 0 2px 10px rgba(30, 80, 150, 0.05);
 }
 
 .calendar-scroll-area::-webkit-scrollbar {
   width: 6px;
 }
 .calendar-scroll-area::-webkit-scrollbar-track {
-  background: #f8fafc;
+  background: #f8fbff;
   border-radius: 4px;
 }
 .calendar-scroll-area::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
+  background-color: #dce8f5;
   border-radius: 4px;
 }
 
@@ -275,26 +319,26 @@
 .calendar-weekday-header.sticky-header {
   position: sticky;
   top: 0;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(4px);
   z-index: 10;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 8px;
   padding: 12px 0;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #dce8f5;
   margin-bottom: 8px;
 }
 
 .calendar-weekday-label {
   text-align: center;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
-  color: #64748b;
+  color: #4a6a8a;
 }
 
-.calendar-weekday-label.sun { color: #ef4444; }
-.calendar-weekday-label.sat { color: #3b82f6; }
+.calendar-weekday-label.sun { color: #e05252; }
+.calendar-weekday-label.sat { color: #4a90d9; }
 
 .calendar-grid {
   display: grid;
@@ -304,9 +348,9 @@
 
 .calendar-day {
   aspect-ratio: 1/1;
-  background: white;
-  border: 1px solid #f1f5f9;
-  border-radius: 12px;
+  background: #fcfdfe;
+  border: 1px solid #eef4fb;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -316,52 +360,46 @@
   position: relative;
 }
 
-/* 날짜 숫자 색상 (일요일 빨강, 토요일 파랑, 월~금 검정/진회색) */
 .date-number {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: #334155; 
+  color: #1e3a5f;
   transition: color 0.2s;
 }
 
 .date-number.first-day {
   font-weight: 800;
-  font-size: 13px;
+  font-size: 12px;
 }
 
-.date-number.sun { color: #ef4444; }
-.date-number.sat { color: #3b82f6; }
+.date-number.sun { color: #e05252; }
+.date-number.sat { color: #4a90d9; }
 
 .calendar-day:hover {
-  border-color: #bfdbfe;
-  background: #eff6ff;
+  border-color: #4a90d9;
+  background: #eef4fb;
 }
 
-/* 예약 가능/선택된 날짜 스타일 변경 (연한 하늘색 배경, 글씨색 유지) */
 .calendar-day.selected {
-  background: #bae6fd; /* 연한 하늘색 */
-  border-color: #7dd3fc;
-  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.15);
+  background: #dce8f5;
+  border-color: #4a90d9;
+  box-shadow: 0 2px 8px rgba(74, 144, 217, 0.15);
 }
 
 .calendar-day.partially-booked {
-  background: #d1fae5;
-  border-color: #34d399;
+  background: #e6f7f0;
+  border-color: #2a9d6e;
 }
 
 .calendar-day.partially-booked:hover {
-  background: #a7f3d0;
-  border-color: #10b981;
+  background: #cef2e4;
+  border-color: #1e7d55;
 }
 
 .calendar-day.dragging {
-  background: #e0f2fe;
-  border-color: #7dd3fc;
+  background: #dce8f5;
+  border-color: #4a90d9;
 }
-
-/* 중요: 예약된 상태(.selected)에서도 요일별 글씨 색상을 그대로 유지하기 위해
-  기존의 color: #ffffff 덮어쓰기 규칙을 제거했습니다.
-*/
 
 .time-tag {
   font-size: 10px;
@@ -370,23 +408,23 @@
   font-weight: 600;
   white-space: nowrap;
   letter-spacing: -0.5px;
-  color: #0369a1; /* 시간 표시도 진한 파란색으로 가독성 확보 */
+  color: #2a5298;
 }
 
-.calendar-day.partially-booked .time-tag { color: #065f46; }
-.calendar-day.dragging .time-tag { color: #0369a1; }
+.calendar-day.partially-booked .time-tag { color: #1e7d55; }
+.calendar-day.dragging .time-tag         { color: #2a5298; }
 
 .calendar-remove-btn {
   position: absolute;
   top: 4px;
   right: 4px;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  background: #ef4444;
+  background: #e05252;
   color: white;
   border: none;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1;
   display: flex;
   align-items: center;
@@ -402,99 +440,99 @@
   opacity: 1;
 }
 
-/* 지난 날짜만 흐리게 처리 */
 .calendar-day.past-date {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
-  background-color: #f8fafc;
-  border-color: #e2e8f0;
+  background-color: #f8fbff;
+  border-color: #eef4fb;
 }
 
 .calendar-day.past-date:hover {
-  border-color: #e2e8f0;
-  background: #f8fafc;
+  border-color: #eef4fb;
+  background: #f8fbff;
 }
 
 /* ========================================= */
-/* 하단 콘텐츠 좌우 레이아웃 (기본정보 / 답변내역) */
+/* 하단 콘텐츠 좌우 레이아웃 */
 /* ========================================= */
 .profile-content-layout {
   display: flex;
-  gap: 24px;
+  gap: 20px;
   align-items: flex-start;
 }
 
 .info-side-panel {
   flex: 1;
   background: #ffffff;
-  padding: 35px;
-  border-radius: 24px;
-  border: 1px solid #e2e8f0;
+  padding: 32px;
+  border-radius: 12px;
+  border: 1px solid #dce8f5;
+  box-shadow: 0 2px 10px rgba(30, 80, 150, 0.06);
 }
 
 .info-item {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
-.info-item:last-child {
-  margin-bottom: 0;
-}
-
-.info-item label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #94a3b8;
+.info-item .label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #a0b8d0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .info-item .value {
-  font-size: 15px;
-  color: #1e293b;
+  font-size: 14px;
+  color: #1e3a5f;
   font-weight: 500;
 }
 
 .info-item .value.highlight {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
-  color: #2563eb;
+  color: #4a90d9;
 }
 
 .info-divider {
   border: none;
-  border-top: 1px solid #f1f5f9;
-  margin: 20px 0;
+  border-top: 1px solid #eef4fb;
+  margin: 18px 0;
 }
 
 .manage-input-inline {
   width: 100%;
   padding: 10px 14px;
-  border-radius: 10px;
-  border: 2px solid #3b82f6;
-  font-size: 15px;
+  border-radius: 8px;
+  border: 1.5px solid #4a90d9;
+  font-size: 14px;
   font-weight: 600;
   margin-top: 4px;
   box-sizing: border-box;
-  background: #f8fafc;
+  background: #f8fbff;
+  color: #1e3a5f;
+  font-family: inherit;
   transition: all 0.2s ease;
 }
 
 .manage-input-inline:focus {
   outline: none;
   background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.1);
 }
 
 .mini-input {
   width: 80px;
   padding: 4px 8px;
-  border: 1px solid #3b82f6;
+  border: 1.5px solid #dce8f5;
   border-radius: 6px;
   font-size: 13px;
   text-align: center;
+  color: #1e3a5f;
+  font-family: inherit;
 }
 
 .manage-product-inputs {
@@ -507,29 +545,32 @@
 .activity-main-panel {
   flex: 2;
   background: #ffffff;
-  padding: 35px;
-  border-radius: 24px;
-  border: 1px solid #e2e8f0;
+  padding: 32px;
+  border-radius: 12px;
+  border: 1px solid #dce8f5;
+  box-shadow: 0 2px 10px rgba(30, 80, 150, 0.06);
 }
 
 .answers-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .answer-card-item {
-  padding: 18px 20px;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  background: #f8fafc;
+  padding: 16px 18px;
+  border-radius: 8px;
+  border: 1px solid #dce8f5;
+  background: #f8fbff;
   transition: all 0.2s ease;
   cursor: pointer;
+  box-shadow: 0 1px 4px rgba(30, 80, 150, 0.04);
 }
 
 .answer-card-item:hover {
-  border-color: #bfdbfe;
-  background: #eff6ff;
+  border-color: #4a90d9;
+  background: #eef4fb;
+  transform: translateX(3px);
 }
 
 .answer-top {
@@ -545,102 +586,113 @@
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
-  background: #f1f5f9;
-  color: #94a3b8;
-  border: 1px solid #e2e8f0;
+  background: #eef4fb;
+  color: #a0b8d0;
+  border: 1px solid #dce8f5;
 }
 
 .adoption-badge.is-adopted {
-  background: #d1fae5;
-  color: #059669;
-  border-color: #10b981;
+  background: #e6f7f0;
+  color: #1e7d55;
+  border-color: #2a9d6e;
 }
 
 .answer-date {
-  font-size: 13px;
-  color: #94a3b8;
+  font-size: 12px;
+  color: #a0b8d0;
 }
 
 .answer-title-text {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  color: #1e293b;
+  color: #1e3a5f;
   margin: 0;
+  line-height: 1.5;
 }
 
 .empty-msg {
   text-align: center;
-  color: #94a3b8;
-  font-size: 15px;
+  color: #a0b8d0;
+  font-size: 14px;
   padding: 40px 0;
+  font-style: italic;
 }
 
 /* ========================================= */
 /* 버튼 & 시간 설정 UI */
 /* ========================================= */
 .btn-mypage {
-  padding: 14px 30px;
-  border-radius: 12px;
-  font-size: 15px;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   border: none;
   transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.btn-mypage:active {
+  transform: scale(0.97);
 }
 
 .btn-mypage.primary {
-  background: #2563eb;
+  background: #1e3a5f;
   color: white;
+  box-shadow: 0 4px 12px rgba(30, 80, 150, 0.2);
 }
 
 .btn-mypage.primary:hover {
-  background: #1d4ed8;
+  background: #4a90d9;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 6px 16px rgba(74, 144, 217, 0.3);
 }
 
 .btn-mypage.gray {
-  background: #f1f5f9;
-  color: #64748b;
+  background: #eef4fb;
+  color: #4a6a8a;
+  border: 1px solid #dce8f5;
 }
 
 .btn-mypage.gray:hover {
-  background: #e2e8f0;
+  background: #dce8f5;
+  color: #1e3a5f;
 }
 
 .btn-mypage.danger {
-  background: #fee2e2;
-  color: #ef4444;
+  background: #fce8e8;
+  color: #e05252;
 }
 
 .btn-mypage.danger:hover {
-  background: #fecaca;
+  background: #f9d4d4;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+  box-shadow: 0 4px 12px rgba(224, 82, 82, 0.2);
 }
 
 .scheduler-time-setter {
   flex: 0.8;
-  background: #f8fafc;
-  padding: 28px 24px;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
+  background: #f8fbff;
+  padding: 24px 20px;
+  border-radius: 10px;
+  border: 1.5px solid #dce8f5;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
+  box-shadow: 0 2px 8px rgba(30, 80, 150, 0.05);
 }
 
 .scheduler-time-setter .sub-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
-  color: #1e293b;
+  color: #1e3a5f;
   margin: 0;
 }
 
 .time-input-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .t-field {
@@ -648,29 +700,31 @@
   align-items: center;
   justify-content: space-between;
   background: #ffffff;
-  padding: 12px 16px;
-  border-radius: 12px;
-  border: 1.5px solid #e2e8f0;
+  padding: 11px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #dce8f5;
   transition: border-color 0.2s ease;
 }
 
 .t-field:focus-within {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #4a90d9;
+  box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.1);
 }
 
 .t-field label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  color: #4a6a8a;
   min-width: 36px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .t-field input[type="time"] {
   border: none;
   font-size: 15px;
   font-weight: 700;
-  color: #1e293b;
+  color: #1e3a5f;
   font-family: inherit;
   outline: none;
   background: transparent;
@@ -680,88 +734,88 @@
 
 .apply-btn {
   width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  padding: 13px;
+  background: #1e3a5f;
   color: white;
   border: none;
-  border-radius: 12px;
-  font-size: 15px;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+  box-shadow: 0 4px 12px rgba(30, 80, 150, 0.2);
+  font-family: inherit;
   letter-spacing: 0.2px;
 }
 
 .apply-btn:hover {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+  background: #4a90d9;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(74, 144, 217, 0.3);
 }
 
 .apply-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+  transform: scale(0.97);
 }
 
 .profile-footer-actions {
   display: flex;
-  gap: 15px;
+  gap: 12px;
   justify-content: center;
-  margin-top: 40px;
-  padding-top: 30px;
-  border-top: 1px solid #e2e8f0;
+  margin-top: 36px;
+  padding-top: 28px;
+  border-top: 1px solid #dce8f5;
 }
 
 /* ========================================= */
-/* 달력 부가 스타일 (네비게이션, 요일 등) */
+/* 달력 네비게이션 */
 /* ========================================= */
 .calendar-nav-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .calendar-nav-box {
   display: flex;
-  gap: 20px;
+  gap: 16px;
   align-items: center;
-  background: #f1f5f9;
-  padding: 10px 24px;
-  border-radius: 24px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  background: #eef4fb;
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 1.5px solid #dce8f5;
+  box-shadow: 0 2px 6px rgba(30, 80, 150, 0.06);
 }
 
 .calendar-nav-btn {
-  border: 1px solid #e2e8f0;
+  border: 1.5px solid #dce8f5;
   background: #ffffff;
   cursor: pointer;
-  color: #475569;
+  color: #4a6a8a;
   font-weight: 700;
-  font-size: 15px;
-  width: 34px;
-  height: 34px;
+  font-size: 14px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 4px rgba(30, 80, 150, 0.06);
 }
 
 .calendar-nav-btn:hover {
-  background: #2563eb;
+  background: #4a90d9;
   color: #ffffff;
-  border-color: #2563eb;
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+  border-color: #4a90d9;
+  box-shadow: 0 4px 10px rgba(74, 144, 217, 0.3);
 }
 
 .calendar-nav-text {
   font-weight: 800;
-  font-size: 17px;
-  color: #1e293b;
+  font-size: 16px;
+  color: #1e3a5f;
   min-width: 100px;
   text-align: center;
   letter-spacing: -0.3px;
@@ -771,45 +825,48 @@
 /* 의뢰인 상담 신청 폼 */
 /* ========================================= */
 .booking-info-text {
-  font-size: 14px;
-  color: #64748b;
-  margin-bottom: 16px;
+  font-size: 13px;
+  color: #4a6a8a;
+  margin-bottom: 14px;
+  line-height: 1.6;
 }
 
 .booking-details-box {
-  background: #fff;
+  background: #f8fbff;
   padding: 16px;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1.5px solid #dce8f5;
+  margin-bottom: 18px;
 }
 
 .booking-detail-group {
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .booking-detail-label {
-  margin: 0 0 6px 0;
-  font-size: 13px;
-  color: #64748b;
-  font-weight: 600;
+  margin: 0 0 5px 0;
+  font-size: 12px;
+  color: #4a6a8a;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
 
 .booking-detail-time {
-  color: #2563eb;
+  color: #4a90d9;
   font-size: 15px;
   font-weight: 700;
 }
 
 .dashed-divider {
-  border-top: 1px dashed #e2e8f0;
-  margin: 16px 0;
+  border-top: 1px dashed #dce8f5;
+  margin: 14px 0;
 }
 
 .booking-section-title {
   margin: 0 0 10px 0;
-  font-size: 14px;
-  color: #1e293b;
+  font-size: 13px;
+  color: #1e3a5f;
   font-weight: 700;
 }
 
@@ -828,7 +885,7 @@
   border: none;
   font-size: 15px;
   font-weight: 700;
-  color: #1e293b;
+  color: #1e3a5f;
   outline: none;
   background: transparent;
   padding: 0;
@@ -838,7 +895,7 @@
 
 .custom-time-separator {
   font-weight: 700;
-  color: #1e293b;
+  color: #1e3a5f;
   margin: 0 4px;
 }
 
@@ -851,19 +908,24 @@
 
 .reservation-item {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  padding: 14px 16px;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  border: 1px solid #dce8f5;
+  padding: 13px 16px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 4px rgba(30, 80, 150, 0.04);
+  transition: border-color 0.2s ease;
+}
+
+.reservation-item:hover {
+  border-color: #4a90d9;
 }
 
 .res-date {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
-  color: #3b82f6;
-  margin-bottom: 6px;
-  letter-spacing: -0.3px;
+  color: #4a90d9;
+  margin-bottom: 5px;
+  letter-spacing: -0.2px;
 }
 
 .res-info {
@@ -871,18 +933,20 @@
   justify-content: space-between;
   align-items: center;
   font-size: 14px;
-  color: #1e293b;
+  color: #1e3a5f;
 }
 
 .res-time {
   font-weight: 600;
-  background: #f1f5f9;
-  padding: 4px 8px;
+  background: #eef4fb;
+  padding: 3px 8px;
   border-radius: 6px;
-  color: #475569;
-  font-size: 13px;
+  color: #4a6a8a;
+  font-size: 12px;
+  border: 1px solid #dce8f5;
 }
 
 .res-client {
   font-weight: 700;
+  color: #1e3a5f;
 }
