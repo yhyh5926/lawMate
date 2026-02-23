@@ -1,0 +1,888 @@
+/* src/styles/auth/LawyerProfile.css */
+
+/* ========================================= */
+/* 기본 컨테이너 & 탭 */
+/* ========================================= */
+.lawyer-profile-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+  user-select: none;
+}
+
+.lawyer-mode-tabs {
+  display: flex;
+  background: #f1f5f9;
+  padding: 6px;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  gap: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.mode-tab {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  color: #64748b;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.mode-tab.active {
+  background: #ffffff;
+  color: #2563eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* ========================================= */
+/* 프로필 헤더 카드 */
+/* ========================================= */
+.profile-header-card {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 24px;
+  padding: 40px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.header-main {
+  flex: 1;
+}
+
+.lawmate-badges {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.badge-item {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fbbf24;
+}
+
+.lawyer-name-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  color: white;
+}
+
+.lawyer-intro {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+.header-stats-group {
+  display: flex;
+  gap: 16px;
+}
+
+.stat-box.yellow {
+  background: #fffbeb;
+  border: 2px solid #fbbf24;
+  padding: 24px 35px;
+  border-radius: 20px;
+  text-align: center;
+  min-width: 150px;
+  box-shadow: 0 4px 15px rgba(251, 191, 36, 0.2);
+}
+
+.stat-box.yellow .stat-label {
+  display: block;
+  color: #b45309;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.stat-box.yellow .stat-value {
+  display: block;
+  font-size: 36px;
+  font-weight: 900;
+  color: #d97706;
+  line-height: 1;
+}
+
+/* ========================================= */
+/* 1:1 상담 예약 상품 섹션 */
+/* ========================================= */
+.consultation-service-section {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 35px;
+  margin-bottom: 30px;
+}
+
+.panel-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 24px 0;
+}
+
+.consult-card-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.consult-card {
+  padding: 32px 24px;
+  border-radius: 24px;
+  border: 2px solid #f1f5f9;
+  text-align: center;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.consult-card.highlight {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+
+.consult-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.consult-icon {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+
+.consult-info {
+  margin-bottom: 16px;
+}
+
+.consult-type {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.consult-price {
+  font-size: 26px;
+  font-weight: 800;
+  color: #2563eb;
+  margin: 10px 0;
+}
+
+.reserve-btn-preview {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  background: #2563eb;
+  color: white;
+  font-weight: 700;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reserve-btn-preview:hover {
+  background: #1d4ed8;
+}
+
+.reserve-btn-preview.active {
+  background: #2563eb;
+  color: white;
+}
+
+.reserve-btn-preview.active:hover {
+  background: #1d4ed8;
+}
+
+.consult-card.editing .reserve-btn-preview,
+.consult-card.editing .reserve-btn-preview.active {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);
+  color: white;
+}
+
+.consult-card.editing .reserve-btn-preview:hover,
+.consult-card.editing .reserve-btn-preview.active:hover {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+}
+
+.consult-card.editing {
+  border-color: #86efac;
+  background: #f0fdf4;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.manage-notice-small {
+  font-size: 13px;
+  color: #94a3b8;
+  margin: 16px 0 0 0;
+}
+
+/* ========================================= */
+/* 달력 및 일정 스케줄러 영역 (연속 스크롤) */
+/* ========================================= */
+.scheduler-wrapper {
+  display: flex;
+  gap: 40px;
+  margin-top: 20px;
+}
+
+.scheduler-calendar {
+  flex: 1.2;
+}
+
+.calendar-scroll-area {
+  height: 480px; /* 윈도우 캘린더처럼 보이도록 세로 높이 지정 */
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0 8px 8px 8px; /* 스크롤바와 여백 조절 */
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.calendar-scroll-area::-webkit-scrollbar {
+  width: 6px;
+}
+.calendar-scroll-area::-webkit-scrollbar-track {
+  background: #f8fafc;
+  border-radius: 4px;
+}
+.calendar-scroll-area::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+/* 요일 고정(Sticky) 헤더 */
+.calendar-weekday-header.sticky-header {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 8px;
+}
+
+.calendar-weekday-label {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.calendar-weekday-label.sun { color: #ef4444; }
+.calendar-weekday-label.sat { color: #3b82f6; }
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-day {
+  aspect-ratio: 1/1;
+  background: white;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+/* 날짜 숫자 색상 (일요일 빨강, 토요일 파랑, 월~금 검정/진회색) */
+.date-number {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155; 
+  transition: color 0.2s;
+}
+
+.date-number.first-day {
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.date-number.sun { color: #ef4444; }
+.date-number.sat { color: #3b82f6; }
+
+.calendar-day:hover {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+
+/* 예약 가능/선택된 날짜 스타일 변경 (연한 하늘색 배경, 글씨색 유지) */
+.calendar-day.selected {
+  background: #bae6fd; /* 연한 하늘색 */
+  border-color: #7dd3fc;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.15);
+}
+
+.calendar-day.partially-booked {
+  background: #d1fae5;
+  border-color: #34d399;
+}
+
+.calendar-day.partially-booked:hover {
+  background: #a7f3d0;
+  border-color: #10b981;
+}
+
+.calendar-day.dragging {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+}
+
+/* 중요: 예약된 상태(.selected)에서도 요일별 글씨 색상을 그대로 유지하기 위해
+  기존의 color: #ffffff 덮어쓰기 규칙을 제거했습니다.
+*/
+
+.time-tag {
+  font-size: 10px;
+  margin-top: 2px;
+  opacity: 0.9;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: -0.5px;
+  color: #0369a1; /* 시간 표시도 진한 파란색으로 가독성 확보 */
+}
+
+.calendar-day.partially-booked .time-tag { color: #065f46; }
+.calendar-day.dragging .time-tag { color: #0369a1; }
+
+.calendar-remove-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ef4444;
+  color: white;
+  border: none;
+  font-size: 12px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+  padding: 0;
+  z-index: 2;
+}
+
+.calendar-remove-btn:hover {
+  opacity: 1;
+}
+
+/* 지난 날짜만 흐리게 처리 */
+.calendar-day.past-date {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.calendar-day.past-date:hover {
+  border-color: #e2e8f0;
+  background: #f8fafc;
+}
+
+/* ========================================= */
+/* 하단 콘텐츠 좌우 레이아웃 (기본정보 / 답변내역) */
+/* ========================================= */
+.profile-content-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.info-side-panel {
+  flex: 1;
+  background: #ffffff;
+  padding: 35px;
+  border-radius: 24px;
+  border: 1px solid #e2e8f0;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 18px;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.info-item label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-item .value {
+  font-size: 15px;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.info-item .value.highlight {
+  font-size: 17px;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.info-divider {
+  border: none;
+  border-top: 1px solid #f1f5f9;
+  margin: 20px 0;
+}
+
+.manage-input-inline {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 2px solid #3b82f6;
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 4px;
+  box-sizing: border-box;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.manage-input-inline:focus {
+  outline: none;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.mini-input {
+  width: 80px;
+  padding: 4px 8px;
+  border: 1px solid #3b82f6;
+  border-radius: 6px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.manage-product-inputs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.activity-main-panel {
+  flex: 2;
+  background: #ffffff;
+  padding: 35px;
+  border-radius: 24px;
+  border: 1px solid #e2e8f0;
+}
+
+.answers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.answer-card-item {
+  padding: 18px 20px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.answer-card-item:hover {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+
+.answer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.adoption-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+}
+
+.adoption-badge.is-adopted {
+  background: #d1fae5;
+  color: #059669;
+  border-color: #10b981;
+}
+
+.answer-date {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.answer-title-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.empty-msg {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 15px;
+  padding: 40px 0;
+}
+
+/* ========================================= */
+/* 버튼 & 시간 설정 UI */
+/* ========================================= */
+.btn-mypage {
+  padding: 14px 30px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-mypage.primary {
+  background: #2563eb;
+  color: white;
+}
+
+.btn-mypage.primary:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-mypage.gray {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.btn-mypage.gray:hover {
+  background: #e2e8f0;
+}
+
+.btn-mypage.danger {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.btn-mypage.danger:hover {
+  background: #fecaca;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.scheduler-time-setter {
+  flex: 0.8;
+  background: #f8fafc;
+  padding: 28px 24px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.scheduler-time-setter .sub-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.time-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.t-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1.5px solid #e2e8f0;
+  transition: border-color 0.2s ease;
+}
+
+.t-field:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.t-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  min-width: 36px;
+}
+
+.t-field input[type="time"] {
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  font-family: inherit;
+  outline: none;
+  background: transparent;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+
+.apply-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+  letter-spacing: 0.2px;
+}
+
+.apply-btn:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+}
+
+.apply-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+.profile-footer-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* ========================================= */
+/* 달력 부가 스타일 (네비게이션, 요일 등) */
+/* ========================================= */
+.calendar-nav-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.calendar-nav-box {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  background: #f1f5f9;
+  padding: 10px 24px;
+  border-radius: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.calendar-nav-btn {
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  cursor: pointer;
+  color: #475569;
+  font-weight: 700;
+  font-size: 15px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.calendar-nav-btn:hover {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+.calendar-nav-text {
+  font-weight: 800;
+  font-size: 17px;
+  color: #1e293b;
+  min-width: 100px;
+  text-align: center;
+  letter-spacing: -0.3px;
+}
+
+/* ========================================= */
+/* 의뢰인 상담 신청 폼 */
+/* ========================================= */
+.booking-info-text {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 16px;
+}
+
+.booking-details-box {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+}
+
+.booking-detail-group {
+  margin-bottom: 16px;
+}
+
+.booking-detail-label {
+  margin: 0 0 6px 0;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.booking-detail-time {
+  color: #2563eb;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.dashed-divider {
+  border-top: 1px dashed #e2e8f0;
+  margin: 16px 0;
+}
+
+.booking-section-title {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+/* ========================================= */
+/* 커스텀 시간 입력 컴포넌트 */
+/* ========================================= */
+.custom-time-wrapper {
+  display: flex;
+  align-items: center;
+  background: transparent;
+}
+
+.custom-time-input {
+  width: 26px;
+  text-align: center;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  font-family: inherit;
+  letter-spacing: 0.5px;
+}
+
+.custom-time-separator {
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 4px;
+}
+
+/* ========================================= */
+/* 예약 내역 리스트 (변호사 모드) */
+/* ========================================= */
+.reservation-section {
+  margin-top: 10px;
+}
+
+.reservation-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.res-date {
+  font-size: 14px;
+  font-weight: 800;
+  color: #3b82f6;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+
+.res-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.res-time {
+  font-weight: 600;
+  background: #f1f5f9;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: #475569;
+  font-size: 13px;
+}
+
+.res-client {
+  font-weight: 700;
+}

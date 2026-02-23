@@ -1,130 +1,297 @@
-/* ── 관리자 컨테이너 ── */
+/* src/styles/auth/Admin.css */
+
+
+/* src/pages/admin/AdminPage.jsx */
+
+/* ======================================= */
+/* Admin Page Layout */
+/* ======================================= */
 .admin-container {
   max-width: 1200px;
   margin: 40px auto;
-  padding: 0 24px;
-  min-height: 80vh;
+  padding: 40px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* ── 관리자 헤더 ── */
 .admin-header {
-  margin-bottom: 40px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #dce8f5; /* 헤더 border-bottom과 통일 */
+  margin-bottom: 30px;
 }
 
 .admin-title {
-  font-size: 26px;
-  color: #1e3a5f; /* 헤더 메인 블루 */
+  font-size: 32px;
   font-weight: 700;
+  color: #1a1a1a;
   margin-bottom: 8px;
+  letter-spacing: -0.5px;
 }
 
-/* ── 섹션 타이틀 ── */
-.section-title {
-  font-size: 18px;
-  color: #1e3a5f;
-  font-weight: 600;
-  margin: 40px 0 16px;
+/* ======================================= */
+/* Tab Styles */
+/* ======================================= */
+.admin-tab-group {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  gap: 12px;
+  margin-bottom: 32px;
+  background: #f8fafc;
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
 }
 
-/* ── 테이블 디자인 (헤더 보더 스타일 적용) ── */
+.admin-tab-btn {
+  flex: 1;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #64748b;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.admin-tab-btn.active {
+  color: #1a1a1a;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.admin-sub-tab-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.admin-sub-tab-btn {
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.admin-sub-tab-btn.active {
+  background: #ffffff;
+  color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+/* ======================================= */
+/* Table Styles */
+/* ======================================= */
 .admin-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  background-color: #ffffff;
-  border: 1px solid #dce8f5;
-  border-radius: 8px;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(30, 80, 150, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  margin-bottom: 40px;
+}
+
+.admin-table thead {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
 }
 
 .admin-table th {
-  background-color: #f8fafc;
-  color: #4a6a8a; /* 헤더 auth-link 색상 */
-  font-weight: 600;
-  padding: 14px 20px;
+  padding: 16px 20px;
   font-size: 14px;
-  border-bottom: 2px solid #dce8f5;
+  font-weight: 600;
+  color: #475569;
   text-align: left;
+  border-bottom: 2px solid #e2e8f0;
 }
 
 .admin-table td {
-  padding: 16px 20px;
+  padding: 18px 20px;
+  font-size: 15px;
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.clickable-name {
+  color: #3b82f6;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ======================================= */
+/* User Info Cell */
+/* ======================================= */
+.user-info-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.info-nickname {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.info-sub {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* ======================================= */
+/* Inline Detail Box (Accordion) */
+/* ======================================= */
+.user-detail-row {
+  background-color: #f8fafc;
+}
+
+.detail-inline-box {
+  padding: 25px 40px;
+  border-left: 4px solid #3b82f6;
+  background: #ffffff;
+  margin: 10px 0;
+  border-radius: 0 8px 8px 0;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.detail-flex-layout {
+  display: flex;
+  gap: 60px;
+  align-items: flex-start;
+}
+
+.detail-info-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-item {
   font-size: 14px;
-  color: #1e3a5f;
-  border-bottom: 1px solid #edf2f7;
-  vertical-align: middle;
+  color: #1e293b;
 }
 
-.admin-table tr:last-child td {
-  border-bottom: none;
+.detail-item span {
+  color: #64748b;
+  font-weight: 600;
+  margin-right: 15px;
+  display: inline-block;
+  width: 70px;
 }
 
-/* ── 버튼 공통 (헤더 버튼 스타일 응용) ── */
+.detail-posts-side {
+  flex: 2;
+  border-left: 1px solid #e2e8f0;
+  padding-left: 40px;
+}
+
+.posts-label {
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.post-item-link {
+  font-size: 14px;
+  color: #3b82f6;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.post-item-link:hover {
+  background: #e2e8f0;
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.no-posts {
+  color: #94a3b8;
+  font-size: 14px;
+  font-style: italic;
+}
+
 .admin-btn {
-  padding: 8px 14px;
-  border-radius: 4px;
+  padding: 8px 16px;
   font-size: 13px;
   font-weight: 600;
+  color: #ffffff;
+  background: #64748b;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
-  border: 1px solid transparent;
-  transition: all 0.2s ease;
 }
 
-/* 승인 버튼 (헤더 mypage-link 스타일) */
 .btn-approve {
-  background-color: rgba(74, 144, 217, 0.08);
-  color: #4a90d9;
-  border-color: rgba(74, 144, 217, 0.3);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
 
-.btn-approve:hover {
-  background-color: #4a90d9;
-  color: #ffffff;
+.btn-ban, .btn-reject {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
-/* 정지 버튼 (헤더 admin-link 스타일) */
-.btn-ban {
-  background-color: rgba(192, 57, 43, 0.05);
-  color: #c0392b;
-  border-color: rgba(192, 57, 43, 0.2);
-}
-
-.btn-ban:hover {
-  background-color: #c0392b;
-  color: #ffffff;
-}
-
-/* ── 상태 배지 ── */
-.badge {
+.post-count-link {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
   padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
   border-radius: 20px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
 }
 
 .badge.pending {
-  background-color: #fff7ed;
-  color: #c2410c;
-  border: 1px solid #fdba74;
+  color: #d97706;
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
 }
 
 .badge.approved {
-  background-color: #f0fdf4;
-  color: #166534;
-  border: 1px solid #86efac;
+  color: #059669;
+  background: #d1fae5;
+  border: 1px solid #10b981;
 }
 
-/* 반응형 */
-@media (max-width: 768px) {
-  .admin-table {
-    display: block;
-    overflow-x: auto;
-  }
+.admin-board-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.admin-search-bar {
+  flex: 0 0 300px;
+}
+
+.admin-search-input {
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  outline: none;
 }
