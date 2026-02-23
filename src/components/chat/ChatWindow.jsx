@@ -5,17 +5,33 @@ import '../../styles/chat/ChatWindow.css';
 
 // ★ 방별 테스트용 가짜 메시지
 const MOCK_MESSAGES = {
+  // 일반회원(user1) ↔ 박변호 변호사
   room1: [
-    { id: '1', text: '안녕하세요, 상담 관련 문의드립니다.', senderId: 'user1', senderName: '원석', timestamp: Date.now() - 120000 },
-    { id: '2', text: '네, 어떤 내용인가요?', senderId: 'lawyer1', senderName: '김변호사', timestamp: Date.now() - 60000 },
+    { id: '1', text: '안녕하세요, 전세 사기 관련 상담 가능하신가요?', senderId: 'user1', senderName: '김의뢰', timestamp: Date.now() - 300000 },
+    { id: '2', text: '네, 가능합니다. 상세 내용을 말씀해주세요.', senderId: 'lawyer1', senderName: '박변호 변호사', timestamp: Date.now() - 240000 },
+    { id: '3', text: '보증금 5천만원인데 집주인이 연락이 안 됩니다.', senderId: 'user1', senderName: '김의뢰', timestamp: Date.now() - 180000 },
+    { id: '4', text: '네, 서류 확인해보겠습니다.', senderId: 'lawyer1', senderName: '박변호 변호사', timestamp: Date.now() - 60000 },
   ],
+  // 일반회원(user1) ↔ 이변호 변호사
   room2: [
-    { id: '1', text: '계약서 검토 부탁드려도 될까요?', senderId: 'user1', senderName: '원석', timestamp: Date.now() - 7200000 },
-    { id: '2', text: '네, 확인해보겠습니다.', senderId: 'lawyer2', senderName: '이변호사', timestamp: Date.now() - 3600000 },
+    { id: '1', text: '이혼 소송 절차가 궁금합니다.', senderId: 'user1', senderName: '김의뢰', timestamp: Date.now() - 7200000 },
+    { id: '2', text: '다음 주 화요일에 상담 가능합니다.', senderId: 'lawyer2', senderName: '이변호 변호사', timestamp: Date.now() - 3600000 },
   ],
+  // 변호사(lawyer1) ↔ 김의뢰
   room3: [
-    { id: '1', text: '상담 일정 조율하고 싶습니다.', senderId: 'user1', senderName: '원석', timestamp: Date.now() - 172800000 },
-    { id: '2', text: '내일 오전에 통화 가능하신가요?', senderId: 'lawyer3', senderName: '박변호사', timestamp: Date.now() - 86400000 },
+    { id: '1', text: '전세 사기 관련 상담 부탁드립니다.', senderId: 'user1', senderName: '김의뢰', timestamp: Date.now() - 120000 },
+    { id: '2', text: '어떤 상황이신지 자세히 알려주세요.', senderId: 'lawyer1', senderName: '박변호', timestamp: Date.now() - 60000 },
+  ],
+  // 변호사(lawyer1) ↔ 이의뢰
+  room4: [
+    { id: '1', text: '계약서 검토 부탁드려요.', senderId: 'user2', senderName: '이의뢰', timestamp: Date.now() - 7200000 },
+    { id: '2', text: '파일 보내주시면 확인하겠습니다.', senderId: 'lawyer1', senderName: '박변호', timestamp: Date.now() - 3600000 },
+  ],
+  // 변호사(lawyer1) ↔ 박의뢰
+  room5: [
+    { id: '1', text: '합의금 관련 문의드립니다.', senderId: 'user3', senderName: '박의뢰', timestamp: Date.now() - 172800000 },
+    { id: '2', text: '상대측 제안을 먼저 확인해봐야 합니다.', senderId: 'lawyer1', senderName: '박변호', timestamp: Date.now() - 90000000 },
+    { id: '3', text: '감사합니다. 답변 확인했습니다.', senderId: 'user3', senderName: '박의뢰', timestamp: Date.now() - 86400000 },
   ],
 };
 
@@ -25,19 +41,16 @@ const ChatWindow = ({ roomId, currentUser }) => {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // 방 바뀌면 해당 방의 가짜 메시지 로드
   useEffect(() => {
     if (!roomId) return;
     const mockMsgs = MOCK_MESSAGES[roomId] || [];
     setMessages([...mockMsgs]);
   }, [roomId]);
 
-  // 메시지 추가될 때 자동 스크롤
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // 메시지 전송 (로컬 state에만 추가)
   const handleSend = () => {
     const trimmed = inputText.trim();
     if (!trimmed || !roomId) return;
@@ -67,7 +80,6 @@ const ChatWindow = ({ roomId, currentUser }) => {
     }, 1500);
   };
 
-  // Enter로 전송
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -75,7 +87,6 @@ const ChatWindow = ({ roomId, currentUser }) => {
     }
   };
 
-  // 날짜 구분선
   const shouldShowDateDivider = (currentMsg, prevMsg) => {
     if (!prevMsg) return true;
     return new Date(currentMsg.timestamp).toDateString() !== new Date(prevMsg.timestamp).toDateString();
@@ -87,7 +98,6 @@ const ChatWindow = ({ roomId, currentUser }) => {
     return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${weekdays[date.getDay()]}요일`;
   };
 
-  // 방 미선택 시
   if (!roomId) {
     return (
       <div className="chat-window empty">
@@ -101,7 +111,6 @@ const ChatWindow = ({ roomId, currentUser }) => {
 
   return (
     <div className="chat-window">
-      {/* 메시지 영역 */}
       <div className="chat-messages">
         {messages.length === 0 ? (
           <div className="chat-no-messages">
@@ -126,7 +135,6 @@ const ChatWindow = ({ roomId, currentUser }) => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* 입력 영역 */}
       <div className="chat-input-area">
         <textarea
           ref={inputRef}
