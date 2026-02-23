@@ -21,6 +21,9 @@ const AdminPage = () => {
   const [boardTab, setBoardTab] = useState('QNA');
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // 전체 글 목록 팝업창 상태
+  const [postsModalUser, setPostsModalUser] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -57,11 +60,12 @@ const AdminPage = () => {
     }
   };
 
-  const handleGoToUserBoard = (userName) => {
-    setActiveTab('BOARD');
-    setBoardTab('QNA');
-    setSearchTerm(userName);
-    setSelectedUserId(null);
+  const handleOpenPostsModal = (user) => {
+    setPostsModalUser(user);
+  };
+
+  const handleClosePostsModal = () => {
+    setPostsModalUser(null);
   };
 
   const handleGoToUser = (userName) => {
@@ -120,8 +124,10 @@ const AdminPage = () => {
   const filteredQna = MOCK_QNA_LIST.filter(post => post.title.includes(searchTerm) || post.writerName.includes(searchTerm));
   const filteredVote = MOCK_VOTE_LIST.filter(vote => vote.title.includes(searchTerm) || vote.writerName.includes(searchTerm));
 
+  // 이름 클릭 시 나오는 아코디언 상세 정보 (최근 5개만)
   const renderUserDetailRow = (user, colSpan) => {
-    const items = getUserPostsOrAnswers(user);
+    const allItems = getUserPostsOrAnswers(user);
+    const recentItems = allItems.slice(0, 5); // 최근 5개만 자르기
     const isLawyer = user.role === 'LAWYER';
 
     return (
@@ -140,9 +146,9 @@ const AdminPage = () => {
               </div>
               
               <div className="detail-posts-side">
-                <div className="posts-label">{isLawyer ? '답변글 목록' : '작성글 목록'}</div>
+                <div className="posts-label">{isLawyer ? '최근 답변글 (최대 5개)' : '최근 작성글 (최대 5개)'}</div>
                 <div className="posts-list">
-                  {items.length > 0 ? items.map((item, idx) => (
+                  {recentItems.length > 0 ? recentItems.map((item, idx) => (
                     <div 
                       key={`${item.id}-${idx}`} 
                       className="post-item-link" 
@@ -163,183 +169,224 @@ const AdminPage = () => {
   };
 
   return (
-    <div className="admin-container">
-      <div className="admin-header">
-        <h2 className="admin-title">🛡️ 관리자 대시보드</h2>
-        <p style={{ color: '#64748b' }}>사이트의 회원과 신고 내용을 관리합니다.</p>
-      </div>
+    <>
+      <div className="admin-container">
+        <div className="admin-header">
+          <h2 className="admin-title">🛡️ 관리자 대시보드</h2>
+          <p style={{ color: '#64748b' }}>사이트의 회원과 신고 내용을 관리합니다.</p>
+        </div>
 
-      <div className="admin-tab-group">
-        <button className={`admin-tab-btn ${activeTab === 'LAWYER' ? 'active' : ''}`} onClick={() => { setActiveTab('LAWYER'); setSelectedUserId(null); setSearchTerm(''); }}>변호사 가입 승인 관리</button>
-        <button className={`admin-tab-btn ${activeTab === 'REPORT' ? 'active' : ''}`} onClick={() => { setActiveTab('REPORT'); setSelectedUserId(null); setSearchTerm(''); }}>신고 및 제재 관리</button>
-        <button className={`admin-tab-btn ${activeTab === 'USER' ? 'active' : ''}`} onClick={() => { setActiveTab('USER'); setSelectedUserId(null); setSearchTerm(''); }}>유저 관리</button>
-        <button className={`admin-tab-btn ${activeTab === 'BOARD' ? 'active' : ''}`} onClick={() => { setActiveTab('BOARD'); setSelectedUserId(null); setSearchTerm(''); }}>게시판 관리</button>
-      </div>
+        <div className="admin-tab-group">
+          <button className={`admin-tab-btn ${activeTab === 'LAWYER' ? 'active' : ''}`} onClick={() => { setActiveTab('LAWYER'); setSelectedUserId(null); setSearchTerm(''); }}>변호사 가입 승인 관리</button>
+          <button className={`admin-tab-btn ${activeTab === 'REPORT' ? 'active' : ''}`} onClick={() => { setActiveTab('REPORT'); setSelectedUserId(null); setSearchTerm(''); }}>신고 및 제재 관리</button>
+          <button className={`admin-tab-btn ${activeTab === 'USER' ? 'active' : ''}`} onClick={() => { setActiveTab('USER'); setSelectedUserId(null); setSearchTerm(''); }}>유저 관리</button>
+          <button className={`admin-tab-btn ${activeTab === 'BOARD' ? 'active' : ''}`} onClick={() => { setActiveTab('BOARD'); setSelectedUserId(null); setSearchTerm(''); }}>게시판 관리</button>
+        </div>
 
-      <div className="admin-content">
-        {/* ======================================= */}
-        {/* 1. 변호사 가입 승인 대기 탭 */}
-        {/* ======================================= */}
-        {activeTab === 'LAWYER' && (
-          <>
-            <div className="section-title">⚖️ 변호사 가입 승인 대기</div>
-            <table className="admin-table">
-              <thead>
-                <tr><th>이름</th><th>자격증명</th><th>학력</th><th>증빙</th><th>관리</th></tr>
-              </thead>
-              <tbody>
-                {pendingLawyers.length === 0 ? (
-                  <tr><td colSpan="5" style={{ textAlign: 'center', color: '#94a3b8' }}>대기 중인 요청이 없습니다.</td></tr>
-                ) : (
-                  pendingLawyers.map(u => (
+        <div className="admin-content">
+          {/* ======================================= */}
+          {/* 1. 변호사 가입 승인 대기 탭 */}
+          {/* ======================================= */}
+          {activeTab === 'LAWYER' && (
+            <>
+              <div className="section-title">⚖️ 변호사 가입 승인 대기</div>
+              <table className="admin-table">
+                <thead>
+                  <tr><th>이름</th><th>자격증명</th><th>학력</th><th>증빙</th><th>관리</th></tr>
+                </thead>
+                <tbody>
+                  {pendingLawyers.length === 0 ? (
+                    <tr><td colSpan="5" style={{ textAlign: 'center', color: '#94a3b8' }}>대기 중인 요청이 없습니다.</td></tr>
+                  ) : (
+                    pendingLawyers.map(u => (
+                      <React.Fragment key={u.id}>
+                        <tr>
+                          <td className="clickable-name" onClick={() => toggleUserDetail(u.id)}>{u.name}</td>
+                          <td>{u.licenseName}</td>
+                          <td>{u.education}</td>
+                          <td><button className="admin-btn" style={{ background: '#64748b' }}>이미지</button></td>
+                          <td style={{ display: 'flex', gap: '8px' }}>
+                            <button onClick={() => handleApprove(u.id)} className="admin-btn btn-approve">승인</button>
+                            <button onClick={() => handleReject(u.id)} className="admin-btn btn-reject">반려</button>
+                          </td>
+                        </tr>
+                        {selectedUserId === u.id && renderUserDetailRow(u, 5)}
+                      </React.Fragment>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </>
+          )}
+
+          {/* ======================================= */}
+          {/* 2. 유저 관리 탭 */}
+          {/* ======================================= */}
+          {activeTab === 'USER' && (
+            <>
+              <div className="section-title">👤 유저 관리</div>
+              <div className="admin-sub-tab-group">
+                <button className={`admin-sub-tab-btn ${userTab === 'USER' ? 'active' : ''}`} onClick={() => { setUserTab('USER'); setSelectedUserId(null); }}>일반 유저</button>
+                <button className={`admin-sub-tab-btn ${userTab === 'LAWYER' ? 'active' : ''}`} onClick={() => { setUserTab('LAWYER'); setSelectedUserId(null); }}>변호사 유저</button>
+              </div>
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>이름</th>
+                    <th>유저 정보 (닉네임 / 이메일 / 역할)</th>
+                    <th>{userTab === 'LAWYER' ? '답변 글' : '작성 글'}</th>
+                    <th>관리</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(userTab === 'USER' ? generalUsers : lawyerUsers).map(u => (
                     <React.Fragment key={u.id}>
                       <tr>
                         <td className="clickable-name" onClick={() => toggleUserDetail(u.id)}>{u.name}</td>
-                        <td>{u.licenseName}</td>
-                        <td>{u.education}</td>
-                        <td><button className="admin-btn" style={{ background: '#64748b' }}>이미지</button></td>
-                        <td style={{ display: 'flex', gap: '8px' }}>
-                          <button onClick={() => handleApprove(u.id)} className="admin-btn btn-approve">승인</button>
-                          <button onClick={() => handleReject(u.id)} className="admin-btn btn-reject">반려</button>
+                        <td>
+                          <div className="user-info-cell">
+                            <div className="info-nickname">{u.nickname || '-'}</div>
+                            <div className="info-sub">{u.email}</div>
+                            <div className="info-sub">{u.role}</div>
+                          </div>
                         </td>
+                        <td>
+                          <button className="post-count-link" onClick={() => handleOpenPostsModal(u)}>
+                            {getPostCount(u)}개
+                          </button>
+                        </td>
+                        <td><button onClick={() => handleBan(u.id)} className="admin-btn btn-ban">정지</button></td>
                       </tr>
-                      {selectedUserId === u.id && renderUserDetailRow(u, 5)}
+                      {selectedUserId === u.id && renderUserDetailRow(u, 4)}
                     </React.Fragment>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </>
-        )}
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
 
-        {/* ======================================= */}
-        {/* 2. 유저 관리 탭 */}
-        {/* ======================================= */}
-        {activeTab === 'USER' && (
-          <>
-            <div className="section-title">👤 유저 관리</div>
-            <div className="admin-sub-tab-group">
-              <button className={`admin-sub-tab-btn ${userTab === 'USER' ? 'active' : ''}`} onClick={() => { setUserTab('USER'); setSelectedUserId(null); }}>일반 유저</button>
-              <button className={`admin-sub-tab-btn ${userTab === 'LAWYER' ? 'active' : ''}`} onClick={() => { setUserTab('LAWYER'); setSelectedUserId(null); }}>변호사 유저</button>
-            </div>
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>이름</th>
-                  <th>유저 정보 (닉네임 / 이메일 / 역할)</th>
-                  <th>{userTab === 'LAWYER' ? '답변 글' : '작성 글'}</th>
-                  <th>관리</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(userTab === 'USER' ? generalUsers : lawyerUsers).map(u => (
-                  <React.Fragment key={u.id}>
-                    <tr>
-                      <td className="clickable-name" onClick={() => toggleUserDetail(u.id)}>{u.name}</td>
-                      <td>
-                        <div className="user-info-cell">
-                          <div className="info-nickname">{u.nickname || '-'}</div>
-                          <div className="info-sub">{u.email}</div>
-                          <div className="info-sub">{u.role}</div>
-                        </div>
-                      </td>
-                      <td>
-                        <button className="post-count-link" onClick={() => handleGoToUserBoard(u.name)}>
-                          {getPostCount(u)}개
-                        </button>
-                      </td>
-                      <td><button onClick={() => handleBan(u.id)} className="admin-btn btn-ban">정지</button></td>
-                    </tr>
-                    {selectedUserId === u.id && renderUserDetailRow(u, 4)}
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
-          </>
-        )}
+          {/* ======================================= */}
+          {/* 3. 신고 및 제재 관리 탭 */}
+          {/* ======================================= */}
+          {activeTab === 'REPORT' && (
+            <>
+              <div className="section-title">🚨 신고 및 제재 관리</div>
+              <table className="admin-table">
+                <thead>
+                  <tr><th>신고대상</th><th>사유</th><th>상태</th><th>관리</th></tr>
+                </thead>
+                <tbody>
+                  {reports.map(r => (
+                    <React.Fragment key={r.id}>
+                      <tr>
+                        <td className="clickable-name" onClick={() => handleGoToUser(r.targetUser)}>{r.targetUser}</td>
+                        <td>{r.reason}</td>
+                        <td><span className={`badge ${r.status === '대기' ? 'pending' : 'approved'}`}>{r.status}</span></td>
+                        <td><button onClick={() => handleBan(r.targetUser)} className="admin-btn btn-ban">계정 정지</button></td>
+                      </tr>
+                      {selectedUserId === r.id && renderUserDetailRow(AUTH_USERS.find(u => u.id === r.targetUser) || { id: r.targetUser, name: r.targetUser, role: 'USER' }, 4)}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
 
-        {/* ======================================= */}
-        {/* 3. 신고 및 제재 관리 탭 */}
-        {/* ======================================= */}
-        {activeTab === 'REPORT' && (
-          <>
-            <div className="section-title">🚨 신고 및 제재 관리</div>
-            <table className="admin-table">
-              <thead>
-                <tr><th>신고대상</th><th>사유</th><th>상태</th><th>관리</th></tr>
-              </thead>
-              <tbody>
-                {reports.map(r => (
-                  <React.Fragment key={r.id}>
-                    <tr>
-                      <td className="clickable-name" onClick={() => handleGoToUser(r.targetUser)}>{r.targetUser}</td>
-                      <td>{r.reason}</td>
-                      <td><span className={`badge ${r.status === '대기' ? 'pending' : 'approved'}`}>{r.status}</span></td>
-                      <td><button onClick={() => handleBan(r.targetUser)} className="admin-btn btn-ban">계정 정지</button></td>
-                    </tr>
-                    {selectedUserId === r.id && renderUserDetailRow(AUTH_USERS.find(u => u.id === r.targetUser) || { id: r.targetUser, name: r.targetUser, role: 'USER' }, 4)}
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
-          </>
-        )}
-
-        {/* ======================================= */}
-        {/* 4. 게시판 관리 탭 */}
-        {/* ======================================= */}
-        {activeTab === 'BOARD' && (
-          <>
-            <div className="section-title">📋 게시판 관리</div>
-            <div className="admin-board-controls">
-              <div className="admin-sub-tab-group">
-                <button className={`admin-sub-tab-btn ${boardTab === 'QNA' ? 'active' : ''}`} onClick={() => { setBoardTab('QNA'); setSelectedUserId(null); setSearchTerm(''); }}>법률 상담 Q&A</button>
-                <button className={`admin-sub-tab-btn ${boardTab === 'VOTE' ? 'active' : ''}`} onClick={() => { setBoardTab('VOTE'); setSelectedUserId(null); setSearchTerm(''); }}>분쟁 투표</button>
+          {/* ======================================= */}
+          {/* 4. 게시판 관리 탭 */}
+          {/* ======================================= */}
+          {activeTab === 'BOARD' && (
+            <>
+              <div className="section-title">📋 게시판 관리</div>
+              <div className="admin-board-controls">
+                <div className="admin-sub-tab-group">
+                  <button className={`admin-sub-tab-btn ${boardTab === 'QNA' ? 'active' : ''}`} onClick={() => { setBoardTab('QNA'); setSelectedUserId(null); setSearchTerm(''); }}>법률 상담 Q&A</button>
+                  <button className={`admin-sub-tab-btn ${boardTab === 'VOTE' ? 'active' : ''}`} onClick={() => { setBoardTab('VOTE'); setSelectedUserId(null); setSearchTerm(''); }}>분쟁 투표</button>
+                </div>
+                <div className="admin-search-bar">
+                  <input 
+                    type="text" 
+                    className="admin-search-input" 
+                    placeholder="제목 또는 작성자 검색 (Enter)" 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={handleBoardSearch}
+                  />
+                </div>
               </div>
-              <div className="admin-search-bar">
-                <input 
-                  type="text" 
-                  className="admin-search-input" 
-                  placeholder="제목 또는 작성자 검색 (Enter)" 
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyDown={handleBoardSearch}
-                />
-              </div>
-            </div>
-            <table className="admin-table">
-              <thead>
-                {boardTab === 'QNA' ? (
-                  <tr><th>제목</th><th>작성자</th><th>작성일</th><th>답변상태</th><th>관리</th></tr>
-                ) : (
-                  <tr><th>제목</th><th>참여수</th><th>상태</th><th>관리</th></tr>
-                )}
-              </thead>
-              <tbody>
-                {(boardTab === 'QNA' ? filteredQna : filteredVote).map(post => (
-                  <tr key={post.id}>
-                    <td className="clickable-name" onClick={() => navigate(`/community/${boardTab.toLowerCase()}/${post.id}`)} style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{post.title}</td>
-                    {boardTab === 'QNA' ? (
-                      <>
-                        <td className="clickable-name" onClick={() => handleGoToUser(post.writerName)}>{post.writerName}</td>
-                        <td>{post.createdAt}</td>
-                        <td><span className={`badge ${post.isAdopted ? 'approved' : 'pending'}`}>{post.isAdopted ? '답변완료' : '대기중'}</span></td>
-                      </>
-                    ) : (
-                      <>
-                        <td>{post.countA + post.countB}명</td>
-                        <td><span className="badge approved">진행중</span></td>
-                      </>
-                    )}
-                    <td><button className="admin-btn btn-ban">삭제</button></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
-        )}
+              <table className="admin-table">
+                <thead>
+                  {boardTab === 'QNA' ? (
+                    <tr><th>제목</th><th>작성자</th><th>작성일</th><th>답변상태</th><th>관리</th></tr>
+                  ) : (
+                    <tr><th>제목</th><th>참여수</th><th>상태</th><th>관리</th></tr>
+                  )}
+                </thead>
+                <tbody>
+                  {(boardTab === 'QNA' ? filteredQna : filteredVote).map(post => (
+                    <tr key={post.id}>
+                      <td className="clickable-name" onClick={() => navigate(`/community/${boardTab.toLowerCase()}/${post.id}`)} style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{post.title}</td>
+                      {boardTab === 'QNA' ? (
+                        <>
+                          <td className="clickable-name" onClick={() => handleGoToUser(post.writerName)}>{post.writerName}</td>
+                          <td>{post.createdAt}</td>
+                          <td><span className={`badge ${post.isAdopted ? 'approved' : 'pending'}`}>{post.isAdopted ? '답변완료' : '대기중'}</span></td>
+                        </>
+                      ) : (
+                        <>
+                          <td>{post.countA + post.countB}명</td>
+                          <td><span className="badge approved">진행중</span></td>
+                        </>
+                      )}
+                      <td><button className="admin-btn btn-ban">삭제</button></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* ======================================= */}
+      {/* 갯수 버튼 눌렀을 때 뜨는 전체 내역 팝업창 */}
+      {/* ======================================= */}
+      {postsModalUser && (
+        <div className="admin-modal-overlay" onClick={handleClosePostsModal}>
+          <div className="admin-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="admin-modal-header">
+              <h3>
+                {postsModalUser.name}님의 전체 {postsModalUser.role === 'LAWYER' ? '답변' : '작성'} 목록 
+                <span style={{color: '#4a90d9', fontSize: '16px', marginLeft: '10px'}}>
+                  (총 {getUserPostsOrAnswers(postsModalUser).length}개)
+                </span>
+              </h3>
+              <button className="admin-modal-close" onClick={handleClosePostsModal}>&times;</button>
+            </div>
+            <div className="admin-modal-body">
+              {getUserPostsOrAnswers(postsModalUser).length > 0 ? (
+                <div className="posts-list-full">
+                  {getUserPostsOrAnswers(postsModalUser).map((item, idx) => (
+                    <div 
+                      key={`${item.id}-${idx}`} 
+                      className="post-item-link-full" 
+                      onClick={() => {
+                        handleClosePostsModal(); 
+                        navigate(`/community/${item.board}/${item.id}`); 
+                      }}
+                    >
+                      <span className="post-idx-num">{idx + 1}.</span> {item.title}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="no-posts">작성한 내역이 없습니다.</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
