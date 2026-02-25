@@ -15,7 +15,7 @@ const ChatConsultRoutes = [
   <Route key="con-res"  path="/consult/reserve.do"        element={<ConsultReservePage />} />,
   <Route key="my-con-l" path="/mypage/consult/list.do"    element={<ConsultListPage />} />,
   <Route key="pay-p"    path="/payment/pay.do"            element={<PaymentPage />} />,
-  // <Route key="pay-r"    path="/payment/refund.do"         element={<div>환불 신청</div>} />,
+  <Route key="pay-r"    path="/payment/refund.do"         element={<div>환불 신청</div>} />,
   <Route key="my-set-l" path="/mypage/settlement/list.do" element={<SettlementPage />} />,
 ];
 
