@@ -1,4 +1,4 @@
-// import axiosInstance from './axiosInstance';
+import axiosInstance from './axiosInstance';
 
 // 결제 요청 (PG사 연동 전 서버 주문 생성)
 export const createPaymentOrder = (consultNo) =>

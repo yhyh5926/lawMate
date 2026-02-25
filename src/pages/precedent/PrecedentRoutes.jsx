@@ -1,16 +1,17 @@
-import React from "react";
 import { Route } from "react-router-dom";
+import PrecedentSearchPage from "./PrecedentSearcPage";
+import PrecedentDetailPage from "./PrecedentDetailPage";
 
 const PrecedentRoutes = [
   <Route
     key="prec-s"
     path="/precedent/search.do"
-    element={<div>판례 검색</div>}
+    element={<PrecedentSearchPage />}
   />,
   <Route
     key="prec-d"
     path="/precedent/detail.do"
-    element={<div>판례 상세</div>}
+    element={<PrecedentDetailPage />}
   />,
 ];
 

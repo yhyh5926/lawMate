@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'; // useContext 임시 제거
+import React, { useEffect, useRef, useContext } from 'react'; // useContext 임시 제거
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import ChatBubble from '../../components/chat/ChatBubble';
 import ChatInputBox from '../../components/chat/ChatInputBox';

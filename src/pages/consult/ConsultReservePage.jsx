@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { createConsult, getAvailableTimes } from '../../api/consultApi';
-// import axiosInstance from '../../api/axiosInstance';
+import axiosInstance from '../../api/axiosInstance';
 
 const ConsultReservePage = () => {
   const [searchParams] = useSearchParams();

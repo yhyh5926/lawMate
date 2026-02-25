@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-// import axiosInstance from '../../api/axiosInstance';
+import axiosInstance from '../../api/axiosInstance';
 
 /**
  * ChatInputBox - 메시지 입력창 + 파일 첨부
