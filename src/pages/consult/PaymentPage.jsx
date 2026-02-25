@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { createPaymentOrder, verifyPayment, requestRefund } from '../../api/paymentApi';
-import axiosInstance from '../../api/axiosInstance';
+// import axiosInstance from '../../api/axiosInstance';
 
 const PAYMENT_METHODS = [
   { value: 'CARD',       label: '💳 신용/체크카드',  pgCode: 'card' },

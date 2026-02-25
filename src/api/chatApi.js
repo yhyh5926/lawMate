@@ -1,4 +1,4 @@
-import axiosInstance from './axiosInstance';
+// import axiosInstance from './axiosInstance';
 
 // 채팅방 목록 조회
 export const getChatRooms = () =>

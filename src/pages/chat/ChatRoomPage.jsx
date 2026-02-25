@@ -1,15 +1,16 @@
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useRef } from 'react'; // useContext 임시 제거
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import ChatBubble from '../../components/chat/ChatBubble';
 import ChatInputBox from '../../components/chat/ChatInputBox';
 import { useChat } from '../../hooks/useChat';
-import { AuthContext } from '../../context/AuthContext';
+// import { AuthContext } from '../../context/AuthContext';
 
 const ChatRoomPage = () => {
   const [searchParams] = useSearchParams();
   const roomNo = Number(searchParams.get('roomNo'));
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  // const { user } = useContext(AuthContext);
+  const user = { memberNo: 1, name: '테스트유저' }; // 임시
   const bottomRef = useRef(null);
 
   const { messages, connected, loading, sendMessage } = useChat(roomNo);

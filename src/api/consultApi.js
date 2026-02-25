@@ -1,4 +1,4 @@
-import axiosInstance from './axiosInstance';
+// import axiosInstance from './axiosInstance';
 
 // 상담 예약 신청
 export const createConsult = (consultData) =>
