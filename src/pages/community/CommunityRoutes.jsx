@@ -1,11 +1,12 @@
 import React from "react";
 import { Route } from "react-router-dom";
+import QnaList from "./QnaList";
 
 const CommunityRoutes = [
   <Route
     key="com-l"
-    path="/community/list.do"
-    element={<div>게시글 목록</div>}
+    path="/community/qnalist.do"
+    element={<QnaList/>}
   />,
   <Route
     key="com-w"
