@@ -24,7 +24,7 @@ const Header = () => {
           법률질문
         </Link>
 
-        <Link to="/community/list.do" style={linkStyle}>
+        <Link to="/community/home" style={linkStyle}>
           커뮤니티
         </Link>
         <Link to="/chat/list.do" style={linkStyle}>

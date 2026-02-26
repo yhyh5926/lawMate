@@ -1,11 +1,17 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import QnaList from "./QnaList";
+import Home from "./Home";
 
 const CommunityRoutes = [
   <Route
+    key="com-h"
+    path="/community/home"
+    element={<Home/>}
+  />,
+  <Route
     key="com-l"
-    path="/community/qnalist.do"
+    path="/community/qnalist"
     element={<QnaList/>}
   />,
   <Route

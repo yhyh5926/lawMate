@@ -27,7 +27,7 @@ const Home = () => {
         
         {/* Q&A 카드 */}
         <button type='button' className='qna-button'
-          onClick={() => navigate('/community/qna')} style={{ padding: '40px' }} >
+          onClick={() => navigate('/community/qnalist')} style={{ padding: '40px' }} >
           <div style={{ fontSize: '40px', marginBottom: '20px' }}>💬</div>
           <h2 className="title">법률 상담 Q&A</h2>
           <p className="card-info">변호사에게 직접 질문하고<br/>전문적인 답변을 받아보세요.</p>
