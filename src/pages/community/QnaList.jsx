@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {Link, useNavigate } from 'react-router-dom';
+// 수정
+import { getPostList } from '../../api/communityApi';
+// 원본
+/*
 import { getPostList } from '../api/communityApi';
+*/
 
 const QnaList = () => {
   const [posts, setPosts] = useState([]); // 게시물 객체
