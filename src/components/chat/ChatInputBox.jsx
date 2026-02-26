@@ -34,7 +34,7 @@ const ChatInputBox = ({ onSend, disabled }) => {
 
     try {
       setUploading(true);
-      const res = await axiosInstance.post('/api/attachment/upload', formData, {
+      const res = await axiosInstance.post('/attachment/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       const { fileUrl, originalName } = res.data.data;

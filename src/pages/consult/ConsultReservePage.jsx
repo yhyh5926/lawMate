@@ -20,7 +20,7 @@ const ConsultReservePage = () => {
   // 변호사 정보 조회
   useEffect(() => {
     if (!lawyerNo) return;
-    axiosInstance.get(`/api/lawyer/${lawyerNo}`).then((res) => {
+    axiosInstance.get(`/lawyer/${lawyerNo}`).then((res) => {
       setLawyer(res.data.data);
     });
   }, [lawyerNo]);
@@ -51,7 +51,7 @@ const ConsultReservePage = () => {
       if (files.length > 0) {
         const formData = new FormData();
         files.forEach((f) => formData.append('files', f));
-        const uploadRes = await axiosInstance.post('/api/attachment/upload-multi', formData, {
+        const uploadRes = await axiosInstance.post('/attachment/upload-multi', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         attachmentNos = uploadRes.data.data.map((a) => a.attachmentNo);

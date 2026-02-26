@@ -20,7 +20,7 @@ const PaymentPage = () => {
 
   useEffect(() => {
     if (!consultNo) return;
-    axiosInstance.get(`/api/consult/${consultNo}`).then((res) => {
+    axiosInstance.get(`/consult/${consultNo}`).then((res) => {
       setConsult(res.data.data);
     });
   }, [consultNo]);
