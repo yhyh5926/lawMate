@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import precedentApi from "../../api/precedentApi";
 
 const PrecedentDetailPage = () => {
-  const { id } = useParams(); // URL 파라미터 :id 추출 [cite: 2026-02-20]
+  const { id } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();

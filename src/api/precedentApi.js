@@ -1,4 +1,4 @@
-import axiosInstance from "./axiosInstance"; // 팀장님이 정하신 이름으로 변경 [cite: 2026-02-20]
+import axiosInstance from "./axiosInstance";
 
 const precedentApi = {
   // 1. 판례 목록 가져오기

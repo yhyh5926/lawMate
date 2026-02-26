@@ -10,7 +10,7 @@ const PrecedentRoutes = [
   />,
   <Route
     key="prec-d"
-    path="/precedent/detail.do"
+    path="/precedent/detail.do/:id"
     element={<PrecedentDetailPage />}
   />,
 ];
