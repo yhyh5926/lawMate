@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-// 💡 만들어둔 lawyerApi를 사용합니다.
 import lawyerApi from "../../api/lawyerApi";
 
 const LawyerDetailPage = () => {
@@ -12,7 +11,6 @@ const LawyerDetailPage = () => {
     const fetchDetail = async () => {
       try {
         setLoading(true);
-        // 💡 API 모듈의 상세 조회 함수 호출
         const data = await lawyerApi.getLawyerDetail(id);
         setLawyer(data);
       } catch (err) {
@@ -35,27 +33,80 @@ const LawyerDetailPage = () => {
   return (
     <div style={containerStyle}>
       <div style={contentCardStyle}>
-        <span style={specialtyBadgeStyle}>{lawyer.specialty} 전문</span>
-        <h1 style={{ marginTop: "10px", color: "#2c3e50" }}>
-          {lawyer.officeName}
-        </h1>
+        {/* 💡 레이아웃: 상단 프로필 영역 (사진 + 핵심정보) */}
+        <div style={headerSectionStyle}>
+          <div style={imageWrapperStyle}>
+            <img
+              src={
+                lawyer.savePath
+                  ? `http://localhost:8080${lawyer.savePath}`
+                  : "/img/default_profile.png"
+              }
+              alt={lawyer.name}
+              style={profileImgStyle}
+              onError={(e) => (e.target.src = "/img/default_profile.png")}
+            />
+          </div>
+          <div style={headerTitleStyle}>
+            <span style={specialtyBadgeStyle}>{lawyer.specialty} 전문</span>
+            <h1 style={{ margin: "10px 0 5px 0", color: "#2c3e50" }}>
+              {lawyer.name} 변호사
+            </h1>
+            <p
+              style={{
+                color: "#3498db",
+                fontWeight: "bold",
+                fontSize: "1.1rem",
+              }}
+            >
+              {lawyer.officeName}
+            </p>
+            <div style={ratingSummaryStyle}>
+              ⭐{" "}
+              <span style={{ fontWeight: "bold" }}>
+                {lawyer.avgRating?.toFixed(1)}
+              </span>
+              <span style={{ color: "#95a5a6", marginLeft: "5px" }}>
+                ({lawyer.reviewCnt}개의 후기)
+              </span>
+            </div>
+          </div>
+        </div>
+
         <p style={introTextStyle}>{lawyer.intro}</p>
 
         <hr style={dividerStyle} />
 
-        <h3 style={{ marginBottom: "15px" }}>주요 경력</h3>
+        <h3 style={{ marginBottom: "15px", color: "#2c3e50" }}>주요 경력</h3>
         <p style={careerTextStyle}>{lawyer.career}</p>
 
+        <h3
+          style={{ marginTop: "40px", marginBottom: "15px", color: "#2c3e50" }}
+        >
+          사무소 및 연락처 정보
+        </h3>
         <div style={infoBoxStyle}>
           <div style={infoItemStyle}>
             <strong>자격번호</strong> <span>{lawyer.licenseNo}</span>
           </div>
           <div style={infoItemStyle}>
+            <strong>이메일</strong> <span>{lawyer.email}</span>
+          </div>
+          <div style={infoItemStyle}>
+            <strong>연락처</strong> <span>{lawyer.phone}</span>
+          </div>
+          <div style={infoItemStyle}>
             <strong>사무소 위치</strong> <span>{lawyer.officeAddr}</span>
           </div>
           <div style={infoItemStyle}>
-            <strong>기본 상담료</strong>
-            <span style={{ color: "#e74c3c", fontWeight: "bold" }}>
+            <strong>기본 상담료 (30분)</strong>
+            <span
+              style={{
+                color: "#e74c3c",
+                fontWeight: "bold",
+                fontSize: "1.1rem",
+              }}
+            >
               {lawyer.consultFee?.toLocaleString()}원
             </span>
           </div>
@@ -64,7 +115,7 @@ const LawyerDetailPage = () => {
         <button
           style={btnStyle}
           onClick={() =>
-            alert(`${lawyer.officeName} 상담 예약 페이지로 연결합니다.`)
+            alert(`${lawyer.name} 변호사에게 상담 예약을 신청합니다.`)
           }
         >
           지금 바로 상담 예약하기
@@ -74,65 +125,102 @@ const LawyerDetailPage = () => {
   );
 };
 
-// 스타일 객체
+// --- 스타일 객체 업데이트 ---
+
 const containerStyle = {
   padding: "40px 20px",
-  maxWidth: "850px",
+  maxWidth: "900px",
   margin: "0 auto",
-  backgroundColor: "#f4f7f6",
+  backgroundColor: "#f8f9fa",
   minHeight: "100vh",
 };
 
 const contentCardStyle = {
   backgroundColor: "#fff",
-  padding: "40px",
-  borderRadius: "16px",
-  boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+  padding: "50px",
+  borderRadius: "20px",
+  boxShadow: "0 15px 35px rgba(0,0,0,0.05)",
+};
+
+const headerSectionStyle = {
+  display: "flex",
+  gap: "30px",
+  marginBottom: "40px",
+  alignItems: "center",
+};
+
+const imageWrapperStyle = {
+  width: "180px",
+  height: "220px",
+  borderRadius: "15px",
+  overflow: "hidden",
+  boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
+};
+
+const profileImgStyle = {
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+};
+
+const headerTitleStyle = {
+  flex: 1,
+};
+
+const ratingSummaryStyle = {
+  marginTop: "10px",
+  fontSize: "1rem",
 };
 
 const specialtyBadgeStyle = {
-  color: "#3498db",
-  fontWeight: "800",
-  fontSize: "0.9rem",
-  textTransform: "uppercase",
-  letterSpacing: "1px",
+  backgroundColor: "#e1f5fe",
+  color: "#0288d1",
+  padding: "5px 15px",
+  borderRadius: "30px",
+  fontWeight: "bold",
+  fontSize: "0.85rem",
 };
 
 const introTextStyle = {
-  fontSize: "1.15rem",
+  fontSize: "1.2rem",
   lineHeight: "1.8",
-  color: "#444",
-  marginTop: "20px",
+  color: "#34495e",
+  fontWeight: "500",
+  backgroundColor: "#fdfdfd",
+  padding: "20px",
+  borderRadius: "10px",
+  border: "1px solid #f0f0f0",
 };
 
 const careerTextStyle = {
   whiteSpace: "pre-wrap",
-  color: "#666",
-  lineHeight: "1.7",
-  backgroundColor: "#fcfcfc",
-  padding: "15px",
-  borderRadius: "8px",
-  borderLeft: "4px solid #dcdde1",
+  color: "#636e72",
+  lineHeight: "1.9",
+  backgroundColor: "#fff",
+  padding: "20px",
+  borderRadius: "10px",
+  border: "1px solid #eee",
 };
 
 const infoBoxStyle = {
-  backgroundColor: "#f8f9fa",
-  padding: "25px",
-  borderRadius: "12px",
-  marginTop: "30px",
+  backgroundColor: "#f9f9f9",
+  padding: "30px",
+  borderRadius: "15px",
+  border: "1px solid #f1f1f1",
 };
 
 const infoItemStyle = {
   display: "flex",
   justifyContent: "space-between",
-  marginBottom: "10px",
-  fontSize: "0.95rem",
+  padding: "12px 0",
+  borderBottom: "1px solid #eee",
+  fontSize: "1rem",
 };
 
 const dividerStyle = {
-  margin: "30px 0",
+  margin: "40px 0",
   border: "0",
-  borderTop: "1px solid #eee",
+  borderTop: "2px solid #f5f5f5",
 };
 
 const statusMessageStyle = {
@@ -144,16 +232,17 @@ const statusMessageStyle = {
 
 const btnStyle = {
   width: "100%",
-  padding: "18px",
-  marginTop: "35px",
-  backgroundColor: "#2c3e50",
+  padding: "20px",
+  marginTop: "40px",
+  backgroundColor: "#1e3799",
   color: "#fff",
   border: "none",
-  borderRadius: "10px",
-  fontSize: "1.2rem",
+  borderRadius: "12px",
+  fontSize: "1.25rem",
   fontWeight: "bold",
   cursor: "pointer",
-  transition: "background-color 0.2s",
+  transition: "all 0.2s ease",
+  boxShadow: "0 8px 20px rgba(30, 55, 153, 0.3)",
 };
 
 export default LawyerDetailPage;

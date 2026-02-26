@@ -4,23 +4,22 @@ import lawyerApi from "../../api/lawyerApi";
 
 const LawyerListPage = () => {
   const [lawyers, setLawyers] = useState([]);
-  const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 💡 async/await 패턴으로 깔끔하게 비동기 처리
     const fetchLawyers = async () => {
       try {
         setLoading(true);
         const data = await lawyerApi.getAllLawyers();
         setLawyers(data);
+        console.log(data);
       } catch (err) {
         console.error("변호사 목록 로드 중 오류 발생:", err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchLawyers();
   }, []);
 
@@ -55,22 +54,45 @@ const LawyerListPage = () => {
                 (e.currentTarget.style.transform = "translateY(0)")
               }
             >
+              {/* 💡 프로필 이미지 추가 (savePath가 없으면 기본 이미지) */}
+              <div style={imgContainerStyle}>
+                <img
+                  src={
+                    lawyer.savePath
+                      ? `http://localhost:8080${lawyer.savePath}`
+                      : "/img/default_profile.png"
+                  }
+                  alt={lawyer.name}
+                  style={imageStyle}
+                  onError={(e) => (e.target.src = "/img/default_profile.png")} // 이미지 로드 실패 시 보정
+                />
+              </div>
+
               <div style={badgeStyle}>{lawyer.specialty}</div>
-              <h3 style={{ margin: "10px 0" }}>{lawyer.officeName}</h3>
+
+              {/* 💡 사무소명과 변호사 성함을 함께 노출 */}
+              <h3 style={{ margin: "10px 0 5px 0" }}>{lawyer.name} 변호사</h3>
               <p
                 style={{
-                  color: "#666",
-                  fontSize: "0.9rem",
-                  height: "40px",
-                  overflow: "hidden",
+                  margin: "0 0 10px 0",
+                  color: "#2980b9",
+                  fontWeight: "600",
+                  fontSize: "0.85rem",
                 }}
               >
-                {lawyer.intro}
+                {lawyer.officeName}
               </p>
+
+              <p style={introStyle}>{lawyer.intro}</p>
+
+              {/* 💡 별점 및 후기 개수 추가 (평판 정보) */}
+              <div style={ratingStyle}>
+                ⭐ {lawyer.avgRating?.toFixed(1)} ({lawyer.reviewCnt}개의 후기)
+              </div>
+
               <div style={priceStyle}>
                 상담료: {lawyer.consultFee?.toLocaleString()}원
               </div>
-              <div style={addrStyle}>📍 {lawyer.officeAddr}</div>
             </div>
           ))}
         </div>
@@ -79,44 +101,79 @@ const LawyerListPage = () => {
   );
 };
 
-// 스타일 컴포넌트화 (가독성을 위해 분리)
+// --- 스타일 컴포넌트 추가 및 수정 ---
+
 const gridStyle = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-  gap: "20px",
+  gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+  gap: "25px",
   marginTop: "20px",
 };
 
 const cardStyle = {
-  border: "1px solid #ddd",
-  borderRadius: "12px",
-  padding: "20px",
+  border: "1px solid #eee",
+  borderRadius: "16px",
+  padding: "24px",
   cursor: "pointer",
   backgroundColor: "#fff",
   transition: "all 0.3s ease",
-  boxShadow: "0 4px 6px rgba(0,0,0,0.05)",
+  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+  display: "flex",
+  flexDirection: "column",
+};
+
+const imgContainerStyle = {
+  width: "100%",
+  height: "180px",
+  borderRadius: "12px",
+  overflow: "hidden",
+  marginBottom: "15px",
+  backgroundColor: "#f8f9fa",
+};
+
+const imageStyle = {
+  width: "100%",
+  height: "100%",
+  objectFit: "cover", // 💡 비율 유지하면서 영역 꽉 채우기
 };
 
 const badgeStyle = {
-  display: "inline-block",
-  backgroundColor: "#ebf5ff",
-  color: "#007bff",
+  alignSelf: "flex-start",
+  backgroundColor: "#e3f2fd",
+  color: "#1976d2",
   padding: "4px 12px",
-  borderRadius: "20px",
+  borderRadius: "8px",
   fontSize: "0.75rem",
   fontWeight: "bold",
+  marginBottom: "8px",
+};
+
+const introStyle = {
+  color: "#666",
+  fontSize: "0.9rem",
+  lineHeight: "1.4",
+  height: "40px",
+  overflow: "hidden",
+  textOverflow: "ellipsis", // 💡 긴 문장 말줄임표 처리
+  display: "-webkit-box",
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: "vertical",
+};
+
+const ratingStyle = {
+  fontSize: "0.85rem",
+  color: "#f1c40f",
+  marginTop: "10px",
+  fontWeight: "600",
 };
 
 const priceStyle = {
-  marginTop: "15px",
+  marginTop: "auto",
+  paddingTop: "15px",
   fontWeight: "bold",
-  color: "#e67e22",
-};
-
-const addrStyle = {
-  fontSize: "0.8rem",
-  color: "#95a5a6",
-  marginTop: "10px",
+  color: "#d35400",
+  fontSize: "1.1rem",
+  borderTop: "1px solid #f5f5f5",
 };
 
 export default LawyerListPage;
