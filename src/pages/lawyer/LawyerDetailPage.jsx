@@ -113,19 +113,24 @@ const LawyerDetailPage = () => {
           </div>
         </div>
 
-        <button
-          style={btnStyle}
-          onClick={() =>
-            navigate(`/consult/reserve.do?lawyerId=${lawyer.lawyerId}`)
-          }
-        >
-          지금 바로 상담 예약하기
-        </button>
+        <div style={{ display: "flex", gap: "12px", marginTop: "40px" }}>
+          <button
+            style={{ ...btnStyle, marginTop: 0, backgroundColor: "#1e8c4d" }}
+            onClick={() => navigate(`/chat/room.do?lawyerId=${lawyer.lawyerId}`)}
+          >
+            💬 채팅 상담하기
+          </button>
+          <button
+            style={{ ...btnStyle, marginTop: 0 }}
+            onClick={() => navigate(`/consult/reserve.do?lawyerId=${lawyer.lawyerId}`)}
+          >
+            지금 바로 상담 예약하기
+          </button>
+        </div>
       </div>
     </div>
   );
 };
-
 // --- 스타일 객체 업데이트 ---
 
 const containerStyle = {
