@@ -42,7 +42,7 @@ const Header = () => {
           <NavLink to="/precedent/search.do">판례검색</NavLink>
           <NavLink to="/lawyer/list.do">변호사찾기</NavLink>
           <NavLink to="/question/list.do">법률질문</NavLink>
-          <NavLink to="/community/list.do">커뮤니티</NavLink>
+          <NavLink to="/community/home">커뮤니티</NavLink>
           {isAuthenticated && <NavLink to="/chat/list.do">채팅상담</NavLink>}
         </nav>
 
