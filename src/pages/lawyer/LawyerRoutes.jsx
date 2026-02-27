@@ -1,16 +1,14 @@
 import React from "react";
 import { Route } from "react-router-dom";
+import LawyerListPage from "./LawyerListPage";
+import LawyerDetailPage from "./LawyerDetailPage";
 
 const LawyerRoutes = [
-  <Route
-    key="law-l"
-    path="/lawyer/list.do"
-    element={<div>변호사 검색/목록</div>}
-  />,
+  <Route key="law-l" path="/lawyer/list.do" element={<LawyerListPage />} />,
   <Route
     key="law-d"
-    path="/lawyer/detail.do"
-    element={<div>변호사 상세</div>}
+    path="/lawyer/detail.do/:id"
+    element={<LawyerDetailPage />}
   />,
   <Route
     key="law-rev"
