@@ -1,6 +1,4 @@
 // src/store/authStore.js
-// 설명: Zustand 인증 스토어입니다. persist 미들웨어를 사용하여 새로고침 시에도 로그인 상태를 유지합니다.
-
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { setToken, removeToken } from "../utils/tokenUtil.js";
@@ -11,16 +9,19 @@ export const useAuthStore = create(
       user: null,
       token: null,
       isAuthenticated: false,
-      isHydrated: false, // 스토어가 스토리지로부터 데이터를 불러왔는지 여부
+      isHydrated: false,
 
-      // 로그인 처리
+      // 💡 로그인 처리: 백엔드 MemberVO 구조에 맞춰 필드 확장
       login: (token, memberData) => {
         setToken(token);
         set({
           token,
           user: {
-            loginId: memberData.loginId,
-            role: memberData.memberType,
+            memberId: memberData.memberId, // 💡 식별값 (PK) 추가
+            loginId: memberData.loginId, // 아이디
+            role: memberData.memberType, // 권한 (GENERAL, ADMIN 등)
+            name: memberData.name, // 💡 실명 추가
+            email: memberData.email, // 💡 이메일 추가
           },
           isAuthenticated: true,
         });
@@ -30,10 +31,10 @@ export const useAuthStore = create(
       logout: () => {
         removeToken();
         set({ user: null, token: null, isAuthenticated: false });
-        localStorage.removeItem("auth-storage"); // 저장소 강제 삭제
+        localStorage.removeItem("auth-storage");
       },
 
-      // 스토어 초기화 완료 상태 설정 (미들웨어가 호출함)
+      // 스토어 초기화 완료 상태 설정
       setHasHydrated: (state) => {
         set({ isHydrated: state });
       },
@@ -42,9 +43,8 @@ export const useAuthStore = create(
       name: "auth-storage",
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
-        // 스토리지에서 데이터를 읽어온 후 실행됨
         state.setHasHydrated(true);
       },
-    }
-  )
+    },
+  ),
 );
