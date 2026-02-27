@@ -7,7 +7,6 @@ const Header = () => {
   const { user, isAuthenticated, logout } = useAuthStore();
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // 스크롤 시 헤더 그림자 효과
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
@@ -25,19 +24,23 @@ const Header = () => {
     <header
       style={{
         ...headerStyle,
-        boxShadow: isScrolled ? "0 4px 20px rgba(0,0,0,0.08)" : "none",
-        borderBottom: isScrolled ? "none" : "1px solid #f1f1f1",
+        boxShadow: isScrolled ? "0 10px 30px rgba(0,0,0,0.05)" : "none",
+        borderBottom: isScrolled ? "none" : "1px solid #f1f5f9",
       }}
     >
       <div style={innerContainerStyle}>
-        {/* 1. 로고 영역 */}
-        <div style={logoStyle}>
+        {/* 1. 로고 영역: 크기 최적화 및 정렬 */}
+        <div style={logoWrapperStyle}>
           <Link to="/main.do" style={logoLinkStyle}>
-            <span style={{ color: "#007BFF" }}>Law</span>Mate
+            <img
+              src="/lawMateLogo.png"
+              alt="LawMate Logo"
+              style={logoImageStyle}
+            />
           </Link>
         </div>
 
-        {/* 2. 메인 네비게이션 (데스크탑) */}
+        {/* 2. 메인 네비게이션: 간격 및 폰트 개선 */}
         <nav style={navStyle}>
           <NavLink to="/precedent/search.do">판례검색</NavLink>
           <NavLink to="/lawyer/list.do">변호사찾기</NavLink>
@@ -46,7 +49,7 @@ const Header = () => {
           {isAuthenticated && <NavLink to="/chat/list.do">채팅상담</NavLink>}
         </nav>
 
-        {/* 3. 유저 액션 영역 */}
+        {/* 3. 유저 액션 영역: 버튼 디자인 고도화 */}
         <div style={authContainerStyle}>
           {isAuthenticated ? (
             <div style={userProfileStyle}>
@@ -55,21 +58,25 @@ const Header = () => {
                   <strong>{user?.name || user?.loginId}</strong>님
                 </span>
                 {user?.role === "ADMIN" && (
-                  <span style={adminBadgeStyle}>Admin</span>
+                  <span style={adminBadgeStyle}>관리자</span>
                 )}
               </div>
 
               <div style={actionGroupStyle}>
                 <Link
                   to="/mypage/edit.do"
-                  style={iconLinkStyle}
+                  style={myPageIconStyle}
                   title="마이페이지"
                 >
                   MY
                 </Link>
                 {user?.loginId === "admin" && (
-                  <Link to="/admin/stats.do" style={adminIconStyle}>
-                    관리 
+                  <Link
+                    to="/admin/stats.do"
+                    style={adminIconStyle}
+                    title="관리자 대시보드"
+                  >
+                    <span style={{ fontSize: "18px" }}>⚙️</span>
                   </Link>
                 )}
                 <button onClick={handleLogout} style={logoutBtnStyle}>
@@ -79,11 +86,11 @@ const Header = () => {
             </div>
           ) : (
             <div style={guestGroupStyle}>
-              <Link to="/member/login.do" style={loginBtnStyle}>
-                로그인
-              </Link>
               <Link to="/member/join/terms.do" style={joinLinkStyle}>
                 회원가입
+              </Link>
+              <Link to="/member/login.do" style={loginBtnStyle}>
+                로그인
               </Link>
             </div>
           )}
@@ -93,28 +100,35 @@ const Header = () => {
   );
 };
 
-// --- 공통 컴포넌트 조각 ---
-const NavLink = ({ to, children }) => (
-  <Link
-    to={to}
-    style={linkStyle}
-    onMouseEnter={(e) => (e.target.style.color = "#007BFF")}
-    onMouseLeave={(e) => (e.target.style.color = "#444")}
-  >
-    {children}
-  </Link>
-);
+// --- 공통 컴포넌트 (호버 효과 포함) ---
+const NavLink = ({ to, children }) => {
+  const [isHover, setIsHover] = useState(false);
+  return (
+    <Link
+      to={to}
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+      style={{
+        ...linkStyle,
+        color: isHover ? "#007BFF" : "#334155",
+      }}
+    >
+      {children}
+      <div style={{ ...underlineStyle, width: isHover ? "100%" : "0" }} />
+    </Link>
+  );
+};
 
-// --- 스타일 정의 (반응형 대응) ---
+// --- 스타일 정의 ---
 const headerStyle = {
   width: "100%",
-  height: "70px",
+  height: "80px", // 높이를 조금 더 여유있게 조정
   position: "sticky",
   top: 0,
-  backgroundColor: "rgba(255, 255, 255, 0.95)",
-  backdropFilter: "blur(10px)",
+  backgroundColor: "rgba(255, 255, 255, 0.98)",
+  backdropFilter: "blur(15px)",
   zIndex: 1000,
-  transition: "all 0.3s ease",
+  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
   display: "flex",
   justifyContent: "center",
 };
@@ -122,101 +136,113 @@ const headerStyle = {
 const innerContainerStyle = {
   width: "100%",
   maxWidth: "1200px",
-  padding: "0 20px",
+  padding: "0 24px",
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
 };
 
-const logoStyle = { fontSize: "24px", fontWeight: "800" };
-const logoLinkStyle = {
-  textDecoration: "none",
-  color: "#2c3e50",
-  letterSpacing: "-1px",
+const logoWrapperStyle = {
+  display: "flex",
+  alignItems: "center",
+  height: "100%",
 };
+const logoImageStyle = {
+  height: "100px", // 로고 크기를 명확하게 지정
+  width: "auto",
+  display: "block",
+  transition: "transform 0.2s ease",
+};
+const logoLinkStyle = { textDecoration: "none" };
 
-const navStyle = { display: "flex", gap: "25px", alignItems: "center" };
-// 💡 미디어 쿼리는 실제 CSS 파일이나 styled-components 권장하지만 인라인에서는 유동적 폭 조절로 대응
+const navStyle = { display: "flex", gap: "32px", alignItems: "center" };
 const linkStyle = {
+  position: "relative",
   textDecoration: "none",
-  color: "#444",
-  fontWeight: "600",
+  fontWeight: "700",
   fontSize: "15px",
+  padding: "8px 0",
   transition: "color 0.2s ease",
+};
+const underlineStyle = {
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  height: "2px",
+  backgroundColor: "#007BFF",
+  transition: "width 0.3s ease",
 };
 
 const authContainerStyle = { display: "flex", alignItems: "center" };
-
-const userProfileStyle = { display: "flex", alignItems: "center", gap: "15px" };
+const userProfileStyle = { display: "flex", alignItems: "center", gap: "20px" };
 const userInfoStyle = {
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-end",
-  gap: "2px",
 };
-const userNameStyle = { fontSize: "14px", color: "#333" };
+const userNameStyle = {
+  fontSize: "14px",
+  color: "#1e293b",
+  marginBottom: "2px",
+};
 
 const adminBadgeStyle = {
   fontSize: "10px",
-  backgroundColor: "#E3F2FD",
-  color: "#007BFF",
-  padding: "1px 6px",
-  borderRadius: "10px",
-  fontWeight: "bold",
-  border: "1px solid #bbdefb",
+  backgroundColor: "#eff6ff",
+  color: "#2563eb",
+  padding: "2px 8px",
+  borderRadius: "6px",
+  fontWeight: "800",
+  border: "1px solid #dbeafe",
 };
 
 const actionGroupStyle = { display: "flex", alignItems: "center", gap: "12px" };
 
-const iconLinkStyle = {
+const myPageIconStyle = {
   textDecoration: "none",
-  color: "#666",
-  fontSize: "12px",
-  fontWeight: "bold",
-  width: "32px",
-  height: "32px",
-  borderRadius: "50%",
-  backgroundColor: "#f5f5f5",
+  color: "#475569",
+  fontSize: "11px",
+  fontWeight: "800",
+  width: "36px",
+  height: "36px",
+  borderRadius: "10px",
+  backgroundColor: "#f1f5f9",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  transition: "all 0.2s",
+  transition: "background-color 0.2s",
 };
 
-const adminIconStyle = {
-  ...iconLinkStyle,
-  backgroundColor: "#FFF9C4",
-  color: "#FBC02D",
-};
+const adminIconStyle = { ...myPageIconStyle, backgroundColor: "#fffbeb" };
 
 const logoutBtnStyle = {
   backgroundColor: "transparent",
-  color: "#ff4d4f",
+  color: "#94a3b8",
   border: "none",
-  padding: "5px 10px",
+  padding: "8px 12px",
   cursor: "pointer",
   fontSize: "13px",
   fontWeight: "600",
+  transition: "color 0.2s",
 };
 
+const guestGroupStyle = { display: "flex", alignItems: "center", gap: "20px" };
+const joinLinkStyle = {
+  textDecoration: "none",
+  color: "#64748b",
+  fontSize: "14px",
+  fontWeight: "600",
+};
 const loginBtnStyle = {
   backgroundColor: "#007BFF",
   color: "#fff",
-  padding: "8px 20px",
-  borderRadius: "8px",
+  padding: "10px 24px",
+  borderRadius: "12px",
   textDecoration: "none",
   fontSize: "14px",
-  fontWeight: "bold",
-  boxShadow: "0 4px 10px rgba(0,123,255,0.2)",
-  transition: "transform 0.2s",
-};
-
-const guestGroupStyle = { display: "flex", alignItems: "center", gap: "15px" };
-const joinLinkStyle = {
-  textDecoration: "none",
-  color: "#555",
-  fontSize: "14px",
-  fontWeight: "500",
+  fontWeight: "800",
+  boxShadow: "0 4px 14px rgba(0,123,255,0.2)",
+  transition: "all 0.2s ease",
 };
 
 export default Header;
