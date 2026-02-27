@@ -13,13 +13,17 @@ const QnaDetail = () => {
       setQnaDetail(data)
     });
     }, [postId]);
+
+    if (!qnaDetail) return <div>Loading...</div>;
   
   return (<>
+  
     <h2>{qnaDetail.title}</h2>
-      <p>{qnaDetail.content}</p>
-      <p>작성자: {qnaDetail.name}</p>
-      <p>조회수: {qnaDetail.viewCnt}</p>
-      <p>작성일: {qnaDetail.createdAt}</p>
+    <p>사건유형: {qnaDetail.caseType}</p>
+    <p>작성자: {qnaDetail.name}</p>
+    <p>작성일: {qnaDetail.createdAt}</p>
+    <p>조회수: {qnaDetail.viewCnt}</p>
+    <p>{qnaDetail.content}</p>
   </>); 
 }
 export default QnaDetail; 

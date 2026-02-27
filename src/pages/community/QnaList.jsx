@@ -16,7 +16,7 @@ const QnaList = () => {
   let postTr = posts.map(post => (
     <tr key={post.postId}>
         <td>{post.postId}</td>
-        <td><Link to={`community/detail/${post.postId}`}>{post.title}</Link></td>
+        <td><Link to={`/community/detail/${post.postId}`}>{post.title}</Link></td>
         <td>{post.commentCnt}</td>
         <td>{post.name}</td>
         <td>{post.viewCnt}</td>
