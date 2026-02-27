@@ -1,30 +1,18 @@
-// src/pages/admin/AdminRoutes.jsx
-// 설명: 관리자 페이지 관련 라우팅 모음 및 권한 가드 적용
-// 해결: 컴파일러의 경로 해석 오류를 방지하기 위해 임포트 경로의 확장자를 제거했습니다.
+// 파일 위치: src/pages/admin/AdminRoutes.jsx
+// 설명: 기존에 개별 페이지를 각각 띄우던 방식을 수정하여,
+// 모든 관리자 메뉴가 사이드바가 있는 'AdminApp' 레이아웃 안에서 열리도록 변경했습니다.
 
 import React from "react";
 import { Route } from "react-router-dom";
-import PrivateRoute from "../../components/common/PrivateRoute";
-
-// 관리자 페이지 컴포넌트 임포트 (확장자 제거)
-import AdminMemberListPage from "./AdminMemberListPage";
-import AdminLawyerApprovePage from "./AdminLawyerApprovePage";
-import AdminCaseListPage from "./AdminCaseListPage";
-import AdminPaymentPage from "./AdminPaymentPage";
-import AdminReportListPage from "./AdminReportListPage";
-import AdminReportDetailPage from "./AdminReportDetailPage";
-import AdminStatsPage from "./AdminStatsPage";
+// 경로 해석 오류를 해결하기 위해 확장자(.jsx)를 추가했습니다.
+import PrivateRoute from "../../components/common/PrivateRoute.jsx";
+import AdminApp from "./AdminApp.jsx"; // 통합 관리자 앱 임포트
 
 const AdminRoutes = [
-  // PrivateRoute를 사용하여 ADMIN 권한이 있는 사용자만 하위 경로에 접근 가능하도록 보호합니다.
   <Route key="admin-guard" element={<PrivateRoute requiredRole="ADMIN" />}>
-    <Route path="/admin/member/list.do" element={<AdminMemberListPage />} />
-    <Route path="/admin/lawyer/approve.do" element={<AdminLawyerApprovePage />} />
-    <Route path="/admin/case/list.do" element={<AdminCaseListPage />} />
-    <Route path="/admin/payment/list.do" element={<AdminPaymentPage />} />
-    <Route path="/admin/report/list.do" element={<AdminReportListPage />} />
-    <Route path="/admin/report/detail.do/:reportId" element={<AdminReportDetailPage />} />
-    <Route path="/admin/stats.do" element={<AdminStatsPage />} />
+    {/* 와일드카드(*)를 사용하여 /admin/ 하위의 어떤 주소로 들어오든 
+        무조건 사이드바가 있는 AdminApp을 화면에 띄웁니다. */}
+    <Route path="/admin/*" element={<AdminApp />} />
   </Route>
 ];
 
