@@ -1,229 +1,152 @@
-import React, { useState, useEffect } from 'react';
-import { getSettlementList, getSettlementChart } from '../../api/paymentApi';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-} from 'recharts';
+// src/pages/mypage/MypageEditPage.jsx
+// 설명: 마이페이지 - 회원 정보(이름, 이메일, 전화번호 등)를 수정하는 화면입니다.
+// Zustand authStore를 통해 현재 로그인된 유저 정보를 가져와서 초기값으로 세팅합니다.
+// 모듈 해석 오류 수정을 위해 임포트 경로에 확장자(.js)를 추가했습니다.
 
-const STATUS_META = {
-  PENDING:   { label: '정산대기', color: '#FF9500', bg: '#FFF3E0' },
-  COMPLETED: { label: '정산완료', color: '#34C759', bg: '#E8F8ED' },
-};
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store/authStore.js";
+import { memberApi } from "../../api/memberApi.js";
 
-const SettlementPage = () => {
-  const now = new Date();
-  const [year, setYear] = useState(now.getFullYear());
-  const [month, setMonth] = useState(now.getMonth() + 1);
-  const [settlements, setSettlements] = useState([]);
-  const [chartData, setChartData] = useState([]);
-  const [loading, setLoading] = useState(true);
+const MypageEditPage = () => {
+  const navigate = useNavigate();
+  const { user, login } = useAuthStore(); // login 함수를 통해 수정된 정보를 전역 상태에 반영 가능
 
+  // 폼 상태 관리 (초기값은 유저 정보에서 추출)
+  const [formData, setFormData] = useState({
+    name: "",
+    phone1: "010",
+    phone2: "",
+    phone3: "",
+    emailId: "",
+    emailDomain: "naver.com",
+  });
+
+  const phone2Ref = useRef(null);
+  const phone3Ref = useRef(null);
+
+  // 페이지 진입 시 기존 유저 정보를 폼에 채워넣음
   useEffect(() => {
-    fetchData();
-  }, [year, month]);
+    if (user) {
+      // 전화번호 파싱 (예: 01012345678 -> 010, 1234, 5678)
+      const phoneMatch = user.phone?.match(/^(\d{3})(\d{3,4})(\d{4})$/);
+      // 이메일 파싱 (예: test@naver.com -> test, naver.com)
+      const emailParts = user.email?.split("@") || ["", "naver.com"];
 
-  const fetchData = async () => {
+      setFormData({
+        name: user.name || "",
+        phone1: phoneMatch ? phoneMatch[1] : "010",
+        phone2: phoneMatch ? phoneMatch[2] : "",
+        phone3: phoneMatch ? phoneMatch[3] : "",
+        emailId: emailParts[0],
+        emailDomain: emailParts[1],
+      });
+    }
+  }, [user]);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // 전화번호 자동 포커스 이동 로직
+  const handlePhoneChange = (e, nextRef) => {
+    const val = e.target.value.replace(/[^0-9]/g, "");
+    setFormData({ ...formData, [e.target.name]: val });
+    if (nextRef && val.length >= 4) nextRef.current.focus();
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    const fullPhone = `${formData.phone1}${formData.phone2}${formData.phone3}`;
+    const fullEmail = `${formData.emailId}@${formData.emailDomain}`;
+
     try {
-      setLoading(true);
-      const [listRes, chartRes] = await Promise.all([
-        getSettlementList(year, month),
-        getSettlementChart(),
-      ]);
-      setSettlements(listRes.data.data || []);
-      setChartData(chartRes.data.data || []);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
+      const updateData = {
+        loginId: user.loginId, // 식별자
+        name: formData.name,
+        phone: fullPhone,
+        email: fullEmail,
+        memberType: user.role // 기존 타입 유지
+      };
+
+      const response = await memberApi.updateProfile(updateData);
+      
+      if (response.data) {
+        alert("회원 정보가 성공적으로 수정되었습니다.");
+        // 수정 성공 후 전역 상태 업데이트 (토큰은 그대로 유지하거나 서버에서 새로 받음)
+        // 여기서는 기존 토큰과 수정된 유저 정보를 다시 스토어에 저장
+        const currentToken = localStorage.getItem("token");
+        login(currentToken, response.data); 
+        
+        navigate("/main.do");
+      }
+    } catch (error) {
+      console.error("수정 실패:", error);
+      alert("정보 수정 중 오류가 발생했습니다.");
     }
   };
 
-  const totalAmount = settlements.reduce((sum, s) => sum + (s.settlementAmount || 0), 0);
-  const totalFee = settlements.reduce((sum, s) => sum + (s.fee || 0), 0);
-  const totalPayment = settlements.reduce((sum, s) => sum + (s.paymentAmount || 0), 0);
-
   return (
-    <div style={{ maxWidth: '860px', margin: '0 auto', padding: '28px 16px' }}>
-      <h2 style={{ fontSize: '22px', fontWeight: '800', color: '#1A1A2E', marginBottom: '24px' }}>
-        정산 내역
-      </h2>
+    <div style={{ maxWidth: "500px", margin: "50px auto", padding: "20px", backgroundColor: "#fff", borderRadius: "8px", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
+      <h2 style={{ textAlign: "center", marginBottom: "30px", color: "#333" }}>회원 정보 수정</h2>
+      
+      <div style={{ marginBottom: "25px", padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "8px", border: "1px solid #e9ecef" }}>
+        <p style={{ margin: 0, fontSize: "14px" }}><strong>아이디:</strong> {user?.loginId} (변경 불가)</p>
+        <p style={{ margin: "8px 0 0 0", fontSize: "14px" }}><strong>회원 유형:</strong> {user?.role === 'LAWYER' ? '전문회원' : '일반회원'}</p>
+      </div>
 
-      {/* 월별 차트 */}
-      <div
-        style={{
-          background: '#fff',
-          border: '1px solid #E8ECF0',
-          borderRadius: '16px',
-          padding: '20px',
-          marginBottom: '28px',
-        }}
-      >
-        <h3 style={{ fontSize: '14px', fontWeight: '700', color: '#444', margin: '0 0 16px' }}>
-          월별 정산 현황
-        </h3>
-        {chartData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={chartData} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F0F2F5" />
-              <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#888' }} />
-              <YAxis
-                tick={{ fontSize: 11, fill: '#888' }}
-                tickFormatter={(v) => `${(v / 10000).toFixed(0)}만`}
-              />
-              <Tooltip
-                formatter={(v) => [`${v.toLocaleString()}원`, '정산액']}
-                labelStyle={{ fontWeight: 700 }}
-              />
-              <Bar dataKey="settlementAmount" fill="#1A6DFF" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        ) : (
-          <div style={{ textAlign: 'center', color: '#aaa', padding: '40px' }}>
-            데이터가 없습니다
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        {/* 이름 수정 */}
+        <div>
+          <label style={labelStyle}>이름(실명)</label>
+          <input 
+            type="text" name="name" 
+            value={formData.name} onChange={handleChange} required 
+            style={inputStyle} 
+          />
+        </div>
+
+        {/* 전화번호 수정 (분할 UI) */}
+        <div>
+          <label style={labelStyle}>새로운 휴대전화 번호</label>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <input type="text" name="phone1" value={formData.phone1} onChange={(e) => handlePhoneChange(e, phone2Ref)} maxLength={3} style={{ ...inputStyle, textAlign: "center", flex: 0.8 }} />
+            <span>-</span>
+            <input type="text" name="phone2" ref={phone2Ref} value={formData.phone2} onChange={(e) => handlePhoneChange(e, phone3Ref)} maxLength={4} style={{ ...inputStyle, textAlign: "center" }} />
+            <span>-</span>
+            <input type="text" name="phone3" ref={phone3Ref} value={formData.phone3} onChange={(e) => handlePhoneChange(e, null)} maxLength={4} style={{ ...inputStyle, textAlign: "center" }} />
           </div>
-        )}
-      </div>
-
-      {/* 연월 필터 */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', alignItems: 'center' }}>
-        <select
-          value={year}
-          onChange={(e) => setYear(Number(e.target.value))}
-          style={selectStyle}
-        >
-          {[2023, 2024, 2025].map((y) => (
-            <option key={y} value={y}>{y}년</option>
-          ))}
-        </select>
-        <select
-          value={month}
-          onChange={(e) => setMonth(Number(e.target.value))}
-          style={selectStyle}
-        >
-          {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-            <option key={m} value={m}>{m}월</option>
-          ))}
-        </select>
-      </div>
-
-      {/* 요약 카드 */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '20px' }}>
-        <SummaryCard label="총 결제액" value={totalPayment} color="#444" />
-        <SummaryCard label="수수료" value={totalFee} color="#FF3B30" />
-        <SummaryCard label="정산 예정액" value={totalAmount} color="#1A6DFF" />
-      </div>
-
-      {/* 목록 테이블 */}
-      {loading ? (
-        <div style={{ textAlign: 'center', padding: '40px', color: '#aaa' }}>불러오는 중...</div>
-      ) : settlements.length === 0 ? (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '50px',
-            background: '#F7F9FB',
-            borderRadius: '14px',
-            color: '#aaa',
-          }}
-        >
-          해당 월 정산 내역이 없습니다
         </div>
-      ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
-            <thead>
-              <tr style={{ background: '#F7F9FB' }}>
-                {['상담 일자', '의뢰인', '결제 금액', '수수료', '정산 금액', '상태'].map((h) => (
-                  <th
-                    key={h}
-                    style={{
-                      padding: '12px 14px',
-                      textAlign: 'left',
-                      fontWeight: '700',
-                      color: '#666',
-                      borderBottom: '1px solid #E8ECF0',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {settlements.map((s) => {
-                const meta = STATUS_META[s.status] || STATUS_META.PENDING;
-                return (
-                  <tr
-                    key={s.settlementNo}
-                    style={{ borderBottom: '1px solid #F0F2F5', transition: 'background 0.1s' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = '#F7F9FB')}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = '#fff')}
-                  >
-                    <td style={tdStyle}>{s.consultDate}</td>
-                    <td style={tdStyle}>{s.memberName}</td>
-                    <td style={tdStyle}>{s.paymentAmount?.toLocaleString()}원</td>
-                    <td style={{ ...tdStyle, color: '#FF3B30' }}>-{s.fee?.toLocaleString()}원</td>
-                    <td style={{ ...tdStyle, fontWeight: '700', color: '#1A6DFF' }}>
-                      {s.settlementAmount?.toLocaleString()}원
-                    </td>
-                    <td style={tdStyle}>
-                      <span
-                        style={{
-                          padding: '3px 10px',
-                          borderRadius: '20px',
-                          background: meta.bg,
-                          color: meta.color,
-                          fontSize: '12px',
-                          fontWeight: '600',
-                        }}
-                      >
-                        {meta.label}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+
+        {/* 이메일 수정 (도메인 선택 UI) */}
+        <div>
+          <label style={labelStyle}>새로운 이메일 주소</label>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <input type="text" name="emailId" value={formData.emailId} onChange={handleChange} placeholder="아이디" style={inputStyle} />
+            <span>@</span>
+            <select name="emailDomain" value={formData.emailDomain} onChange={handleChange} style={selectStyle}>
+              <option value="naver.com">naver.com</option>
+              <option value="gmail.com">gmail.com</option>
+              <option value="kakao.com">kakao.com</option>
+              <option value="daum.net">daum.net</option>
+            </select>
+          </div>
         </div>
-      )}
+        
+        <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+          <button type="button" onClick={() => navigate(-1)} style={cancelBtnStyle}>취소</button>
+          <button type="submit" style={submitBtnStyle}>수정 완료</button>
+        </div>
+      </form>
     </div>
   );
 };
 
-const SummaryCard = ({ label, value, color }) => (
-  <div
-    style={{
-      background: '#fff',
-      border: '1px solid #E8ECF0',
-      borderRadius: '12px',
-      padding: '16px',
-      textAlign: 'center',
-    }}
-  >
-    <div style={{ fontSize: '12px', color: '#888', marginBottom: '6px' }}>{label}</div>
-    <div style={{ fontSize: '18px', fontWeight: '800', color }}>{value.toLocaleString()}원</div>
-  </div>
-);
+const labelStyle = { display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: "bold", color: "#444" };
+const inputStyle = { width: "100%", padding: "12px", border: "1px solid #ccc", borderRadius: "4px", boxSizing: "border-box", fontSize: "15px" };
+const selectStyle = { padding: "12px", border: "1px solid #ccc", borderRadius: "4px", flex: 1, fontSize: "15px" };
+const submitBtnStyle = { flex: 1, padding: "14px", backgroundColor: "#007BFF", color: "#fff", border: "none", borderRadius: "4px", fontWeight: "bold", cursor: "pointer" };
+const cancelBtnStyle = { flex: 1, padding: "14px", border: "1px solid #ccc", background: "#fff", borderRadius: "4px", cursor: "pointer" };
 
-const selectStyle = {
-  padding: '8px 14px',
-  border: '1.5px solid #D0D8E4',
-  borderRadius: '8px',
-  fontSize: '14px',
-  outline: 'none',
-  cursor: 'pointer',
-};
-
-const tdStyle = {
-  padding: '12px 14px',
-  color: '#444',
-};
-
-export default SettlementPage;
+export default MypageEditPage;

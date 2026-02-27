@@ -1,21 +1,24 @@
-// vs코드
-// 파일 위치: src/utils/tokenUtil.js
-// 설명: JWT 토큰을 로컬스토리지에 저장, 조회, 삭제하고 페이로드(정보)를 파싱하는 유틸리티
+// src/utils/tokenUtil.js
+// 설명: JWT 토큰을 로컬 스토리지에 저장하고 가져오며, 토큰 내의 유저 정보를 해독하는 유틸리티입니다.
 
+// 토큰 저장
 export const setToken = (token) => {
   localStorage.setItem("token", token);
 };
 
+// 토큰 가져오기
 export const getToken = () => {
   return localStorage.getItem("token");
 };
 
+// 토큰 삭제 (로그아웃 시)
 export const removeToken = () => {
   localStorage.removeItem("token");
 };
 
-// 토큰에서 사용자 정보(Claims) 추출
+// JWT 토큰 해독 (유저 아이디, 권한 추출)
 export const parseJwt = (token) => {
+  if (!token) return null;
   try {
     const base64Url = token.split(".")[1];
     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
@@ -26,7 +29,7 @@ export const parseJwt = (token) => {
         .join("")
     );
     return JSON.parse(jsonPayload);
-  } catch (error) {
+  } catch (e) {
     return null;
   }
 };

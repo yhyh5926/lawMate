@@ -1,21 +1,21 @@
 // src/store/authStore.js
-// 설명: Zustand를 이용한 전역 인증 상태 관리 스토어입니다.
-// 로그인 유저 정보, 토큰 저장 및 로그아웃 로직을 처리합니다.
+// 설명: Zustand 인증 스토어입니다. persist 미들웨어를 사용하여 새로고침 시에도 로그인 상태를 유지합니다.
 
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { setToken, removeToken, parseJwt } from "../utils/tokenUtil";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { setToken, removeToken } from "../utils/tokenUtil.js";
 
 export const useAuthStore = create(
   persist(
-    (set, get) => ({
-      user: null, // { loginId, role }
+    (set) => ({
+      user: null,
       token: null,
       isAuthenticated: false,
+      isHydrated: false, // 스토어가 스토리지로부터 데이터를 불러왔는지 여부
 
-      // 로그인 성공 시 호출: 토큰 저장 및 상태 업데이트
+      // 로그인 처리
       login: (token, memberData) => {
-        setToken(token); // 로컬 스토리지 저장
+        setToken(token);
         set({
           token,
           user: {
@@ -26,35 +26,25 @@ export const useAuthStore = create(
         });
       },
 
-      // 로그아웃 시 호출: 상태 초기화 및 토큰 제거
+      // 로그아웃 처리
       logout: () => {
         removeToken();
-        set({
-          user: null,
-          token: null,
-          isAuthenticated: false,
-        });
+        set({ user: null, token: null, isAuthenticated: false });
+        localStorage.removeItem("auth-storage"); // 저장소 강제 삭제
       },
 
-      // 앱 새로고침 시 토큰 유효성 체크 및 상태 복구
-      checkAuth: () => {
-        const token = localStorage.getItem("token");
-        if (token) {
-          const decoded = parseJwt(token);
-          if (decoded) {
-            set({
-              token,
-              user: { loginId: decoded.sub, role: decoded.role },
-              isAuthenticated: true,
-            });
-          } else {
-            get().logout();
-          }
-        }
+      // 스토어 초기화 완료 상태 설정 (미들웨어가 호출함)
+      setHasHydrated: (state) => {
+        set({ isHydrated: state });
       },
     }),
     {
-      name: "auth-storage", // 로컬 스토리지에 저장될 키 이름
+      name: "auth-storage",
+      storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        // 스토리지에서 데이터를 읽어온 후 실행됨
+        state.setHasHydrated(true);
+      },
     }
   )
 );
