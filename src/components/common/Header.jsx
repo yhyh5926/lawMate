@@ -67,9 +67,9 @@ const Header = () => {
                 >
                   MY
                 </Link>
-                {user?.role === "ADMIN" && (
+                {user?.loginId === "admin" && (
                   <Link to="/admin/stats.do" style={adminIconStyle}>
-                    관리
+                    관리 
                   </Link>
                 )}
                 <button onClick={handleLogout} style={logoutBtnStyle}>
