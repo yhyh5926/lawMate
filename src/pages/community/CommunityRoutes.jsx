@@ -2,6 +2,7 @@ import React from "react";
 import { Route } from "react-router-dom";
 import QnaList from "./QnaList";
 import Home from "./Home";
+import QnaDetail from "./QnaDetail";
 
 const CommunityRoutes = [
   <Route
@@ -21,8 +22,8 @@ const CommunityRoutes = [
   />,
   <Route
     key="com-d"
-    path="/community/detail.do"
-    element={<div>게시글 상세/댓글</div>}
+    path="/community/detail/:postId"
+    element={<QnaDetail/>}
   />,
   <Route
     key="pol-w"
