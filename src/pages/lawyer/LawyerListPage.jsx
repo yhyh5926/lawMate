@@ -148,28 +148,28 @@ const LawyerCard = ({ lawyer, index, onClick }) => {
 
         {/* Price + CTA */}
         <div style={{ display: "flex", gap: "8px" }}>
-  <div
-    onClick={(e) => {
-      e.stopPropagation();
-      navigate(`/chat/room/${lawyer.lawyerId}`);
-    }}
-    style={{
-      ...styles.ctaBtn,
-      background: hovered ? "#1a6e3a" : "#1e8c4d",
-      cursor: "pointer",
-    }}
-  >
-    💬 채팅
-  </div>
-  <div
-    style={{
-      ...styles.ctaBtn,
-      background: hovered ? "#1a3a6e" : "#1e4d8c",
-    }}
-  >
-    상담 신청 →
-  </div>
-</div>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/chat/room/${lawyer.lawyerId}`);
+            }}
+            style={{
+              ...styles.ctaBtn,
+              background: hovered ? "#1a6e3a" : "#1e8c4d",
+              cursor: "pointer",
+            }}
+          >
+            💬 채팅
+          </div>
+          <div
+            style={{
+              ...styles.ctaBtn,
+              background: hovered ? "#1a3a6e" : "#1e4d8c",
+            }}
+          >
+            상담 신청 →
+          </div>
+        </div>
       </div>
     </div>
   );

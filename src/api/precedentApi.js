@@ -2,10 +2,13 @@ import axiosInstance from "./axiosInstance";
 
 const precedentApi = {
   // 1. 판례 목록 가져오기
-  getPrecedentList: async () => {
+  getPrecedentList: async (page = 1, size = 10) => {
     try {
-      const response = await axiosInstance.get("/precedents");
+      const response = await axiosInstance.get(
+        `/precedents?page=${page}&size=${size}`,
+      );
       return response.data;
+      //{ list: [...], totalPages: 10, totalCount: 95 }
     } catch (error) {
       console.error("판례 목록 API 호출 실패:", error);
       throw error;

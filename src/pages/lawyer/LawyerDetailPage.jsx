@@ -118,8 +118,8 @@ const LawyerDetailPage = () => {
             style={{ ...btnStyle, marginTop: 0, backgroundColor: "#1e8c4d" }}
             onClick={async () => {
               try {
-                const res = await import("../../api/chatApi").then(m =>
-                  m.getOrCreateChatRoom(lawyer.memberId)
+                const res = await import("../../api/chatApi").then((m) =>
+                  m.getOrCreateChatRoom(lawyer.memberId),
                 );
                 const roomNo = res.data.roomNo;
                 navigate(`/chat/room.do?roomNo=${roomNo}`);
@@ -132,7 +132,9 @@ const LawyerDetailPage = () => {
           </button>
           <button
             style={{ ...btnStyle, marginTop: 0 }}
-            onClick={() => navigate(`/consult/reserve.do?lawyerId=${lawyer.lawyerId}`)}
+            onClick={() =>
+              navigate(`/consult/reserve.do?lawyerId=${lawyer.lawyerId}`)
+            }
           >
             지금 바로 상담 예약하기
           </button>
