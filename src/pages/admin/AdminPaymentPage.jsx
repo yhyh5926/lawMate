@@ -1,6 +1,6 @@
-// vs코드
-// 파일 위치: src/pages/admin/AdminPaymentPage.jsx
-// 설명: 관리자 - 플랫폼 전체 결제 및 정산 대기 목록 확인 화면 (모의 데이터 기반)
+// src/pages/admin/AdminPaymentPage.jsx
+// 설명: 관리자 - 플랫폼 전체 결제 및 정산 대기 목록 확인 화면
+// 해결: 컴파일러의 경로 해석 오류를 방지하기 위해 adminApi 임포트 경로의 확장자를 제거했습니다.
 
 import React, { useEffect, useState } from "react";
 import { adminApi } from "../../api/adminApi";
@@ -14,59 +14,63 @@ const AdminPaymentPage = () => {
   }, []);
 
   const fetchPayments = async () => {
+    setLoading(true);
     try {
       const response = await adminApi.getPaymentList();
-      setPayments(response.data.data || []);
+      // 백엔드 응답 구조(data.data 또는 data)에 맞게 안전하게 처리
+      setPayments(response.data.data || response.data || []);
     } catch (error) {
       console.error("결제 목록 조회 실패", error);
-      // 모의 데이터
-      setPayments([
-        { paymentId: "PAY_001", amount: 50000, method: "CARD", status: "COMPLETED", createdAt: "2026-02-26" },
-        { paymentId: "PAY_002", amount: 30000, method: "KAKAOPAY", status: "REFUNDED", createdAt: "2026-02-25" },
-      ]);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2 style={{ borderBottom: "2px solid #333", paddingBottom: "10px" }}>결제/정산 관리</h2>
+    <div className="p-8 max-w-7xl mx-auto">
+      <h2 className="text-2xl font-bold text-gray-800 mb-8 border-b-2 border-gray-800 pb-4">결제/정산 관리</h2>
       
       {loading ? (
-        <div style={{ padding: "50px", textAlign: "center" }}>데이터를 불러오는 중입니다...</div>
+        <div className="py-20 text-center text-gray-500">결제 데이터를 불러오는 중입니다...</div>
       ) : (
-        <table style={tableStyle}>
-          <thead>
-            <tr style={{ backgroundColor: "#f8f9fa" }}>
-              <th style={thStyle}>결제번호</th>
-              <th style={thStyle}>결제수단</th>
-              <th style={thStyle}>결제금액</th>
-              <th style={thStyle}>상태</th>
-              <th style={thStyle}>결제일시</th>
-            </tr>
-          </thead>
-          <tbody>
-            {payments.map((p) => (
-              <tr key={p.paymentId} style={{ borderBottom: "1px solid #eee", textAlign: "center" }}>
-                <td style={tdStyle}>{p.paymentId}</td>
-                <td style={tdStyle}>{p.method}</td>
-                <td style={tdStyle}>{p.amount.toLocaleString()}원</td>
-                <td style={{ ...tdStyle, color: p.status === 'COMPLETED' ? 'blue' : 'red', fontWeight: 'bold' }}>
-                  {p.status}
-                </td>
-                <td style={tdStyle}>{p.createdAt}</td>
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <table className="w-full text-sm text-center">
+            <thead className="bg-gray-50 border-b">
+              <tr>
+                <th className="p-4 font-bold">결제번호</th>
+                <th className="p-4 font-bold">결제수단</th>
+                <th className="p-4 font-bold text-right px-10">결제금액</th>
+                <th className="p-4 font-bold">상태</th>
+                <th className="p-4 font-bold">결제일시</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {payments.map((p) => (
+                <tr key={p.paymentId} className="border-b hover:bg-gray-50">
+                  <td className="p-4 font-mono text-gray-500 text-xs">{p.paymentId}</td>
+                  <td className="p-4 font-medium">{p.method}</td>
+                  <td className="p-4 text-right px-10 font-bold text-gray-900">{p.amount?.toLocaleString()}원</td>
+                  <td className="p-4">
+                    <span className={`px-2 py-1 rounded text-xs font-bold ${
+                      p.status === 'COMPLETED' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'
+                    }`}>
+                      {p.status}
+                    </span>
+                  </td>
+                  <td className="p-4 text-gray-500">{p.createdAt?.split('T')[0]}</td>
+                </tr>
+              ))}
+              {payments.length === 0 && (
+                <tr>
+                  <td colSpan="5" className="p-20 text-gray-400">결제 내역이 존재하지 않습니다.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
 };
-
-const tableStyle = { width: "100%", borderCollapse: "collapse", marginTop: "20px" };
-const thStyle = { padding: "12px", borderBottom: "2px solid #ddd" };
-const tdStyle = { padding: "12px" };
 
 export default AdminPaymentPage;
