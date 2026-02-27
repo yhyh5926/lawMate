@@ -15,6 +15,7 @@ import ChatConsultRoutes from "./pages/chat/ChatConsultRoutes";
 import PrecedentRoutes from "./pages/precedent/PrecedentRoutes";
 import LawyerRoutes from "./pages/lawyer/LawyerRoutes";
 import CommunityRoutes from "./pages/community/CommunityRoutes";
+import QuestionRoutes from "./pages/question/QuestionRoutes";
 
 function App() {
   return (
@@ -32,7 +33,7 @@ function App() {
             {PrecedentRoutes}
             {LawyerRoutes}
             {CommunityRoutes}
-
+            {QuestionRoutes}
             <Route path="/" element={<Navigate to="/main.do" replace />} />
             <Route
               path="*"
