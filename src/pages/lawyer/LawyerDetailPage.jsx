@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import lawyerApi from "../../api/lawyerApi";
+import { DEFAULT_IMAGE } from "./LawyerListPage";
 
 const LawyerDetailPage = () => {
   const { id } = useParams();
@@ -40,7 +41,7 @@ const LawyerDetailPage = () => {
               src={
                 lawyer.savePath
                   ? `http://localhost:8080${lawyer.savePath}`
-                  : "/img/default_profile.png"
+                  : DEFAULT_IMAGE
               }
               alt={lawyer.name}
               style={profileImgStyle}
