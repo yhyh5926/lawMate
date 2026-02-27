@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import lawyerApi from "../../api/lawyerApi";
 import { DEFAULT_IMAGE } from "./LawyerListPage";
 
@@ -7,7 +7,7 @@ const LawyerDetailPage = () => {
   const { id } = useParams();
   const [lawyer, setLawyer] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchDetail = async () => {
       try {
@@ -116,7 +116,7 @@ const LawyerDetailPage = () => {
         <button
           style={btnStyle}
           onClick={() =>
-            alert(`${lawyer.name} 변호사에게 상담 예약을 신청합니다.`)
+            navigate(`/consult/reserve.do?lawyerId=${lawyer.lawyerId}`)
           }
         >
           지금 바로 상담 예약하기
