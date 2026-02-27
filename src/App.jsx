@@ -16,6 +16,7 @@ import PrecedentRoutes from "./pages/precedent/PrecedentRoutes";
 import LawyerRoutes from "./pages/lawyer/LawyerRoutes";
 import CommunityRoutes from "./pages/community/CommunityRoutes";
 import QuestionRoutes from "./pages/question/QuestionRoutes";
+import ConsultRoutes from "./pages/consult/ConsultRoutes";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
             {LawyerRoutes}
             {CommunityRoutes}
             {QuestionRoutes}
+            {ConsultRoutes}
             <Route path="/" element={<Navigate to="/main.do" replace />} />
             <Route
               path="*"
