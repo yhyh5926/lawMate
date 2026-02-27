@@ -35,7 +35,8 @@ const LawyerJoinFormPage = () => {
         <input type="password" name="password" placeholder="비밀번호" onChange={handleChange} required style={inputStyle} />
         <input type="text" name="name" placeholder="변호사명 (실명)" onChange={handleChange} required style={inputStyle} />
         <input type="text" name="phone" placeholder="연락처 (- 제외)" onChange={handleChange} required style={inputStyle} />
-        
+        <input type="text" name="email" placeholder="이메일" onChange={handleChange} required style={inputStyle} />
+
         <hr style={{ margin: "10px 0", borderTop: "1px dashed #ccc" }} />
         
         <h4 style={{ margin: "0 0 -5px 0", color: "#666" }}>전문가 정보</h4>

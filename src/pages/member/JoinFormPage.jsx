@@ -10,7 +10,7 @@ import { validateId, validatePassword, validatePhone } from "../../utils/validat
 
 const JoinFormPage = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ loginId: "", password: "", passwordConfirm: "", name: "", phone: "" });
+  const [formData, setFormData] = useState({ loginId: "", password: "", passwordConfirm: "", name: "", phone: "", email: "" });
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -39,6 +39,7 @@ const JoinFormPage = () => {
         <input type="password" name="passwordConfirm" placeholder="비밀번호 확인" value={formData.passwordConfirm} onChange={handleChange} required style={inputStyle} />
         <input type="text" name="name" placeholder="실명" value={formData.name} onChange={handleChange} required style={inputStyle} />
         <input type="text" name="phone" placeholder="휴대폰 번호 (- 제외)" value={formData.phone} onChange={handleChange} required style={inputStyle} />
+        <input type="text" name="email" placeholder="이메일" value={formData.email} onChange={handleChange} required style={inputStyle} />
         <button type="submit" style={{ padding: "14px", backgroundColor: "#007BFF", color: "#fff", border: "none", borderRadius: "4px", fontWeight: "bold", marginTop: "10px" }}>가입 완료하기</button>
       </form>
     </div>
