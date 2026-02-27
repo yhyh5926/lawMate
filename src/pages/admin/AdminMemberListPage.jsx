@@ -72,8 +72,4 @@ const AdminMemberListPage = () => {
   );
 };
 
-const tableStyle = { width: "100%", borderCollapse: "collapse", marginTop: "20px" };
-const thStyle = { padding: "12px", borderBottom: "2px solid #ddd" };
-const tdStyle = { padding: "12px" };
-
 export default AdminMemberListPage;
