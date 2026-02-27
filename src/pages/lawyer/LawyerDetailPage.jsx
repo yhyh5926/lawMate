@@ -116,7 +116,17 @@ const LawyerDetailPage = () => {
         <div style={{ display: "flex", gap: "12px", marginTop: "40px" }}>
           <button
             style={{ ...btnStyle, marginTop: 0, backgroundColor: "#1e8c4d" }}
-            onClick={() => navigate(`/chat/room.do?lawyerId=${lawyer.lawyerId}`)}
+            onClick={async () => {
+              try {
+                const res = await import("../../api/chatApi").then(m =>
+                  m.getOrCreateChatRoom(lawyer.memberId)
+                );
+                const roomNo = res.data.roomNo;
+                navigate(`/chat/room.do?roomNo=${roomNo}`);
+              } catch (err) {
+                alert("채팅방 생성에 실패했습니다. 로그인이 필요합니다.");
+              }
+            }}
           >
             💬 채팅 상담하기
           </button>
