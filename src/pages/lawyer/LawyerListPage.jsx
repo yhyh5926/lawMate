@@ -81,6 +81,7 @@ const LawyerListPage = () => {
 
 const LawyerCard = ({ lawyer, index, onClick }) => {
   const [hovered, setHovered] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div
@@ -146,23 +147,29 @@ const LawyerCard = ({ lawyer, index, onClick }) => {
         <div style={styles.divider} />
 
         {/* Price + CTA */}
-        <div style={styles.footer}>
-          <div>
-            <span style={styles.feeLabel}>상담료</span>
-            <span style={styles.fee}>
-              {lawyer.consultFee?.toLocaleString()}
-              <span style={styles.feeUnit}>원</span>
-            </span>
-          </div>
-          <div
-            style={{
-              ...styles.ctaBtn,
-              background: hovered ? "#1a3a6e" : "#1e4d8c",
-            }}
-          >
-            상담 신청 →
-          </div>
-        </div>
+        <div style={{ display: "flex", gap: "8px" }}>
+  <div
+    onClick={(e) => {
+      e.stopPropagation();
+      navigate(`/chat/room/${lawyer.lawyerId}`);
+    }}
+    style={{
+      ...styles.ctaBtn,
+      background: hovered ? "#1a6e3a" : "#1e8c4d",
+      cursor: "pointer",
+    }}
+  >
+    💬 채팅
+  </div>
+  <div
+    style={{
+      ...styles.ctaBtn,
+      background: hovered ? "#1a3a6e" : "#1e4d8c",
+    }}
+  >
+    상담 신청 →
+  </div>
+</div>
       </div>
     </div>
   );
