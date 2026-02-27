@@ -1,61 +1,45 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+// vs코드
+// 파일 위치: src/pages/member/FindIdPwPage.jsx
+// 설명: 아이디 찾기 및 비밀번호 재설정 화면 (스타일 오타 수정 완료)
 
-export default function FindIdPwPage() {
-  const [activeTab, setActiveTab] = useState('ID'); // 'ID' or 'PW'
-  const [form, setForm] = useState({ name: '', phone: '', loginId: '' });
-  const [resultMsg, setResultMsg] = useState('');
+import React, { useState } from "react";
+import { memberApi } from "../../api/memberApi.js";
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
-  const handleFindId = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post('http://localhost:8080/api/member/find-id', { name: form.name, phone: form.phone });
-      setResultMsg(`고객님의 아이디는 [ ${res.data.data.loginId} ] 입니다.`);
-    } catch (error) {
-      setResultMsg('입력하신 정보와 일치하는 계정을 찾을 수 없습니다.');
-    }
-  };
-
-  const handleFindPw = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post('http://localhost:8080/api/member/reset-pw', { loginId: form.loginId, phone: form.phone });
-      setResultMsg('등록된 연락처로 임시 비밀번호를 발송했습니다.');
-    } catch (error) {
-      setResultMsg('계정 정보를 찾을 수 없거나 SMS 발송에 실패했습니다.');
-    }
-  };
+const FindIdPwPage = () => {
+  const [tab, setTab] = useState("id"); // 'id' 또는 'pw'
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 bg-white shadow-md rounded-md">
-      <h2 className="text-2xl font-bold text-center mb-6">아이디/비밀번호 찾기</h2>
+    <div style={{ maxWidth: "400px", margin: "50px auto", padding: "20px" }}>
+      <h2 style={{ textAlign: "center" }}>{tab === "id" ? "아이디 찾기" : "비밀번호 찾기"}</h2>
       
-      <div className="flex mb-6 border-b">
-        <button onClick={() => { setActiveTab('ID'); setResultMsg(''); }} className={`flex-1 py-2 text-center font-semibold ${activeTab === 'ID' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'}`}>아이디 찾기</button>
-        <button onClick={() => { setActiveTab('PW'); setResultMsg(''); }} className={`flex-1 py-2 text-center font-semibold ${activeTab === 'PW' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'}`}>비밀번호 찾기</button>
+      <div style={{ display: "flex", marginBottom: "20px", borderBottom: "1px solid #ddd" }}>
+        <button 
+          onClick={() => setTab("id")} 
+          style={{ flex: 1, padding: "10px", background: "none", border: "none", borderBottom: tab === "id" ? "2px solid #007BFF" : "none", fontWeight: tab === "id" ? "bold" : "normal" }}
+        >
+          아이디 찾기
+        </button>
+        <button 
+          onClick={() => setTab("pw")} 
+          style={{ flex: 1, padding: "10px", background: "none", border: "none", borderBottom: tab === "pw" ? "20px solid #007BFF" : "none", fontWeight: tab === "pw" ? "bold" : "normal" }}
+        >
+          비밀번호 찾기
+        </button>
       </div>
 
-      {activeTab === 'ID' ? (
-        <form onSubmit={handleFindId} className="space-y-4">
-          <input type="text" name="name" placeholder="가입한 이름" className="w-full px-4 py-2 border rounded" required onChange={handleChange} />
-          <input type="tel" name="phone" placeholder="가입한 휴대전화번호" className="w-full px-4 py-2 border rounded" required onChange={handleChange} />
-          <button type="submit" className="w-full bg-gray-800 text-white py-2 rounded">아이디 찾기</button>
-        </form>
-      ) : (
-        <form onSubmit={handleFindPw} className="space-y-4">
-          <input type="text" name="loginId" placeholder="아이디" className="w-full px-4 py-2 border rounded" required onChange={handleChange} />
-          <input type="tel" name="phone" placeholder="가입한 휴대전화번호" className="w-full px-4 py-2 border rounded" required onChange={handleChange} />
-          <button type="submit" className="w-full bg-gray-800 text-white py-2 rounded">임시 비밀번호 발송</button>
-        </form>
-      )}
-
-      {resultMsg && (
-        <div className="mt-6 p-4 bg-gray-50 border border-gray-200 text-center rounded text-blue-700 font-medium">
-          {resultMsg}
-        </div>
-      )}
+      <div style={{ border: "1px solid #ddd", padding: "20px", borderRadius: "8px" }}>
+        <p style={{ fontSize: "14px", color: "#666", marginBottom: "15px" }}>
+          {tab === "id" ? "가입 시 등록한 이름과 전화번호를 입력해주세요." : "아이디와 전화번호를 입력해주세요."}
+        </p>
+        {/* box-sizing -> boxSizing으로 수정하여 에러를 해결했습니다. */}
+        <input type="text" placeholder={tab === "id" ? "이름" : "아이디"} style={{ width: "100%", padding: "10px", marginBottom: "10px", boxSizing: "border-box" }} />
+        <input type="text" placeholder="전화번호 (- 제외)" style={{ width: "100%", padding: "10px", marginBottom: "10px", boxSizing: "border-box" }} />
+        <button style={{ width: "100%", padding: "10px", backgroundColor: "#333", color: "#fff", border: "none", borderRadius: "4px" }}>
+          인증번호 발송
+        </button>
+      </div>
     </div>
   );
-}
+};
+
+export default FindIdPwPage;

@@ -1,56 +1,56 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+// vs코드
+// 파일 위치: src/pages/member/LawyerJoinFormPage.jsx
+// 설명: 전문(변호사) 회원가입 정보 입력 화면
 
-export default function LawyerJoinFormPage() {
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import JoinStepIndicator from "../../components/member/JoinStepIndicator.jsx";
+import { memberApi } from "../../api/memberApi.js";
+
+const LawyerJoinFormPage = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    loginId: '', password: '', passwordConfirm: '', name: '', phone: '', email: '',
-    licenseNo: '', specialty: '', officeName: '', officeAddr: ''
+  const [formData, setFormData] = useState({ 
+    loginId: "", password: "", name: "", phone: "", licenseNumber: "", officeName: "", specialty: "" 
   });
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (form.password !== form.passwordConfirm) return alert('비밀번호가 일치하지 않습니다.');
-    
     try {
-      // 일반 회원(TB_MEMBER) 정보 + 전문 회원(TB_LAWYER) 정보를 함께 전송
-      await axios.post('http://localhost:8080/api/member/lawyer/join', {
-        ...form, memberType: 'LAWYER', approveStatus: 'PENDING'
-      });
-      navigate('/member/lawyer/complete.do');
+      await memberApi.join({ ...formData, memberType: "LAWYER" });
+      navigate("/member/lawyer/complete.do");
     } catch (error) {
-      alert('전문회원 가입 신청에 실패했습니다.');
+      alert("회원가입 중 오류가 발생했습니다.");
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
-      <h2 className="text-2xl font-bold mb-6">전문회원(변호사) 정보 입력</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <h3 className="font-semibold border-b pb-2">기본 정보</h3>
-        <input type="text" name="loginId" placeholder="아이디" className="w-full px-4 py-2 border rounded-md" required onChange={handleChange} />
-        <input type="password" name="password" placeholder="비밀번호" className="w-full px-4 py-2 border rounded-md" required onChange={handleChange} />
-        <input type="password" name="passwordConfirm" placeholder="비밀번호 확인" className="w-full px-4 py-2 border rounded-md" required onChange={handleChange} />
-        <input type="text" name="name" placeholder="이름 (실명)" className="w-full px-4 py-2 border rounded-md" required onChange={handleChange} />
-        <input type="tel" name="phone" placeholder="휴대전화번호" className="w-full px-4 py-2 border rounded-md" required onChange={handleChange} />
+    <div style={{ maxWidth: "500px", margin: "50px auto", padding: "20px" }}>
+      <JoinStepIndicator currentStep={2} />
+      <h2 style={{ textAlign: "center", marginBottom: "30px" }}>전문회원 정보 입력</h2>
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+        <h4 style={{ margin: "0 0 -5px 0", color: "#666" }}>기본 정보</h4>
+        <input type="text" name="loginId" placeholder="아이디" onChange={handleChange} required style={inputStyle} />
+        <input type="password" name="password" placeholder="비밀번호" onChange={handleChange} required style={inputStyle} />
+        <input type="text" name="name" placeholder="변호사명 (실명)" onChange={handleChange} required style={inputStyle} />
+        <input type="text" name="phone" placeholder="연락처 (- 제외)" onChange={handleChange} required style={inputStyle} />
         
-        <h3 className="font-semibold border-b pb-2 mt-6">변호사 자격 정보</h3>
-        <input type="text" name="licenseNo" placeholder="변호사 자격번호 (예: 12345)" className="w-full px-4 py-2 border rounded-md" required onChange={handleChange} />
-        <input type="text" name="specialty" placeholder="주요 전문 분야 (예: 민사, 형사, 이혼)" className="w-full px-4 py-2 border rounded-md" required onChange={handleChange} />
-        <input type="text" name="officeName" placeholder="소속 사무소/법무법인명" className="w-full px-4 py-2 border rounded-md" required onChange={handleChange} />
-        <input type="text" name="officeAddr" placeholder="사무소 주소" className="w-full px-4 py-2 border rounded-md" required onChange={handleChange} />
-
-        <div className="bg-blue-50 text-blue-800 p-4 rounded-md text-sm mt-4">
-          안내: 가입 신청 후 관리자의 <strong>자격 승인 절차</strong>를 거친 뒤 서비스 이용이 가능합니다. (보통 1~2영업일 소요)
-        </div>
-
-        <button type="submit" className="w-full bg-blue-800 text-white py-3 rounded-md mt-6 font-bold hover:bg-blue-900">
+        <hr style={{ margin: "10px 0", borderTop: "1px dashed #ccc" }} />
+        
+        <h4 style={{ margin: "0 0 -5px 0", color: "#666" }}>전문가 정보</h4>
+        <input type="text" name="licenseNumber" placeholder="변호사 자격번호" onChange={handleChange} required style={inputStyle} />
+        <input type="text" name="officeName" placeholder="소속 법무법인 / 법률사무소명" onChange={handleChange} required style={inputStyle} />
+        <input type="text" name="specialty" placeholder="주요 전문 분야 (예: 형사, 이혼)" onChange={handleChange} required style={inputStyle} />
+        
+        <button type="submit" style={{ padding: "14px", backgroundColor: "#28a745", color: "#fff", border: "none", borderRadius: "4px", fontWeight: "bold", marginTop: "10px" }}>
           가입 신청하기
         </button>
       </form>
     </div>
   );
-}
+};
+
+const inputStyle = { padding: "12px", border: "1px solid #ccc", borderRadius: "4px" };
+
+export default LawyerJoinFormPage;

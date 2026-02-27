@@ -1,54 +1,31 @@
+// vs코드
+// 파일 위치: src/pages/member/MemberRoutes.jsx
+// 설명: 로그인, 일반/전문 회원가입, 아이디/비밀번호 찾기 관련 라우팅 모음
+
 import React from "react";
 import { Route } from "react-router-dom";
+import LoginPage from "./LoginPage";
+import FindIdPwPage from "./FindIdPwPage";
+import JoinTermsPage from "./JoinTermsPage";
+import JoinFormPage from "./JoinFormPage";
+import JoinCompletePage from "./JoinCompletePage";
+import LawyerJoinTermsPage from "./LawyerJoinTermsPage";
+import LawyerJoinFormPage from "./LawyerJoinFormPage";
+import LawyerJoinCompletePage from "./LawyerJoinCompletePage";
 
 const MemberRoutes = [
-  <Route key="mem-login" path="/member/login.do" element={<div>로그인</div>} />,
-  <Route
-    key="mem-join-t"
-    path="/member/join/terms.do"
-    element={<div>회원가입 약관</div>}
-  />,
-  <Route
-    key="mem-join-f"
-    path="/member/join/form.do"
-    element={<div>회원정보입력</div>}
-  />,
-  <Route
-    key="mem-join-c"
-    path="/member/join/complete.do"
-    element={<div>가입완료</div>}
-  />,
-  <Route
-    key="law-join-t"
-    path="/member/lawyer/terms.do"
-    element={<div>전문회원 약관</div>}
-  />,
-  <Route
-    key="law-join-f"
-    path="/member/lawyer/form.do"
-    element={<div>전문회원 정보입력</div>}
-  />,
-  <Route
-    key="law-join-c"
-    path="/member/lawyer/complete.do"
-    element={<div>전문회원 가입완료</div>}
-  />,
-  <Route
-    key="mem-find"
-    path="/member/find.do"
-    element={<div>ID/PW 찾기</div>}
-  />,
-  <Route key="my-edit" path="/mypage/edit.do" element={<div>정보수정</div>} />,
-  <Route
-    key="my-withdraw"
-    path="/mypage/withdraw.do"
-    element={<div>회원탈퇴</div>}
-  />,
-  <Route
-    key="noti-list"
-    path="/notification/list.do"
-    element={<div>알림 목록</div>}
-  />,
+  <Route key="mem-login" path="/member/login.do" element={<LoginPage />} />,
+  <Route key="mem-find" path="/member/find.do" element={<FindIdPwPage />} />,
+  
+  // 일반 회원가입
+  <Route key="mem-join-terms" path="/member/join/terms.do" element={<JoinTermsPage />} />,
+  <Route key="mem-join-form" path="/member/join/form.do" element={<JoinFormPage />} />,
+  <Route key="mem-join-comp" path="/member/join/complete.do" element={<JoinCompletePage />} />,
+  
+  // 전문(변호사) 회원가입
+  <Route key="law-join-terms" path="/member/lawyer/terms.do" element={<LawyerJoinTermsPage />} />,
+  <Route key="law-join-form" path="/member/lawyer/form.do" element={<LawyerJoinFormPage />} />,
+  <Route key="law-join-comp" path="/member/lawyer/complete.do" element={<LawyerJoinCompletePage />} />
 ];
 
 export default MemberRoutes;

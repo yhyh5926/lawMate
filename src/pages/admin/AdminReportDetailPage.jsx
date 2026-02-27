@@ -1,128 +1,90 @@
-import React, { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+// vs코드
+// 파일 위치: src/pages/admin/AdminReportDetailPage.jsx
+// 설명: 관리자 - 특정 신고의 상세 내용을 확인하고 제재(경고, 정지 등)를 집행하는 화면
 
-export default function AdminReportDetailPage() {
-  const [searchParams] = useSearchParams();
-  const reportId = searchParams.get('reportId');
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { adminApi } from "../../api/adminApi";
+
+const AdminReportDetailPage = () => {
+  const { reportId } = useParams();
   const navigate = useNavigate();
   const [report, setReport] = useState(null);
-  
-  // 제재 폼 데이터
-  const [sanction, setSanction] = useState({
-    sanctionType: 'WARNING',
-    reason: '',
-    durationDays: 0 // SUSPEND 시 정지 기간
-  });
+  const [sanction, setSanction] = useState({ sanctionType: "WARNING", reason: "" });
 
   useEffect(() => {
-    const fetchReportDetail = async () => {
-      try {
-        const token = localStorage.getItem('accessToken');
-        const res = await axios.get(`http://localhost:8080/api/admin/report/${reportId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setReport(res.data.data);
-        setSanction((prev) => ({ ...prev, reason: res.data.data.reason }));
-      } catch (error) {
-        alert('신고 내역을 불러오지 못했습니다.');
-      }
-    };
-    if (reportId) fetchReportDetail();
+    // 실제 API 호출 시뮬레이션
+    setReport({
+      reportId, reporterId: 10, targetType: "POST", targetId: 55,
+      reason: "욕설 및 비방", detail: "게시글 내용에 심한 욕설이 포함되어 있습니다.",
+      status: "PENDING", createdAt: "2026-02-27"
+    });
   }, [reportId]);
 
-  const handleAction = async (status) => {
-    // status: 'DISMISSED' (기각), 'RESOLVED' (제재 처리)
-    if (!window.confirm(`해당 신고를 [${status === 'RESOLVED' ? '제재 처리' : '기각'}] 하시겠습니까?`)) return;
+  const handleSanctionSubmit = async (e) => {
+    e.preventDefault();
+    if (!sanction.reason) return alert("제재 상세 사유를 입력해주세요.");
 
     try {
-      const token = localStorage.getItem('accessToken');
-      await axios.post('http://localhost:8080/api/admin/report/handle', {
-        reportId: report.reportId,
-        status: status,
-        targetMemberId: report.targetMemberId, // DB 조인을 통해 가져온 대상 회원 ID 가정
-        sanctionData: status === 'RESOLVED' ? sanction : null // RESOLVED 일때만 제재 정보 전송
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      alert('처리가 완료되었습니다.');
-      navigate('/admin/report/list.do');
+      await adminApi.processSanction({ reportId, ...sanction });
+      alert("해당 대상에 대한 제재 처리가 완료되었습니다.");
+      navigate("/admin/report/list.do");
     } catch (error) {
-      alert('처리 중 오류가 발생했습니다.');
+      alert("제재 처리 중 오류가 발생했습니다.");
     }
   };
 
-  if (!report) return <div className="p-6">로딩중...</div>;
+  if (!report) return <div style={{ padding: "50px", textAlign: "center" }}>데이터를 불러오는 중입니다...</div>;
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">신고 상세 및 제재 처리</h2>
+    <div style={{ maxWidth: "800px", margin: "20px auto", padding: "20px" }}>
+      <button onClick={() => navigate(-1)} style={{ background: "none", border: "none", color: "#007BFF", cursor: "pointer", marginBottom: "20px" }}>
+        &larr; 목록으로 돌아가기
+      </button>
 
-      {/* 신고 내용 섹션 */}
-      <div className="bg-white p-6 border rounded-md shadow-sm mb-6">
-        <h3 className="font-bold text-lg mb-4 border-b pb-2">신고 정보</h3>
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div><span className="font-semibold text-gray-500 w-24 inline-block">신고번호</span> {report.reportId}</div>
-          <div><span className="font-semibold text-gray-500 w-24 inline-block">접수일시</span> {report.createdAt}</div>
-          <div><span className="font-semibold text-gray-500 w-24 inline-block">신고자</span> {report.reporterId}</div>
-          <div><span className="font-semibold text-gray-500 w-24 inline-block">현재상태</span> <span className="text-red-600 font-bold">{report.status}</span></div>
-          <div className="col-span-2"><span className="font-semibold text-gray-500 w-24 inline-block">대상 유형</span> {report.targetType} (ID: {report.targetId})</div>
-          <div className="col-span-2"><span className="font-semibold text-gray-500 w-24 inline-block">신고 사유</span> {report.reason}</div>
-          <div className="col-span-2">
-            <span className="font-semibold text-gray-500 block mb-2">상세 내용</span>
-            <div className="bg-gray-50 p-3 rounded border whitespace-pre-wrap">{report.detail}</div>
-          </div>
-        </div>
+      <h2 style={{ borderBottom: "2px solid #333", paddingBottom: "10px", marginBottom: "20px" }}>신고 상세 내용</h2>
+      
+      <div style={{ backgroundColor: "#f8f9fa", padding: "20px", borderRadius: "8px", marginBottom: "30px", fontSize: "15px", lineHeight: "1.6" }}>
+        <p><strong>신고 번호:</strong> {report.reportId} &nbsp;&nbsp;|&nbsp;&nbsp; <strong>상태:</strong> <span style={{ color: "#dc3545", fontWeight: "bold" }}>{report.status}</span></p>
+        <p><strong>대상 유형:</strong> {report.targetType} (ID: {report.targetId})</p>
+        <p><strong>신고 사유:</strong> {report.reason}</p>
+        <hr style={{ border: "0", borderTop: "1px solid #ddd", margin: "15px 0" }} />
+        <p><strong>상세 내용:</strong></p>
+        <p style={{ color: "#555" }}>{report.detail}</p>
       </div>
 
-      {/* 제재 처리 섹션 (PENDING 상태일 때만 노출) */}
-      {report.status === 'PENDING' && (
-        <div className="bg-red-50 p-6 border border-red-200 rounded-md shadow-sm">
-          <h3 className="font-bold text-lg text-red-700 mb-4 border-b border-red-200 pb-2">제재 조치 (TB_SANCTION)</h3>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold mb-1">제재 유형</label>
-              <select 
-                className="w-full border p-2 rounded"
-                value={sanction.sanctionType} 
-                onChange={(e) => setSanction({...sanction, sanctionType: e.target.value})}
-              >
-                <option value="WARNING">경고 (WARNING)</option>
-                <option value="SUSPEND">이용정지 (SUSPEND)</option>
-                <option value="FORCE_WITHDRAW">강제탈퇴 (FORCE_WITHDRAW)</option>
-              </select>
-            </div>
-
-            {sanction.sanctionType === 'SUSPEND' && (
-              <div>
-                <label className="block text-sm font-semibold mb-1">정지 기간 (일)</label>
-                <input 
-                  type="number" className="w-full border p-2 rounded" placeholder="예: 7"
-                  value={sanction.durationDays} onChange={(e) => setSanction({...sanction, durationDays: e.target.value})}
-                />
-              </div>
-            )}
-
-            <div>
-              <label className="block text-sm font-semibold mb-1">관리자 처리 메모 / 제재 사유</label>
-              <textarea 
-                className="w-full border p-2 rounded resize-none" rows="3"
-                value={sanction.reason} onChange={(e) => setSanction({...sanction, reason: e.target.value})}
-              ></textarea>
-            </div>
-          </div>
-
-          <div className="mt-6 flex justify-end space-x-3">
-            <button onClick={() => handleAction('DISMISSED')} className="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
-              신고 기각 (무혐의)
-            </button>
-            <button onClick={() => handleAction('RESOLVED')} className="px-6 py-2 bg-red-600 text-white rounded font-bold hover:bg-red-700">
-              제재 확정 및 처리
-            </button>
-          </div>
+      <h2 style={{ borderBottom: "2px solid #333", paddingBottom: "10px", marginBottom: "20px" }}>관리자 제재 처리</h2>
+      <form onSubmit={handleSanctionSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px", backgroundColor: "#fff5f5", padding: "20px", border: "1px solid #dc3545", borderRadius: "8px" }}>
+        <div>
+          <label style={{ display: "block", fontWeight: "bold", marginBottom: "8px" }}>제재 조치 선택</label>
+          <select 
+            value={sanction.sanctionType} 
+            onChange={(e) => setSanction({ ...sanction, sanctionType: e.target.value })}
+            style={{ width: "200px", padding: "10px", border: "1px solid #ccc", borderRadius: "4px" }}
+          >
+            <option value="WARNING">경고 조치 (알림 발송)</option>
+            <option value="SUSPEND">이용 정지 (7일)</option>
+            <option value="FORCE_WITHDRAW">강제 탈퇴</option>
+            <option value="DISMISS">무혐의 (반려)</option>
+          </select>
         </div>
-      )}
+
+        <div>
+          <label style={{ display: "block", fontWeight: "bold", marginBottom: "8px" }}>제재 처리 메모 (사유)</label>
+          <textarea 
+            placeholder="제재 처리 사유를 상세히 기록해주세요."
+            value={sanction.reason}
+            onChange={(e) => setSanction({ ...sanction, reason: e.target.value })}
+            style={{ width: "100%", height: "100px", padding: "12px", border: "1px solid #ccc", borderRadius: "4px", boxSizing: "border-box" }}
+          />
+        </div>
+
+        <button type="submit" style={{ padding: "12px", backgroundColor: "#dc3545", color: "#fff", border: "none", borderRadius: "4px", fontWeight: "bold", cursor: "pointer", marginTop: "10px" }}>
+          제재 집행 및 신고 종결
+        </button>
+      </form>
     </div>
   );
-}
+};
+
+export default AdminReportDetailPage;

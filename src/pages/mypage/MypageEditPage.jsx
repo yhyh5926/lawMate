@@ -1,85 +1,69 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// vs코드
+// 파일 위치: src/pages/mypage/MypageEditPage.jsx
+// 설명: 마이페이지 - 회원 정보(이메일, 전화번호 등) 수정 화면
 
-export default function MypageEditPage() {
-  const [form, setForm] = useState({
-    password: '', passwordConfirm: '', email: '', phone: ''
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { memberApi } from "../../api/memberApi";
+import { useAuth } from "../../hooks/useAuth";
+
+const MypageEditPage = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [formData, setFormData] = useState({
+    email: "",
+    phone: "",
   });
-  const [notifySet, setNotifySet] = useState({ inappYn: 'Y', emailYn: 'Y', smsYn: 'N' });
 
-  useEffect(() => {
-    // 기존 정보 불러오기
-    const fetchMyInfo = async () => {
-      try {
-        const token = localStorage.getItem('accessToken');
-        const res = await axios.get('http://localhost:8080/api/mypage/info', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = res.data.data;
-        setForm({ ...form, email: data.email, phone: data.phone });
-        if (data.notifySetting) setNotifySet(data.notifySetting);
-      } catch (error) {
-        console.error('정보 로딩 실패');
-      }
-    };
-    fetchMyInfo();
-  }, []);
-
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-  const handleNotifyChange = (e) => setNotifySet({ ...notifySet, [e.target.name]: e.target.checked ? 'Y' : 'N' });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (form.password && form.password !== form.passwordConfirm) {
-      return alert('비밀번호가 일치하지 않습니다.');
-    }
-
     try {
-      const token = localStorage.getItem('accessToken');
-      await axios.put('http://localhost:8080/api/mypage/edit', { ...form, notifySetting: notifySet }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      alert('회원 정보가 성공적으로 수정되었습니다.');
+      // 실제로는 user의 식별자 등을 함께 보내거나 JWT 토큰 기반으로 백엔드에서 처리합니다.
+      await memberApi.editProfile(formData);
+      alert("회원 정보가 성공적으로 수정되었습니다.");
+      navigate("/main.do");
     } catch (error) {
-      alert('정보 수정에 실패했습니다.');
+      alert("정보 수정 중 오류가 발생했습니다.");
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
-      <h2 className="text-2xl font-bold mb-6">회원 정보 수정</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div style={{ maxWidth: "500px", margin: "50px auto", padding: "20px" }}>
+      <h2 style={{ textAlign: "center", marginBottom: "30px" }}>회원 정보 수정</h2>
+      <div style={{ marginBottom: "20px", padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "8px" }}>
+        <p style={{ margin: 0 }}><strong>아이디:</strong> {user?.loginId}</p>
+        <p style={{ margin: "5px 0 0 0" }}><strong>회원 유형:</strong> {user?.role === 'LAWYER' ? '전문회원' : '일반회원'}</p>
+      </div>
+
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+        <div>
+          <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "bold" }}>새로운 이메일</label>
+          <input 
+            type="email" name="email" placeholder="example@lawmate.com" 
+            value={formData.email} onChange={handleChange} 
+            style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "4px", boxSizing: "border-box" }} 
+          />
+        </div>
+        <div>
+          <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "bold" }}>새로운 휴대전화 번호</label>
+          <input 
+            type="text" name="phone" placeholder="- 없이 입력" 
+            value={formData.phone} onChange={handleChange} 
+            style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "4px", boxSizing: "border-box" }} 
+          />
+        </div>
         
-        <div className="border-b pb-4 mb-4">
-          <h3 className="text-lg font-semibold mb-3">기본 정보</h3>
-          <input type="password" name="password" placeholder="새 비밀번호 (변경시에만 입력)" className="w-full px-4 py-2 border rounded-md mb-2" value={form.password} onChange={handleChange} />
-          <input type="password" name="passwordConfirm" placeholder="새 비밀번호 확인" className="w-full px-4 py-2 border rounded-md mb-2" value={form.passwordConfirm} onChange={handleChange} />
-          <input type="tel" name="phone" placeholder="전화번호" className="w-full px-4 py-2 border rounded-md mb-2" value={form.phone} onChange={handleChange} required />
-          <input type="email" name="email" placeholder="이메일" className="w-full px-4 py-2 border rounded-md" value={form.email} onChange={handleChange} />
+        <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+          <button type="button" onClick={() => navigate(-1)} style={{ flex: 1, padding: "12px", border: "1px solid #ccc", background: "#fff", borderRadius: "4px", cursor: "pointer" }}>취소</button>
+          <button type="submit" style={{ flex: 1, padding: "12px", backgroundColor: "#007BFF", color: "#fff", border: "none", borderRadius: "4px", fontWeight: "bold", cursor: "pointer" }}>수정 완료</button>
         </div>
-
-        <div className="border-b pb-4 mb-4">
-          <h3 className="text-lg font-semibold mb-3">알림 수신 설정</h3>
-          <div className="flex space-x-6">
-            <label className="flex items-center space-x-2">
-              <input type="checkbox" name="inappYn" checked={notifySet.inappYn === 'Y'} onChange={handleNotifyChange} />
-              <span>앱/웹 푸시 알림</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input type="checkbox" name="emailYn" checked={notifySet.emailYn === 'Y'} onChange={handleNotifyChange} />
-              <span>이메일 알림</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input type="checkbox" name="smsYn" checked={notifySet.smsYn === 'Y'} onChange={handleNotifyChange} />
-              <span>SMS 알림</span>
-            </label>
-          </div>
-        </div>
-
-        <button type="submit" className="w-full bg-gray-800 text-white py-3 rounded-md mt-4 font-bold hover:bg-black">
-          저장하기
-        </button>
       </form>
     </div>
   );
-}
+};
+
+export default MypageEditPage;

@@ -1,75 +1,50 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// vs코드
+// 파일 위치: src/pages/member/JoinTermsPage.jsx
+// 설명: 일반 회원가입 약관 동의 화면
 
-export default function JoinTermsPage() {
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import JoinStepIndicator from "../../components/member/JoinStepIndicator.jsx";
+
+const JoinTermsPage = () => {
   const navigate = useNavigate();
-  const [terms, setTerms] = useState({
-    all: false,
-    service: false,
-    privacy: false,
-    marketing: false,
-  });
-
-  const handleAllCheck = (e) => {
-    const isChecked = e.target.checked;
-    setTerms({ all: isChecked, service: isChecked, privacy: isChecked, marketing: isChecked });
-  };
-
-  const handleSingleCheck = (e) => {
-    const { name, checked } = e.target;
-    const newTerms = { ...terms, [name]: checked };
-    newTerms.all = newTerms.service && newTerms.privacy && newTerms.marketing;
-    setTerms(newTerms);
-  };
+  const [agreed, setAgreed] = useState(false);
 
   const handleNext = () => {
-    if (!terms.service || !terms.privacy) {
-      alert('필수 약관에 모두 동의해주세요.');
-      return;
-    }
-    // 마케팅 동의 여부를 state나 localStorage로 넘겨줄 수 있습니다.
-    navigate('/member/join/form.do', { state: { marketing: terms.marketing } });
+    if (!agreed) return alert("필수 약관에 동의해주세요.");
+    navigate("/member/join/form.do");
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">회원가입 약관 동의</h2>
+    <div style={{ maxWidth: "600px", margin: "50px auto", padding: "20px" }}>
+      <JoinStepIndicator currentStep={1} />
+      <h2 style={{ textAlign: "center", marginBottom: "30px" }}>일반회원 약관 동의</h2>
       
-      <div className="border p-4 rounded-md mb-6 bg-gray-50">
-        <label className="flex items-center font-bold text-lg cursor-pointer">
-          <input type="checkbox" className="w-5 h-5 mr-3" checked={terms.all} onChange={handleAllCheck} />
-          전체 약관에 동의합니다.
-        </label>
+      <div style={{ border: "1px solid #ddd", padding: "15px", height: "150px", overflowY: "scroll", marginBottom: "10px", backgroundColor: "#f9f9f9", fontSize: "14px" }}>
+        <strong>제 1 조 (목적)</strong><br />
+        이 약관은 LawMate(이하 "회사")가 제공하는 서비스의 이용과 관련하여 회사와 회원과의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다.
+        <br /><br />
+        <strong>제 2 조 (개인정보 수집)</strong><br />
+        회사는 원활한 서비스 제공을 위해 최소한의 개인정보를 수집하고 있습니다.
       </div>
-
-      <div className="space-y-4 mb-8">
-        <div>
-          <label className="flex items-center cursor-pointer mb-2">
-            <input type="checkbox" name="service" className="w-5 h-5 mr-3" checked={terms.service} onChange={handleSingleCheck} />
-            <span className="font-semibold">[필수] 서비스 이용약관 동의</span>
-          </label>
-          <div className="h-24 overflow-y-scroll text-sm text-gray-600 border p-3 rounded bg-gray-50">
-            제1조 (목적) 본 약관은 LawMate가 제공하는 법률 분쟁해결 플랫폼 서비스의 이용과 관련하여...
-          </div>
-        </div>
-
-        <div>
-          <label className="flex items-center cursor-pointer mb-2">
-            <input type="checkbox" name="privacy" className="w-5 h-5 mr-3" checked={terms.privacy} onChange={handleSingleCheck} />
-            <span className="font-semibold">[필수] 개인정보 수집 및 이용 동의</span>
-          </label>
-          <div className="h-24 overflow-y-scroll text-sm text-gray-600 border p-3 rounded bg-gray-50">
-            LawMate는 서비스 제공을 위해 아래와 같이 개인정보를 수집 및 이용합니다...
-          </div>
-        </div>
+      
+      <label style={{ display: "block", marginBottom: "30px", fontSize: "15px", cursor: "pointer" }}>
+        <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} style={{ marginRight: "10px" }} />
+        (필수) 서비스 이용약관 및 개인정보 처리방침에 동의합니다.
+      </label>
+      
+      <div style={{ display: "flex", gap: "10px" }}>
+        <button onClick={() => navigate(-1)} style={{ flex: 1, padding: "12px", border: "1px solid #ccc", background: "#fff", borderRadius: "4px" }}>취소</button>
+        <button onClick={handleNext} style={{ flex: 1, padding: "12px", backgroundColor: "#007BFF", color: "#fff", border: "none", borderRadius: "4px" }}>다음</button>
       </div>
-
-      <button 
-        onClick={handleNext} 
-        className={`w-full py-3 rounded-md font-bold text-white transition-colors ${terms.service && terms.privacy ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'}`}
-      >
-        다음 단계
-      </button>
+      
+      <div style={{ marginTop: "30px", textAlign: "center" }}>
+        <Link to="/member/lawyer/terms.do" style={{ color: "#28a745", fontWeight: "bold", textDecoration: "none" }}>
+          👨‍⚖️ 변호사이신가요? 전문회원 가입하기
+        </Link>
+      </div>
     </div>
   );
-}
+};
+
+export default JoinTermsPage;

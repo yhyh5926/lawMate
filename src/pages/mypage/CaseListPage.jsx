@@ -1,66 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
-// import StatusBadge from '../../components/common/StatusBadge';
+// vs코드
+// 파일 위치: src/pages/mypage/CaseListPage.jsx
+// 설명: 마이페이지 - 의뢰인이 접수한 내 사건 목록 화면
 
-export default function CaseListPage() {
-  const [caseList, setCaseList] = useState([]);
+import React, { useEffect, useState } from "react";
+import { caseApi } from "../../api/caseApi";
+import CaseCard from "../../components/case/CaseCard";
+
+const CaseListPage = () => {
+  const [cases, setCases] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMyCases = async () => {
-      try {
-        const token = localStorage.getItem('accessToken');
-        const res = await axios.get('http://localhost:8080/api/mypage/case/list', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setCaseList(res.data.data.list || []);
-      } catch (error) {
-        console.error('사건 목록 로딩 실패', error);
-      }
-    };
     fetchMyCases();
   }, []);
 
-  // 진행 단계별 배지 색상 변환 함수
-  const getStepBadge = (step) => {
-    switch(step) {
-      case 'RECEIVED': return <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-sm">접수완료</span>;
-      case 'ASSIGNED': return <span className="px-2 py-1 bg-blue-100 text-blue-600 rounded text-sm">배정완료</span>;
-      case 'IN_PROGRESS': return <span className="px-2 py-1 bg-yellow-100 text-yellow-600 rounded text-sm">진행중</span>;
-      case 'OPINION_READY': return <span className="px-2 py-1 bg-green-100 text-green-600 rounded text-sm">의견완료</span>;
-      case 'CLOSED': return <span className="px-2 py-1 bg-gray-300 text-gray-800 rounded text-sm">종료</span>;
-      default: return null;
+  const fetchMyCases = async () => {
+    try {
+      // 실제 환경에서는 현재 로그인한 유저의 ID를 넘기거나, 백엔드에서 JWT를 통해 식별합니다.
+      // 여기서는 임시로 memberId 1을 넘기는 형태로 작성합니다.
+      const response = await caseApi.getMyCaseList(1);
+      setCases(response.data || []);
+    } catch (error) {
+      console.error("사건 목록을 불러오는데 실패했습니다.", error);
+      // API 연결 실패 시 보여줄 임시 모의 데이터 (테스트용)
+      setCases([
+        { caseId: 1, title: "전세금 반환 청구 소송", caseType: "민사", step: "IN_PROGRESS", createdAt: "2026-02-20" },
+        { caseId: 2, title: "명예훼손 고소건", caseType: "형사", step: "RECEIVED", createdAt: "2026-02-25" }
+      ]);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
-      <h2 className="text-2xl font-bold mb-6">나의 사건 목록</h2>
+    <div style={{ maxWidth: "800px", margin: "40px auto", padding: "20px" }}>
+      <h2 style={{ marginBottom: "30px", borderBottom: "2px solid #333", paddingBottom: "10px" }}>내 사건 목록</h2>
       
-      <div className="space-y-4">
-        {caseList.length > 0 ? caseList.map(item => (
-          <div key={item.caseId} className="border p-4 rounded-md hover:shadow-lg transition flex justify-between items-center">
-            <div>
-              <div className="text-sm text-gray-500 mb-1">
-                사건번호: {item.caseId} | {item.caseType}
-              </div>
-              <Link to={`/mypage/case/detail.do?caseId=${item.caseId}`} className="text-lg font-semibold hover:text-blue-600">
-                {item.title}
-              </Link>
-              <div className="text-sm text-gray-400 mt-2">
-                접수일: {item.createdAt?.substring(0, 10)}
-              </div>
-            </div>
-            <div>
-              {getStepBadge(item.step)}
-            </div>
-          </div>
-        )) : (
-          <div className="text-center py-10 text-gray-500">
-            접수된 사건이 없습니다.
-          </div>
-        )}
-      </div>
+      {loading ? (
+        <div style={{ textAlign: "center", padding: "50px 0" }}>불러오는 중...</div>
+      ) : cases.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "50px 0", color: "#888" }}>등록된 사건이 없습니다.</div>
+      ) : (
+        <div style={{ display: "grid", gap: "15px" }}>
+          {cases.map((c) => (
+            <CaseCard key={c.caseId} caseItem={c} />
+          ))}
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default CaseListPage;

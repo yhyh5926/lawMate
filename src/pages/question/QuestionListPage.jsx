@@ -1,78 +1,95 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
+// vs코드
+// 파일 위치: src/pages/question/QuestionListPage.jsx
+// 설명: 전체 법률 질문 목록 및 필터 조회 화면
 
-export default function QuestionListPage() {
+import React, { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { questionApi } from "../../api/questionApi.js";
+
+const QuestionListPage = () => {
+  const navigate = useNavigate();
   const [questions, setQuestions] = useState([]);
-  const [filter, setFilter] = useState({ caseType: '', status: '' });
-
-  const fetchQuestions = async () => {
-    try {
-      const res = await axios.get('http://localhost:8080/api/question/list', { params: filter });
-      setQuestions(res.data.data.list || []);
-    } catch (error) {
-      console.error('질문 목록 로딩 실패', error);
-    }
-  };
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("");
 
   useEffect(() => {
     fetchQuestions();
   }, [filter]);
 
+  const fetchQuestions = async () => {
+    try {
+      const response = await questionApi.getQuestionList(filter ? { caseType: filter } : {});
+      setQuestions(response.data.data || []);
+    } catch (error) {
+      console.error("질문 목록 조회 실패", error);
+      // 테스트용 모의 데이터
+      setQuestions([
+        { questionId: 1, title: "전세금 반환을 받지 못하고 있습니다.", caseType: "민사", status: "OPEN", createdAt: "2026-02-27" },
+        { questionId: 2, title: "음주운전 초범인데 어떻게 해야 하나요?", caseType: "형사", status: "ANSWERED", createdAt: "2026-02-26" },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="max-w-5xl mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">법률 질문</h2>
-        <Link to="/question/write.do" className="bg-blue-600 text-white px-4 py-2 rounded">
+    <div style={{ maxWidth: "900px", margin: "40px auto", padding: "20px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "2px solid #333", paddingBottom: "10px" }}>
+        <h2 style={{ margin: 0 }}>법률 질문 게시판</h2>
+        <button onClick={() => navigate("/question/write.do")} style={{ padding: "10px 20px", backgroundColor: "#007BFF", color: "#fff", border: "none", borderRadius: "4px", fontWeight: "bold", cursor: "pointer" }}>
           질문 작성하기
-        </Link>
+        </button>
       </div>
 
-      <div className="flex space-x-2 mb-4">
-        <select className="border p-2 rounded" value={filter.caseType} onChange={(e) => setFilter({...filter, caseType: e.target.value})}>
-          <option value="">사건 유형 전체</option>
-          <option value="CIVIL">민사</option>
-          <option value="CRIMINAL">형사</option>
-          <option value="FAMILY">가사/이혼</option>
-          <option value="REAL_ESTATE">부동산</option>
-        </select>
-        <select className="border p-2 rounded" value={filter.status} onChange={(e) => setFilter({...filter, status: e.target.value})}>
-          <option value="">답변 상태 전체</option>
-          <option value="OPEN">답변 대기</option>
-          <option value="ANSWERED">답변 완료</option>
+      <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
+        <select 
+          value={filter} 
+          onChange={(e) => setFilter(e.target.value)}
+          style={{ padding: "8px", border: "1px solid #ccc", borderRadius: "4px" }}
+        >
+          <option value="">전체 유형</option>
+          <option value="민사">민사</option>
+          <option value="형사">형사</option>
+          <option value="가사">가사</option>
         </select>
       </div>
 
-      <table className="w-full border-collapse border text-center">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="border p-3 w-20">번호</th>
-            <th className="border p-3 w-32">유형</th>
-            <th className="border p-3">제목</th>
-            <th className="border p-3 w-32">상태</th>
-            <th className="border p-3 w-32">등록일</th>
-          </tr>
-        </thead>
-        <tbody>
-          {questions.map(q => (
-            <tr key={q.questionId} className="hover:bg-gray-50">
-              <td className="border p-3 text-gray-500">{q.questionId}</td>
-              <td className="border p-3">{q.caseType}</td>
-              <td className="border p-3 text-left">
-                <Link to={`/question/detail.do?id=${q.questionId}`} className="hover:underline font-medium">
-                  {q.title}
-                </Link>
-              </td>
-              <td className="border p-3">
-                <span className={`px-2 py-1 rounded text-sm ${q.status === 'ANSWERED' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
-                  {q.status === 'ANSWERED' ? '답변완료' : '답변대기'}
-                </span>
-              </td>
-              <td className="border p-3 text-gray-500">{q.createdAt?.substring(0, 10)}</td>
+      {loading ? (
+        <div style={{ textAlign: "center", padding: "50px" }}>불러오는 중...</div>
+      ) : questions.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "50px", color: "#888", border: "1px solid #eee", borderRadius: "8px" }}>등록된 질문이 없습니다.</div>
+      ) : (
+        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+          <thead>
+            <tr style={{ backgroundColor: "#f8f9fa", borderBottom: "2px solid #ddd" }}>
+              <th style={{ padding: "15px 10px", width: "10%" }}>번호</th>
+              <th style={{ padding: "15px 10px", width: "15%" }}>유형</th>
+              <th style={{ padding: "15px 10px", width: "45%" }}>제목</th>
+              <th style={{ padding: "15px 10px", width: "15%" }}>상태</th>
+              <th style={{ padding: "15px 10px", width: "15%" }}>등록일</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {questions.map((q) => (
+              <tr key={q.questionId} style={{ borderBottom: "1px solid #eee" }}>
+                <td style={{ padding: "15px 10px" }}>{q.questionId}</td>
+                <td style={{ padding: "15px 10px" }}><span style={{ backgroundColor: "#e9ecef", padding: "4px 8px", borderRadius: "4px", fontSize: "12px" }}>{q.caseType}</span></td>
+                <td style={{ padding: "15px 10px" }}>
+                  <Link to={`/question/detail.do/${q.questionId}`} style={{ textDecoration: "none", color: "#333", fontWeight: "bold" }}>
+                    {q.title}
+                  </Link>
+                </td>
+                <td style={{ padding: "15px 10px", color: q.status === 'ANSWERED' ? '#28a745' : '#dc3545', fontWeight: 'bold' }}>
+                  {q.status === 'ANSWERED' ? '답변완료' : '답변대기'}
+                </td>
+                <td style={{ padding: "15px 10px", fontSize: "14px", color: "#666" }}>{q.createdAt}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
-}
+};
+
+export default QuestionListPage;

@@ -1,78 +1,96 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-// import FileUpload from '../../components/common/FileUpload';
+// vs코드
+// 파일 위치: src/pages/question/QuestionWritePage.jsx
+// 설명: 법률 질문 등록 화면
 
-export default function QuestionWritePage() {
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { questionApi } from "../../api/questionApi.js";
+import { useAuth } from "../../hooks/useAuth.js";
+
+const QuestionWritePage = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ title: '', caseType: '', content: '' });
-  const [file, setFile] = useState(null);
+  const { user } = useAuth();
+  const [formData, setFormData] = useState({
+    title: "",
+    caseType: "민사", // 기본값
+    content: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // FormData를 사용하여 파일과 함께 전송
-    const formData = new FormData();
-    formData.append('title', form.title);
-    formData.append('caseType', form.caseType);
-    formData.append('content', form.content);
-    if (file) formData.append('file', file);
+    if (!formData.title || !formData.content) {
+      alert("제목과 내용을 모두 입력해주세요.");
+      return;
+    }
 
     try {
-      // API 분리 시 questionApi.js 사용 권장
-      const token = localStorage.getItem('accessToken');
-      await axios.post('http://localhost:8080/api/question/write', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}`
-        }
+      // 실제 구현 시 파일 첨부 로직 등도 함께 처리할 수 있습니다.
+      await questionApi.writeQuestion({
+        ...formData,
+        memberId: user?.loginId // 실제 DB의 member PK를 넘기도록 수정 필요
       });
-      alert('질문이 등록되었습니다.');
-      navigate('/question/list.do');
-    } catch (e) {
-      alert('질문 등록 실패');
+      alert("질문이 성공적으로 등록되었습니다.");
+      navigate("/question/list.do");
+    } catch (error) {
+      alert("질문 등록 중 오류가 발생했습니다.");
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
-      <h2 className="text-2xl font-bold mb-6">법률 질문 작성</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex space-x-4">
+    <div style={{ maxWidth: "800px", margin: "40px auto", padding: "20px" }}>
+      <h2 style={{ borderBottom: "2px solid #333", paddingBottom: "10px", marginBottom: "30px" }}>법률 질문 작성</h2>
+      
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <div>
+          <label style={{ display: "block", fontWeight: "bold", marginBottom: "8px" }}>사건 유형</label>
           <select 
-            name="caseType" required
-            className="w-1/4 px-4 py-2 border rounded-md"
-            value={form.caseType} onChange={(e) => setForm({...form, caseType: e.target.value})}
+            name="caseType" 
+            value={formData.caseType} 
+            onChange={handleChange}
+            style={{ width: "200px", padding: "10px", border: "1px solid #ccc", borderRadius: "4px" }}
           >
-            <option value="">사건 유형 선택</option>
-            <option value="CIVIL">민사</option>
-            <option value="CRIMINAL">형사</option>
-            <option value="FAMILY">가사/이혼</option>
-            <option value="REAL_ESTATE">부동산</option>
+            <option value="민사">민사</option>
+            <option value="형사">형사</option>
+            <option value="가사">가사</option>
+            <option value="행정">행정</option>
+            <option value="기타">기타</option>
           </select>
+        </div>
+
+        <div>
+          <label style={{ display: "block", fontWeight: "bold", marginBottom: "8px" }}>제목</label>
           <input 
-            type="text" name="title" placeholder="제목을 입력하세요" required
-            className="flex-1 px-4 py-2 border rounded-md"
-            value={form.title} onChange={(e) => setForm({...form, title: e.target.value})} 
+            type="text" 
+            name="title" 
+            placeholder="질문 제목을 입력해주세요" 
+            value={formData.title} 
+            onChange={handleChange}
+            style={{ width: "100%", padding: "12px", border: "1px solid #ccc", borderRadius: "4px", boxSizing: "border-box" }} 
           />
         </div>
-        
-        <textarea 
-          name="content" rows="10" required
-          placeholder="구체적인 상황을 작성해주세요. 개인정보가 포함되지 않도록 주의해주세요."
-          className="w-full px-4 py-2 border rounded-md resize-none"
-          value={form.content} onChange={(e) => setForm({...form, content: e.target.value})}
-        />
 
-        <div className="border p-4 rounded-md bg-gray-50">
-          <p className="text-sm text-gray-600 mb-2">첨부파일 (옵션)</p>
-          <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+        <div>
+          <label style={{ display: "block", fontWeight: "bold", marginBottom: "8px" }}>상세 내용</label>
+          <textarea 
+            name="content" 
+            placeholder="구체적인 상황을 설명해주시면 더욱 정확한 답변을 받을 수 있습니다." 
+            value={formData.content} 
+            onChange={handleChange}
+            style={{ width: "100%", height: "300px", padding: "12px", border: "1px solid #ccc", borderRadius: "4px", boxSizing: "border-box", resize: "vertical" }} 
+          />
         </div>
 
-        <div className="flex justify-end space-x-2">
-          <button type="button" onClick={() => navigate(-1)} className="px-6 py-2 border rounded-md">취소</button>
-          <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-md">등록</button>
+        <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+          <button type="button" onClick={() => navigate(-1)} style={{ padding: "12px 24px", backgroundColor: "#6c757d", color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer" }}>취소</button>
+          <button type="submit" style={{ padding: "12px 24px", backgroundColor: "#007BFF", color: "#fff", border: "none", borderRadius: "4px", fontWeight: "bold", cursor: "pointer" }}>등록하기</button>
         </div>
       </form>
     </div>
   );
-}
+};
+
+export default QuestionWritePage;

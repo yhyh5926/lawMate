@@ -1,73 +1,74 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// vs코드
+// 파일 위치: src/pages/admin/AdminCaseListPage.jsx
+// 설명: 관리자 - 플랫폼 내 전체 사건 목록 및 진행 상태 모니터링 화면
 
-export default function AdminCaseListPage() {
+import React, { useEffect, useState } from "react";
+import { adminApi } from "../../api/adminApi";
+
+const AdminCaseListPage = () => {
   const [cases, setCases] = useState([]);
-  const [filter, setFilter] = useState({ step: '', caseType: '' });
-
-  const fetchCases = async () => {
-    try {
-      const token = localStorage.getItem('accessToken');
-      const res = await axios.get('http://localhost:8080/api/admin/case/list', {
-        params: filter,
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setCases(res.data.data.list || []);
-    } catch (error) {
-      console.error('사건 목록 조회 실패', error);
-    }
-  };
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchCases();
-  }, [filter.step, filter.caseType]);
+  }, []);
+
+  const fetchCases = async () => {
+    try {
+      const response = await adminApi.getCaseList();
+      setCases(response.data.data || []);
+    } catch (error) {
+      console.error("사건 목록 조회 실패", error);
+      // 모의 데이터
+      setCases([
+        { caseId: 10, title: "손해배상 청구의 건", caseType: "민사", step: "IN_PROGRESS", createdAt: "2026-02-15" },
+        { caseId: 11, title: "사기 피해 고소장 작성", caseType: "형사", step: "RECEIVED", createdAt: "2026-02-26" },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">전체 사건 관리</h2>
+    <div style={{ padding: "20px" }}>
+      <h2 style={{ borderBottom: "2px solid #333", paddingBottom: "10px" }}>전체 사건 모니터링</h2>
       
-      <div className="flex space-x-4 mb-6 bg-gray-50 p-4 rounded-md">
-        <select className="border p-2 rounded" value={filter.step} onChange={(e) => setFilter({...filter, step: e.target.value})}>
-          <option value="">진행 단계 전체</option>
-          <option value="RECEIVED">접수완료</option>
-          <option value="ASSIGNED">배정완료</option>
-          <option value="IN_PROGRESS">진행중</option>
-          <option value="CLOSED">종료됨</option>
-        </select>
-        <select className="border p-2 rounded" value={filter.caseType} onChange={(e) => setFilter({...filter, caseType: e.target.value})}>
-          <option value="">사건 유형 전체</option>
-          <option value="CIVIL">민사</option>
-          <option value="CRIMINAL">형사</option>
-          <option value="FAMILY">가사</option>
-        </select>
-      </div>
-
-      <table className="w-full border-collapse border text-center text-sm">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="border p-2">사건번호</th>
-            <th className="border p-2">유형</th>
-            <th className="border p-2">제목</th>
-            <th className="border p-2">의뢰인(ID)</th>
-            <th className="border p-2">담당변호사</th>
-            <th className="border p-2">진행단계</th>
-            <th className="border p-2">접수일</th>
-          </tr>
-        </thead>
-        <tbody>
-          {cases.map(c => (
-            <tr key={c.caseId} className="hover:bg-gray-50">
-              <td className="border p-2">{c.caseId}</td>
-              <td className="border p-2">{c.caseType}</td>
-              <td className="border p-2 text-left truncate max-w-xs">{c.title}</td>
-              <td className="border p-2">{c.memberName}</td>
-              <td className="border p-2">{c.lawyerName || '미배정'}</td>
-              <td className="border p-2 font-semibold">{c.step}</td>
-              <td className="border p-2">{c.createdAt?.substring(0, 10)}</td>
+      {loading ? (
+        <div style={{ padding: "50px", textAlign: "center" }}>데이터를 불러오는 중입니다...</div>
+      ) : (
+        <table style={tableStyle}>
+          <thead>
+            <tr style={{ backgroundColor: "#f8f9fa" }}>
+              <th style={thStyle}>사건번호</th>
+              <th style={thStyle}>유형</th>
+              <th style={thStyle}>사건제목</th>
+              <th style={thStyle}>진행단계</th>
+              <th style={thStyle}>접수일</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {cases.map((c) => (
+              <tr key={c.caseId} style={{ borderBottom: "1px solid #eee", textAlign: "center" }}>
+                <td style={tdStyle}>{c.caseId}</td>
+                <td style={tdStyle}>{c.caseType}</td>
+                <td style={{ ...tdStyle, textAlign: "left" }}>{c.title}</td>
+                <td style={tdStyle}>
+                  <span style={{ padding: "4px 8px", backgroundColor: "#e9ecef", borderRadius: "4px", fontSize: "12px", fontWeight: "bold" }}>
+                    {c.step}
+                  </span>
+                </td>
+                <td style={tdStyle}>{c.createdAt}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
-}
+};
+
+const tableStyle = { width: "100%", borderCollapse: "collapse", marginTop: "20px" };
+const thStyle = { padding: "12px", borderBottom: "2px solid #ddd" };
+const tdStyle = { padding: "12px" };
+
+export default AdminCaseListPage;

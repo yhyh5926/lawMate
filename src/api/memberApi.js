@@ -1,36 +1,25 @@
-import axios from 'axios';
+// vs코드
+// 파일 위치: src/api/memberApi.js
+// 설명: 회원가입, 로그인, 마이페이지 정보수정 및 탈퇴 등 회원 인증 도메인 API 호출
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api',
-  headers: { 'Content-Type': 'application/json' },
-});
-
-// 인터셉터로 토큰 자동 추가
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+import axiosInstance from "./axiosInstance";
 
 export const memberApi = {
-  // 로그인
-  login: (loginId, password) => api.post('/member/login', { loginId, password }),
-  
   // 아이디 중복 확인
-  checkId: (loginId) => api.get(`/member/check-id?loginId=${loginId}`),
+  checkId: (loginId) => axiosInstance.get(`/member/check-id.do?loginId=${loginId}`),
   
-  // 개인회원 가입 (TB_MEMBER)
-  join: (data) => api.post('/member/join', data),
+  // 일반/전문 회원가입 (데이터 내 memberType으로 구분)
+  join: (data) => axiosInstance.post("/member/join/form.do", data),
   
-  // 전문회원 가입 (TB_MEMBER + TB_LAWYER)
-  joinLawyer: (data) => api.post('/member/lawyer/join', data),
+  // 로그인
+  login: (data) => axiosInstance.post("/member/login.do", data),
   
-  // 내 정보 조회
-  getMyInfo: () => api.get('/member/mypage/info'),
+  // 아이디/비밀번호 찾기
+  findIdPw: (data) => axiosInstance.post("/member/find.do", data),
   
-  // 정보 수정 (비밀번호, 이메일, 전화번호, 알림설정)
-  updateInfo: (data) => api.put('/member/mypage/edit', data),
+  // 회원 정보 수정
+  editProfile: (data) => axiosInstance.put("/mypage/edit.do", data),
   
-  // 회원 탈퇴 (TB_MEMBER STATUS -> WITHDRAWN)
-  withdraw: () => api.post('/member/mypage/withdraw')
+  // 회원 탈퇴
+  withdraw: () => axiosInstance.delete("/mypage/withdraw.do"),
 };
