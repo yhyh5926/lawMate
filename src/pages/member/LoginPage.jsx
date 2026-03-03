@@ -48,17 +48,17 @@ const LoginContent = () => {
         };
 
         const response = await memberApi.socialLogin(googleData);
-        
-        // 💡 가입 정보가 없어 응답에 토큰이 없는 경우 알림창 띄우기
-        if (!response.data || !response.data.token) {
-          alert("가입된 정보가 없습니다. 회원가입을 먼저 진행해주세요.");
-          return;
+        if (response.data.token) {
+          login(response.data.token, response.data.member);
+          navigate("/main.do");
         }
-
-        login(response.data.token, response.data.member);
-        navigate("/main.do");
       } catch (err) {
-        alert("구글 로그인 처리 중 오류가 발생했습니다.");
+        // 💡 수정 사항: 404 에러 시 가입 유도 메시지
+        if (err.response?.status === 404) {
+          alert("가입된 정보가 없습니다. 회원가입을 먼저 진행해주세요.");
+        } else {
+          alert("구글 로그인 처리 중 오류가 발생했습니다.");
+        }
       }
     },
     onError: () => alert("구글 로그인에 실패했습니다."),
@@ -66,7 +66,7 @@ const LoginContent = () => {
 
   const handleSocialClick = (platform) => {
     if (platform === "kakao" || platform === "naver") {
-      alert("구글로 해주세요"); // 💡 요청하신 안내 문구
+      alert("구글로 해주세요");
       return;
     }
     if (platform === "google") {
@@ -77,12 +77,7 @@ const LoginContent = () => {
   return (
     <div style={{ maxWidth: "400px", margin: "80px auto", padding: "30px", background: "#fff", borderRadius: "12px", boxShadow: "0 10px 30px rgba(0,0,0,0.1)" }}>
       <h2 style={{ textAlign: "center", marginBottom: "30px", fontWeight: "bold", fontSize: "24px" }}>로그인</h2>
-      
-      {error && (
-        <div style={{ color: "#dc3545", backgroundColor: "#f8d7da", padding: "12px", borderRadius: "6px", marginBottom: "20px", fontSize: "14px", textAlign: "center" }}>
-          {error}
-        </div>
-      )}
+      {error && <div style={{ color: "#dc3545", backgroundColor: "#f8d7da", padding: "12px", borderRadius: "6px", marginBottom: "20px", fontSize: "14px", textAlign: "center" }}>{error}</div>}
       
       <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
         <input type="text" name="loginId" placeholder="아이디" value={formData.loginId} onChange={handleChange} required style={inputStyle} />
@@ -92,15 +87,12 @@ const LoginContent = () => {
 
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px", fontSize: "14px" }}>
         <Link to="/member/find.do" style={{ color: "#666", textDecoration: "none" }}>아이디/비밀번호 찾기</Link>
-        {/* 💡 가입 유형 선택 페이지(/member/join/type.do)로 연결되도록 수정 */}
         <Link to="/member/join/type.do" style={{ color: "#007BFF", textDecoration: "none", fontWeight: "bold" }}>회원가입</Link>
       </div>
       
       <div style={{ position: "relative", margin: "40px 0 20px", textAlign: "center" }}>
         <hr style={{ border: "0", borderTop: "1px solid #eee" }} />
-        <span style={{ position: "absolute", top: "-10px", left: "50%", transform: "translateX(-50%)", background: "#fff", padding: "0 15px", color: "#999", fontSize: "12px" }}>
-          또는 간편 로그인
-        </span>
+        <span style={{ position: "absolute", top: "-10px", left: "50%", transform: "translateX(-50%)", background: "#fff", padding: "0 15px", color: "#999", fontSize: "12px" }}>또는 간편 로그인</span>
       </div>
       
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -112,12 +104,7 @@ const LoginContent = () => {
   );
 };
 
-const LoginPage = () => (
-  <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-    <LoginContent />
-  </GoogleOAuthProvider>
-);
-
+const LoginPage = () => (<GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}><LoginContent /></GoogleOAuthProvider>);
 const inputStyle = { padding: "14px", border: "1px solid #ddd", borderRadius: "8px", fontSize: "15px", outline: "none" };
 const loginBtnStyle = { padding: "14px", backgroundColor: "#007BFF", color: "#fff", border: "none", borderRadius: "8px", fontWeight: "bold", fontSize: "16px", cursor: "pointer" };
 const socialBtnStyle = { padding: "12px", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "bold", fontSize: "14px", transition: "0.2s" };
