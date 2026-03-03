@@ -17,7 +17,7 @@ export const useChat = (roomNo) => {
     try {
       setLoading(true);
       const res = await getChatMessages(roomNo);
-      setMessages(res.data.data.content || []);
+      setMessages(res.data.data || []);
     } catch (e) {
       console.error('메시지 로드 실패', e);
     } finally {
@@ -32,7 +32,8 @@ export const useChat = (roomNo) => {
     loadMessages();
     markMessagesRead(roomNo).catch(() => {});
 
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem('token');
+    console.log('=== STOMP 연결 토큰:', token);  // ← 추가
 
     const client = new Client({
       webSocketFactory: () => new SockJS(WS_URL),
@@ -64,7 +65,8 @@ export const useChat = (roomNo) => {
   const sendMessage = useCallback(
     (content, type = 'TEXT', fileUrl = null) => {
       if (!clientRef.current?.connected) return;
-      const token = localStorage.getItem('accessToken');
+      const token = localStorage.getItem('token');
+      console.log('=== 전송 토큰:', token);  // ← 추가
 
       clientRef.current.publish({
         destination: `/pub/chat/message`,

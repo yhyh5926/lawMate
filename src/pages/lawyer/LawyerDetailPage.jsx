@@ -121,7 +121,7 @@ const LawyerDetailPage = () => {
                 const res = await import("../../api/chatApi").then((m) =>
                   m.getOrCreateChatRoom(lawyer.memberId),
                 );
-                const roomNo = res.data.roomNo;
+                const roomNo = res.data.data.roomNo;
                 navigate(`/chat/room.do?roomNo=${roomNo}`);
               } catch (err) {
                 alert("채팅방 생성에 실패했습니다. 로그인이 필요합니다.");

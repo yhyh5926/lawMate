@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }) => {
         setUser({
           loginId: decoded.sub,
           role: decoded.role, // PERSONAL, LAWYER, ADMIN
+          memberId: decoded.memberId,  // ← 추가
         });
         setIsAuthenticated(true);
       } else {
