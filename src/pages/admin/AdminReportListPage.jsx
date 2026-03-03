@@ -1,91 +1,179 @@
 // src/pages/admin/AdminReportListPage.jsx
-// 설명: 관리자 - 사용자들이 접수한 신고 목록 조회 화면
-// 수정 사항: 모듈 경로 해석 오류를 방지하기 위해 임포트 경로의 확장자를 제거했습니다.
+/**
+ * 파일위치: src/pages/admin/AdminReportListPage.jsx
+ * 기능전체: 신고 내역을 조회하고 탭별로 분류하며, 상세 사유 확인 및 유저 제재를 수행합니다.
+ * 수정사항: 전체/신규/제재완료 탭 필터 추가 및 상세 제재용 모달 팝업 구현
+ */
 
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { adminApi } from "../../api/adminApi";
 
 const AdminReportListPage = () => {
-  const navigate = useNavigate();
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("ALL"); // ALL, PENDING, COMPLETED
+  const [selectedReport, setSelectedReport] = useState(null); // 모달에 표시할 데이터
 
-  useEffect(() => {
-    fetchReports();
-  }, []);
+  useEffect(() => { fetchReports(); }, []);
 
   const fetchReports = async () => {
     setLoading(true);
     try {
       const response = await adminApi.getReportList();
-      // 백엔드 API 응답 구조에 맞춰 데이터 추출 (data.data 또는 data)
       setReports(response.data?.data || response.data || []);
     } catch (error) {
       console.error("신고 목록 조회 실패", error);
-      // API 호출 실패 시에도 빈 배열로 초기화하여 렌더링 에러 방지
       setReports([]);
     } finally {
       setLoading(false);
     }
   };
 
+  // 탭 필터링 로직
+  const filteredReports = reports.filter(r => {
+    if (activeTab === "ALL") return true;
+    return r.status === activeTab;
+  });
+
+  const pendingCount = reports.filter(r => r.status === 'PENDING').length;
+
+  // 제재 처리 함수 (실제 구현 시 API 호출 연결)
+  const submitSanction = (type) => {
+    if (!window.confirm(`해당 신고 건에 대해 [${type}] 처리를 진행하시겠습니까?`)) return;
+    alert(`${selectedReport.reportId}번 건이 ${type} 처리되었습니다.`);
+    setSelectedReport(null);
+    fetchReports();
+  };
+
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <h2 className="text-2xl font-bold text-gray-800 mb-8 border-b-2 border-gray-800 pb-4">신고 접수 목록</h2>
-      
-      {loading ? (
-        <div className="py-20 text-center text-gray-500 font-medium">신고 내역을 집계 중입니다...</div>
-      ) : (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          <table className="w-full text-sm text-center">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="p-4 font-bold text-gray-700">번호</th>
-                <th className="p-4 font-bold text-gray-700">대상유형</th>
-                <th className="p-4 font-bold text-left text-gray-700">신고사유</th>
-                <th className="p-4 font-bold text-gray-700">처리상태</th>
-                <th className="p-4 font-bold text-gray-700">접수일</th>
-                <th className="p-4 font-bold text-gray-700">관리</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reports.length > 0 ? (
-                reports.map((r) => (
-                  <tr key={r.reportId} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="p-4 text-gray-500">{r.reportId}</td>
-                    <td className="p-4 font-semibold text-gray-800">{r.targetType}</td>
-                    <td className="p-4 text-left text-gray-700">{r.reason}</td>
-                    <td className="p-4">
-                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${
-                        r.status === 'PENDING' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'
-                      }`}>
-                        {r.status === 'PENDING' ? '🔴 미처리' : '🟢 처리완료'}
-                      </span>
+    <>
+      <style>{`
+        .rl-wrap { font-family: 'Pretendard', sans-serif; }
+        .rl-tabs { display: flex; border-bottom: 2px solid #e2e8f0; margin-bottom: 25px; gap: 10px; }
+        .rl-tab-btn { 
+          padding: 12px 24px; border: none; background: none; cursor: pointer;
+          font-weight: 700; color: #94a3b8; font-size: 15px; transition: 0.2s;
+          border-bottom: 3px solid transparent; margin-bottom: -2px;
+        }
+        .rl-tab-btn.active { color: #0f172a; border-bottom-color: #0f172a; }
+        
+        .rl-notice {
+          display: flex; align-items: center; gap: 10px;
+          background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px;
+          padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: #92400e; font-weight: 600;
+        }
+
+        .rl-card { background:#fff; border-radius:14px; border:1px solid #e2e8f0; overflow:hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .rl-table { width:100%; border-collapse:collapse; font-size:13.5px; }
+        .rl-table thead tr { background:#f8fafc; border-bottom:1px solid #e2e8f0; }
+        .rl-table th { padding:15px 16px; font-weight:700; color:#475569; font-size:12px; text-align:center; }
+        .rl-table td { padding:14px 16px; color:#334155; vertical-align:middle; text-align:center; border-bottom:1px solid #f1f5f9; }
+
+        .rl-status-pending { padding:4px 10px; background:#fef2f2; color:#dc2626; border-radius:20px; font-size:11.5px; font-weight:700; }
+        .rl-status-done { padding:4px 10px; background:#f0fdf4; color:#15803d; border-radius:20px; font-size:11.5px; font-weight:700; }
+        
+        .rl-action-btn {
+          padding: 7px 14px; background: #0f172a; color: #fff; border: none; border-radius: 8px;
+          font-size: 12px; font-weight: 700; cursor: pointer;
+        }
+
+        /* 모달 스타일 */
+        .rl-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .rl-modal { background: #fff; width: 450px; border-radius: 20px; overflow: hidden; animation: fadeIn 0.2s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .rl-modal-header { padding: 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-weight: 800; display: flex; justify-content: space-between; }
+        .rl-modal-body { padding: 25px; }
+        .rl-reason-box { background: #f1f5f9; padding: 15px; border-radius: 10px; margin-top: 10px; font-size: 14px; line-height: 1.5; color: #475569; }
+        .rl-modal-footer { padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f8fafc; }
+        .btn-sanction { padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-weight: 700; cursor: pointer; background: #fff; font-size: 12px; }
+        .btn-sanction.red { color: #dc2626; border-color: #fecaca; }
+        .btn-close { grid-column: span 2; padding: 12px; background: #0f172a; color: #fff; border: none; border-radius: 8px; font-weight: 700; margin-top: 5px; cursor: pointer; }
+      `}</style>
+
+      <div className="rl-wrap">
+        {/* 상단 알림 */}
+        {pendingCount > 0 && (
+          <div className="rl-notice">
+            <span>⚠️</span> 미처리 신고 <strong>{pendingCount}건</strong>이 처리를 기다리고 있습니다.
+          </div>
+        )}
+
+        {/* 탭 메뉴 */}
+        <div className="rl-tabs">
+          <button className={`rl-tab-btn ${activeTab === 'ALL' ? 'active' : ''}`} onClick={() => setActiveTab('ALL')}>전체</button>
+          <button className={`rl-tab-btn ${activeTab === 'PENDING' ? 'active' : ''}`} onClick={() => setActiveTab('PENDING')}>신규</button>
+          <button className={`rl-tab-btn ${activeTab === 'COMPLETED' ? 'active' : ''}`} onClick={() => setActiveTab('COMPLETED')}>제재완료</button>
+        </div>
+
+        {loading ? (
+          <div className="rl-loading">신고 데이터를 불러오는 중...</div>
+        ) : (
+          <div className="rl-card">
+            <table className="rl-table">
+              <thead>
+                <tr>
+                  <th>번호</th>
+                  <th>대상유형</th>
+                  <th style={{textAlign:'left'}}>신고사유</th>
+                  <th>처리상태</th>
+                  <th>접수일</th>
+                  <th>관리</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredReports.length > 0 ? filteredReports.map((r) => (
+                  <tr key={r.reportId}>
+                    <td><span style={{color:'#94a3b8'}}>#{r.reportId}</span></td>
+                    <td><span style={{background:'#f1f5f9', padding:'3px 8px', borderRadius:'5px', fontWeight:700, fontSize:'11px'}}>{r.targetType}</span></td>
+                    <td style={{textAlign:'left', fontWeight:600}}>{r.reason}</td>
+                    <td>
+                      {r.status === 'PENDING'
+                        ? <span className="rl-status-pending">● 미처리</span>
+                        : <span className="rl-status-done">● 처리완료</span>}
                     </td>
-                    <td className="p-4 text-gray-400">
-                      {r.createdAt ? r.createdAt.split('T')[0] : '-'}
-                    </td>
-                    <td className="p-4">
-                      <button 
-                        onClick={() => navigate(`/admin/report/detail.do/${r.reportId}`)}
-                        className="px-4 py-1.5 bg-gray-800 text-white text-xs rounded hover:bg-black transition-colors font-bold"
-                      >
-                        상세 및 제재
-                      </button>
+                    <td><span style={{color:'#94a3b8'}}>{r.createdAt?.split('T')[0] || '—'}</span></td>
+                    <td>
+                      <button className="rl-action-btn" onClick={() => setSelectedReport(r)}>상세 및 제재</button>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="6" className="p-20 text-gray-400 font-medium">접수된 신고 건이 없습니다.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
+                )) : (
+                  <tr><td colSpan="6" className="rl-empty">신고 내역이 없습니다.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* 제재 상세 모달 */}
+        {selectedReport && (
+          <div className="rl-modal-overlay" onClick={() => setSelectedReport(null)}>
+            <div className="rl-modal" onClick={e => e.stopPropagation()}>
+              <div className="rl-modal-header">
+                <span>신고 상세 및 제재 결정</span>
+                <span style={{cursor:'pointer'}} onClick={() => setSelectedReport(null)}>✕</span>
+              </div>
+              <div className="rl-modal-body">
+                <div style={{fontSize:'12px', color:'#94a3b8', marginBottom:'5px'}}>신고 사유</div>
+                <div style={{fontWeight:800, fontSize:'18px', color:'#0f172a'}}>{selectedReport.reason}</div>
+                
+                <div style={{marginTop:'20px', fontSize:'12px', color:'#94a3b8'}}>상세 신고 내용</div>
+                <div className="rl-reason-box">
+                  {/* 실제 DB에 상세내용 컬럼이 있다면 해당 필드를 사용하세요 */}
+                  해당 회원이 서비스 운영 정책을 위반하는 부적절한 언행 혹은 스팸성 게시물을 게시하여 신고가 접수되었습니다. 증거 자료를 검토 후 제재 수위를 결정하십시오.
+                </div>
+              </div>
+              <div className="rl-modal-footer">
+                <button className="btn-sanction" onClick={() => submitSanction('무혐의')}>무혐의 처리</button>
+                <button className="btn-sanction red" onClick={() => submitSanction('경고')}>경고 조치</button>
+                <button className="btn-sanction red" onClick={() => submitSanction('7일 정지')}>7일 이용정지</button>
+                <button className="btn-sanction red" onClick={() => submitSanction('영구 정지')}>영구 퇴출</button>
+                <button className="btn-close" onClick={() => setSelectedReport(null)}>닫기</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

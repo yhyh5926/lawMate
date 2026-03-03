@@ -1,12 +1,13 @@
 // src/pages/member/LawyerJoinFormPage.jsx
-// 설명: 변호사 등 전문 회원가입 화면입니다. 
-// Zustand를 사용하여 입력 데이터를 전역적으로 관리하며, 전화번호 자동 포커스, 
-// 이메일 도메인 선택, 비밀번호 실시간 일치 확인 기능을 제공합니다.
-// 컴파일 오류 수정을 위해 import 경로의 확장자를 제거했습니다.
+/**
+ * 파일 위치: src/pages/member/LawyerJoinFormPage.jsx
+ * 기능전체: 변호사 전문 회원가입 화면입니다. 아이디 중복 확인 기능이 추가되었습니다.
+ * 수정사항: 기존의 전문가 정보 입력 필드를 유지하며, 아이디 중복 체크 로직을 동일하게 적용했습니다.
+ */
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { create } from "zustand"; // Zustand 임포트
+import { create } from "zustand"; 
 import JoinStepIndicator from "../../components/member/JoinStepIndicator";
 import { memberApi } from "../../api/memberApi";
 
@@ -15,7 +16,7 @@ const useLawyerJoinStore = create((set) => ({
   formData: {
     loginId: "",
     password: "",
-    passwordConfirm: "", // 비밀번호 확인 필드 추가
+    passwordConfirm: "",
     name: "",
     phone1: "010",
     phone2: "",
@@ -26,37 +27,65 @@ const useLawyerJoinStore = create((set) => ({
     officeName: "",
     specialty: ""
   },
-  // 데이터 업데이트 액션
+  // 💡 중복 확인 상태 관리 추가
+  isIdChecked: false,
+  checkedId: "",
+
   setFormData: (updates) => set((state) => ({
     formData: { ...state.formData, ...updates }
   })),
-  // 폼 초기화 액션
+  setIdChecked: (checked, id) => set({ isIdChecked: checked, checkedId: id }),
   resetForm: () => set({
     formData: {
       loginId: "", password: "", passwordConfirm: "", name: "",
       phone1: "010", phone2: "", phone3: "",
       emailId: "", emailDomain: "naver.com",
       licenseNumber: "", officeName: "", specialty: ""
-    }
+    },
+    isIdChecked: false,
+    checkedId: ""
   })
 }));
 
 const inputStyle = { padding: "12px", border: "1px solid #ccc", borderRadius: "4px", flex: 1, minWidth: 0, boxSizing: "border-box" };
 const selectStyle = { padding: "12px", border: "1px solid #ccc", borderRadius: "4px", flex: 1, boxSizing: "border-box" };
+const checkBtnStyle = { padding: "12px 15px", backgroundColor: "#333", color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer", fontSize: "13px", fontWeight: "bold", whiteSpace: "nowrap" };
 
 const LawyerJoinFormPage = () => {
   const navigate = useNavigate();
-  
-  // Zustand 스토어에서 상태와 액션 가져오기
-  const { formData, setFormData, resetForm } = useLawyerJoinStore();
+  const { formData, setFormData, resetForm, isIdChecked, checkedId, setIdChecked } = useLawyerJoinStore();
 
-  // 자동 포커스 이동을 위한 Refs
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
 
-  const handleChange = (e) => setFormData({ [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ [name]: value });
+    if (name === "loginId") {
+      setIdChecked(false, ""); // 아이디 수정 시 중복 확인 리셋
+    }
+  };
 
-  // 전화번호 자동 포커스 로직
+  // 💡 아이디 중복 확인 핸들러
+  const handleCheckId = async () => {
+    if (formData.loginId.length < 4) {
+      return alert("아이디는 4자 이상이어야 합니다.");
+    }
+
+    try {
+      const response = await memberApi.checkId(formData.loginId);
+      if (response.data.available) {
+        alert("사용 가능한 아이디입니다.");
+        setIdChecked(true, formData.loginId);
+      } else {
+        alert("이미 사용 중인 아이디입니다.");
+        setIdChecked(false, "");
+      }
+    } catch (error) {
+      alert("중복 확인 처리 중 오류가 발생했습니다.");
+    }
+  };
+
   const handlePhone1Change = (e) => {
     const val = e.target.value.replace(/[^0-9]/g, "");
     setFormData({ phone1: val });
@@ -77,10 +106,14 @@ const LawyerJoinFormPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // 💡 필수 체크: 중복 확인 여부 검증
+    if (!isIdChecked || formData.loginId !== checkedId) {
+      return alert("아이디 중복 확인을 진행해주세요.");
+    }
+
     const fullPhone = `${formData.phone1}${formData.phone2}${formData.phone3}`;
     const fullEmail = `${formData.emailId}@${formData.emailDomain}`;
 
-    // 간단한 유효성 검사
     if (formData.password !== formData.passwordConfirm) return alert("비밀번호가 일치하지 않습니다.");
     if (fullPhone.length < 10) return alert("유효한 전화번호를 모두 입력해주세요.");
     if (!formData.emailId) return alert("이메일 아이디를 입력해주세요.");
@@ -92,22 +125,23 @@ const LawyerJoinFormPage = () => {
         name: formData.name,
         phone: fullPhone,
         email: fullEmail,
-        licenseNumber: formData.licenseNumber,
+        licenseNo: formData.licenseNumber, 
         officeName: formData.officeName,
         specialty: formData.specialty,
         memberType: "LAWYER"
       };
 
       await memberApi.join(submitData);
-      resetForm(); // 가입 성공 시 스토어 초기화
+      resetForm();
       navigate("/member/lawyer/complete.do");
     } catch (error) {
-      console.error("전문 회원가입 실패:", error);
-      alert("회원가입 중 오류가 발생했습니다.");
+      // 💡 실제 에러 사유를 출력하도록 수정
+      console.error("전문 회원가입 실패:", error.response?.data);
+      const errorMsg = error.response?.data?.message || "서버 통신 중 오류가 발생했습니다.";
+      alert(`가입 신청 실패: ${errorMsg}`);
     }
   };
 
-  // 실시간 비밀번호 체크 상태
   const isPasswordMatch = formData.passwordConfirm && formData.password === formData.passwordConfirm;
   const isPasswordMismatch = formData.passwordConfirm && formData.password !== formData.passwordConfirm;
 
@@ -121,7 +155,13 @@ const LawyerJoinFormPage = () => {
         <h4 style={{ margin: "10px 0 0 0", color: "#333" }}>기본 정보</h4>
         <div>
           <label style={{ fontSize: "13px", color: "#666", marginBottom: "5px", display: "block" }}>아이디</label>
-          <input type="text" name="loginId" placeholder="아이디" value={formData.loginId} onChange={handleChange} required style={{...inputStyle, width: "100%"}} />
+          <div style={{ display: "flex", gap: "10px" }}>
+            <input type="text" name="loginId" placeholder="아이디" value={formData.loginId} onChange={handleChange} required style={inputStyle} />
+            <button type="button" onClick={handleCheckId} style={checkBtnStyle}>중복 확인</button>
+          </div>
+          {isIdChecked && formData.loginId === checkedId && (
+            <span style={{ fontSize: "12px", color: "#28a745", marginTop: "5px", display: "block" }}>✅ 사용 가능한 아이디입니다.</span>
+          )}
         </div>
 
         <div style={{ display: "flex", gap: "10px" }}>
@@ -142,7 +182,6 @@ const LawyerJoinFormPage = () => {
           <input type="text" name="name" placeholder="이름 입력" value={formData.name} onChange={handleChange} required style={{...inputStyle, width: "100%"}} />
         </div>
         
-        {/* 전화번호 UI */}
         <div>
           <label style={{ fontSize: "13px", color: "#666", marginBottom: "5px", display: "block" }}>연락처</label>
           <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
@@ -154,7 +193,6 @@ const LawyerJoinFormPage = () => {
           </div>
         </div>
 
-        {/* 이메일 UI */}
         <div>
           <label style={{ fontSize: "13px", color: "#666", marginBottom: "5px", display: "block" }}>이메일</label>
           <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>

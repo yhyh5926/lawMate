@@ -1,8 +1,11 @@
 // src/pages/member/JoinFormPage.jsx
-// 설명: 일반 회원가입 화면입니다. Zustand를 사용하여 입력 데이터를 관리하며, 
-// 가입 완료 시 전역 인증(Auth) 시스템과 연동될 수 있도록 구성되었습니다.
+/**
+ * 파일 위치: src/pages/member/JoinFormPage.jsx
+ * 기능전체: 일반 회원가입 화면입니다. 아이디 중복 확인 기능이 추가되었습니다.
+ * 수정사항: 기존 로직을 유지하며 아이디 중복 확인 버튼 및 가입 전 필수 체크 로직을 구현했습니다.
+ */
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { create } from "zustand";
 import JoinStepIndicator from "../../components/member/JoinStepIndicator.jsx";
@@ -22,31 +25,71 @@ const useJoinFormStore = create((set) => ({
     emailId: "",
     emailDomain: "naver.com"
   },
+  // 💡 중복 확인 상태 관리를 위한 필드 추가
+  isIdChecked: false, 
+  checkedId: "",
+
   setFormData: (updates) => set((state) => ({
     formData: { ...state.formData, ...updates }
   })),
+  // 💡 중복 확인 결과 업데이트 액션
+  setIdChecked: (checked, id) => set({ isIdChecked: checked, checkedId: id }),
   resetForm: () => set({
     formData: {
       loginId: "", password: "", passwordConfirm: "", name: "",
       phone1: "010", phone2: "", phone3: "",
       emailId: "", emailDomain: "naver.com"
-    }
+    },
+    isIdChecked: false,
+    checkedId: ""
   })
 }));
 
 const inputStyle = { padding: "12px", border: "1px solid #ccc", borderRadius: "4px", flex: 1, minWidth: 0, boxSizing: "border-box" };
 const selectStyle = { padding: "12px", border: "1px solid #ccc", borderRadius: "4px", flex: 1, boxSizing: "border-box" };
+// 💡 중복 확인 버튼 전용 스타일 추가
+const checkBtnStyle = { padding: "12px 15px", backgroundColor: "#333", color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer", fontSize: "13px", fontWeight: "bold", whiteSpace: "nowrap" };
 
 const JoinFormPage = () => {
   const navigate = useNavigate();
-  const { formData, setFormData, resetForm } = useJoinFormStore();
+  const { formData, setFormData, resetForm, isIdChecked, checkedId, setIdChecked } = useJoinFormStore();
 
   // 자동 포커스 이동을 위한 Refs
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
 
   const handleChange = (e) => {
-    setFormData({ [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ [name]: value });
+    
+    // 💡 아이디 입력값이 변경되면 중복 확인 상태를 초기화하여 다시 확인하게 합니다.
+    if (name === "loginId") {
+      setIdChecked(false, "");
+    }
+  };
+
+  // 💡 아이디 중복 확인 서버 통신 핸들러
+  const handleCheckId = async () => {
+    if (!validateId(formData.loginId)) {
+      return alert("아이디는 영문, 숫자 조합 4자 이상이어야 합니다.");
+    }
+
+    try {
+      // 백엔드의 /api/member/check-id.do API를 호출합니다.
+      const response = await memberApi.checkId(formData.loginId);
+      // MemberServiceImpl에서 조회 결과가 없으면 true를 반환합니다.
+      const isAvailable = response.data.available; 
+
+      if (isAvailable) {
+        alert("사용 가능한 아이디입니다.");
+        setIdChecked(true, formData.loginId);
+      } else {
+        alert("이미 사용 중인 아이디입니다.");
+        setIdChecked(false, "");
+      }
+    } catch (error) {
+      alert("중복 확인 중 오류가 발생했습니다.");
+    }
   };
 
   const handlePhone1Change = (e) => {
@@ -69,6 +112,11 @@ const JoinFormPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // 💡 필수 체크: 중복 확인 여부와 현재 입력된 아이디가 일치하는지 확인
+    if (!isIdChecked || formData.loginId !== checkedId) {
+      return alert("아이디 중복 확인을 완료해주세요.");
+    }
+
     const fullPhone = `${formData.phone1}${formData.phone2}${formData.phone3}`;
     const fullEmail = `${formData.emailId}@${formData.emailDomain}`;
 
@@ -94,8 +142,10 @@ const JoinFormPage = () => {
         navigate("/member/join/complete.do");
       }
     } catch (error) {
+      // 💡 실제 에러 사유를 출력하도록 수정하여 오해를 방지합니다.
       console.error("가입 실패 로그:", error.response?.data);
-      alert("가입 중 오류가 발생했습니다. (아이디 중복 여부를 확인해주세요)");
+      const errorMsg = error.response?.data?.message || "서버 통신 중 오류가 발생했습니다.";
+      alert(`가입 신청 실패: ${errorMsg}`);
     }
   };
 
@@ -110,7 +160,21 @@ const JoinFormPage = () => {
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
         <div>
           <label style={{ fontSize: "14px", color: "#555", marginBottom: "5px", display: "block" }}>아이디</label>
-          <input type="text" name="loginId" placeholder="아이디" value={formData.loginId} onChange={handleChange} required style={{...inputStyle, width: "100%"}} />
+          <div style={{ display: "flex", gap: "10px" }}>
+            <input 
+              type="text" 
+              name="loginId" 
+              placeholder="아이디" 
+              value={formData.loginId} 
+              onChange={handleChange} 
+              required 
+              style={inputStyle} 
+            />
+            <button type="button" onClick={handleCheckId} style={checkBtnStyle}>중복 확인</button>
+          </div>
+          {isIdChecked && formData.loginId === checkedId && (
+            <span style={{ fontSize: "12px", color: "#28a745", marginTop: "5px", display: "block" }}>✅ 사용 가능한 아이디입니다.</span>
+          )}
         </div>
 
         <div>

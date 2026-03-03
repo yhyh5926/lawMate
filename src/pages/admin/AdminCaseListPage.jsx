@@ -1,85 +1,108 @@
-// src/pages/admin/AdminCaseListPage.jsx
-// 설명: 관리자 - 플랫폼 내 전체 사건 목록 및 진행 상태 모니터링 화면
-// 해결: 모듈 해석 오류를 방지하기 위해 임포트 경로의 확장자를 제거했습니다.
-
+/**
+ * 파일 위치: src/pages/admin/AdminCaseListPage.jsx
+ * 기능전체: 관리자 전용 사건 모니터링 페이지입니다.
+ * 수정사항: 에러 발생 시 출력되던 가상(더미) 데이터를 제거하고, 실제 DB의 데이터만 출력되도록 수정했습니다.
+ */
 import React, { useEffect, useState } from "react";
 import { adminApi } from "../../api/adminApi";
+
+const STEP_CONFIG = {
+  IN_PROGRESS: { label: "진행중",   bg: "#dcfce7", color: "#15803d" },
+  RECEIVED:    { label: "접수됨",   bg: "#dbeafe", color: "#1d4ed8" },
+  COMPLETED:   { label: "완료",     bg: "#f1f5f9", color: "#475569" },
+  PENDING:     { label: "대기중",   bg: "#fef9c3", color: "#a16207" },
+};
 
 const AdminCaseListPage = () => {
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchCases();
-  }, []);
+  useEffect(() => { fetchCases(); }, []);
 
   const fetchCases = async () => {
     setLoading(true);
     try {
       const response = await adminApi.getCaseList();
-      // 백엔드 응답 구조(data.data 또는 data)에 맞게 안전하게 처리
-      setCases(response.data.data || response.data || []);
+      // DB에서 가져온 실제 데이터를 세팅합니다.
+      setCases(response.data?.data || response.data || []);
     } catch (error) {
-      console.error("사건 목록 조회 실패", error);
-      // 개발 및 테스트 환경을 위한 모의 데이터
-      setCases([
-        { caseId: 10, title: "손해배상 청구의 건", caseType: "민사", step: "IN_PROGRESS", createdAt: "2026-02-15" },
-        { caseId: 11, title: "사기 피해 고소장 작성", caseType: "형사", step: "RECEIVED", createdAt: "2026-02-26" },
-      ]);
+      console.error("사건 목록 조회 실패 (DB 연동 확인 필요):", error);
+      // 💡 더미 데이터를 지웠습니다. 이제 연결 실패 시 빈 목록이 나옵니다.
+      setCases([]);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <h2 className="text-2xl font-bold text-gray-800 mb-8 border-b-2 border-gray-800 pb-4">전체 사건 모니터링</h2>
-      
-      {loading ? (
-        <div className="py-20 text-center text-gray-500 font-medium">사건 데이터를 동기화 중입니다...</div>
-      ) : (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          <table className="w-full text-sm text-center">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="p-4 font-bold text-gray-700">사건번호</th>
-                <th className="p-4 font-bold text-gray-700">유형</th>
-                <th className="p-4 font-bold text-left text-gray-700">사건제목</th>
-                <th className="p-4 font-bold text-gray-700">진행단계</th>
-                <th className="p-4 font-bold text-gray-700">접수일</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cases.length > 0 ? (
-                cases.map((c) => (
-                  <tr key={c.caseId} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="p-4 text-gray-500">{c.caseId}</td>
-                    <td className="p-4">
-                      <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-medium border border-gray-200">
-                        {c.caseType}
-                      </span>
-                    </td>
-                    <td className="p-4 text-left font-medium text-gray-800">{c.title}</td>
-                    <td className="p-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                        c.step === 'RECEIVED' ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'
-                      }`}>
-                        {c.step}
-                      </span>
-                    </td>
-                    <td className="p-4 text-gray-500">{c.createdAt?.split('T')[0]}</td>
-                  </tr>
-                ))
-              ) : (
+    <>
+      <style>{`
+        .cl-wrap { font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif; }
+        .cl-card { background:#fff; border-radius:14px; border:1px solid #e2e8f0; overflow:hidden; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .cl-table { width:100%; border-collapse:collapse; font-size:13.5px; }
+        .cl-table thead tr { background:#f8fafc; border-bottom:1px solid #e2e8f0; }
+        .cl-table th {
+          padding:15px 16px; font-weight:700; color:#475569;
+          text-align:center; font-size:12px; text-transform:uppercase; letter-spacing:0.6px;
+        }
+        .cl-table tbody tr { border-bottom:1px solid #f1f5f9; transition:background 0.1s; }
+        .cl-table tbody tr:hover { background:#f8fafc; }
+        .cl-table td { padding:14px 16px; color:#334155; vertical-align:middle; text-align:center; }
+        
+        .cl-id { font-size:12px; color:#94a3b8; font-weight:600; }
+        .cl-type-badge {
+          display:inline-block; padding:3px 9px;
+          background:#f1f5f9; color:#475569;
+          border-radius:6px; font-size:11.5px; font-weight:700;
+          border:1px solid #e2e8f0;
+        }
+        .cl-title { font-weight:600; color:#0f172a; text-align: left; display: block; }
+        .cl-step-badge { display:inline-block; padding:4px 10px; border-radius:20px; font-size:11.5px; font-weight:700; }
+        .cl-date { font-size:12.5px; color:#94a3b8; }
+        .cl-empty { padding:80px; text-align:center; color:#94a3b8; font-weight:600; }
+        .cl-loading { padding:80px; text-align:center; color:#64748b; font-weight:600; }
+      `}</style>
+
+      <div className="cl-wrap">
+        {loading ? (
+          <div className="cl-loading">서버에서 사건 데이터를 가져오는 중입니다...</div>
+        ) : (
+          <div className="cl-card">
+            <table className="cl-table">
+              <thead>
                 <tr>
-                  <td colSpan="5" className="p-20 text-gray-400 font-medium">등록된 사건 내역이 없습니다.</td>
+                  <th>번호</th>
+                  <th>유형</th>
+                  <th style={{ textAlign: 'left' }}>사건제목</th>
+                  <th>진행단계</th>
+                  <th>접수일</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
+              </thead>
+              <tbody>
+                {cases.length > 0 ? cases.map((c) => {
+                  const step = STEP_CONFIG[c.step] || { label: c.step, bg: "#f1f5f9", color: "#64748b" };
+                  return (
+                    <tr key={c.caseId}>
+                      <td><span className="cl-id">#{c.caseId}</span></td>
+                      <td><span className="cl-type-badge">{c.caseType}</span></td>
+                      <td><span className="cl-title">{c.title}</span></td>
+                      <td>
+                        <span className="cl-step-badge" style={{ background: step.bg, color: step.color }}>
+                          {step.label}
+                        </span>
+                      </td>
+                      <td><span className="cl-date">{c.createdAt?.split('T')[0]}</span></td>
+                    </tr>
+                  );
+                }) : (
+                  <tr><td colSpan="5" className="cl-empty">DB에 등록된 사건 내역이 없습니다.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

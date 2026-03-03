@@ -1,34 +1,42 @@
 // src/pages/admin/AdminStatsPage.jsx
-// 설명: 관리자 - 플랫폼 가입 및 사건 접수 지표를 시각화하여 확인하는 화면
-// 수정: 모듈 해석 오류 해결을 위해 임포트 경로의 확장자를 제거했습니다.
 
 import React, { useEffect, useState } from "react";
 import { adminApi } from "../../api/adminApi";
 
-// 내부 차트 컴포넌트 (은혁님 요청사항 반영)
-const StatsLineChart = ({ data, title }) => {
+const BarChart = ({ data, title, color }) => {
   const maxCount = Math.max(...data.map(d => d.count), 1);
   return (
-    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full">
-      <h3 className="text-lg font-bold mb-8 text-gray-800">{title}</h3>
-      <div className="flex items-end justify-between h-56 gap-4 px-4">
+    <div className="sc-chart-card">
+      <div className="sc-chart-title">{title}</div>
+      <div className="sc-bars">
         {data.map((item, idx) => (
-          <div key={idx} className="flex flex-col items-center flex-1 group">
-            <div 
-              className="w-full bg-blue-500 rounded-t-lg transition-all duration-300 group-hover:bg-blue-600 relative"
-              style={{ height: `${(item.count / maxCount) * 100}%`, minHeight: '8px' }}
-            >
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1.5 px-3 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                {item.count}건
+          <div key={idx} className="sc-bar-group">
+            <div className="sc-bar-outer">
+              <div
+                className="sc-bar-inner"
+                style={{
+                  height: `${Math.max((item.count / maxCount) * 100, 4)}%`,
+                  background: color,
+                }}
+              >
+                <div className="sc-bar-tooltip">{item.count}건</div>
               </div>
             </div>
-            <span className="text-[11px] text-gray-400 mt-4 font-medium">{item.date}</span>
+            <span className="sc-bar-label">{item.date}</span>
           </div>
         ))}
       </div>
     </div>
   );
 };
+
+const KpiCard = ({ label, value, unit, color }) => (
+  <div className="sc-kpi-card">
+    <div className="sc-kpi-dot" style={{ background: color }} />
+    <div className="sc-kpi-label">{label}</div>
+    <div className="sc-kpi-val">{value}<span className="sc-kpi-unit">{unit}</span></div>
+  </div>
+);
 
 const AdminStatsPage = () => {
   const [loading, setLoading] = useState(true);
@@ -41,7 +49,6 @@ const AdminStatsPage = () => {
         setStatsData(response.data);
       } catch (error) {
         console.error("통계 로드 실패", error);
-        // 기본 모의 데이터
         setStatsData({
           users: [{date:"02-23",count:10},{date:"02-24",count:25},{date:"02-25",count:15},{date:"02-26",count:40},{date:"02-27",count:62}],
           cases: [{date:"02-23",count:5},{date:"02-24",count:12},{date:"02-25",count:8},{date:"02-26",count:15},{date:"02-27",count:30}]
@@ -54,37 +61,80 @@ const AdminStatsPage = () => {
   }, []);
 
   return (
-    <div className="p-10 max-w-6xl mx-auto">
-      <h2 className="text-3xl font-black text-gray-900 mb-10 pb-4 border-b-4 border-gray-900 inline-block">플랫폼 인사이트</h2>
-      
-      {loading ? (
-        <div className="py-24 text-center text-gray-400 font-bold animate-pulse">데이터 엔진 분석 중...</div>
-      ) : (
-        <div className="space-y-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <StatsLineChart data={statsData.users} title="📈 신규 회원 가입 추이" />
-            <StatsLineChart data={statsData.cases} title="⚖️ 신규 사건 접수 추이" />
-          </div>
-          
-          <div className="bg-gray-900 text-white p-12 rounded-3xl shadow-2xl flex flex-col md:flex-row justify-around items-center gap-10">
-            <div className="text-center group">
-              <p className="text-gray-400 text-sm mb-2 group-hover:text-blue-400 transition-colors">누적 일반 회원</p>
-              <h2 className="text-5xl font-black">1,204<span className="text-lg ml-1 font-normal text-gray-500">명</span></h2>
+    <>
+      <style>{`
+        .sc-wrap { font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif; }
+
+        /* KPI row */
+        .sc-kpis { display: flex; gap: 14px; margin-bottom: 24px; }
+        .sc-kpi-card {
+          flex: 1; background: #fff; border-radius: 14px; padding: 22px 24px;
+          border: 1px solid #e2e8f0; position: relative; overflow: hidden;
+        }
+        .sc-kpi-dot {
+          width: 8px; height: 8px; border-radius: 50%; margin-bottom: 12px;
+        }
+        .sc-kpi-label { font-size: 11.5px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+        .sc-kpi-val { font-size: 32px; font-weight: 900; color: #0f172a; line-height: 1; letter-spacing: -1px; }
+        .sc-kpi-unit { font-size: 14px; font-weight: 600; color: #94a3b8; margin-left: 4px; letter-spacing: 0; }
+
+        /* Charts */
+        .sc-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        .sc-chart-card {
+          background: #fff; border: 1px solid #e2e8f0; border-radius: 14px;
+          padding: 24px;
+        }
+        .sc-chart-title { font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 24px; }
+        .sc-bars {
+          display: flex; align-items: flex-end; gap: 10px;
+          height: 160px; padding-bottom: 28px; position: relative;
+        }
+        .sc-bars::before {
+          content: ''; position: absolute;
+          left: 0; right: 0; bottom: 28px; top: 0;
+          background: repeating-linear-gradient(
+            to bottom,
+            transparent, transparent calc(50% - 0.5px),
+            #f1f5f9 calc(50% - 0.5px), #f1f5f9 calc(50%)
+          );
+        }
+        .sc-bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; }
+        .sc-bar-outer { flex: 1; width: 100%; display: flex; align-items: flex-end; position: relative; }
+        .sc-bar-inner {
+          width: 100%; border-radius: 6px 6px 0 0;
+          transition: height 0.4s ease; position: relative;
+        }
+        .sc-bar-inner:hover .sc-bar-tooltip { opacity: 1; transform: translateY(0); }
+        .sc-bar-tooltip {
+          position: absolute; top: -32px; left: 50%; transform: translateX(-50%) translateY(4px);
+          background: #0f172a; color: #fff; font-size: 11px; font-weight: 700;
+          padding: 4px 8px; border-radius: 6px; white-space: nowrap;
+          opacity: 0; transition: all 0.15s; pointer-events: none; z-index: 10;
+        }
+        .sc-bar-label { font-size: 11px; color: #94a3b8; margin-top: 8px; font-weight: 600; }
+
+        .sc-loading { padding: 60px; text-align: center; color: #94a3b8; font-weight: 600; }
+      `}</style>
+
+      <div className="sc-wrap">
+        {loading ? (
+          <div className="sc-loading">데이터 분석 중...</div>
+        ) : (
+          <>
+            <div className="sc-kpis">
+              <KpiCard label="누적 일반 회원" value="1,204" unit="명" color="#3b82f6" />
+              <KpiCard label="활동 전문 회원" value="85"    unit="명" color="#8b5cf6" />
+              <KpiCard label="해결 완료 사건" value="218"   unit="건" color="#10b981" />
             </div>
-            <div className="hidden md:block w-px h-16 bg-gray-700"></div>
-            <div className="text-center group">
-              <p className="text-gray-400 text-sm mb-2 group-hover:text-green-400 transition-colors">활동 전문 회원</p>
-              <h2 className="text-5xl font-black">85<span className="text-lg ml-1 font-normal text-gray-500">명</span></h2>
+            <div className="sc-charts">
+              <BarChart data={statsData.users} title="📈 신규 회원 가입 추이" color="#3b82f6" />
+              <BarChart data={statsData.cases} title="⚖️ 신규 사건 접수 추이" color="#8b5cf6" />
             </div>
-            <div className="hidden md:block w-px h-16 bg-gray-700"></div>
-            <div className="text-center group">
-              <p className="text-gray-400 text-sm mb-2 group-hover:text-red-400 transition-colors">해결 완료 사건</p>
-              <h2 className="text-5xl font-black">218<span className="text-lg ml-1 font-normal text-gray-500">건</span></h2>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+          </>
+        )}
+      </div>
+    </>
   );
 };
 
