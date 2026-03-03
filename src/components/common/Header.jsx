@@ -87,7 +87,8 @@ const Header = () => {
             </div>
           ) : (
             <div style={guestGroupStyle}>
-              <Link to="/member/join/terms.do" style={joinLinkStyle}>
+              {/* 💡 주소 수정: /member/join/terms.do -> /member/join/type.do */}
+              <Link to="/member/join/type.do" style={joinLinkStyle}>
                 회원가입
               </Link>
               <Link to="/member/login.do" style={loginBtnStyle}>

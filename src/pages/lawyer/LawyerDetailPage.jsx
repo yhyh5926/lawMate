@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import lawyerApi from "../../api/lawyerApi";
 import { DEFAULT_IMAGE } from "./LawyerListPage";
+import "../../styles/lawyer/LawyerDetailPage.css";
 
 const LawyerDetailPage = () => {
   const { id } = useParams();
   const [lawyer, setLawyer] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchDetail = async () => {
       try {
@@ -20,23 +22,27 @@ const LawyerDetailPage = () => {
         setLoading(false);
       }
     };
-
     if (id) fetchDetail();
   }, [id]);
 
   if (loading)
-    return <div style={statusMessageStyle}>상세 정보를 로딩 중입니다...</div>;
+    return (
+      <div className="lawyer-detail-status">상세 정보를 로딩 중입니다...</div>
+    );
   if (!lawyer)
     return (
-      <div style={statusMessageStyle}>해당 변호사 정보를 찾을 수 없습니다.</div>
+      <div className="lawyer-detail-status">
+        해당 변호사 정보를 찾을 수 없습니다.
+      </div>
     );
 
+  console.log(lawyer);
   return (
-    <div style={containerStyle}>
-      <div style={contentCardStyle}>
-        {/* 💡 레이아웃: 상단 프로필 영역 (사진 + 핵심정보) */}
-        <div style={headerSectionStyle}>
-          <div style={imageWrapperStyle}>
+    <div className="lawyer-detail-container">
+      <div className="lawyer-detail-card">
+        {/* 1. 상단 프로필 영역 */}
+        <div className="lawyer-detail-header">
+          <div className="lawyer-detail-img-wrapper">
             <img
               src={
                 lawyer.savePath
@@ -44,94 +50,109 @@ const LawyerDetailPage = () => {
                   : DEFAULT_IMAGE
               }
               alt={lawyer.name}
-              style={profileImgStyle}
-              onError={(e) => (e.target.src = "/img/default_profile.png")}
+              className="lawyer-detail-profile-img"
+              onError={(e) => (e.target.src = DEFAULT_IMAGE)}
             />
           </div>
-          <div style={headerTitleStyle}>
-            <span style={specialtyBadgeStyle}>{lawyer.specialty} 전문</span>
-            <h1 style={{ margin: "10px 0 5px 0", color: "#2c3e50" }}>
-              {lawyer.name} 변호사
-            </h1>
-            <p
-              style={{
-                color: "#3498db",
-                fontWeight: "bold",
-                fontSize: "1.1rem",
-              }}
-            >
-              {lawyer.officeName}
-            </p>
-            <div style={ratingSummaryStyle}>
-              ⭐{" "}
-              <span style={{ fontWeight: "bold" }}>
-                {lawyer.avgRating?.toFixed(1)}
-              </span>
-              <span style={{ color: "#95a5a6", marginLeft: "5px" }}>
+          <div className="lawyer-detail-header-info">
+            <span className="lawyer-detail-badge">{lawyer.specialty} 전문</span>
+            <h1 className="lawyer-detail-name">{lawyer.name} 변호사</h1>
+            <p className="lawyer-detail-office">{lawyer.officeName}</p>
+            <div className="lawyer-detail-rating">
+              ⭐ <strong>{lawyer.avgRating?.toFixed(1)}</strong>
+              <span style={{ color: "#94a3b8" }}>
                 ({lawyer.reviewCnt}개의 후기)
               </span>
             </div>
           </div>
         </div>
 
-        <p style={introTextStyle}>{lawyer.intro}</p>
+        {/* 2. 자기소개 및 경력 */}
+        <p className="lawyer-detail-intro">{lawyer.intro}</p>
 
-        <hr style={dividerStyle} />
+        <h3 className="lawyer-detail-section-title">주요 경력</h3>
+        <p className="lawyer-detail-career">{lawyer.career}</p>
 
-        <h3 style={{ marginBottom: "15px", color: "#2c3e50" }}>주요 경력</h3>
-        <p style={careerTextStyle}>{lawyer.career}</p>
-
-        <h3
-          style={{ marginTop: "40px", marginBottom: "15px", color: "#2c3e50" }}
-        >
-          사무소 및 연락처 정보
-        </h3>
-        <div style={infoBoxStyle}>
-          <div style={infoItemStyle}>
+        {/* 3. 사무소 상세 정보 */}
+        <h3 className="lawyer-detail-section-title">사무소 및 연락처 정보</h3>
+        <div className="lawyer-detail-info-box">
+          <div className="lawyer-detail-info-item">
             <strong>자격번호</strong> <span>{lawyer.licenseNo}</span>
           </div>
-          <div style={infoItemStyle}>
+          <div className="lawyer-detail-info-item">
             <strong>이메일</strong> <span>{lawyer.email}</span>
           </div>
-          <div style={infoItemStyle}>
+          <div className="lawyer-detail-info-item">
             <strong>연락처</strong> <span>{lawyer.phone}</span>
           </div>
-          <div style={infoItemStyle}>
+          <div className="lawyer-detail-info-item">
             <strong>사무소 위치</strong> <span>{lawyer.officeAddr}</span>
           </div>
-          <div style={infoItemStyle}>
+          <div className="lawyer-detail-info-item">
             <strong>기본 상담료 (30분)</strong>
-            <span
-              style={{
-                color: "#e74c3c",
-                fontWeight: "bold",
-                fontSize: "1.1rem",
-              }}
-            >
+            <span className="lawyer-detail-fee">
               {lawyer.consultFee?.toLocaleString()}원
             </span>
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: "12px", marginTop: "40px" }}>
+        {/* 4. 의뢰인 리뷰 섹션 */}
+        <div className="lawyer-detail-reviews-wrapper">
+          <h3 className="lawyer-detail-section-title">의뢰인 후기</h3>
+          {lawyer.reviews &&
+          lawyer.reviews.length > 0 &&
+          lawyer.reviews[0].content !== null ? (
+            <div className="lawyer-reviews-list">
+              {lawyer.reviews.map((review) => (
+                <div key={review.reviewId} className="lawyer-review-item">
+                  <div className="lawyer-review-header">
+                    <div className="review-user-info">
+                      <span className="review-stars">
+                        {"⭐".repeat(review.rating)}
+                      </span>
+                      <span className="review-author">
+                        {review.reviewerName}
+                      </span>
+                      {/* [추가] 어떤 상담이었는지 보여주는 태그 */}
+                      {review.consultSummary && (
+                        <span className="review-consult-tag">
+                          {review.consultSummary} 관련 상담
+                        </span>
+                      )}
+                    </div>
+                    <span className="review-date">
+                      {new Date(review.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="review-text">{review.content}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="no-reviews">아직 등록된 후기가 없습니다.</div>
+          )}
+        </div>
+
+        {/* 5. 하단 버튼 그룹 */}
+        <div className="lawyer-detail-btn-group">
           <button
-            style={{ ...btnStyle, marginTop: 0, backgroundColor: "#1e8c4d" }}
+            className="lawyer-detail-btn btn-chat"
             onClick={async () => {
               try {
                 const res = await import("../../api/chatApi").then((m) =>
                   m.getOrCreateChatRoom(lawyer.memberId),
                 );
-                const roomNo = res.data.roomNo;
+                const roomNo = res.data.data.roomNo;
                 navigate(`/chat/room.do?roomNo=${roomNo}`);
               } catch (err) {
-                alert("채팅방 생성에 실패했습니다. 로그인이 필요합니다.");
+                alert("채팅방 생성에 실패했습니다. 로그인이 필요합니다.", err);
               }
             }}
           >
             💬 채팅 상담하기
           </button>
           <button
-            style={{ ...btnStyle, marginTop: 0 }}
+            className="lawyer-detail-btn btn-reserve"
             onClick={() =>
               navigate(`/consult/reserve.do?lawyerId=${lawyer.lawyerId}`)
             }
@@ -142,125 +163,6 @@ const LawyerDetailPage = () => {
       </div>
     </div>
   );
-};
-// --- 스타일 객체 업데이트 ---
-
-const containerStyle = {
-  padding: "40px 20px",
-  maxWidth: "900px",
-  margin: "0 auto",
-  backgroundColor: "#f8f9fa",
-  minHeight: "100vh",
-};
-
-const contentCardStyle = {
-  backgroundColor: "#fff",
-  padding: "50px",
-  borderRadius: "20px",
-  boxShadow: "0 15px 35px rgba(0,0,0,0.05)",
-};
-
-const headerSectionStyle = {
-  display: "flex",
-  gap: "30px",
-  marginBottom: "40px",
-  alignItems: "center",
-};
-
-const imageWrapperStyle = {
-  width: "180px",
-  height: "220px",
-  borderRadius: "15px",
-  overflow: "hidden",
-  boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
-};
-
-const profileImgStyle = {
-  width: "100%",
-  height: "100%",
-  objectFit: "cover",
-};
-
-const headerTitleStyle = {
-  flex: 1,
-};
-
-const ratingSummaryStyle = {
-  marginTop: "10px",
-  fontSize: "1rem",
-};
-
-const specialtyBadgeStyle = {
-  backgroundColor: "#e1f5fe",
-  color: "#0288d1",
-  padding: "5px 15px",
-  borderRadius: "30px",
-  fontWeight: "bold",
-  fontSize: "0.85rem",
-};
-
-const introTextStyle = {
-  fontSize: "1.2rem",
-  lineHeight: "1.8",
-  color: "#34495e",
-  fontWeight: "500",
-  backgroundColor: "#fdfdfd",
-  padding: "20px",
-  borderRadius: "10px",
-  border: "1px solid #f0f0f0",
-};
-
-const careerTextStyle = {
-  whiteSpace: "pre-wrap",
-  color: "#636e72",
-  lineHeight: "1.9",
-  backgroundColor: "#fff",
-  padding: "20px",
-  borderRadius: "10px",
-  border: "1px solid #eee",
-};
-
-const infoBoxStyle = {
-  backgroundColor: "#f9f9f9",
-  padding: "30px",
-  borderRadius: "15px",
-  border: "1px solid #f1f1f1",
-};
-
-const infoItemStyle = {
-  display: "flex",
-  justifyContent: "space-between",
-  padding: "12px 0",
-  borderBottom: "1px solid #eee",
-  fontSize: "1rem",
-};
-
-const dividerStyle = {
-  margin: "40px 0",
-  border: "0",
-  borderTop: "2px solid #f5f5f5",
-};
-
-const statusMessageStyle = {
-  textAlign: "center",
-  padding: "100px",
-  fontSize: "1.2rem",
-  color: "#7f8c8d",
-};
-
-const btnStyle = {
-  width: "100%",
-  padding: "20px",
-  marginTop: "40px",
-  backgroundColor: "#1e3799",
-  color: "#fff",
-  border: "none",
-  borderRadius: "12px",
-  fontSize: "1.25rem",
-  fontWeight: "bold",
-  cursor: "pointer",
-  transition: "all 0.2s ease",
-  boxShadow: "0 8px 20px rgba(30, 55, 153, 0.3)",
 };
 
 export default LawyerDetailPage;
