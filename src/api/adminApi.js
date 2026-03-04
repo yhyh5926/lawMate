@@ -1,7 +1,7 @@
-// vs코드
-// 파일 위치: src/api/adminApi.js
-// 설명: 관리자 페이지의 통계, 회원/변호사 관리, 결제, 신고 제재 도메인 API 호출
-
+/**
+ * 파일위치: src/api/adminApi.js
+ * 기능설명: 관리자 페이지의 모든 도메인 API 호출을 관리합니다.
+ */
 import axiosInstance from "./axiosInstance";
 
 export const adminApi = {
@@ -14,14 +14,17 @@ export const adminApi = {
   // 승인 대기 전문회원 목록 조회
   getPendingLawyers: () => axiosInstance.get("/admin/lawyer/approve.do"),
   
-  // 전문회원 승인/반려 처리 (LawyerVO 형태로 백엔드 전달)
+  // 전문회원 승인/반려 처리
   approveLawyer: (data) => axiosInstance.post("/admin/lawyer/approve.do", data),
   
-  // 신고 접수 목록 조회
+  // 신고 접수 목록 조회 (실제 DB 연동)
   getReportList: (params) => axiosInstance.get("/admin/report/list.do", { params }),
+
+  // 신고 상세 정보 조회
+  getReportDetail: (reportId) => axiosInstance.get("/admin/report/detail.do", { params: { reportId } }),
   
-  // 신고 대상 제재 처리 (정지, 강퇴 등)
-  processSanction: (data) => axiosInstance.post("/admin/report/detail.do", data),
+  // 신고 대상 제재 집행 처리
+  processSanction: (data) => axiosInstance.post("/admin/report/process.do", data),
   
   // 전체 결제 내역 조회
   getPaymentList: (params) => axiosInstance.get("/admin/payment/list.do", { params }),
