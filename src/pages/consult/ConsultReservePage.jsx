@@ -32,12 +32,11 @@ const ConsultReservePage = () => {
   }, [lawyerId]);
 
   useEffect(() => {
-    if (!selectedDate || !lawyerId) return;
-    getAvailableTimes(lawyerId, selectedDate).then((res) => {
-      setAvailableTimes(res.data?.data || res.data || []);
-      setSelectedTime("");
-    });
-  }, [selectedDate, lawyerId]);
+  if (!selectedDate) return;
+  const times = ['09:00','10:00','11:00','13:00','14:00','15:00','16:00','17:00'];
+  setAvailableTimes(times);
+  setSelectedTime('');
+  }, [selectedDate]);
 
   const handleFileChange = (e) => {
     setFiles(Array.from(e.target.files));
