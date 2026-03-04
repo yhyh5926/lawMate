@@ -1,0 +1,63 @@
+/* src/styles/admins/AdminMemberListPage.css */
+
+.ml-wrap { font-family: 'Pretendard', sans-serif; }
+
+/* 상단 KPI 요약 카드 */
+.ml-summary-cards { display: flex; gap: 16px; margin-bottom: 24px; }
+.ml-summary-card {
+  flex: 1; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+  padding: 20px 24px; display: flex; flex-direction: column;
+}
+.ml-summary-title { font-size: 13px; font-weight: 700; color: #64748b; display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.ml-summary-dot { width: 8px; height: 8px; border-radius: 50%; }
+.ml-summary-val { font-size: 28px; font-weight: 900; color: #0f172a; }
+
+/* 탭 네비게이션 */
+.ml-tabs { display: flex; gap: 20px; border-bottom: 2px solid #e2e8f0; margin-bottom: 20px; }
+.ml-tab-btn {
+  padding: 10px 4px; background: none; border: none; font-size: 14px; font-weight: 700;
+  color: #94a3b8; cursor: pointer; position: relative;
+}
+.ml-tab-btn.active { color: #3b82f6; }
+.ml-tab-btn.active::after {
+  content: ''; position: absolute; bottom: -2px; left: 0; width: 100%;
+  height: 2px; background: #3b82f6;
+}
+.ml-tab-count {
+  display: inline-block; background: #f1f5f9; color: #64748b; font-size: 11px;
+  padding: 2px 8px; border-radius: 10px; margin-left: 6px;
+}
+.ml-tab-btn.active .ml-tab-count { background: #eff6ff; color: #3b82f6; }
+
+/* 테이블 영역 */
+.ml-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
+.ml-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13.5px; }
+.ml-table th { padding: 15px; background: #f8fafc; color: #475569; font-weight: 700; font-size: 13px; border-bottom: 1px solid #e2e8f0; }
+.ml-table td { padding: 15px; color: #334155; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+.ml-table tbody tr:hover { background: #f8fafc; }
+
+/* 배지 및 텍스트 */
+.ml-badge-type {
+  display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px;
+  border-radius: 20px; font-size: 12px; font-weight: 800;
+}
+.ml-badge-type.personal { background: #f1f5f9; color: #475569; }
+.ml-badge-type.lawyer { background: #f5f3ff; color: #7c3aed; }
+.ml-badge-type.admin { background: #fee2e2; color: #dc2626; }
+
+.ml-badge-status { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 12px; }
+.ml-badge-status.active { color: #10b981; }
+.ml-badge-status.withdrawn { color: #dc2626; }
+
+/* 버튼 */
+.ml-btn-suspend {
+  padding: 6px 12px; background: #fff; border: 1px solid #fca5a5; border-radius: 6px;
+  color: #dc2626; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.15s;
+}
+.ml-btn-suspend:hover { background: #fef2f2; }
+.ml-btn-disabled {
+  padding: 6px 12px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px;
+  color: #94a3b8; font-size: 12px; font-weight: 700; cursor: not-allowed;
+}
+
+.ml-loading, .ml-empty { padding: 60px; text-align: center; color: #94a3b8; font-weight: 600; }
