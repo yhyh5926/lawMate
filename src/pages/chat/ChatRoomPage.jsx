@@ -29,11 +29,13 @@ const ChatRoomPage = () => {
   // memberNo1 = MEMBER_ID(일반회원), memberNo2 = LAWYER_ID(변호사)
   // 내가 memberNo1이면 상대는 변호사, 내가 memberNo2이면 상대는 일반회원
   const targetRole = currentRoom
-    ? (currentRoom.memberNo1 === user?.memberId ? 'LAWYER' : 'PERSONAL')
-    : null;
-  console.log('=== currentRoom:', currentRoom);
-  console.log('=== rooms:', rooms);
-  console.log('=== currentRoom 상세:', JSON.stringify(currentRoom));
+  ? (Number(currentRoom.memberNo1) === Number(user?.memberId) ? 'LAWYER' : 'PERSONAL')
+  : null;
+  console.log('memberNo1:', currentRoom?.memberNo1, typeof currentRoom?.memberNo1);
+  console.log('memberId:', user?.memberId, typeof user?.memberId);
+  console.log('targetRole:', targetRole);
+  console.log('memberNo2:', currentRoom?.memberNo2);
+  console.log('targetMemberNo:', currentRoom?.targetMemberNo);
 
   const { messages, connected, loading, sendMessage } = useChat(roomNo);
 
@@ -171,14 +173,18 @@ const ChatRoomPage = () => {
               <div style={{ fontSize: '36px', marginBottom: '12px' }}>👋</div>
               <p>대화를 시작해보세요</p>
             </div>
+          ) : !user ? (
+          <div style={{ textAlign: 'center', color: '#aaa', marginTop: '60px' }}>
+            로딩 중...
+            </div>
           ) : (
             messages.map((msg, idx) => (
               <ChatBubble
                 key={msg.msgNo ?? idx}
                 message={msg}
                 myNo={user?.memberId}
-                targetRole={targetRole}   // ← 변수로 교체
-                targetMemberNo={currentRoom?.targetMemberNo}
+                targetRole={targetRole}
+                targetMemberNo={currentRoom?.memberNo2}  // ← TB_LAWYER.LAWYER_ID 직접 사용
               />
             ))
           )}
