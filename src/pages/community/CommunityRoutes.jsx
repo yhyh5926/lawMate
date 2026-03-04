@@ -3,6 +3,9 @@ import { Route } from "react-router-dom";
 import QnaList from "./QnaList";
 import Home from "./Home";
 import QnaDetail from "./QnaDetail";
+import QnaWrite from "./QnaWrite";
+import PollList from "./PollList";
+import PollDetail from "./PollDetail";
 
 const CommunityRoutes = [
   <Route
@@ -17,13 +20,18 @@ const CommunityRoutes = [
   />,
   <Route
     key="com-w"
-    path="/community/write.do"
-    element={<div>게시글 등록</div>}
+    path="/community/write"
+    element={<QnaWrite/>}
   />,
   <Route
     key="com-d"
     path="/community/detail/:postId"
     element={<QnaDetail/>}
+  />,
+  <Route
+    key="pol-l"
+    path="/community/pollList"
+    element={<PollList/>}
   />,
   <Route
     key="pol-w"
@@ -32,8 +40,8 @@ const CommunityRoutes = [
   />,
   <Route
     key="pol-d"
-    path="/community/poll/detail.do"
-    element={<div>의견조사 참여</div>}
+    path="/community/poll/detail/:pollId"
+    element={<PollDetail/>}
   />,
 ];
 

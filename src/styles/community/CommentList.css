@@ -1,0 +1,86 @@
+/* Comment Section */
+.comment-section {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 16px rgba(30, 36, 68, 0.07);
+  padding: 24px 32px;
+}
+
+.comment-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1d2e;
+  margin: 0 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comment-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4f6ef7;
+  background: #eef1ff;
+  border-radius: 20px;
+  padding: 1px 9px;
+}
+
+/* Comment item */
+.comment-item {
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f2fb;
+  animation: fadeUp 0.25s ease both;
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.comment-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.comment-author {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #444869;
+}
+
+.comment-date {
+  font-size: 12px;
+  color: #b0b5cc;
+}
+
+.comment-edited-tag {
+  font-size: 11px;
+  color: #b0b5cc;
+  background: #f3f4fb;
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+.comment-content {
+  font-size: 14px;
+  color: #2c3050;
+  line-height: 1.7;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Empty state */
+.comment-empty {
+  text-align: center;
+  padding: 30px 0;
+  color: #b0b5cc;
+  font-size: 14px;
+}
