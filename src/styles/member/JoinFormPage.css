@@ -1,0 +1,15 @@
+/* src/styles/member/JoinFormPage.css */
+.join-container { max-width: 500px; margin: 50px auto; padding: 30px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff; }
+.join-title { text-align: center; margin-bottom: 30px; font-size: 24px; color: #333; }
+.join-form-group { margin-bottom: 20px; }
+.join-label { font-size: 14px; color: #555; margin-bottom: 5px; display: block; font-weight: bold; }
+.join-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box; }
+.join-input:focus { border-color: #007BFF; outline: none; }
+.join-select { padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none; }
+.join-btn-primary { width: 100%; padding: 14px; background-color: #007BFF; color: #fff; border: none; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
+.join-btn-primary:hover { background-color: #0056b3; }
+.join-btn-secondary { padding: 12px; background-color: #6c757d; color: #fff; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; white-space: nowrap; }
+.join-btn-secondary:hover { background-color: #5a6268; }
+.join-flex-row { display: flex; gap: 10px; align-items: center; }
+.join-error-text { color: red; font-size: 12px; margin-top: 5px; }
+.join-success-text { color: green; font-size: 12px; margin-top: 5px; }
