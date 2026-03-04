@@ -42,6 +42,7 @@ const Header = () => {
 
         {/* 2. 메인 네비게이션: 간격 및 폰트 개선 */}
         <nav style={navStyle}>
+          <NavLink to="/main.do">메인</NavLink>
           <NavLink to="/precedent/search.do">판례검색</NavLink>
           <NavLink to="/lawyer/list.do">변호사찾기</NavLink>
           <NavLink to="/question/list.do">법률질문</NavLink>

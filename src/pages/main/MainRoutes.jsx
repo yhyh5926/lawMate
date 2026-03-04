@@ -1,12 +1,11 @@
+// src/pages/main/MainRoutes.jsx
 import React from "react";
-import { Route } from "react-router-dom";
+import { Route, Navigate } from "react-router-dom";
+import MainPage from "./MainPage";
 
 const MainRoutes = [
-  <Route
-    key="main-home"
-    path="/main.do"
-    element={<div>메인화면 (통계/공지)</div>}
-  />,
+  // ✅ canonical
+  <Route key="main" path="/main.do" element={<MainPage />} />,
 ];
 
 export default MainRoutes;

@@ -1,7 +1,3 @@
-// vs코드
-// 파일 위치: src/pages/question/QuestionRoutes.jsx
-// 설명: 법률 질문 등록, 전체 목록 조회, 상세 화면 라우팅 모음
-
 import React from "react";
 import { Route } from "react-router-dom";
 import PrivateRoute from "../../components/common/PrivateRoute";
