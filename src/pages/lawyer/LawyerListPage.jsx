@@ -94,15 +94,22 @@ const LawyerListPage = () => {
               <div className="lawyer-list-divider" />
 
               <div className="lawyer-list-btn-group">
-                <button
-                  className="lawyer-list-cta-btn lawyer-list-btn-chat"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/chat/room/${lawyer.lawyerId}`);
-                  }}
-                >
-                  💬 채팅상담
-                </button>
+              <button
+                className="lawyer-list-cta-btn lawyer-list-btn-chat"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  try {
+                    const { getOrCreateChatRoom } = await import('../../api/chatApi');
+                    const res = await getOrCreateChatRoom(lawyer.memberId);
+                    const roomNo = res.data.data.roomNo;
+                    navigate(`/chat/room.do?roomNo=${roomNo}`);
+                  } catch (err) {
+                    alert('채팅방 생성에 실패했습니다. 로그인이 필요합니다.');
+                  }
+                }}
+              >
+                💬 채팅상담
+              </button>
                 <button className="lawyer-list-cta-btn lawyer-list-btn-apply">
                   상담신청
                 </button>

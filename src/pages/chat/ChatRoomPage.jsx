@@ -26,6 +26,14 @@ const ChatRoomPage = () => {
 
   const [rooms, setRooms] = useState([]);
   const currentRoom = rooms.find((r) => r.roomNo === roomNo);
+  // memberNo1 = MEMBER_ID(일반회원), memberNo2 = LAWYER_ID(변호사)
+  // 내가 memberNo1이면 상대는 변호사, 내가 memberNo2이면 상대는 일반회원
+  const targetRole = currentRoom
+    ? (currentRoom.memberNo1 === user?.memberId ? 'LAWYER' : 'PERSONAL')
+    : null;
+  console.log('=== currentRoom:', currentRoom);
+  console.log('=== rooms:', rooms);
+  console.log('=== currentRoom 상세:', JSON.stringify(currentRoom));
 
   const { messages, connected, loading, sendMessage } = useChat(roomNo);
 
@@ -169,7 +177,7 @@ const ChatRoomPage = () => {
                 key={msg.msgNo ?? idx}
                 message={msg}
                 myNo={user?.memberId}
-                targetRole={currentRoom?.targetRole}
+                targetRole={targetRole}   // ← 변수로 교체
                 targetMemberNo={currentRoom?.targetMemberNo}
               />
             ))

@@ -38,6 +38,11 @@ const lawyerApi = {
       throw error;
     }
   },
+
+  getLawyerByMemberId: async (memberId) => {
+    const response = await axiosInstance.get(`/lawyers/by-member/${memberId}`);
+    return response.data;
+  },
 };
 
 export default lawyerApi;

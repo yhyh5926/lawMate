@@ -14,9 +14,7 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
 
   const goToProfile = () => {
     if (targetRole === 'LAWYER') {
-      navigate(`/lawyer/detail.do?lawyerId=${targetMemberNo}`);
-    } else {
-      navigate(`/member/profile.do?memberId=${targetMemberNo}`);
+      navigate(`/lawyer/detail.do/${targetMemberNo}`);
     }
     setShowPopup(false);
   };
