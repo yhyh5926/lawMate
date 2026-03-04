@@ -9,6 +9,9 @@ export const adminApi = {
   // 전체 회원 목록 조회
   getMemberList: (params) => axiosInstance.get("/admin/member/list.do", { params }),
   
+  // 회원 정지 처리 (신규)
+  suspendMember: (data) => axiosInstance.post("/admin/member/delete.do", data),
+  
   // 승인 대기 전문회원 목록 조회
   getPendingLawyers: () => axiosInstance.get("/admin/lawyer/approve.do"),
   
