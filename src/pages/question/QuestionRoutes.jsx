@@ -1,5 +1,5 @@
 import React from "react";
-import { Route } from "react-routerm";
+import { Route } from "react-router-dom";
 import PrivateRoute from "../../components/common/PrivateRoute";
 
 import QuestionListPage from "./QuestionListPage";
