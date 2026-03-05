@@ -18,7 +18,7 @@ export const cancelConsult = (consultNo) =>
 
 // 변호사 가용 시간 조회
 export const getAvailableTimes = (lawyerId, date) =>
-  axiosInstance.get('/consult/available', { params: { lawyerNo, date } });
+  axiosInstance.get("/consult/available", { params: { lawyerId, date } });
 
 // 환불 신청
 export const requestRefund = (paymentNo, reason) =>
