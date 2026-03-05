@@ -45,7 +45,9 @@ const Modal = ({ isOpen, title, onClose, children }) => {
       <div
         style={{
           ...styles.modal,
-          transform: active ? "translateY(0) scale(1)" : "translateY(6px) scale(0.98)",
+          transform: active
+            ? "translateY(0) scale(1)"
+            : "translateY(6px) scale(0.98)",
           opacity: active ? 1 : 0,
         }}
         onClick={(e) => e.stopPropagation()} // prevent close when clicking inside

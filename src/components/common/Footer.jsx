@@ -18,15 +18,15 @@ const Footer = () => {
             <div className="nav-group">
               <h4>법률 서비스</h4>
               <ul>
-                {/* 💡 정의서의 .do 경로 반영 */}
+                {/* 💡 정의서의  경로 반영 */}
                 <li>
-                  <Link to="/question/list.do">법률 Q&A</Link>
+                  <Link to="/question/list">법률 Q&A</Link>
                 </li>
                 <li>
-                  <Link to="/lawyer/list.do">변호사 찾기</Link>
+                  <Link to="/lawyer/list">변호사 찾기</Link>
                 </li>
                 <li>
-                  <Link to="/precedent/search.do">판례 검색</Link>
+                  <Link to="/precedent/search">판례 검색</Link>
                 </li>
                 <li>
                   <Link to="/community/qnalist">커뮤니티</Link>
@@ -37,13 +37,13 @@ const Footer = () => {
               <h4>마이페이지</h4>
               <ul>
                 <li>
-                  <Link to="/mypage/edit.do">정보수정</Link>
+                  <Link to="/mypage/edit">정보수정</Link>
                 </li>
                 <li>
-                  <Link to="/mypage/case/list.do">나의 사건목록</Link>
+                  <Link to="/mypage/case/list">나의 사건목록</Link>
                 </li>
                 <li>
-                  <Link to="/mypage/consult/list.do">상담 예약내역</Link>
+                  <Link to="/mypage/consult/list">상담 예약내역</Link>
                 </li>
               </ul>
             </div>
@@ -75,8 +75,8 @@ const Footer = () => {
           <div className="footer-legal">
             <div className="legal-links">
               {/* 💡 정의서 기반 약관 동의 경로 */}
-              <Link to="/member/join/terms.do">이용약관</Link>
-              <Link to="/member/join/terms.do" className="bold">
+              <Link to="/member/join/terms">이용약관</Link>
+              <Link to="/member/join/terms" className="bold">
                 개인정보처리방침
               </Link>
             </div>
