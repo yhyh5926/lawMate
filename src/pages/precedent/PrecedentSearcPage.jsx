@@ -46,7 +46,7 @@ const PrecedentSearchPage = () => {
           list.map((item) => (
             <div
               key={item.precId}
-              onClick={() => navigate(`/precedent/detail.do/${item.precId}`)}
+              onClick={() => navigate(`/precedent/detail/${item.precId}`)}
               style={cardStyle}
             >
               <div style={{ marginBottom: "5px" }}>

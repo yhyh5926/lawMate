@@ -5,7 +5,7 @@
  */
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { create } from "zustand"; 
+import { create } from "zustand";
 import JoinStepIndicator from "../../components/member/JoinStepIndicator.jsx";
 import { memberApi } from "../../api/memberApi.js";
 import { validateId, validatePassword } from "../../utils/validationUtil.js";
@@ -13,25 +13,59 @@ import "../../styles/member/LawyerJoinFormPage.css";
 
 const useLawyerJoinStore = create((set) => ({
   formData: {
-    loginId: "", password: "", passwordConfirm: "", name: "",
-    phone1: "010", phone2: "", phone3: "", emailId: "", emailDomain: "naver.com",
-    licenseNumber: "", officeName: "", specialty: "", officeAddress: "", officeDetailAddress: ""
+    loginId: "",
+    password: "",
+    passwordConfirm: "",
+    name: "",
+    phone1: "010",
+    phone2: "",
+    phone3: "",
+    emailId: "",
+    emailDomain: "naver.com",
+    licenseNumber: "",
+    officeName: "",
+    specialty: "",
+    officeAddress: "",
+    officeDetailAddress: "",
   },
-  isIdChecked: false, checkedId: "",
-  setFormData: (updates) => set((state) => ({ formData: { ...state.formData, ...updates } })),
+  isIdChecked: false,
+  checkedId: "",
+  setFormData: (updates) =>
+    set((state) => ({ formData: { ...state.formData, ...updates } })),
   setIdChecked: (checked, id) => set({ isIdChecked: checked, checkedId: id }),
-  resetForm: () => set({
-    formData: {
-      loginId: "", password: "", passwordConfirm: "", name: "", phone1: "010", phone2: "", phone3: "", emailId: "", emailDomain: "naver.com",
-      licenseNumber: "", officeName: "", specialty: "", officeAddress: "", officeDetailAddress: ""
-    },
-    isIdChecked: false, checkedId: ""
-  })
+  resetForm: () =>
+    set({
+      formData: {
+        loginId: "",
+        password: "",
+        passwordConfirm: "",
+        name: "",
+        phone1: "010",
+        phone2: "",
+        phone3: "",
+        emailId: "",
+        emailDomain: "naver.com",
+        licenseNumber: "",
+        officeName: "",
+        specialty: "",
+        officeAddress: "",
+        officeDetailAddress: "",
+      },
+      isIdChecked: false,
+      checkedId: "",
+    }),
 }));
 
 const LawyerJoinFormPage = () => {
   const navigate = useNavigate();
-  const { formData, setFormData, isIdChecked, checkedId, setIdChecked, resetForm } = useLawyerJoinStore();
+  const {
+    formData,
+    setFormData,
+    isIdChecked,
+    checkedId,
+    setIdChecked,
+    resetForm,
+  } = useLawyerJoinStore();
   const [idError, setIdError] = useState("");
   const [idSuccess, setIdSuccess] = useState("");
   const [files, setFiles] = useState([]); // 💡 파일 다중 업로드용 상태
@@ -42,7 +76,11 @@ const LawyerJoinFormPage = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ [name]: value });
-    if (name === "loginId") { setIdChecked(false, ""); setIdSuccess(""); setIdError(""); }
+    if (name === "loginId") {
+      setIdChecked(false, "");
+      setIdSuccess("");
+      setIdError("");
+    }
   };
 
   const handleFileChange = (e) => {
@@ -60,20 +98,47 @@ const LawyerJoinFormPage = () => {
   };
 
   const handleCheckId = async () => {
-    if (!validateId(formData.loginId)) { setIdError("아이디는 4~20자의 영문 소문자, 숫자만 가능합니다."); return; }
+    if (!validateId(formData.loginId)) {
+      setIdError("아이디는 4~20자의 영문 소문자, 숫자만 가능합니다.");
+      return;
+    }
     try {
       const res = await memberApi.checkId(formData.loginId);
-      if (res.data.available) { setIdSuccess("사용 가능한 아이디입니다."); setIdError(""); setIdChecked(true, formData.loginId); }
-      else { setIdError("이미 사용 중인 아이디입니다."); setIdSuccess(""); setIdChecked(false, ""); }
-    } catch (error) { setIdError("중복 확인 중 오류가 발생했습니다."); }
+      if (res.data.available) {
+        setIdSuccess("사용 가능한 아이디입니다.");
+        setIdError("");
+        setIdChecked(true, formData.loginId);
+      } else {
+        setIdError("이미 사용 중인 아이디입니다.");
+        setIdSuccess("");
+        setIdChecked(false, "");
+      }
+    } catch (error) {
+      setIdError("중복 확인 중 오류가 발생했습니다.");
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isIdChecked || formData.loginId !== checkedId) return alert("아이디 중복 확인을 해주세요.");
-    if (!validatePassword(formData.password)) return alert("비밀번호는 8~20자의 영문, 숫자, 특수문자를 포함해야 합니다.");
-    if (formData.password !== formData.passwordConfirm) return alert("비밀번호가 일치하지 않습니다.");
-    if (!formData.name || !formData.phone2 || !formData.phone3 || !formData.emailId || !formData.licenseNumber || !formData.officeName || !formData.specialty || !formData.officeAddress) return alert("필수 정보를 모두 입력해주세요.");
+    if (!isIdChecked || formData.loginId !== checkedId)
+      return alert("아이디 중복 확인을 해주세요.");
+    if (!validatePassword(formData.password))
+      return alert(
+        "비밀번호는 8~20자의 영문, 숫자, 특수문자를 포함해야 합니다.",
+      );
+    if (formData.password !== formData.passwordConfirm)
+      return alert("비밀번호가 일치하지 않습니다.");
+    if (
+      !formData.name ||
+      !formData.phone2 ||
+      !formData.phone3 ||
+      !formData.emailId ||
+      !formData.licenseNumber ||
+      !formData.officeName ||
+      !formData.specialty ||
+      !formData.officeAddress
+    )
+      return alert("필수 정보를 모두 입력해주세요.");
 
     const phone = `${formData.phone1}-${formData.phone2}-${formData.phone3}`;
     const email = `${formData.emailId}@${formData.emailDomain}`;
@@ -91,17 +156,21 @@ const LawyerJoinFormPage = () => {
     submitData.append("specialty", formData.specialty);
     submitData.append("officeAddress", formData.officeAddress);
     submitData.append("officeDetailAddr", formData.officeDetailAddress);
-    
+
     // 선택된 파일들을 순회하며 Append
-    files.forEach((file) => { submitData.append("files", file); });
+    files.forEach((file) => {
+      submitData.append("files", file);
+    });
 
     try {
       const res = await memberApi.join(submitData);
       if (res.data.success) {
         resetForm();
-        navigate("/member/lawyer/complete.do");
+        navigate("/member/lawyer/complete");
       }
-    } catch (error) { alert("전문회원 가입 중 오류가 발생했습니다."); }
+    } catch (error) {
+      alert("전문회원 가입 중 오류가 발생했습니다.");
+    }
   };
 
   return (
@@ -114,55 +183,197 @@ const LawyerJoinFormPage = () => {
         <div className="lawyer-join-group">
           <label className="lawyer-join-label">아이디</label>
           <div className="lawyer-join-flex-row">
-            <input type="text" name="loginId" value={formData.loginId} onChange={handleChange} placeholder="4~20자 영문, 숫자" className="lawyer-join-input" />
-            <button type="button" onClick={handleCheckId} className="lawyer-join-btn-secondary">중복 확인</button>
+            <input
+              type="text"
+              name="loginId"
+              value={formData.loginId}
+              onChange={handleChange}
+              placeholder="4~20자 영문, 숫자"
+              className="lawyer-join-input"
+            />
+            <button
+              type="button"
+              onClick={handleCheckId}
+              className="lawyer-join-btn-secondary"
+            >
+              중복 확인
+            </button>
           </div>
           {idError && <div className="lawyer-join-error">{idError}</div>}
           {idSuccess && <div className="lawyer-join-success">{idSuccess}</div>}
         </div>
 
-        <div className="lawyer-join-group"><label className="lawyer-join-label">비밀번호</label><input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="8~20자 영문, 숫자, 특수문자" className="lawyer-join-input" /></div>
-        <div className="lawyer-join-group"><label className="lawyer-join-label">비밀번호 확인</label><input type="password" name="passwordConfirm" value={formData.passwordConfirm} onChange={handleChange} placeholder="비밀번호 다시 입력" className="lawyer-join-input" /></div>
-        <div className="lawyer-join-group"><label className="lawyer-join-label">이름 (실명)</label><input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="실명 입력" className="lawyer-join-input" /></div>
+        <div className="lawyer-join-group">
+          <label className="lawyer-join-label">비밀번호</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="8~20자 영문, 숫자, 특수문자"
+            className="lawyer-join-input"
+          />
+        </div>
+        <div className="lawyer-join-group">
+          <label className="lawyer-join-label">비밀번호 확인</label>
+          <input
+            type="password"
+            name="passwordConfirm"
+            value={formData.passwordConfirm}
+            onChange={handleChange}
+            placeholder="비밀번호 다시 입력"
+            className="lawyer-join-input"
+          />
+        </div>
+        <div className="lawyer-join-group">
+          <label className="lawyer-join-label">이름 (실명)</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="실명 입력"
+            className="lawyer-join-input"
+          />
+        </div>
 
         <div className="lawyer-join-group">
           <label className="lawyer-join-label">휴대전화</label>
           <div className="lawyer-join-flex-row">
-            <select name="phone1" value={formData.phone1} onChange={handleChange} className="lawyer-join-select">
-              <option value="010">010</option><option value="011">011</option><option value="016">016</option>
+            <select
+              name="phone1"
+              value={formData.phone1}
+              onChange={handleChange}
+              className="lawyer-join-select"
+            >
+              <option value="010">010</option>
+              <option value="011">011</option>
+              <option value="016">016</option>
             </select>
             <span>-</span>
-            <input type="text" ref={phone2Ref} value={formData.phone2} onChange={handlePhone2Change} maxLength={4} className="lawyer-join-input" style={{ textAlign: "center" }} />
+            <input
+              type="text"
+              ref={phone2Ref}
+              value={formData.phone2}
+              onChange={handlePhone2Change}
+              maxLength={4}
+              className="lawyer-join-input"
+              style={{ textAlign: "center" }}
+            />
             <span>-</span>
-            <input type="text" ref={phone3Ref} value={formData.phone3} onChange={handlePhone3Change} maxLength={4} className="lawyer-join-input" style={{ textAlign: "center" }} />
+            <input
+              type="text"
+              ref={phone3Ref}
+              value={formData.phone3}
+              onChange={handlePhone3Change}
+              maxLength={4}
+              className="lawyer-join-input"
+              style={{ textAlign: "center" }}
+            />
           </div>
         </div>
 
         <div className="lawyer-join-group">
           <label className="lawyer-join-label">이메일</label>
           <div className="lawyer-join-flex-row">
-            <input type="text" name="emailId" value={formData.emailId} onChange={handleChange} placeholder="이메일 아이디" className="lawyer-join-input" />
+            <input
+              type="text"
+              name="emailId"
+              value={formData.emailId}
+              onChange={handleChange}
+              placeholder="이메일 아이디"
+              className="lawyer-join-input"
+            />
             <span>@</span>
-            <select name="emailDomain" value={formData.emailDomain} onChange={handleChange} className="lawyer-join-select">
-              <option value="naver.com">naver.com</option><option value="gmail.com">gmail.com</option><option value="kakao.com">kakao.com</option>
+            <select
+              name="emailDomain"
+              value={formData.emailDomain}
+              onChange={handleChange}
+              className="lawyer-join-select"
+            >
+              <option value="naver.com">naver.com</option>
+              <option value="gmail.com">gmail.com</option>
+              <option value="kakao.com">kakao.com</option>
             </select>
           </div>
         </div>
 
         <div className="lawyer-join-section">2. 전문가 정보</div>
-        <div className="lawyer-join-group"><label className="lawyer-join-label">변호사 자격 입력</label><input type="text" name="licenseNumber" placeholder="자격 입력" value={formData.licenseNumber} onChange={handleChange} className="lawyer-join-input" /></div>
-        <div className="lawyer-join-group"><label className="lawyer-join-label">소속 법무법인 / 사무소명</label><input type="text" name="officeName" placeholder="소속 입력" value={formData.officeName} onChange={handleChange} className="lawyer-join-input" /></div>
-        <div className="lawyer-join-group"><label className="lawyer-join-label">주요 전문 분야 (카테고리)</label><input type="text" name="specialty" placeholder="예: 형사, 이혼, 민사" value={formData.specialty} onChange={handleChange} className="lawyer-join-input" /></div>
-        <div className="lawyer-join-group"><label className="lawyer-join-label">사무소 기본 주소</label><input type="text" name="officeAddress" value={formData.officeAddress} onChange={handleChange} placeholder="예: 서울시 서초구 서초대로" className="lawyer-join-input" /></div>
-        <div className="lawyer-join-group"><label className="lawyer-join-label">사무소 상세 주소</label><input type="text" name="officeDetailAddress" value={formData.officeDetailAddress} onChange={handleChange} placeholder="예: 대법원빌딩 3층" className="lawyer-join-input" /></div>
-
         <div className="lawyer-join-group">
-          <label className="lawyer-join-label">변호사 자격증 증빙서류 (다중 선택 가능)</label>
-          <input type="file" name="files" multiple onChange={handleFileChange} className="lawyer-join-file-input" />
-          <div style={{fontSize: "12px", color: "#888", marginTop: "5px"}}>※ Ctrl 키를 누른 상태로 여러 파일을 선택할 수 있습니다.</div>
+          <label className="lawyer-join-label">변호사 자격 입력</label>
+          <input
+            type="text"
+            name="licenseNumber"
+            placeholder="자격 입력"
+            value={formData.licenseNumber}
+            onChange={handleChange}
+            className="lawyer-join-input"
+          />
+        </div>
+        <div className="lawyer-join-group">
+          <label className="lawyer-join-label">소속 법무법인 / 사무소명</label>
+          <input
+            type="text"
+            name="officeName"
+            placeholder="소속 입력"
+            value={formData.officeName}
+            onChange={handleChange}
+            className="lawyer-join-input"
+          />
+        </div>
+        <div className="lawyer-join-group">
+          <label className="lawyer-join-label">주요 전문 분야 (카테고리)</label>
+          <input
+            type="text"
+            name="specialty"
+            placeholder="예: 형사, 이혼, 민사"
+            value={formData.specialty}
+            onChange={handleChange}
+            className="lawyer-join-input"
+          />
+        </div>
+        <div className="lawyer-join-group">
+          <label className="lawyer-join-label">사무소 기본 주소</label>
+          <input
+            type="text"
+            name="officeAddress"
+            value={formData.officeAddress}
+            onChange={handleChange}
+            placeholder="예: 서울시 서초구 서초대로"
+            className="lawyer-join-input"
+          />
+        </div>
+        <div className="lawyer-join-group">
+          <label className="lawyer-join-label">사무소 상세 주소</label>
+          <input
+            type="text"
+            name="officeDetailAddress"
+            value={formData.officeDetailAddress}
+            onChange={handleChange}
+            placeholder="예: 대법원빌딩 3층"
+            className="lawyer-join-input"
+          />
         </div>
 
-        <button type="submit" className="lawyer-join-btn-primary">가입 신청하기</button>
+        <div className="lawyer-join-group">
+          <label className="lawyer-join-label">
+            변호사 자격증 증빙서류 (다중 선택 가능)
+          </label>
+          <input
+            type="file"
+            name="files"
+            multiple
+            onChange={handleFileChange}
+            className="lawyer-join-file-input"
+          />
+          <div style={{ fontSize: "12px", color: "#888", marginTop: "5px" }}>
+            ※ Ctrl 키를 누른 상태로 여러 파일을 선택할 수 있습니다.
+          </div>
+        </div>
+
+        <button type="submit" className="lawyer-join-btn-primary">
+          가입 신청하기
+        </button>
       </form>
     </div>
   );

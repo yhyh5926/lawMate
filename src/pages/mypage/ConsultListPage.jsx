@@ -197,7 +197,7 @@ const ConsultListPage = () => {
                   {c.status === "CONFIRMED" && !c.paid && (
                     <button
                       onClick={() =>
-                        navigate(`/payment/pay.do?consultNo=${c.consultNo}`)
+                        navigate(`/payment/pay?consultNo=${c.consultNo}`)
                       }
                       style={btnStyle("#1A6DFF", "#fff")}
                     >
@@ -209,7 +209,7 @@ const ConsultListPage = () => {
                     <button
                       onClick={() =>
                         navigate(
-                          `/lawyer/review/write.do?consultNo=${c.consultNo}`,
+                          `/lawyer/review/write?consultNo=${c.consultNo}`,
                         )
                       }
                       style={btnStyle("#34C759", "#fff")}

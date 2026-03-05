@@ -8,40 +8,24 @@ import PollList from "./PollList";
 import PollDetail from "./PollDetail";
 
 const CommunityRoutes = [
-  <Route
-    key="com-h"
-    path="/community/home"
-    element={<Home/>}
-  />,
-  <Route
-    key="com-l"
-    path="/community/qnalist"
-    element={<QnaList/>}
-  />,
-  <Route
-    key="com-w"
-    path="/community/write"
-    element={<QnaWrite/>}
-  />,
+  <Route key="com-h" path="/community/home" element={<Home />} />,
+  <Route key="com-l" path="/community/qnalist" element={<QnaList />} />,
+  <Route key="com-w" path="/community/write" element={<QnaWrite />} />,
   <Route
     key="com-d"
     path="/community/detail/:postId"
-    element={<QnaDetail/>}
+    element={<QnaDetail />}
   />,
-  <Route
-    key="pol-l"
-    path="/community/pollList"
-    element={<PollList/>}
-  />,
+  <Route key="pol-l" path="/community/pollList" element={<PollList />} />,
   <Route
     key="pol-w"
-    path="/community/poll/write.do"
+    path="/community/poll/write"
     element={<div>의견조사 생성</div>}
   />,
   <Route
     key="pol-d"
     path="/community/poll/detail/:pollId"
-    element={<PollDetail/>}
+    element={<PollDetail />}
   />,
 ];
 

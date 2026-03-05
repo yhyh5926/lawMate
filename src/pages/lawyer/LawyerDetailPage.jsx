@@ -143,7 +143,7 @@ const LawyerDetailPage = () => {
                   m.getOrCreateChatRoom(lawyer.memberId),
                 );
                 const roomNo = res.data.data.roomNo;
-                navigate(`/chat/room.do?roomNo=${roomNo}`);
+                navigate(`/chat/room?roomNo=${roomNo}`);
               } catch (err) {
                 alert("채팅방 생성에 실패했습니다. 로그인이 필요합니다.", err);
               }
@@ -154,7 +154,7 @@ const LawyerDetailPage = () => {
           <button
             className="lawyer-detail-btn btn-reserve"
             onClick={() =>
-              navigate(`/consult/reserve.do?lawyerId=${lawyer.lawyerId}`)
+              navigate(`/consult/reserve?lawyerId=${lawyer.lawyerId}`)
             }
           >
             지금 바로 상담 예약하기

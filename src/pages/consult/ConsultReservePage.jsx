@@ -32,10 +32,19 @@ const ConsultReservePage = () => {
   }, [lawyerId]);
 
   useEffect(() => {
-  if (!selectedDate) return;
-  const times = ['09:00','10:00','11:00','13:00','14:00','15:00','16:00','17:00'];
-  setAvailableTimes(times);
-  setSelectedTime('');
+    if (!selectedDate) return;
+    const times = [
+      "09:00",
+      "10:00",
+      "11:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
+    ];
+    setAvailableTimes(times);
+    setSelectedTime("");
   }, [selectedDate]);
 
   const handleFileChange = (e) => {
@@ -79,7 +88,7 @@ const ConsultReservePage = () => {
 
       // 💡 CONSULT_ID를 받아 결제 페이지로 이동
       const consultId = res.data?.consultId || res.data?.data?.consultId;
-      navigate(`/payment/pay.do?consultId=${consultId}`);
+      navigate(`/payment/pay?consultId=${consultId}`);
     } catch (e) {
       alert(e.response?.data?.message || "예약 신청 중 오류가 발생했습니다.");
     } finally {

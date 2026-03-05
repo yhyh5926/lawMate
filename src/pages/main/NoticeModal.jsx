@@ -4,7 +4,11 @@ import Modal from "../../components/common/Modal";
 
 const NoticeModal = ({ isOpen, onClose, detail }) => {
   return (
-    <Modal isOpen={isOpen} title={detail?.title || "공지사항"} onClose={onClose}>
+    <Modal
+      isOpen={isOpen}
+      title={detail?.title || "공지사항"}
+      onClose={onClose}
+    >
       <div style={{ fontSize: 12, color: "#64748b", marginBottom: 10 }}>
         {detail?.createdAt ? new Date(detail.createdAt).toLocaleString() : ""}
       </div>

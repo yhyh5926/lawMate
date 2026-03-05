@@ -34,7 +34,7 @@ const QuestionWritePage = () => {
         memberId: user?.loginId, // 실제 DB의 member PK를 넘기도록 수정 필요
       });
       alert("질문이 성공적으로 등록되었습니다.");
-      navigate("/question/list.do");
+      navigate("/question/list");
     } catch (error) {
       alert("질문 등록 중 오류가 발생했습니다.", error);
     }

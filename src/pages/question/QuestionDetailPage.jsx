@@ -105,9 +105,7 @@ const QuestionDetailPage = () => {
             <div className="answer-header">
               <div className="lawyer-info">
                 <span>👨‍⚖️</span> {ans.lawyerName} 변호사
-                {ans.isAdopted === "Y" && (
-                  <span className="adopt-badge">채택됨</span>
-                )}
+                {ans.ispted === "Y" && <span className="pt-badge">채택됨</span>}
               </div>
               <span className="answer-date">{ans.createdAt}</span>
             </div>

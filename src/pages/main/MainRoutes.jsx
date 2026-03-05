@@ -5,7 +5,7 @@ import MainPage from "./MainPage";
 
 const MainRoutes = [
   // ✅ canonical
-  <Route key="main" path="/main.do" element={<MainPage />} />,
+  <Route key="main" path="/main" element={<MainPage />} />,
 ];
 
 export default MainRoutes;

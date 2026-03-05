@@ -36,7 +36,7 @@ function App() {
             {CommunityRoutes}
             {QuestionRoutes}
             {ConsultRoutes}
-            <Route path="/" element={<Navigate to="/main.do" replace />} />
+            <Route path="/" element={<Navigate to="/main" replace />} />
             <Route
               path="*"
               element={

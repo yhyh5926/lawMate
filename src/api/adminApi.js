@@ -4,38 +4,42 @@ import axiosInstance from "./axiosInstance";
 
 export const adminApi = {
   // 관리자 대시보드 통계
-  getStats: () => axiosInstance.get("/admin/stats.do"),
-  
+  getStats: () => axiosInstance.get("/admin/stats"),
+
   // 전체 회원 목록 조회
-  getMemberList: (params) => axiosInstance.get("/admin/member/list.do", { params }),
-  
+  getMemberList: (params) =>
+    axiosInstance.get("/admin/member/list", { params }),
+
   // 회원 정지 처리 (신규)
-  suspendMember: (data) => axiosInstance.post("/admin/member/delete.do", data),
-  
+  suspendMember: (data) => axiosInstance.post("/admin/member/delete", data),
+
   // 승인 대기 전문회원 목록 조회
-  getPendingLawyers: () => axiosInstance.get("/admin/lawyer/approve.do"),
-  
+  getPendingLawyers: () => axiosInstance.get("/admin/lawyer/approve"),
+
   // 전문회원 승인/반려 처리
-  approveLawyer: (data) => axiosInstance.post("/admin/lawyer/approve.do", data),
-  
+  approveLawyer: (data) => axiosInstance.post("/admin/lawyer/approve", data),
+
   // 플랫폼 전체 사건 현황 모니터링 (기존 기능 보존)
-  getCaseList: (params) => axiosInstance.get("/admin/case/list.do", { params }),
+  getCaseList: (params) => axiosInstance.get("/admin/case/list", { params }),
 
   // 💡 커뮤니티 관리 통합 게시글(일반/Q&A) 조회 (신규)
-  getBoardList: () => axiosInstance.get("/admin/board/list.do"),
-  
+  getBoardList: () => axiosInstance.get("/admin/board/list"),
+
   // 💡 커뮤니티 관리 통합 게시글 삭제 (신규)
-  deleteBoardItem: (data) => axiosInstance.post("/admin/board/delete.do", data),
-  
-  // 신고 접수 목록 조회 
-  getReportList: (params) => axiosInstance.get("/admin/report/list.do", { params }),
+  deleteBoardItem: (data) => axiosInstance.post("/admin/board/delete", data),
+
+  // 신고 접수 목록 조회
+  getReportList: (params) =>
+    axiosInstance.get("/admin/report/list", { params }),
 
   // 신고 상세 정보 조회
-  getReportDetail: (reportId) => axiosInstance.get("/admin/report/detail.do", { params: { reportId } }),
-  
+  getReportDetail: (reportId) =>
+    axiosInstance.get("/admin/report/detail", { params: { reportId } }),
+
   // 신고 대상 제재 집행 처리
-  processSanction: (data) => axiosInstance.post("/admin/report/process.do", data),
-  
+  processSanction: (data) => axiosInstance.post("/admin/report/process", data),
+
   // 전체 결제 내역 조회
-  getPaymentList: (params) => axiosInstance.get("/admin/payment/list.do", { params }),
+  getPaymentList: (params) =>
+    axiosInstance.get("/admin/payment/list", { params }),
 };

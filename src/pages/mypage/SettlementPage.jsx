@@ -57,7 +57,7 @@ const MypageEditPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const fullPhone = `${formData.phone1}${formData.phone2}${formData.phone3}`;
     const fullEmail = `${formData.emailId}@${formData.emailDomain}`;
 
@@ -67,19 +67,19 @@ const MypageEditPage = () => {
         name: formData.name,
         phone: fullPhone,
         email: fullEmail,
-        memberType: user.role // 기존 타입 유지
+        memberType: user.role, // 기존 타입 유지
       };
 
       const response = await memberApi.updateProfile(updateData);
-      
+
       if (response.data) {
         alert("회원 정보가 성공적으로 수정되었습니다.");
         // 수정 성공 후 전역 상태 업데이트 (토큰은 그대로 유지하거나 서버에서 새로 받음)
         // 여기서는 기존 토큰과 수정된 유저 정보를 다시 스토어에 저장
         const currentToken = localStorage.getItem("token");
-        login(currentToken, response.data); 
-        
-        navigate("/main.do");
+        login(currentToken, response.data);
+
+        navigate("/main");
       }
     } catch (error) {
       console.error("수정 실패:", error);
@@ -88,22 +88,52 @@ const MypageEditPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: "500px", margin: "50px auto", padding: "20px", backgroundColor: "#fff", borderRadius: "8px", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
-      <h2 style={{ textAlign: "center", marginBottom: "30px", color: "#333" }}>회원 정보 수정</h2>
-      
-      <div style={{ marginBottom: "25px", padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "8px", border: "1px solid #e9ecef" }}>
-        <p style={{ margin: 0, fontSize: "14px" }}><strong>아이디:</strong> {user?.loginId} (변경 불가)</p>
-        <p style={{ margin: "8px 0 0 0", fontSize: "14px" }}><strong>회원 유형:</strong> {user?.role === 'LAWYER' ? '전문회원' : '일반회원'}</p>
+    <div
+      style={{
+        maxWidth: "500px",
+        margin: "50px auto",
+        padding: "20px",
+        backgroundColor: "#fff",
+        borderRadius: "8px",
+        boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+      }}
+    >
+      <h2 style={{ textAlign: "center", marginBottom: "30px", color: "#333" }}>
+        회원 정보 수정
+      </h2>
+
+      <div
+        style={{
+          marginBottom: "25px",
+          padding: "15px",
+          backgroundColor: "#f8f9fa",
+          borderRadius: "8px",
+          border: "1px solid #e9ecef",
+        }}
+      >
+        <p style={{ margin: 0, fontSize: "14px" }}>
+          <strong>아이디:</strong> {user?.loginId} (변경 불가)
+        </p>
+        <p style={{ margin: "8px 0 0 0", fontSize: "14px" }}>
+          <strong>회원 유형:</strong>{" "}
+          {user?.role === "LAWYER" ? "전문회원" : "일반회원"}
+        </p>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+      >
         {/* 이름 수정 */}
         <div>
           <label style={labelStyle}>이름(실명)</label>
-          <input 
-            type="text" name="name" 
-            value={formData.name} onChange={handleChange} required 
-            style={inputStyle} 
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            style={inputStyle}
           />
         </div>
 
@@ -111,11 +141,34 @@ const MypageEditPage = () => {
         <div>
           <label style={labelStyle}>새로운 휴대전화 번호</label>
           <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-            <input type="text" name="phone1" value={formData.phone1} onChange={(e) => handlePhoneChange(e, phone2Ref)} maxLength={3} style={{ ...inputStyle, textAlign: "center", flex: 0.8 }} />
+            <input
+              type="text"
+              name="phone1"
+              value={formData.phone1}
+              onChange={(e) => handlePhoneChange(e, phone2Ref)}
+              maxLength={3}
+              style={{ ...inputStyle, textAlign: "center", flex: 0.8 }}
+            />
             <span>-</span>
-            <input type="text" name="phone2" ref={phone2Ref} value={formData.phone2} onChange={(e) => handlePhoneChange(e, phone3Ref)} maxLength={4} style={{ ...inputStyle, textAlign: "center" }} />
+            <input
+              type="text"
+              name="phone2"
+              ref={phone2Ref}
+              value={formData.phone2}
+              onChange={(e) => handlePhoneChange(e, phone3Ref)}
+              maxLength={4}
+              style={{ ...inputStyle, textAlign: "center" }}
+            />
             <span>-</span>
-            <input type="text" name="phone3" ref={phone3Ref} value={formData.phone3} onChange={(e) => handlePhoneChange(e, null)} maxLength={4} style={{ ...inputStyle, textAlign: "center" }} />
+            <input
+              type="text"
+              name="phone3"
+              ref={phone3Ref}
+              value={formData.phone3}
+              onChange={(e) => handlePhoneChange(e, null)}
+              maxLength={4}
+              style={{ ...inputStyle, textAlign: "center" }}
+            />
           </div>
         </div>
 
@@ -123,9 +176,21 @@ const MypageEditPage = () => {
         <div>
           <label style={labelStyle}>새로운 이메일 주소</label>
           <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-            <input type="text" name="emailId" value={formData.emailId} onChange={handleChange} placeholder="아이디" style={inputStyle} />
+            <input
+              type="text"
+              name="emailId"
+              value={formData.emailId}
+              onChange={handleChange}
+              placeholder="아이디"
+              style={inputStyle}
+            />
             <span>@</span>
-            <select name="emailDomain" value={formData.emailDomain} onChange={handleChange} style={selectStyle}>
+            <select
+              name="emailDomain"
+              value={formData.emailDomain}
+              onChange={handleChange}
+              style={selectStyle}
+            >
               <option value="naver.com">naver.com</option>
               <option value="gmail.com">gmail.com</option>
               <option value="kakao.com">kakao.com</option>
@@ -133,20 +198,63 @@ const MypageEditPage = () => {
             </select>
           </div>
         </div>
-        
+
         <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-          <button type="button" onClick={() => navigate(-1)} style={cancelBtnStyle}>취소</button>
-          <button type="submit" style={submitBtnStyle}>수정 완료</button>
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            style={cancelBtnStyle}
+          >
+            취소
+          </button>
+          <button type="submit" style={submitBtnStyle}>
+            수정 완료
+          </button>
         </div>
       </form>
     </div>
   );
 };
 
-const labelStyle = { display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: "bold", color: "#444" };
-const inputStyle = { width: "100%", padding: "12px", border: "1px solid #ccc", borderRadius: "4px", boxSizing: "border-box", fontSize: "15px" };
-const selectStyle = { padding: "12px", border: "1px solid #ccc", borderRadius: "4px", flex: 1, fontSize: "15px" };
-const submitBtnStyle = { flex: 1, padding: "14px", backgroundColor: "#007BFF", color: "#fff", border: "none", borderRadius: "4px", fontWeight: "bold", cursor: "pointer" };
-const cancelBtnStyle = { flex: 1, padding: "14px", border: "1px solid #ccc", background: "#fff", borderRadius: "4px", cursor: "pointer" };
+const labelStyle = {
+  display: "block",
+  marginBottom: "8px",
+  fontSize: "14px",
+  fontWeight: "bold",
+  color: "#444",
+};
+const inputStyle = {
+  width: "100%",
+  padding: "12px",
+  border: "1px solid #ccc",
+  borderRadius: "4px",
+  boxSizing: "border-box",
+  fontSize: "15px",
+};
+const selectStyle = {
+  padding: "12px",
+  border: "1px solid #ccc",
+  borderRadius: "4px",
+  flex: 1,
+  fontSize: "15px",
+};
+const submitBtnStyle = {
+  flex: 1,
+  padding: "14px",
+  backgroundColor: "#007BFF",
+  color: "#fff",
+  border: "none",
+  borderRadius: "4px",
+  fontWeight: "bold",
+  cursor: "pointer",
+};
+const cancelBtnStyle = {
+  flex: 1,
+  padding: "14px",
+  border: "1px solid #ccc",
+  background: "#fff",
+  borderRadius: "4px",
+  cursor: "pointer",
+};
 
 export default MypageEditPage;

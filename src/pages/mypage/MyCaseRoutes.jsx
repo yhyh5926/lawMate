@@ -11,12 +11,12 @@ import CaseDetailPage from "./CaseDetailPage";
 const MyCaseRoutes = [
   <Route key="mypage-guard" element={<PrivateRoute />}>
     {/* 💡 마이페이지 메인 진입점 */}
-    <Route path="/mypage/main.do" element={<MyPage />} /> 
-    
-    <Route path="/mypage/withdraw.do" element={<WithdrawPage />} />
-    <Route path="/mypage/case/list.do" element={<CaseListPage />} />
-    <Route path="/mypage/case/detail.do/:caseId" element={<CaseDetailPage />} />
-  </Route>
+    <Route path="/mypage/main" element={<MyPage />} />
+
+    <Route path="/mypage/withdraw" element={<WithdrawPage />} />
+    <Route path="/mypage/case/list" element={<CaseListPage />} />
+    <Route path="/mypage/case/detail/:caseId" element={<CaseDetailPage />} />
+  </Route>,
 ];
 
 export default MyCaseRoutes;

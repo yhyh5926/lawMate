@@ -10,13 +10,25 @@ import PaymentPage from "../consult/PaymentPage";
 import SettlementPage from "../mypage/SettlementPage";
 
 const ChatConsultRoutes = [
-  <Route key="chat-l"   path="/chat/list.do"              element={<ChatListPage />} />,
-  <Route key="chat-r"   path="/chat/room.do"              element={<ChatRoomPage />} />,
-  <Route key="con-res"  path="/consult/reserve.do"        element={<ConsultReservePage />} />,
-  <Route key="my-con-l" path="/mypage/consult/list.do"    element={<ConsultListPage />} />,
-  <Route key="pay-p"    path="/payment/pay.do"            element={<PaymentPage />} />,
-  <Route key="pay-r"    path="/payment/refund.do"         element={<div>환불 신청</div>} />,
-  <Route key="my-set-l" path="/mypage/settlement/list.do" element={<SettlementPage />} />,
+  <Route key="chat-l" path="/chat/list" element={<ChatListPage />} />,
+  <Route key="chat-r" path="/chat/room" element={<ChatRoomPage />} />,
+  <Route
+    key="con-res"
+    path="/consult/reserve"
+    element={<ConsultReservePage />}
+  />,
+  <Route
+    key="my-con-l"
+    path="/mypage/consult/list"
+    element={<ConsultListPage />}
+  />,
+  <Route key="pay-p" path="/payment/pay" element={<PaymentPage />} />,
+  <Route key="pay-r" path="/payment/refund" element={<div>환불 신청</div>} />,
+  <Route
+    key="my-set-l"
+    path="/mypage/settlement/list"
+    element={<SettlementPage />}
+  />,
 ];
 
 export default ChatConsultRoutes;

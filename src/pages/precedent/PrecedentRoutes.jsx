@@ -5,12 +5,12 @@ import PrecedentDetailPage from "./PrecedentDetailPage";
 const PrecedentRoutes = [
   <Route
     key="prec-s"
-    path="/precedent/search.do"
+    path="/precedent/search"
     element={<PrecedentSearchPage />}
   />,
   <Route
     key="prec-d"
-    path="/precedent/detail.do/:id"
+    path="/precedent/detail/:id"
     element={<PrecedentDetailPage />}
   />,
 ];

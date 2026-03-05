@@ -22,7 +22,7 @@ export default function MainPage() {
 
   // ✅ requirement: 질문 등록(하단/상단) 클릭 시 바로 로그인 페이지로 이동
   const goToLogin = () => {
-    window.location.href = "/member/login.do";
+    window.location.href = "/member/login";
   };
 
   useEffect(() => {
@@ -44,8 +44,14 @@ export default function MainPage() {
     };
   }, []);
 
-  const topNotices = useMemo(() => (data?.topNotices ?? []).slice(0, 3), [data]);
-  const recentPosts = useMemo(() => (data?.recentPosts ?? []).slice(0, 5), [data]);
+  const topNotices = useMemo(
+    () => (data?.topNotices ?? []).slice(0, 3),
+    [data],
+  );
+  const recentPosts = useMemo(
+    () => (data?.recentPosts ?? []).slice(0, 5),
+    [data],
+  );
 
   // --- Stats normalization ---
   const stats = data?.stats ?? { todayCount: 0, weeklyCount: 0, series: [] };
@@ -103,7 +109,8 @@ export default function MainPage() {
   };
 
   const trendStyle = (pct) => {
-    if (pct == null || Number.isNaN(pct) || pct === 0) return styles.trendNeutral;
+    if (pct == null || Number.isNaN(pct) || pct === 0)
+      return styles.trendNeutral;
     return pct > 0 ? styles.trendUp : styles.trendDown;
   };
 
@@ -151,19 +158,22 @@ export default function MainPage() {
           <div style={styles.heroLeft}>
             <div style={styles.heroBadgeRow}>
               <span style={styles.heroBadge}>LAW MATE</span>
-              <span style={styles.heroBadgeMuted}>/ main.do</span>
+              <span style={styles.heroBadgeMuted}>/ main</span>
             </div>
 
             <div style={styles.heroTitle}>법률 상담을 더 쉽고 빠르게</div>
             <div style={styles.heroSubtitle}>
-              공지 · 통계 · 커뮤니티 최신 글을 한 번에 확인하고, 로그인 후 질문을 등록하세요.
+              공지 · 통계 · 커뮤니티 최신 글을 한 번에 확인하고, 로그인 후
+              질문을 등록하세요.
             </div>
 
             <div className="lm-kpis" style={styles.kpis}>
               <div style={styles.kpiCard}>
                 <div style={styles.kpiLabel}>오늘 접수 사건 수</div>
                 <div style={styles.kpiValue}>{todayCount}</div>
-                <div style={{ ...styles.kpiTrend, ...trendStyle(todayChangePct) }}>
+                <div
+                  style={{ ...styles.kpiTrend, ...trendStyle(todayChangePct) }}
+                >
                   전일 대비 {trendText(todayChangePct)}
                 </div>
               </div>
@@ -171,7 +181,9 @@ export default function MainPage() {
               <div style={styles.kpiCard}>
                 <div style={styles.kpiLabel}>주간 누적 상담 건수</div>
                 <div style={styles.kpiValue}>{weeklyCount}</div>
-                <div style={{ ...styles.kpiTrend, ...trendStyle(weeklyChangePct) }}>
+                <div
+                  style={{ ...styles.kpiTrend, ...trendStyle(weeklyChangePct) }}
+                >
                   전주 대비 {trendText(weeklyChangePct)}
                 </div>
               </div>
@@ -182,7 +194,8 @@ export default function MainPage() {
             <div className="lm-ctaBox" style={styles.ctaBox}>
               <div style={styles.ctaTitle}>지금 바로 질문하세요</div>
               <div style={styles.ctaDesc}>
-                질문 등록은 로그인 후 이용할 수 있습니다. 버튼 클릭 시 로그인 페이지로 이동합니다.
+                질문 등록은 로그인 후 이용할 수 있습니다. 버튼 클릭 시 로그인
+                페이지로 이동합니다.
               </div>
 
               <button style={styles.ctaBtn} onClick={goToLogin}>
@@ -191,7 +204,7 @@ export default function MainPage() {
 
               <button
                 style={styles.ctaBtnGhost}
-                onClick={() => navigate("/question/list.do")}
+                onClick={() => navigate("/question/list")}
               >
                 질문 목록 보기
               </button>
@@ -225,7 +238,9 @@ export default function MainPage() {
                 >
                   <div style={styles.cardTitle}>{n.title}</div>
                   <div style={styles.cardMeta}>
-                    {n.createdAt ? new Date(n.createdAt).toLocaleDateString() : ""}
+                    {n.createdAt
+                      ? new Date(n.createdAt).toLocaleDateString()
+                      : ""}
                   </div>
                 </div>
               ))
@@ -253,7 +268,12 @@ export default function MainPage() {
                     <div style={styles.sideKpiValue}>{todayCount}건</div>
                   </div>
                 </div>
-                <div style={{ ...styles.sideKpiTrend, ...trendStyle(todayChangePct) }}>
+                <div
+                  style={{
+                    ...styles.sideKpiTrend,
+                    ...trendStyle(todayChangePct),
+                  }}
+                >
                   전일 대비 {trendText(todayChangePct)}
                 </div>
               </div>
@@ -266,7 +286,12 @@ export default function MainPage() {
                     <div style={styles.sideKpiValue}>{weeklyCount}건</div>
                   </div>
                 </div>
-                <div style={{ ...styles.sideKpiTrend, ...trendStyle(weeklyChangePct) }}>
+                <div
+                  style={{
+                    ...styles.sideKpiTrend,
+                    ...trendStyle(weeklyChangePct),
+                  }}
+                >
                   전주 대비 {trendText(weeklyChangePct)}
                 </div>
               </div>
@@ -294,13 +319,18 @@ export default function MainPage() {
               <div style={styles.chartHeader}>
                 <div style={styles.chartTitle}>주간 추이</div>
                 <div style={styles.chartHint}>
-                  {series.length ? `최근일: ${String(last?.date ?? "")}` : "데이터 없음"}
+                  {series.length
+                    ? `최근일: ${String(last?.date ?? "")}`
+                    : "데이터 없음"}
                 </div>
               </div>
 
               <div style={{ width: "100%", height: 320 }}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={series} margin={{ top: 12, right: 16, left: 0, bottom: 10 }}>
+                  <LineChart
+                    data={series}
+                    margin={{ top: 12, right: 16, left: 0, bottom: 10 }}
+                  >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                       dataKey="date"
@@ -352,7 +382,10 @@ export default function MainPage() {
                   key={p.postId ?? p.id ?? idx}
                   style={{
                     ...styles.listItem,
-                    borderBottom: idx === recentPosts.length - 1 ? "none" : styles.borderLine,
+                    borderBottom:
+                      idx === recentPosts.length - 1
+                        ? "none"
+                        : styles.borderLine,
                   }}
                   onClick={() => goCommunityDetail(p)}
                   role="button"
@@ -360,7 +393,9 @@ export default function MainPage() {
                 >
                   <div style={styles.listTitle}>{p.title}</div>
                   <div style={styles.listMeta}>
-                    {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : ""}
+                    {p.createdAt
+                      ? new Date(p.createdAt).toLocaleDateString()
+                      : ""}
                   </div>
                 </div>
               ))
@@ -373,7 +408,9 @@ export default function MainPage() {
           <div style={styles.bottomCta}>
             <div>
               <div style={styles.bottomTitle}>법률 질문 등록</div>
-              <div style={styles.bottomDesc}>질문 등록은 로그인 후 이용할 수 있습니다.</div>
+              <div style={styles.bottomDesc}>
+                질문 등록은 로그인 후 이용할 수 있습니다.
+              </div>
             </div>
 
             <button style={styles.bottomBtn} onClick={goToLogin}>
@@ -438,8 +475,17 @@ const styles = {
     marginBottom: 18,
   },
   heroLeft: { minWidth: 0 },
-  heroRight: { display: "flex", alignItems: "stretch", justifyContent: "flex-end" },
-  heroBadgeRow: { display: "flex", alignItems: "center", gap: 10, marginBottom: 10 },
+  heroRight: {
+    display: "flex",
+    alignItems: "stretch",
+    justifyContent: "flex-end",
+  },
+  heroBadgeRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 10,
+  },
   heroBadge: {
     display: "inline-flex",
     alignItems: "center",
@@ -481,11 +527,16 @@ const styles = {
     backdropFilter: "blur(6px)",
   },
   kpiLabel: { fontSize: 12, opacity: 0.85, fontWeight: 800 },
-  kpiValue: { marginTop: 6, fontSize: 22, fontWeight: 900, letterSpacing: -0.3 },
+  kpiValue: {
+    marginTop: 6,
+    fontSize: 22,
+    fontWeight: 900,
+    letterSpacing: -0.3,
+  },
   kpiTrend: { marginTop: 6, fontSize: 12, fontWeight: 800, opacity: 0.95 },
 
-  trendUp: { color: "#bbf7d0" },      // light green
-  trendDown: { color: "#fecaca" },    // light red
+  trendUp: { color: "#bbf7d0" }, // light green
+  trendDown: { color: "#fecaca" }, // light red
   trendNeutral: { color: "rgba(255,255,255,0.85)" },
 
   ctaBox: {
@@ -502,7 +553,12 @@ const styles = {
     justifyContent: "center",
   },
   ctaTitle: { fontSize: 16, fontWeight: 900, marginBottom: 8 },
-  ctaDesc: { fontSize: 13, color: "#64748b", lineHeight: 1.6, marginBottom: 12 },
+  ctaDesc: {
+    fontSize: 13,
+    color: "#64748b",
+    lineHeight: 1.6,
+    marginBottom: 12,
+  },
   ctaBtn: {
     width: "100%",
     padding: "12px 12px",
@@ -558,7 +614,12 @@ const styles = {
     cursor: "pointer",
     transition: "transform 0.14s ease",
   },
-  cardTitle: { fontWeight: 900, color: "#0f172a", marginBottom: 8, lineHeight: 1.35 },
+  cardTitle: {
+    fontWeight: 900,
+    color: "#0f172a",
+    marginBottom: 8,
+    lineHeight: 1.35,
+  },
   cardMeta: { fontSize: 12, color: "#64748b" },
 
   // ===== Stats row (side + chart) =====
@@ -597,15 +658,30 @@ const styles = {
     fontSize: 18,
   },
   sideKpiLabel: { fontSize: 12, color: "#64748b", fontWeight: 900 },
-  sideKpiValue: { fontSize: 18, color: "#0f172a", fontWeight: 900, marginTop: 2 },
-  sideKpiTrend: { fontSize: 12, fontWeight: 900, marginTop: 8, color: "#334155" },
+  sideKpiValue: {
+    fontSize: 18,
+    color: "#0f172a",
+    fontWeight: 900,
+    marginTop: 2,
+  },
+  sideKpiTrend: {
+    fontSize: 12,
+    fontWeight: 900,
+    marginTop: 8,
+    color: "#334155",
+  },
 
   sparkWrap: {
     marginTop: 12,
     borderTop: "1px solid #eef2f7",
     paddingTop: 12,
   },
-  sparkTitle: { fontSize: 12, color: "#64748b", fontWeight: 900, marginBottom: 8 },
+  sparkTitle: {
+    fontSize: 12,
+    color: "#64748b",
+    fontWeight: 900,
+    marginBottom: 8,
+  },
 
   chartHeader: {
     display: "flex",
