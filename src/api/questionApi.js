@@ -11,10 +11,7 @@ export const questionApi = {
   // 3. 새로운 법률 질문 작성 (TB_QUESTION)
   writeQuestion: (data) => axiosInstance.post("/question/write", data),
 
-  // --- 추가된 API ---
-
   // 4. 변호사 답변 등록 (TB_ANSWER)
-  // data: { questionId, content } -> lawyerId는 서버 세션/토큰에서 추출 권장
   writeAnswer: (data) => axiosInstance.post("/question/answer/write", data),
 
   // 5. 답변 채택 (TB_ANSWER.IS_PTED = 'Y')

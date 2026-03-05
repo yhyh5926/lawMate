@@ -28,10 +28,9 @@ const QuestionWritePage = () => {
     }
 
     try {
-      // 실제 구현 시 파일 첨부 로직 등도 함께 처리할 수 있습니다.
       await questionApi.writeQuestion({
         ...formData,
-        memberId: user?.loginId, // 실제 DB의 member PK를 넘기도록 수정 필요
+        memberId: user?.loginId,
       });
       alert("질문이 성공적으로 등록되었습니다.");
       navigate("/question/list");
