@@ -1,247 +1,570 @@
-/* src/styles/lawyer/LawyerDetailPage.css */
-.lawyer-detail-page {
-  background-color: #f8fafc;
-  min-height: 100vh;
-  padding: 60px 20px;
-  font-family: "Noto Sans KR", sans-serif;
-  color: #1e293b;
-}
-
-.lawyer-detail-container {
-  max-width: 800px;
+/* ============================
+   전체 레이아웃
+============================ */
+.lawyer-list-page {
+  max-width: 1400px;
   margin: 0 auto;
+  padding: 80px 32px;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  min-height: 100vh;
 }
 
-.detail-header {
-  display: flex;
-  gap: 40px;
-  background-color: #fff;
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-  margin-bottom: 24px;
-  align-items: center;
+/* ============================
+   히어로 섹션
+============================ */
+.lawyer-list-hero {
+  text-align: center;
+  margin-bottom: 60px;
+  position: relative;
 }
 
-.detail-img-box {
-  width: 220px; /* 💡 사진이 답답하지 않도록 200px -> 220px 로 확대 */
-  height: 280px; /* 💡 세로 길이도 260px -> 280px 로 확대 */
-  border-radius: 12px;
-  overflow: hidden;
-  background-color: #f1f5f9;
-  flex-shrink: 0;
+.lawyer-list-title {
+  font-size: 3.5rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  animation: fadeInDown 0.6s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================
+   검색창
+============================ */
+.lawyer-search-container {
   display: flex;
   justify-content: center;
-  align-items: center;
+  gap: 16px;
+  max-width: 720px;
+  margin: 0 auto;
+  animation: fadeIn 0.8s ease-out 0.2s both;
 }
 
-/* 💡 실제 인물 사진: 머리가 잘리지 않도록 가장 위쪽(top)에 고정 */
-.detail-img.real-profile {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-/* 💡 이모티콘 사진: 화면 꽉 채우기 */
-.detail-img.default-avatar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-.detail-info {
+.lawyer-search-input-wrapper {
+  position: relative;
   flex: 1;
 }
 
-.detail-specialty-badge {
-  display: inline-block;
-  background-color: #eff6ff;
-  color: #2563eb;
+.lawyer-search-input {
+  width: 100%;
+  padding: 18px 50px 18px 28px;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  font-size: 1.05rem;
+  font-weight: 500;
+  background-color: white;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.lawyer-search-input:focus {
+  outline: none;
+  background-color: #fff;
+  border-color: #667eea;
+  box-shadow:
+    0 0 0 4px rgba(102, 126, 234, 0.15),
+    0 8px 20px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.lawyer-search-input::placeholder {
+  color: #94a3b8;
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+  color: white;
+  border: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.search-clear-btn:hover {
+  background: linear-gradient(135deg, #475569 0%, #334155 100%);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.lawyer-search-btn {
+  padding: 0 36px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+}
+
+.lawyer-search-btn:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #6a3e8f 100%);
+  box-shadow: 0 12px 28px rgba(102, 126, 234, 0.45);
+  transform: translateY(-2px);
+}
+
+.lawyer-search-btn:active {
+  transform: translateY(0);
+}
+
+/* ============================
+   필터 컨트롤
+============================ */
+.filter-controls-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 50px;
+  padding: 28px 32px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  border: 2px solid #f1f5f9;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.lawyer-filter-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex: 1;
+}
+
+.filter-chip {
+  padding: 12px 24px;
+  border: 2px solid #e2e8f0;
+  border-radius: 50px;
+  background-color: white;
+  color: #64748b;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.filter-chip:hover {
+  border-color: #667eea;
+  color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.filter-chip.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  transform: translateY(-2px);
+}
+
+.filter-reset-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-reset-btn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #475569;
+}
+
+/* ============================
+   변호사 그리드
+============================ */
+.lawyer-list-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  margin-bottom: 80px;
+}
+
+/* ============================
+   변호사 카드
+============================ */
+.lawyer-card {
+  background: white;
+  border-radius: 24px;
+  border: 2px solid #f1f5f9;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.lawyer-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  border-radius: 24px;
+  z-index: 0;
+}
+
+.lawyer-card:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 24px 48px rgba(102, 126, 234, 0.25);
+  border-color: #667eea;
+}
+
+.lawyer-card:hover::before {
+  opacity: 0.03;
+}
+
+.lawyer-card-img-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  overflow: hidden;
+  z-index: 1;
+}
+
+.lawyer-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.lawyer-card:hover .lawyer-card-img {
+  transform: scale(1.08);
+}
+
+/* ============================
+   스페셜리티 배지
+============================ */
+.lawyer-specialty-badge {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  color: #667eea;
+  padding: 10px 18px;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 900;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+  border: 2px solid #667eea;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.lawyer-card:hover .lawyer-specialty-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: transparent;
+  transform: scale(1.05);
+}
+
+/* ============================
+   카드 정보
+============================ */
+.lawyer-card-info {
+  padding: 28px;
+  z-index: 1;
+  position: relative;
+}
+
+.lawyer-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.lawyer-name {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1e293b;
+  letter-spacing: -0.02em;
+  transition: color 0.3s ease;
+}
+
+.lawyer-card:hover .lawyer-name {
+  color: #667eea;
+}
+
+.lawyer-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #f59e0b;
+  font-weight: 800;
+  font-size: 1rem;
+  background: #fef3c7;
   padding: 6px 12px;
   border-radius: 20px;
-  font-size: 13px;
-  font-weight: 800;
-  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
 }
 
-.detail-name {
-  font-size: 32px;
-  font-weight: 800;
-  margin: 0 0 8px 0;
+.lawyer-rating::before {
+  content: "⭐";
+  font-size: 0.9rem;
 }
 
-.detail-office {
-  font-size: 16px;
-  color: #3b82f6;
+.lawyer-office {
+  font-size: 0.95rem;
+  color: #64748b;
   font-weight: 600;
-  margin-bottom: 16px;
-}
-
-.detail-rating {
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 16px;
-  font-weight: 700;
 }
 
-.detail-rating .star {
-  color: #f59e0b;
+.lawyer-office::before {
+  content: "🏢";
+  font-size: 0.9rem;
 }
 
-.detail-rating .count {
-  color: #94a3b8;
-  font-weight: 500;
-}
-
-.detail-summary-box {
-  background-color: #fff;
-  padding: 24px 30px;
-  border-radius: 16px;
-  border-left: 4px solid #2563eb;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-  font-size: 16px;
-  font-weight: 600;
-  color: #334155;
-  margin-bottom: 40px;
-}
-
-.detail-section {
-  margin-bottom: 40px;
-}
-
-.detail-section-title {
-  font-size: 20px;
-  font-weight: 800;
-  margin-bottom: 20px;
-  color: #1e293b;
-}
-
-.detail-career-text {
-  font-size: 15px;
-  color: #475569;
-  line-height: 1.8;
-  white-space: pre-wrap;
-}
-
-.info-table {
-  background-color: #fff;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
-  overflow: hidden;
-}
-
-.info-row {
+/* ============================
+   스페셜리티 태그
+============================ */
+.lawyer-specialties-tags {
   display: flex;
-  padding: 20px 24px;
-  border-bottom: 1px dashed #e2e8f0;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.info-row:last-child {
-  border-bottom: none;
-}
-
-.info-label {
-  width: 150px;
+.spec-tag {
+  font-size: 0.8rem;
   font-weight: 700;
+  color: #3b82f6;
+  background: #eff6ff;
+  padding: 6px 14px;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.spec-tag:hover {
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.lawyer-card:hover .spec-tag {
+  border-color: #3b82f6;
+}
+
+/* ============================
+   하단 상태
+============================ */
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 100px 0;
+}
+
+.no-results h3 {
+  font-size: 1.8rem;
   color: #64748b;
-  font-size: 15px;
-}
-
-.info-value {
-  flex: 1;
-  color: #334155;
-  font-size: 15px;
-  text-align: right;
-  font-weight: 500;
-}
-
-.info-value.price {
-  color: #e11d48;
-  font-weight: 800;
-  font-size: 16px;
-}
-
-.review-box {
-  background-color: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 16px;
-}
-
-.review-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 12px;
-}
-
-.review-stars {
-  color: #f59e0b;
-  letter-spacing: 2px;
-}
-
-.review-author {
   font-weight: 700;
-  margin-left: 8px;
-  color: #334155;
 }
 
-.review-badge {
-  background-color: #f1f5f9;
-  color: #64748b;
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  margin-left: 8px;
-}
-
-.review-date {
+.no-results p {
   color: #94a3b8;
-  font-size: 13px;
+  margin-bottom: 32px;
+  font-size: 1.1rem;
 }
 
-.review-content {
-  color: #475569;
-  font-size: 15px;
-  line-height: 1.6;
-  margin: 0;
-}
-
-.detail-action-buttons {
-  display: flex;
-  gap: 16px;
-  margin-top: 50px;
-}
-
-.btn-action-chat, .btn-action-reserve {
-  flex: 1;
-  padding: 20px;
-  border-radius: 12px;
-  font-size: 18px;
-  font-weight: 800;
-  cursor: pointer;
+.no-results-reset {
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
   border: none;
-  transition: all 0.2s;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+  transition: all 0.3s ease;
 }
 
-.btn-action-chat {
-  background-color: #f1f5f9;
-  color: #1e293b;
+.no-results-reset:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #6a3e8f 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(102, 126, 234, 0.45);
 }
 
-.btn-action-chat:hover {
-  background-color: #e2e8f0;
+.scroll-loader {
+  text-align: center;
+  padding: 40px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #667eea;
 }
 
-.btn-action-reserve {
-  background-color: #1e293b;
-  color: #fff;
+.scroll-loader::after {
+  content: "...";
+  animation: dots 1.5s steps(4, end) infinite;
 }
 
-.btn-action-reserve:hover {
-  background-color: #0f172a;
+@keyframes dots {
+  0%,
+  20% {
+    content: ".";
+  }
+  40% {
+    content: "..";
+  }
+  60%,
+  100% {
+    content: "...";
+  }
+}
+
+.scroll-end {
+  text-align: center;
+  padding: 60px;
+  color: #cbd5e1;
+  font-weight: 600;
+  font-size: 1rem;
+  border-top: 2px dashed #e2e8f0;
+  margin-top: 40px;
+}
+
+/* ============================
+   반응형
+============================ */
+@media (max-width: 1280px) {
+  .lawyer-list-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  .lawyer-list-title {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .lawyer-list-page {
+    padding: 60px 24px;
+  }
+
+  .lawyer-list-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .lawyer-list-title {
+    font-size: 2.5rem;
+  }
+
+  .filter-controls-container {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 24px;
+  }
+
+  .filter-reset-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .lawyer-list-page {
+    padding: 40px 16px;
+  }
+
+  .lawyer-list-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .lawyer-list-title {
+    font-size: 2rem;
+  }
+
+  .lawyer-search-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .lawyer-search-btn {
+    width: 100%;
+    padding: 16px;
+  }
+
+  .lawyer-card-info {
+    padding: 20px;
+  }
+
+  .lawyer-name {
+    font-size: 1.2rem;
+  }
+
+  .filter-chip {
+    padding: 10px 18px;
+    font-size: 0.85rem;
+  }
 }
