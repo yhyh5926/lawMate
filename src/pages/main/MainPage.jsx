@@ -1,7 +1,6 @@
 // src/pages/main/MainPage.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Modal from "../../components/common/Modal";
 import { mainApi } from "../../api/mainApi";
 import {
   LineChart,
@@ -17,10 +16,8 @@ export default function MainPage() {
   const navigate = useNavigate();
 
   const [data, setData] = useState(null);
-  const [noticeDetail, setNoticeDetail] = useState(null);
   const [err, setErr] = useState("");
 
-  // ✅ requirement: 질문 등록(하단/상단) 클릭 시 바로 로그인 페이지로 이동
   const goToLogin = () => {
     window.location.href = "/member/login";
   };
@@ -44,10 +41,6 @@ export default function MainPage() {
     };
   }, []);
 
-  const topNotices = useMemo(
-    () => (data?.topNotices ?? []).slice(0, 3),
-    [data],
-  );
   const recentPosts = useMemo(
     () => (data?.recentPosts ?? []).slice(0, 5),
     [data],
@@ -57,7 +50,6 @@ export default function MainPage() {
   const stats = data?.stats ?? { todayCount: 0, weeklyCount: 0, series: [] };
   const rawSeries = Array.isArray(stats.series) ? stats.series : [];
 
-  // Sort by date ASC safely (expects YYYY-MM-DD)
   const series = useMemo(() => {
     const arr = [...rawSeries].filter((d) => d && d.date != null);
     arr.sort((a, b) => String(a.date).localeCompare(String(b.date)));
@@ -67,12 +59,10 @@ export default function MainPage() {
   const last = series[series.length - 1];
   const prev = series[series.length - 2];
 
-  // Today count: prefer stats.todayCount, fallback to last point
   const todayCount = Number.isFinite(Number(stats.todayCount))
     ? Number(stats.todayCount)
     : Number(last?.count ?? 0);
 
-  // Weekly count: prefer stats.weeklyCount, fallback to sum of last 7
   const weeklyFromSeries = useMemo(() => {
     const last7 = series.slice(-7);
     return last7.reduce((sum, d) => sum + Number(d?.count ?? 0), 0);
@@ -82,7 +72,6 @@ export default function MainPage() {
     ? Number(stats.weeklyCount)
     : weeklyFromSeries;
 
-  // Day-over-day % change based on last two points
   const todayChangePct = useMemo(() => {
     const a = Number(last?.count ?? todayCount);
     const b = Number(prev?.count ?? 0);
@@ -90,7 +79,6 @@ export default function MainPage() {
     return ((a - b) / b) * 100;
   }, [last, prev, todayCount]);
 
-  // Week-over-week % change: sum(last7) vs sum(prev7)
   const weeklyChangePct = useMemo(() => {
     const last7 = series.slice(-7);
     const prev7 = series.slice(-14, -7);
@@ -114,31 +102,14 @@ export default function MainPage() {
     return pct > 0 ? styles.trendUp : styles.trendDown;
   };
 
-  const openNotice = async (id) => {
-    try {
-      const detail = await mainApi.getNoticeDetail(id);
-      setNoticeDetail(detail);
-    } catch {
-      window.alert("공지 상세를 불러오지 못했습니다.");
-    }
-  };
-
   const goCommunityDetail = (p) => {
     const pid = p?.postId ?? p?.id;
     if (!pid) return;
     navigate(`/community/detail/${pid}`);
   };
 
-  const tooltipLabel = (label) => {
-    if (!label) return "";
-    return `일자: ${label}`;
-  };
-
-  const tooltipValue = (val) => [`${val}건`, "상담/접수"];
-
   return (
     <div style={styles.page}>
-      {/* Responsive helpers (no separate css file needed) */}
       <style>{`
         @media (max-width: 980px) {
           .lm-hero { grid-template-columns: 1fr; }
@@ -153,7 +124,7 @@ export default function MainPage() {
       `}</style>
 
       <div style={styles.wrap}>
-        {/* ===== Professional Compact HeroBar ===== */}
+        {/* ===== HeroBar ===== */}
         <section className="lm-hero" style={styles.hero}>
           <div style={styles.heroLeft}>
             <div style={styles.heroBadgeRow}>
@@ -163,13 +134,14 @@ export default function MainPage() {
 
             <div style={styles.heroTitle}>법률 상담을 더 쉽고 빠르게</div>
             <div style={styles.heroSubtitle}>
-              공지 · 통계 · 커뮤니티 최신 글을 한 번에 확인하고, 로그인 후
-              질문을 등록하세요.
+              사건 통계와 실시간 커뮤니티 글을 확인하고,
+              <br />
+              전문 변호사들의 답변을 받아보세요.
             </div>
 
             <div className="lm-kpis" style={styles.kpis}>
               <div style={styles.kpiCard}>
-                <div style={styles.kpiLabel}>오늘 접수 사건 수</div>
+                <div style={styles.kpiLabel}>오늘 접수 사건</div>
                 <div style={styles.kpiValue}>{todayCount}</div>
                 <div
                   style={{ ...styles.kpiTrend, ...trendStyle(todayChangePct) }}
@@ -179,7 +151,7 @@ export default function MainPage() {
               </div>
 
               <div style={styles.kpiCard}>
-                <div style={styles.kpiLabel}>주간 누적 상담 건수</div>
+                <div style={styles.kpiLabel}>주간 누적 상담</div>
                 <div style={styles.kpiValue}>{weeklyCount}</div>
                 <div
                   style={{ ...styles.kpiTrend, ...trendStyle(weeklyChangePct) }}
@@ -194,14 +166,12 @@ export default function MainPage() {
             <div className="lm-ctaBox" style={styles.ctaBox}>
               <div style={styles.ctaTitle}>지금 바로 질문하세요</div>
               <div style={styles.ctaDesc}>
-                질문 등록은 로그인 후 이용할 수 있습니다. 버튼 클릭 시 로그인
-                페이지로 이동합니다.
+                로그인 후 질문을 등록하시면 여러 명의 전문 변호사로부터 답변을
+                받을 수 있습니다.
               </div>
-
               <button style={styles.ctaBtn} onClick={goToLogin}>
                 질문 등록하기 →
               </button>
-
               <button
                 style={styles.ctaBtnGhost}
                 onClick={() => navigate("/question/list")}
@@ -214,52 +184,16 @@ export default function MainPage() {
 
         {err && <div style={styles.error}>{err}</div>}
 
-        {/* ===== 공지사항 3건 카드 ===== */}
+        {/* ===== 통계 섹션 ===== */}
         <section style={styles.section}>
           <div style={styles.sectionHeader}>
-            <h2 style={styles.h2}>공지사항</h2>
-            <span style={styles.subText}>최신 3건</span>
-          </div>
-
-          <div className="lm-grid3" style={styles.grid3}>
-            {topNotices.length === 0 ? (
-              <div style={{ ...styles.card, gridColumn: "1 / -1" }}>
-                <div style={styles.cardTitle}>공지사항이 없습니다.</div>
-                <div style={styles.cardMeta}>—</div>
-              </div>
-            ) : (
-              topNotices.map((n) => (
-                <div
-                  key={n.id}
-                  style={styles.cardClickable}
-                  onClick={() => openNotice(n.id)}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <div style={styles.cardTitle}>{n.title}</div>
-                  <div style={styles.cardMeta}>
-                    {n.createdAt
-                      ? new Date(n.createdAt).toLocaleDateString()
-                      : ""}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </section>
-
-        {/* ===== 오늘/주간 사건 통계 (개선 통합) ===== */}
-        <section style={styles.section}>
-          <div style={styles.sectionHeader}>
-            <h2 style={styles.h2}>오늘/주간 사건 통계</h2>
-            <span style={styles.subText}>Python 집계 → React 차트</span>
+            <h2 style={styles.h2}>사건 통계 분석</h2>
+            <span style={styles.subText}>실시간 데이터 시각화</span>
           </div>
 
           <div className="lm-statRow" style={styles.statRow}>
-            {/* KPI + Sparkline */}
             <div style={styles.statSideCard}>
-              <div style={styles.sideTitle}>요약</div>
-
+              <div style={styles.sideTitle}>요약 데이터</div>
               <div style={styles.sideKpi}>
                 <div style={styles.sideKpiTop}>
                   <div style={styles.sideKpiIcon}>📅</div>
@@ -267,14 +201,6 @@ export default function MainPage() {
                     <div style={styles.sideKpiLabel}>오늘 접수</div>
                     <div style={styles.sideKpiValue}>{todayCount}건</div>
                   </div>
-                </div>
-                <div
-                  style={{
-                    ...styles.sideKpiTrend,
-                    ...trendStyle(todayChangePct),
-                  }}
-                >
-                  전일 대비 {trendText(todayChangePct)}
                 </div>
               </div>
 
@@ -286,18 +212,10 @@ export default function MainPage() {
                     <div style={styles.sideKpiValue}>{weeklyCount}건</div>
                   </div>
                 </div>
-                <div
-                  style={{
-                    ...styles.sideKpiTrend,
-                    ...trendStyle(weeklyChangePct),
-                  }}
-                >
-                  전주 대비 {trendText(weeklyChangePct)}
-                </div>
               </div>
 
               <div style={styles.sparkWrap}>
-                <div style={styles.sparkTitle}>최근 7일 추이</div>
+                <div style={styles.sparkTitle}>최근 7일 트렌드</div>
                 <div style={{ width: "100%", height: 54 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={series.slice(-7)}>
@@ -314,42 +232,34 @@ export default function MainPage() {
               </div>
             </div>
 
-            {/* Main Chart */}
             <div style={styles.card}>
               <div style={styles.chartHeader}>
-                <div style={styles.chartTitle}>주간 추이</div>
-                <div style={styles.chartHint}>
-                  {series.length
-                    ? `최근일: ${String(last?.date ?? "")}`
-                    : "데이터 없음"}
-                </div>
+                <div style={styles.chartTitle}>주간 사건 추이</div>
               </div>
-
               <div style={{ width: "100%", height: 320 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
                     data={series}
                     margin={{ top: 12, right: 16, left: 0, bottom: 10 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      vertical={false}
+                      stroke="#f0f0f0"
+                    />
                     <XAxis
                       dataKey="date"
                       tickMargin={8}
-                      tickFormatter={(v) => {
-                        const s = String(v);
-                        return s.length >= 10 ? s.slice(5) : s; // YYYY-MM-DD -> MM-DD
-                      }}
+                      tickFormatter={(v) => String(v).slice(5)}
                     />
                     <YAxis tickMargin={8} />
                     <Tooltip
                       contentStyle={{
                         borderRadius: 12,
-                        border: "1px solid #e8edf5",
-                        boxShadow: "0 10px 24px rgba(15, 23, 42, 0.10)",
+                        border: "none",
+                        boxShadow: "0 10px 24px rgba(0,0,0,0.1)",
                       }}
-                      labelStyle={{ fontWeight: 900 }}
-                      labelFormatter={tooltipLabel}
-                      formatter={tooltipValue}
+                      formatter={(val) => [`${val}건`, "건수"]}
                     />
                     <Line
                       type="monotone"
@@ -357,7 +267,7 @@ export default function MainPage() {
                       stroke="#1e4d8c"
                       strokeWidth={3}
                       dot={false}
-                      activeDot={{ r: 5 }}
+                      activeDot={{ r: 6 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -366,13 +276,12 @@ export default function MainPage() {
           </div>
         </section>
 
-        {/* ===== 최근 게시글 5건 ===== */}
+        {/* ===== 최근 게시글 섹션 ===== */}
         <section style={styles.section}>
           <div style={styles.sectionHeader}>
-            <h2 style={styles.h2}>최근 게시글</h2>
-            <span style={styles.subText}>최신 5건</span>
+            <h2 style={styles.h2}>최근 커뮤니티 게시글</h2>
+            <span style={styles.subText}>따끈따끈한 새 글</span>
           </div>
-
           <div style={styles.listCard}>
             {recentPosts.length === 0 ? (
               <div style={styles.empty}>최근 게시글이 없습니다.</div>
@@ -403,48 +312,29 @@ export default function MainPage() {
           </div>
         </section>
 
-        {/* ===== 하단 CTA: 클릭 시 바로 로그인 페이지 이동 ===== */}
-        <section style={{ ...styles.section, marginBottom: 18 }}>
+        {/* ===== 하단 CTA ===== */}
+        <section style={{ ...styles.section, marginBottom: 40 }}>
           <div style={styles.bottomCta}>
             <div>
-              <div style={styles.bottomTitle}>법률 질문 등록</div>
+              <div style={styles.bottomTitle}>
+                전문 변호사의 조언이 필요하신가요?
+              </div>
               <div style={styles.bottomDesc}>
-                질문 등록은 로그인 후 이용할 수 있습니다.
+                익명으로 안전하게 고민을 털어놓으세요.
               </div>
             </div>
-
             <button style={styles.bottomBtn} onClick={goToLogin}>
-              질문 등록
+              지금 질문하기
             </button>
           </div>
         </section>
       </div>
-
-      {/* ===== 레이어 팝업 (공지 상세) ===== */}
-      <Modal
-        isOpen={!!noticeDetail}
-        title={noticeDetail?.title || "공지사항"}
-        onClose={() => setNoticeDetail(null)}
-      >
-        {noticeDetail && (
-          <>
-            <div style={{ fontSize: 12, color: "#64748b" }}>
-              {noticeDetail.createdAt
-                ? new Date(noticeDetail.createdAt).toLocaleString()
-                : ""}
-            </div>
-            <hr style={{ margin: "12px 0" }} />
-            <div style={{ whiteSpace: "pre-wrap", lineHeight: 1.75 }}>
-              {noticeDetail.content}
-            </div>
-          </>
-        )}
-      </Modal>
     </div>
   );
 }
 
 const styles = {
+  // 위에서 제공해주신 styles 객체와 동일하며, 공지사항 관련 grid3 스타일 등은 자동으로 무시됩니다.
   page: {
     minHeight: "100vh",
     background: "#f4f6fb",
@@ -457,22 +347,17 @@ const styles = {
     margin: "0 auto",
     padding: "18px 24px 0",
   },
-
-  // ===== Hero =====
   hero: {
     display: "grid",
     gridTemplateColumns: "1.25fr 0.75fr",
     gap: 18,
     padding: 22,
     borderRadius: 24,
-    border: "1px solid #e8edf5",
     background:
       "linear-gradient(135deg, #0b1220 0%, #0f2347 40%, #173b73 100%)",
     boxShadow: "0 18px 46px rgba(15, 23, 42, 0.18)",
     color: "#fff",
-    overflow: "hidden",
-    position: "relative",
-    marginBottom: 18,
+    marginBottom: 30,
   },
   heroLeft: { minWidth: 0 },
   heroRight: {
@@ -487,81 +372,51 @@ const styles = {
     marginBottom: 10,
   },
   heroBadge: {
-    display: "inline-flex",
-    alignItems: "center",
     padding: "6px 10px",
     borderRadius: 999,
     background: "rgba(255,255,255,0.14)",
-    border: "1px solid rgba(255,255,255,0.18)",
     fontSize: 12,
     fontWeight: 900,
-    letterSpacing: 1.2,
   },
   heroBadgeMuted: { fontSize: 12, opacity: 0.75 },
-  heroTitle: {
-    fontSize: 30,
-    fontWeight: 900,
-    letterSpacing: -0.4,
-    lineHeight: 1.15,
-    marginTop: 6,
-  },
-  heroSubtitle: {
-    marginTop: 10,
-    fontSize: 14,
-    opacity: 0.9,
-    lineHeight: 1.6,
-    maxWidth: 680,
-  },
-
+  heroTitle: { fontSize: 32, fontWeight: 900, marginTop: 6 },
+  heroSubtitle: { marginTop: 10, fontSize: 15, opacity: 0.9, lineHeight: 1.6 },
   kpis: {
-    marginTop: 16,
+    marginTop: 20,
     display: "grid",
-    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+    gridTemplateColumns: "repeat(2, 1fr)",
     gap: 12,
   },
   kpiCard: {
     borderRadius: 16,
-    padding: "12px 14px",
-    background: "rgba(255,255,255,0.10)",
-    border: "1px solid rgba(255,255,255,0.16)",
-    backdropFilter: "blur(6px)",
+    padding: "14px",
+    background: "rgba(255,255,255,0.1)",
+    border: "1px solid rgba(255,255,255,0.15)",
   },
-  kpiLabel: { fontSize: 12, opacity: 0.85, fontWeight: 800 },
-  kpiValue: {
-    marginTop: 6,
-    fontSize: 22,
-    fontWeight: 900,
-    letterSpacing: -0.3,
-  },
-  kpiTrend: { marginTop: 6, fontSize: 12, fontWeight: 800, opacity: 0.95 },
-
-  trendUp: { color: "#bbf7d0" }, // light green
-  trendDown: { color: "#fecaca" }, // light red
-  trendNeutral: { color: "rgba(255,255,255,0.85)" },
-
+  kpiLabel: { fontSize: 12, opacity: 0.8 },
+  kpiValue: { fontSize: 24, fontWeight: 900, marginTop: 4 },
+  kpiTrend: { fontSize: 12, marginTop: 6, fontWeight: 700 },
+  trendUp: { color: "#4ade80" },
+  trendDown: { color: "#fb7185" },
+  trendNeutral: { color: "#cbd5e1" },
   ctaBox: {
     width: 340,
-    maxWidth: "100%",
     borderRadius: 18,
-    padding: 18,
-    background: "#ffffff",
+    padding: 20,
+    background: "#fff",
     color: "#0f172a",
-    border: "1px solid rgba(255,255,255,0.65)",
-    boxShadow: "0 18px 50px rgba(0,0,0,0.28)",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
+    boxShadow: "0 18px 50px rgba(0,0,0,0.2)",
   },
-  ctaTitle: { fontSize: 16, fontWeight: 900, marginBottom: 8 },
+  ctaTitle: { fontSize: 18, fontWeight: 900, marginBottom: 8 },
   ctaDesc: {
     fontSize: 13,
     color: "#64748b",
-    lineHeight: 1.6,
-    marginBottom: 12,
+    lineHeight: 1.5,
+    marginBottom: 15,
   },
   ctaBtn: {
     width: "100%",
-    padding: "12px 12px",
+    padding: "12px",
     borderRadius: 12,
     border: "none",
     background: "#1e4d8c",
@@ -571,177 +426,104 @@ const styles = {
   },
   ctaBtnGhost: {
     width: "100%",
-    padding: "10px 12px",
+    padding: "10px",
     borderRadius: 12,
     border: "1px solid #dbe6f5",
     background: "#f7faff",
     color: "#1e4d8c",
     fontWeight: 900,
-    cursor: "pointer",
     marginTop: 10,
+    cursor: "pointer",
   },
-
-  // ===== Sections =====
-  section: { marginTop: 22 },
+  section: { marginTop: 30 },
   sectionHeader: {
     display: "flex",
     alignItems: "baseline",
     justifyContent: "space-between",
-    marginBottom: 12,
+    marginBottom: 15,
   },
-  h2: { margin: 0, fontSize: 18, fontWeight: 900, color: "#0f172a" },
-  subText: { fontSize: 12, color: "#64748b" },
-
-  grid3: {
-    display: "grid",
-    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-    gap: 14,
-  },
-
+  h2: { fontSize: 20, fontWeight: 900, color: "#1e293b" },
+  subText: { fontSize: 13, color: "#94a3b8" },
   card: {
-    background: "#ffffff",
+    background: "#fff",
     borderRadius: 20,
     border: "1px solid #e8edf5",
-    boxShadow: "0 14px 30px rgba(15, 23, 42, 0.06)",
-    padding: 16,
+    padding: 20,
+    boxShadow: "0 4px 20px rgba(0,0,0,0.03)",
   },
-  cardClickable: {
-    background: "#ffffff",
-    borderRadius: 20,
-    border: "1px solid #e8edf5",
-    boxShadow: "0 14px 30px rgba(15, 23, 42, 0.06)",
-    padding: 16,
-    cursor: "pointer",
-    transition: "transform 0.14s ease",
-  },
-  cardTitle: {
-    fontWeight: 900,
-    color: "#0f172a",
-    marginBottom: 8,
-    lineHeight: 1.35,
-  },
-  cardMeta: { fontSize: 12, color: "#64748b" },
-
-  // ===== Stats row (side + chart) =====
-  statRow: {
-    display: "grid",
-    gridTemplateColumns: "360px 1fr",
-    gap: 14,
-    alignItems: "start",
-  },
+  statRow: { display: "grid", gridTemplateColumns: "320px 1fr", gap: 16 },
   statSideCard: {
-    background: "#ffffff",
+    background: "#fff",
     borderRadius: 20,
     border: "1px solid #e8edf5",
-    boxShadow: "0 14px 30px rgba(15, 23, 42, 0.06)",
-    padding: 16,
+    padding: 20,
   },
-  sideTitle: { fontWeight: 900, color: "#0f172a", marginBottom: 10 },
-
+  sideTitle: { fontWeight: 900, marginBottom: 15 },
   sideKpi: {
-    borderRadius: 16,
-    border: "1px solid #edf2f7",
-    background: "#f8fbff",
     padding: 12,
-    marginBottom: 10,
+    borderRadius: 12,
+    background: "#f8fbff",
+    marginBottom: 12,
   },
   sideKpiTop: { display: "flex", gap: 10, alignItems: "center" },
   sideKpiIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
+    width: 36,
+    height: 36,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    background: "#ffffff",
-    border: "1px solid #dbe6f5",
-    fontSize: 18,
+    background: "#fff",
+    borderRadius: 10,
+    border: "1px solid #e2e8f0",
   },
-  sideKpiLabel: { fontSize: 12, color: "#64748b", fontWeight: 900 },
-  sideKpiValue: {
-    fontSize: 18,
-    color: "#0f172a",
-    fontWeight: 900,
-    marginTop: 2,
-  },
-  sideKpiTrend: {
-    fontSize: 12,
-    fontWeight: 900,
-    marginTop: 8,
-    color: "#334155",
-  },
-
-  sparkWrap: {
-    marginTop: 12,
-    borderTop: "1px solid #eef2f7",
-    paddingTop: 12,
-  },
-  sparkTitle: {
-    fontSize: 12,
-    color: "#64748b",
-    fontWeight: 900,
-    marginBottom: 8,
-  },
-
-  chartHeader: {
-    display: "flex",
-    alignItems: "baseline",
-    justifyContent: "space-between",
-    marginBottom: 10,
-  },
-  chartTitle: { fontWeight: 900, color: "#0f172a" },
-  chartHint: { fontSize: 12, color: "#64748b" },
-
+  sideKpiLabel: { fontSize: 12, color: "#64748b" },
+  sideKpiValue: { fontSize: 18, fontWeight: 900 },
+  sparkWrap: { marginTop: 15, borderTop: "1px solid #f1f5f9", paddingTop: 15 },
+  sparkTitle: { fontSize: 12, color: "#94a3b8", marginBottom: 8 },
+  chartHeader: { marginBottom: 15 },
+  chartTitle: { fontWeight: 800 },
   listCard: {
-    background: "#ffffff",
+    background: "#fff",
     borderRadius: 20,
     border: "1px solid #e8edf5",
-    boxShadow: "0 14px 30px rgba(15, 23, 42, 0.06)",
     overflow: "hidden",
   },
-  borderLine: "1px solid #edf2f7",
   listItem: {
-    padding: "12px 14px",
+    padding: "16px 20px",
     display: "flex",
     justifyContent: "space-between",
-    gap: 12,
     cursor: "pointer",
   },
-  listTitle: { fontWeight: 800, color: "#0f172a" },
-  listMeta: { fontSize: 12, color: "#64748b", whiteSpace: "nowrap" },
-  empty: { padding: 14, color: "#64748b" },
-
+  listTitle: { fontWeight: 700, color: "#334155" },
+  listMeta: { fontSize: 12, color: "#94a3b8" },
+  borderLine: "1px solid #f1f5f9",
+  empty: { padding: 30, textAlign: "center", color: "#94a3b8" },
   bottomCta: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 12,
-    background: "#ffffff",
-    borderRadius: 20,
+    padding: "24px 30px",
+    background: "#fff",
+    borderRadius: 24,
     border: "1px solid #e8edf5",
-    boxShadow: "0 14px 30px rgba(15, 23, 42, 0.06)",
-    padding: 16,
   },
-  bottomTitle: { fontWeight: 900, color: "#0f172a" },
-  bottomDesc: { fontSize: 12, color: "#64748b", marginTop: 4 },
+  bottomTitle: { fontSize: 18, fontWeight: 900 },
+  bottomDesc: { fontSize: 14, color: "#64748b", marginTop: 4 },
   bottomBtn: {
-    padding: "10px 16px",
+    padding: "12px 24px",
     borderRadius: 12,
-    border: "none",
     background: "#1e4d8c",
     color: "#fff",
     fontWeight: 900,
+    border: "none",
     cursor: "pointer",
-    whiteSpace: "nowrap",
   },
-
   error: {
-    marginTop: 12,
-    padding: "10px 12px",
-    borderRadius: 12,
+    padding: 12,
     background: "#fff1f2",
-    border: "1px solid #fecdd3",
-    color: "#be123c",
-    fontWeight: 900,
+    color: "#e11d48",
+    borderRadius: 10,
+    marginBottom: 15,
+    fontWeight: 700,
   },
 };

@@ -14,10 +14,12 @@ const QuestionDetailPage = () => {
 
   const { user, isAuthenticated } = useAuthStore();
 
-  // 변호사 여부 확인
+  // 권한 및 상태 체크
   const isLawyer = isAuthenticated && user?.role === "LAWYER";
+  const isOwner = isAuthenticated && user?.memberId === detail?.memberId;
+  const isAlreadyAdopted = detail?.status === "ADOPTED";
 
-  // 💡 현재 로그인한 변호사가 이미 이 질문에 답변을 달았는지 확인 (중복 답변 방지)
+  // 현재 로그인한 변호사의 답변 여부
   const hasAlreadyAnswered = detail?.answers?.some(
     (ans) => ans.lawyerId === user?.lawyerId,
   );
@@ -32,18 +34,46 @@ const QuestionDetailPage = () => {
       setDetail(response.data.data);
     } catch (error) {
       console.error("질문 상세 조회 실패", error);
-      // 백엔드 연동 전 테스트용 데이터 구조
+      // 가상 데이터 (개발용)
       setDetail({
         questionId,
-        title: "전세금 반환 관련 문의",
-        content: "내용...",
-        caseType: "민사",
+        title: "데이터를 불러올 수 없습니다.",
+        content: "상세 내용을 불러오는 중 오류가 발생했습니다.",
+        caseType: "-",
         status: "WAITING",
-        createdAt: "2026-03-03",
-        answers: [], // 💡 배열 구조로 관리
+        memberName: "알 수 없음",
+        createdAt: "-",
+        answers: [],
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAdopt = async (answerId, lawyerId) => {
+    if (
+      !window.confirm(
+        "이 답변을 채택하시겠습니까?\n채택 후에는 변경할 수 없습니다.",
+      )
+    )
+      return;
+
+    try {
+      const res = await questionApi.adoptAnswer({
+        questionId: detail.questionId,
+        lawyerId: lawyerId,
+        memberId: user.memberId,
+        answerId: answerId,
+      });
+
+      if (res.data.success) {
+        alert("채택이 완료되었습니다!");
+        fetchDetail();
+      }
+    } catch (error) {
+      alert(
+        error.response?.data?.message || "채택 처리 중 오류가 발생했습니다.",
+      );
     }
   };
 
@@ -52,11 +82,7 @@ const QuestionDetailPage = () => {
 
   return (
     <div className="question-detail-container">
-      <button className="back-list-btn" onClick={() => navigate(-1)}>
-        ← 목록으로 돌아가기
-      </button>
-
-      {/* 질문 카드 */}
+      {/* 1. 질문 카드 섹션 */}
       <div className="question-card">
         <div className="question-header">
           <h2 className="question-title">{detail.title}</h2>
@@ -64,62 +90,84 @@ const QuestionDetailPage = () => {
         </div>
 
         <div className="question-meta">
+          <span>
+            작성자: <strong>{detail.memberName}</strong>
+          </span>
           <span>작성일: {detail.createdAt}</span>
-          <span className="status-indicator">
-            상태:{" "}
-            <span
-              className={
-                detail.status === "ANSWERED"
-                  ? "status-answered"
-                  : "status-waiting"
-              }
-            >
-              {detail.status === "ANSWERED" ? "답변완료" : "답변대기"}
-            </span>
+          <span
+            className={`status-indicator ${isAlreadyAdopted ? "text-success" : "text-warning"}`}
+          >
+            ● {isAlreadyAdopted ? "채택완료" : "채택대기"}
           </span>
         </div>
 
         <p className="question-content">{detail.content}</p>
       </div>
 
-      {/* 💡 답변 작성 폼: 변호사이고 아직 답변을 달지 않았을 때만 노출 */}
-      {isLawyer && !hasAlreadyAnswered && (
-        <QuestionAnswerForm
-          questionId={questionId}
-          onAnswerSuccess={fetchDetail}
-        />
-      )}
-
-      <h3 className="section-title">
-        변호사 답변 ({detail.answers?.length || 0})
-      </h3>
-
-      {/* 💡 답변 리스트 렌더링 */}
-      {detail.answers && detail.answers.length > 0 ? (
-        detail.answers.map((ans) => (
-          <div
-            key={ans.answerId}
-            className="answer-box"
-            style={{ marginBottom: "20px" }}
-          >
-            <div className="answer-header">
-              <div className="lawyer-info">
-                <span>👨‍⚖️</span> {ans.lawyerName} 변호사
-                {ans.ispted === "Y" && <span className="pt-badge">채택됨</span>}
-              </div>
-              <span className="answer-date">{ans.createdAt}</span>
-            </div>
-            <p className="answer-content">{ans.content}</p>
-          </div>
-        ))
-      ) : (
-        <div className="no-answer-container">
-          <span className="no-answer-icon">📄</span>
-          {isLawyer
-            ? "아직 등록된 답변이 없습니다. 전문가님의 지식을 나눠주세요!"
-            : "아직 등록된 답변이 없습니다. 변호사님이 답변을 검토 중입니다."}
+      {/* 2. 답변 작성 섹션 (변호사 전용) */}
+      {isLawyer && !hasAlreadyAnswered && !isAlreadyAdopted && (
+        <div className="answer-form-wrapper">
+          <QuestionAnswerForm
+            questionId={questionId}
+            onAnswerSuccess={fetchDetail}
+          />
         </div>
       )}
+
+      {/* 3. 답변 리스트 섹션 */}
+      <h3 className="section-title">
+        변호사 답변{" "}
+        <span className="count-badge">{detail.answers?.length || 0}</span>
+      </h3>
+
+      <div className="answers-list">
+        {detail.answers && detail.answers.length > 0 ? (
+          detail.answers.map((ans) => (
+            <div
+              key={ans.answerId}
+              className={`answer-box ${ans.isAdopted === "Y" ? "adopted-border" : ""}`}
+            >
+              <div className="answer-header">
+                <div className="lawyer-info">
+                  <span className="lawyer-icon">
+                    {ans.isAdopted === "Y" ? "🏆" : "👨‍⚖️"}
+                  </span>
+                  <span className="lawyer-name">{ans.lawyerName} 변호사</span>
+                  {ans.isAdopted === "Y" && (
+                    <span className="pt-badge">의뢰인 채택 답변</span>
+                  )}
+                </div>
+                <span className="answer-date">{ans.createdAt}</span>
+              </div>
+
+              <p className="answer-content">{ans.content}</p>
+
+              {/* 채택 버튼 (작성자 본인 & 미채택 상태일 때만) */}
+              {isOwner && !isAlreadyAdopted && (
+                <div className="adopt-btn-wrapper">
+                  <button
+                    className="adopt-action-btn"
+                    onClick={() => handleAdopt(ans.answerId, ans.lawyerId)}
+                  >
+                    이 답변 채택하기
+                  </button>
+                </div>
+              )}
+            </div>
+          ))
+        ) : (
+          <div className="no-answer-container">
+            <p>아직 등록된 답변이 없습니다.</p>
+          </div>
+        )}
+      </div>
+
+      {/* 4. 하단 푸터 (목록으로 이동) */}
+      <div className="detail-footer">
+        <button className="back-list-btn-bottom" onClick={() => navigate(-1)}>
+          목록으로 돌아가기
+        </button>
+      </div>
     </div>
   );
 };

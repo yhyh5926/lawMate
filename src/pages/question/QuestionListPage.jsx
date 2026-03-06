@@ -1,7 +1,3 @@
-// vs코드
-// 파일 위치: src/pages/question/QuestionListPage.jsx
-// 설명: 전체 법률 질문 목록 및 필터 조회 화면
-
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { questionApi } from "../../api/questionApi.js";
@@ -24,20 +20,24 @@ const QuestionListPage = () => {
       setQuestions(response.data.data || []);
     } catch (error) {
       console.error("질문 목록 조회 실패", error);
-      // 테스트용 모의 데이터
+      // 테스트용 모의 데이터 (memberName, answerCount 추가)
       setQuestions([
         {
           questionId: 1,
           title: "전세금 반환을 받지 못하고 있습니다.",
           caseType: "민사",
-          status: "OPEN",
+          status: "ADOPTED",
+          memberName: "김철수",
+          answerCount: 3,
           createdAt: "2026-02-27",
         },
         {
           questionId: 2,
           title: "음주운전 초범인데 어떻게 해야 하나요?",
           caseType: "형사",
-          status: "ANSWERED",
+          status: "WAITING",
+          memberName: "이영희",
+          answerCount: 0,
           createdAt: "2026-02-26",
         },
       ]);
@@ -47,7 +47,7 @@ const QuestionListPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: "900px", margin: "40px auto", padding: "20px" }}>
+    <div style={{ maxWidth: "1000px", margin: "40px auto", padding: "20px" }}>
       <div
         style={{
           display: "flex",
@@ -58,7 +58,7 @@ const QuestionListPage = () => {
           paddingBottom: "10px",
         }}
       >
-        <h2 style={{ margin: 0 }}>법률 질문 게시판</h2>
+        <h2 style={{ margin: 0 }}>⚖️ 법률 질문 게시판</h2>
         <button
           onClick={() => navigate("/question/write")}
           style={{
@@ -75,14 +75,15 @@ const QuestionListPage = () => {
         </button>
       </div>
 
-      <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
+      {/* 필터 영역 */}
+      <div style={{ marginBottom: "20px" }}>
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           style={{
             padding: "8px",
-            border: "1px solid #ccc",
             borderRadius: "4px",
+            border: "1px solid #ccc",
           }}
         >
           <option value="">전체 유형</option>
@@ -95,18 +96,6 @@ const QuestionListPage = () => {
       {loading ? (
         <div style={{ textAlign: "center", padding: "50px" }}>
           불러오는 중...
-        </div>
-      ) : questions.length === 0 ? (
-        <div
-          style={{
-            textAlign: "center",
-            padding: "50px",
-            color: "#888",
-            border: "1px solid #eee",
-            borderRadius: "8px",
-          }}
-        >
-          등록된 질문이 없습니다.
         </div>
       ) : (
         <table
@@ -123,10 +112,11 @@ const QuestionListPage = () => {
                 borderBottom: "2px solid #ddd",
               }}
             >
-              <th style={{ padding: "15px 10px", width: "10%" }}>번호</th>
-              <th style={{ padding: "15px 10px", width: "15%" }}>유형</th>
-              <th style={{ padding: "15px 10px", width: "45%" }}>제목</th>
-              <th style={{ padding: "15px 10px", width: "15%" }}>상태</th>
+              <th style={{ padding: "15px 10px", width: "8%" }}>번호</th>
+              <th style={{ padding: "15px 10px", width: "12%" }}>유형</th>
+              <th style={{ padding: "15px 10px", width: "40%" }}>제목</th>
+              <th style={{ padding: "15px 10px", width: "12%" }}>작성자</th>
+              <th style={{ padding: "15px 10px", width: "13%" }}>상태</th>
               <th style={{ padding: "15px 10px", width: "15%" }}>등록일</th>
             </tr>
           </thead>
@@ -156,16 +146,32 @@ const QuestionListPage = () => {
                     }}
                   >
                     {q.title}
+                    {/* 답변 개수 표시 */}
+                    {q.answerCount > 0 && (
+                      <span
+                        style={{
+                          color: "#007BFF",
+                          marginLeft: "8px",
+                          fontSize: "13px",
+                        }}
+                      >
+                        [{q.answerCount}]
+                      </span>
+                    )}
                   </Link>
+                </td>
+                {/* 작성자 이름 컬럼 */}
+                <td style={{ padding: "15px 10px", color: "#555" }}>
+                  {q.memberName}
                 </td>
                 <td
                   style={{
                     padding: "15px 10px",
-                    color: q.status === "ANSWERED" ? "#28a745" : "#dc3545",
+                    color: q.status === "ADOPTED" ? "#28a745" : "#fd7e14",
                     fontWeight: "bold",
                   }}
                 >
-                  {q.status === "ANSWERED" ? "답변완료" : "답변대기"}
+                  {q.status === "ADOPTED" ? "채택완료" : "채택대기"}
                 </td>
                 <td
                   style={{

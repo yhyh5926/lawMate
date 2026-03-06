@@ -14,10 +14,11 @@ export const questionApi = {
   // 4. 변호사 답변 등록 (TB_ANSWER)
   writeAnswer: (data) => axiosInstance.post("/question/answer/write", data),
 
-  // 5. 답변 채택 (TB_ANSWER.IS_PTED = 'Y')
-  // answerId를 통해 특정 답변을 채택하고 질문 상태를 CLOSED로 변경 유도
-  ptAnswer: (answerId) =>
-    axiosInstance.post(`/question/answer/pt`, { answerId }),
+  /**
+   * 5. 변호사 답변 채택 (TB_QUESTION 상태 변경 + TB_ANSWER 채택 처리)
+   * @param {Object} data - { questionId, lawyerId, memberId, answerId }
+   */
+  adoptAnswer: (data) => axiosInstance.post("/question/adopt", data),
 
   // 6. 질문 삭제 (필요 시)
   deleteQuestion: (questionId) =>

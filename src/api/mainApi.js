@@ -6,9 +6,4 @@ export const mainApi = {
     const res = await axiosInstance.get("/main");
     return res.data;
   },
-
-  async getNoticeDetail(id) {
-    const res = await axiosInstance.get(`/notices/${id}`);
-    return res.data;
-  },
 };
