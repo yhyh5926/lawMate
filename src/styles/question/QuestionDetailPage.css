@@ -1,19 +1,20 @@
-/* 컨테이너 및 기본 설정 */
+/* QuestionDetailPage.css */
+
 .question-detail-container {
-  max-width: 850px;
-  margin: 40px auto;
+  max-width: 900px;
+  margin: 50px auto;
   padding: 0 20px;
-  line-height: 1.6;
-  color: #2d3748;
+  font-family: "Pretendard", sans-serif;
+  color: #1e293b;
 }
 
-/* 질문 카드 스타일 */
+/* --- 질문 카드 스타일 --- */
 .question-card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  border: 1px solid #edf2f7;
+  background: #fff;
+  border-radius: 24px;
+  padding: 45px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
   margin-bottom: 40px;
 }
 
@@ -21,195 +22,234 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 20px;
-}
-
-.question-title {
-  font-size: 24px;
-  font-weight: 800;
-  color: #1a202c;
-  margin: 0;
+  margin-bottom: 25px;
 }
 
 .case-type-badge {
-  background: #ebf8ff;
-  color: #3182ce;
-  padding: 6px 14px;
+  display: inline-block;
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 5px 14px;
   border-radius: 8px;
   font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.question-title {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.4;
+  letter-spacing: -0.5px;
+}
+
+.status-badge {
+  padding: 7px 16px;
+  border-radius: 50px;
+  font-size: 13px;
   font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-badge.is-waiting {
+  background: #fff7ed;
+  color: #f97316;
+}
+.status-badge.is-adopted {
+  background: #ecfdf5;
+  color: #059669;
 }
 
 .question-meta {
-  display: flex;
-  gap: 15px;
+  margin-bottom: 35px;
+  color: #94a3b8;
   font-size: 14px;
-  color: #718096;
-  margin-bottom: 24px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #f7fafc;
-}
-
-.question-content {
-  font-size: 16px;
-  white-space: pre-wrap;
-  color: #4a5568;
-}
-
-/* 답변 섹션 타이틀 */
-.section-title {
-  font-size: 19px;
-  font-weight: 700;
-  margin: 40px 0 20px;
   display: flex;
   align-items: center;
-  gap: 8px;
+}
+
+.meta-item strong {
+  color: #475569;
+  margin-left: 5px;
+}
+.meta-divider {
+  margin: 0 15px;
+  color: #e2e8f0;
+}
+
+.question-content-text {
+  font-size: 18px;
+  line-height: 1.8;
+  color: #334155;
+  white-space: pre-wrap;
+}
+
+/* --- 답변 작성 영역 (변호사용) --- */
+.answer-form-section {
+  background: #f8fafc;
+  padding: 30px;
+  border-radius: 20px;
+  border: 2px dashed #e2e8f0;
+  margin-bottom: 50px;
+}
+
+.form-notice {
+  margin-bottom: 20px;
+  font-size: 15px;
+  color: #64748b;
+}
+
+/* --- 답변 리스트 스타일 --- */
+.section-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .count-badge {
-  background: #edf2f7;
-  padding: 2px 8px;
-  border-radius: 12px;
+  background: #1e293b;
+  color: white;
   font-size: 14px;
-  color: #4a5568;
+  padding: 3px 12px;
+  border-radius: 12px;
 }
 
-/* 답변 박스 기본 */
-.answer-box {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 28px;
+.answer-item {
+  background: white;
+  border-radius: 24px;
+  padding: 35px;
+  margin-bottom: 30px;
   border: 1px solid #e2e8f0;
-  margin-bottom: 20px;
-  transition: all 0.2s ease;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* 채택된 답변 강조 */
+.answer-item.selected-answer {
+  border: 2px solid #059669;
+  background: #f0fdf4;
+  box-shadow: 0 10px 30px rgba(5, 150, 105, 0.08);
+}
+
+.adopted-label {
+  position: absolute;
+  top: -15px;
+  left: 35px;
+  background: #059669;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: 0 4px 10px rgba(5, 150, 105, 0.3);
 }
 
 .answer-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 18px;
+  margin-bottom: 25px;
 }
 
-.lawyer-info {
+.lawyer-profile {
   display: flex;
   align-items: center;
+  gap: 15px;
 }
 
-.lawyer-icon {
-  font-size: 20px;
-  margin-right: 8px;
+.lawyer-avatar {
+  width: 50px;
+  height: 50px;
+  background: #f1f5f9;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
 }
 
 .lawyer-name {
+  display: block;
+  font-size: 18px;
   font-weight: 700;
-  font-size: 16px;
+  color: #1e293b;
 }
 
-.answer-date {
+.ans-date {
   font-size: 13px;
-  color: #a0aec0;
+  color: #94a3b8;
 }
 
-.answer-content {
-  font-size: 15.5px;
-  color: #2d3748;
+.answer-body {
+  font-size: 17px;
+  line-height: 1.8;
+  color: #475569;
   white-space: pre-wrap;
 }
 
-/* ✨ 채택된 답변 강조 스타일 */
-.answer-box.adopted-border {
-  border: 2.5px solid #48bb78 !important; /* 초록 테두리 */
-  background-color: #f0fff4 !important; /* 연한 초록 배경 */
-  box-shadow: 0 10px 25px rgba(72, 187, 120, 0.15) !important;
-  position: relative;
-}
-
-/* 채택 박스 좌측 강조 선 */
-.answer-box.adopted-border::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 6px;
-  height: 100%;
-  background-color: #48bb78;
-}
-
-.pt-badge {
-  background: #48bb78;
-  color: white;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 3px 10px;
-  border-radius: 4px;
-  margin-left: 12px;
-}
-
-/* 채택 버튼 */
-.adopt-btn-wrapper {
-  margin-top: 20px;
+/* --- 채택 버튼 --- */
+.adopt-action-area {
+  margin-top: 30px;
   text-align: right;
 }
 
-.adopt-action-btn {
-  background: #48bb78;
+.btn-adopt {
+  background: #1e293b;
   color: white;
-  border: none;
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.adopt-action-btn:hover {
-  background: #38a169;
-}
-
-/* ✅ 하단 푸터 (목록 돌아가기) */
-.detail-footer {
-  margin-top: 60px;
-  padding-top: 30px;
-  border-top: 1px solid #edf2f7;
-  text-align: center;
-}
-
-.back-list-btn-bottom {
-  background: #ffffff;
-  color: #4a5568;
-  border: 1px solid #cbd5e0;
-  padding: 12px 48px;
-  border-radius: 10px;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.back-list-btn-bottom:hover {
-  background: #f7fafc;
-  border-color: #a0aec0;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-/* 상태 텍스트 색상 */
-.text-success {
-  color: #48bb78;
-  font-weight: bold;
-}
-.text-warning {
-  color: #ed8936;
-  font-weight: bold;
-}
-
-/* 답변 없음 */
-.no-answer-container {
-  text-align: center;
-  padding: 50px;
-  background: #f7fafc;
+  padding: 12px 28px;
   border-radius: 12px;
-  color: #a0aec0;
-  border: 1px dashed #cbd5e0;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-adopt:hover {
+  background: #334155;
+  transform: translateY(-2px);
+}
+
+/* --- 데이터 없음 --- */
+.empty-answer {
+  text-align: center;
+  padding: 80px 0;
+  background: #fff;
+  border-radius: 24px;
+  border: 1px solid #f1f5f9;
+  color: #94a3b8;
+}
+
+.empty-icon {
+  font-size: 50px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+/* --- 하단 버튼 --- */
+.footer-nav {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.btn-back-list {
+  background: #fff;
+  color: #64748b;
+  padding: 15px 40px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-back-list:hover {
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.loading-spinner-container {
+  text-align: center;
+  padding: 100px;
+  color: #94a3b8;
+  font-weight: 600;
 }

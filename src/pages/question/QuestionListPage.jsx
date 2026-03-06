@@ -78,16 +78,21 @@ const QuestionListPage = () => {
     updateParams({ caseType: val === "전체" ? "" : val, page: 1 });
   };
 
-  // 💡 검색창의 X 버튼 클릭 시: 입력값만 초기화
   const handleClearInput = () => {
     setTempQuery("");
     updateParams({ query: "", page: 1 });
   };
 
-  // 💡 초기화 버튼 클릭 시: 카테고리와 검색어 모두 초기화
   const handleResetAll = () => {
     setTempQuery("");
-    setSearchParams({}); // 모든 쿼리 파라미터 제거
+    setSearchParams({});
+  };
+
+  // 날짜 포맷 함수 (YYYY-MM-DD 형식)
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
   };
 
   const renderPagination = () => {
@@ -140,7 +145,6 @@ const QuestionListPage = () => {
               value={tempQuery}
               onChange={(e) => setTempQuery(e.target.value)}
             />
-            {/* 💡 검색어 클리어 버튼(X) */}
             {tempQuery && (
               <button
                 type="button"
@@ -154,8 +158,6 @@ const QuestionListPage = () => {
           <button type="submit" className="ql-search-btn">
             검색
           </button>
-
-          {/* 💡 필터 초기화 버튼(↺) */}
           <button
             type="button"
             className="ql-reset-btn"
@@ -175,10 +177,11 @@ const QuestionListPage = () => {
             <table className="ql-table">
               <thead>
                 <tr>
-                  <th className="w-id">번호</th>
                   <th className="w-type">유형</th>
                   <th className="w-title">질문 제목</th>
                   <th className="w-author">작성자</th>
+                  <th className="w-date">작성일</th>{" "}
+                  {/* 💡 번호 삭제 후 작성일 추가 */}
                   <th className="w-status">진행 상태</th>
                 </tr>
               </thead>
@@ -186,7 +189,6 @@ const QuestionListPage = () => {
                 {questions.length > 0 ? (
                   questions.map((q) => (
                     <tr key={q.questionId} className="ql-row">
-                      <td className="ql-id">{q.questionId}</td>
                       <td>
                         <span className="ql-type-badge">{q.caseType}</span>
                       </td>
@@ -202,6 +204,10 @@ const QuestionListPage = () => {
                         </Link>
                       </td>
                       <td className="ql-author">{q.memberName}</td>
+                      <td className="ql-date">
+                        {formatDate(q.createdAt)}
+                      </td>{" "}
+                      {/* 💡 작성일 출력 */}
                       <td>
                         <span
                           className={`ql-status ${q.status === "ADOPTED" ? "is-adopted" : "is-waiting"}`}
