@@ -1,7 +1,7 @@
 // src/pages/member/LawyerJoinFormPage.jsx
 /**
  * 파일 위치: src/pages/member/LawyerJoinFormPage.jsx
- * 수정사항: 변호사 사무소 주소 입력 및 자격증 다중 업로드 기능이 추가되었습니다.
+ * 수정사항: 변호사 사무소 주소 입력칸을 2개로 간소화하고, 자격증 다중 파일 업로드 시 파일 목록 확인 및 미리보기(클릭) 기능이 추가되었습니다.
  */
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -83,8 +83,15 @@ const LawyerJoinFormPage = () => {
     }
   };
 
+  // 💡 여러 파일을 선택할 때 기존 파일에 추가되도록 수정
   const handleFileChange = (e) => {
-    setFiles(Array.from(e.target.files));
+    const selectedFiles = Array.from(e.target.files);
+    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+  };
+
+  // 💡 선택한 파일 목록에서 특정 파일을 제거하는 기능
+  const handleRemoveFile = (indexToRemove) => {
+    setFiles((prevFiles) => prevFiles.filter((_, index) => index !== indexToRemove));
   };
 
   const handlePhone2Change = (e) => {
@@ -332,6 +339,8 @@ const LawyerJoinFormPage = () => {
             className="lawyer-join-input"
           />
         </div>
+
+        {/* 💡 사무소 주소 2개로 간소화 (기본/상세) */}
         <div className="lawyer-join-group">
           <label className="lawyer-join-label">사무소 기본 주소</label>
           <input
@@ -355,6 +364,7 @@ const LawyerJoinFormPage = () => {
           />
         </div>
 
+        {/* 💡 증빙서류 멀티 업로드 및 미리보기 영역 */}
         <div className="lawyer-join-group">
           <label className="lawyer-join-label">
             변호사 자격증 증빙서류 (다중 선택 가능)
@@ -365,10 +375,36 @@ const LawyerJoinFormPage = () => {
             multiple
             onChange={handleFileChange}
             className="lawyer-join-file-input"
+            id="lawyer-file-upload"
           />
           <div style={{ fontSize: "12px", color: "#888", marginTop: "5px" }}>
-            ※ Ctrl 키를 누른 상태로 여러 파일을 선택할 수 있습니다.
+            ※ 파일을 여러 개 추가로 선택할 수 있습니다.
           </div>
+
+          {/* 업로드된 파일 목록 표시 */}
+          {files.length > 0 && (
+            <ul className="lawyer-join-file-list">
+              {files.map((file, index) => {
+                // 클릭 시 브라우저에서 확인할 수 있는 임시 URL 생성
+                const fileUrl = URL.createObjectURL(file);
+                return (
+                  <li key={index} className="lawyer-join-file-item">
+                    <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                      📄 {file.name}
+                    </a>
+                    <button
+                      type="button"
+                      className="lawyer-join-file-remove"
+                      onClick={() => handleRemoveFile(index)}
+                      title="파일 삭제"
+                    >
+                      ✖
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
 
         <button type="submit" className="lawyer-join-btn-primary">
