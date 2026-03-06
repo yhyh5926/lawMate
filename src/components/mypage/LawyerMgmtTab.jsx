@@ -5,6 +5,9 @@ import { useAuthStore } from "../../store/authStore.js";
 import { DEFAULT_IMAGE } from "../../pages/lawyer/LawyerListPage";
 import "../../styles/mypage/LawyerMgmtTab.css";
 
+// 💡 선택 가능한 전체 전문 분야 리스트
+const SPECIALTIES = ["민사", "형사", "가사", "이혼", "노동", "행정", "기업", "부동산"];
+
 const LawyerMgmtTab = () => {
   const { user } = useAuthStore();
   const [loading, setLoading] = useState(true);
@@ -15,7 +18,7 @@ const LawyerMgmtTab = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewImg, setPreviewImg] = useState(DEFAULT_IMAGE);
 
-  // 읽기 전용 정보
+  // 읽기 전용 정보 (이름, 이메일 등)
   const [readOnlyData, setReadOnlyData] = useState({
     name: user.name || "이름 없음",
     email: user.email || "-",
@@ -25,11 +28,11 @@ const LawyerMgmtTab = () => {
     reviewCnt: 0
   });
 
-  // 수정 가능한 정보
+  // 수정 가능한 정보 (사무소, 전문분야, 인사말 등)
   const [formData, setFormData] = useState({
     officeName: "",
     officeAddr: "",
-    specialty: "",
+    specialty: "", // 💡 서버에서 받아온 "민사,부동산" 형태의 문자열이 저장됨
     intro: "",
     career: "",
     consultFee: 0,
@@ -39,15 +42,17 @@ const LawyerMgmtTab = () => {
     const fetchLawyerData = async () => {
       try {
         setLoading(true);
+        // 서버에서 현재 로그인한 변호사의 상세 정보를 가져옴
         const res = await lawyerApi.getLawyerByMemberId(user.memberId);
         const data = res.data?.data || res.data || res;
         
         setLawyerId(data.lawyerId);
         
+        // 💡 중요: 서버 데이터를 formData에 세팅하면 specialty 버튼들이 자동으로 체크됩니다.
         setFormData({
           officeName: data.officeName || "",
           officeAddr: data.officeAddr || "",
-          specialty: data.specialty || "",
+          specialty: data.specialty || "", // 예: "민사,부동산"
           intro: data.intro || "",
           career: data.career || "",
           consultFee: data.consultFee || 0,
@@ -59,6 +64,7 @@ const LawyerMgmtTab = () => {
           reviewCnt: data.reviewCnt || 0
         }));
 
+        // 이미지 경로 설정
         const path = data.savePath || data.profileUrl || data.profileImage;
         if (path) {
           setPreviewImg(path.startsWith("http") ? path : `http://localhost:8080${path}`);
@@ -81,6 +87,25 @@ const LawyerMgmtTab = () => {
     }));
   };
 
+  // 💡 전문 분야 클릭 토글 핸들러
+  const handleSpecToggle = (spec) => {
+    // 기존 문자열을 배열로 변환하여 공백 제거 및 필터링
+    let currentList = formData.specialty 
+      ? formData.specialty.split(",").map(s => s.trim()).filter(s => s !== "") 
+      : [];
+    
+    if (currentList.includes(spec)) {
+      // 이미 선택된 분야면 제거
+      currentList = currentList.filter((item) => item !== spec);
+    } else {
+      // 선택되지 않은 분야면 추가
+      currentList.push(spec);
+    }
+    
+    // 다시 쉼표로 연결된 문자열로 변환하여 저장
+    setFormData((prev) => ({ ...prev, specialty: currentList.join(",") }));
+  };
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -101,16 +126,13 @@ const LawyerMgmtTab = () => {
         return;
       }
 
-      // 💡 1. 이미지 파일이 선택되었다면 백엔드로 전송 (주석 완전 해제됨!)
       if (selectedFile) {
         const fileData = new FormData();
         fileData.append("file", selectedFile);
         await lawyerApi.uploadProfileImage(lawyerId, fileData);
       }
 
-      // 💡 2. 나머지 텍스트 정보 전송
       await lawyerApi.updateLawyer(lawyerId, formData);
-      
       alert("변호사 프로필 및 상담 설정이 성공적으로 저장되었습니다!");
     } catch (err) {
       console.error(err);
@@ -121,6 +143,11 @@ const LawyerMgmtTab = () => {
   if (loading) {
     return <div className="empty-tab-content">변호사 정보를 불러오는 중입니다...</div>;
   }
+
+  // 💡 현재 선택된 분야들을 실시간으로 확인하기 위한 배열 변환
+  const selectedList = formData.specialty 
+    ? formData.specialty.split(",").map(s => s.trim()) 
+    : [];
 
   const isDefaultImg = previewImg === DEFAULT_IMAGE;
 
@@ -157,15 +184,19 @@ const LawyerMgmtTab = () => {
 
           <div className="mgmt-info">
             <div>
-              <label className="mgmt-label-small">전문 분야 (배지)</label>
-              <input 
-                type="text" 
-                name="specialty" 
-                value={formData.specialty} 
-                onChange={handleChange} 
-                className="mgmt-edit-input mgmt-input-specialty" 
-                placeholder="예: 형사,이혼,민사" 
-              />
+              <label className="mgmt-label-small">주요 전문 분야 (다중 선택)</label>
+              <div className="mgmt-spec-group">
+                {SPECIALTIES.map((spec) => (
+                  <button
+                    key={spec}
+                    type="button"
+                    onClick={() => handleSpecToggle(spec)}
+                    className={`mgmt-spec-btn ${selectedList.includes(spec) ? "active" : ""}`}
+                  >
+                    #{spec}
+                  </button>
+                ))}
+              </div>
             </div>
             
             <div className="mgmt-name-display">
@@ -248,7 +279,6 @@ const LawyerMgmtTab = () => {
                 />
               </span>
             </div>
-            {/* 기본 상담료 설정 (통합됨) */}
             <div className="mgmt-info-row mgmt-row-fee">
               <span className="mgmt-info-label mgmt-label-fee">기본 상담료<br/><small>(30분 기준)</small></span>
               <span className="mgmt-info-value mgmt-value-fee">
@@ -267,7 +297,6 @@ const LawyerMgmtTab = () => {
           </div>
         </section>
 
-        {/* 5. 하단 고정 액션 버튼 */}
         <button type="submit" className="mgmt-save-btn">
           프로필 및 상담 설정 저장하기
         </button>
