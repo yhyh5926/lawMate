@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import { useAuthStore } from "../../store/authStore.js";
 import MyInfoTab from "../../components/mypage/MyInfoTab.jsx";
 import EditInfoTab from "../../components/mypage/EditInfoTab.jsx";
-import MyPostsTab from "../../components/mypage/MyPostsTab.jsx"; // 💡 새로 만든 컴포넌트 임포트!
+import MyPostsTab from "../../components/mypage/MyPostsTab.jsx";
+import LawyerMgmtTab from "../../components/mypage/LawyerMgmtTab.jsx"; // 💡 새로 만든 변호사 관리 탭 임포트
 import "../../styles/mypage/MyPage.css";
 
 const MyPage = () => {
@@ -11,9 +12,14 @@ const MyPage = () => {
   const [activeTab, setActiveTab] = useState("info");
 
   if (!user) {
-    return <div style={{ textAlign: "center", marginTop: "100px", fontSize: "18px" }}>로그인 정보가 없습니다.</div>;
+    return (
+      <div style={{ textAlign: "center", marginTop: "100px", fontSize: "18px" }}>
+        로그인 정보가 없습니다.
+      </div>
+    );
   }
 
+  // 💡 1. 기본 탭 (일반/전문 회원 공통)
   const tabs = [
     { id: "info", label: "내 정보 출력" },
     { id: "edit", label: "정보 수정" },
@@ -21,12 +27,17 @@ const MyPage = () => {
     { id: "cases", label: "사건 기록" },
   ];
 
+  // 💡 2. 변호사(LAWYER) 계정일 경우에만 '변호사 관리' 탭 추가
+  if (user.role === "LAWYER") {
+    tabs.push({ id: "lawyerMgmt", label: "변호사 관리" });
+  }
+
   return (
     <div className="mypage-container">
       <h2 className="mypage-title">마이페이지</h2>
 
       <div className="mypage-main-layout">
-        {/* 왼쪽 사이드바 */}
+        {/* 왼쪽 사이드바 (메뉴) */}
         <aside className="mypage-sidebar">
           {tabs.map((tab) => (
             <button
@@ -43,11 +54,14 @@ const MyPage = () => {
         <section className="mypage-content">
           {activeTab === "info" && <MyInfoTab />}
           {activeTab === "edit" && <EditInfoTab />}
-          {activeTab === "posts" && <MyPostsTab />} {/* 💡 내가 쓴 글 탭 컴포넌트 추가 */}
-          
+          {activeTab === "posts" && <MyPostsTab />}
           {activeTab === "cases" && (
-            <div className="empty-tab-content">⚖️ 진행 중인 사건 및 과거 기록을 불러오는 중입니다.</div>
+            <div className="empty-tab-content">
+              ⚖️ 진행 중인 사건 및 과거 기록을 불러오는 중입니다.
+            </div>
           )}
+          {/* 💡 변호사 관리 탭 렌더링 */}
+          {activeTab === "lawyerMgmt" && <LawyerMgmtTab />}
         </section>
       </div>
     </div>

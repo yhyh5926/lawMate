@@ -61,8 +61,8 @@ const MyInfoTab = () => {
             <li className="myinfo-item">
               <span className="myinfo-label">사무실 주소</span>
               <span className="myinfo-value">
-                {user.officeAddr
-                  ? `${user.officeAddr} ${user.officeDetailAddr || ""}`
+                {(user.officeAddr || user.address)
+                  ? `${user.officeAddr || user.address} ${user.officeDetailAddr || user.detailAddress || ""}`
                   : "미등록"}
               </span>
             </li>

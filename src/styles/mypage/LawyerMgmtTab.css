@@ -1,0 +1,298 @@
+/* src/styles/mypage/LawyerMgmtTab.css */
+.lawyer-mgmt-wrapper {
+  animation: fadeIn 0.3s ease-in-out;
+  color: #1e293b;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+.mgmt-content-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 24px;
+  color: #1e293b;
+}
+
+.mgmt-info-notice {
+  background-color: #eff6ff;
+  color: #2563eb;
+  padding: 16px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 30px;
+  border: 1px solid #bfdbfe;
+}
+
+/* 상세 페이지와 동일한 헤더 레이아웃 */
+.mgmt-header {
+  display: flex;
+  gap: 40px;
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  margin-bottom: 24px;
+  align-items: flex-start;
+}
+
+/* 프로필 사진 박스 (클릭하여 업로드) */
+.mgmt-img-box {
+  width: 220px;
+  height: 280px;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #f8fafc;
+  flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+  border: 2px dashed #cbd5e1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mgmt-img-box:hover .mgmt-img-overlay {
+  opacity: 1;
+}
+
+.mgmt-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.mgmt-img.default-avatar {
+  width: 50%;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.8;
+}
+
+.mgmt-img-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.mgmt-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 입력 필드 공통 스타일 [ ] 느낌 */
+.mgmt-edit-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  color: #1e293b;
+  background-color: #f8fafc;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.mgmt-edit-input:focus {
+  border-color: #3b82f6;
+  background-color: #fff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.mgmt-edit-textarea {
+  width: 100%;
+  padding: 16px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 15px;
+  line-height: 1.6;
+  font-family: inherit;
+  color: #1e293b;
+  background-color: #f8fafc;
+  resize: vertical;
+  min-height: 100px;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.mgmt-edit-textarea:focus {
+  border-color: #3b82f6;
+  background-color: #fff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.mgmt-readonly-text {
+  font-size: 15px;
+  color: #64748b;
+  padding: 12px 0;
+  font-weight: 500;
+}
+
+.mgmt-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.mgmt-rating .star {
+  color: #f59e0b;
+}
+
+.mgmt-rating .count {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* 핵심 요약 문구 (파란 테두리 박스) */
+.mgmt-summary-box {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 16px;
+  border-left: 4px solid #2563eb;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  margin-bottom: 40px;
+}
+
+/* 각 섹션 공통 스타일 */
+.mgmt-section {
+  margin-bottom: 40px;
+}
+
+.mgmt-section-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  color: #1e293b;
+}
+
+/* 사무소 및 연락처 테이블 */
+.mgmt-info-table {
+  background-color: #fff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.mgmt-info-row {
+  display: flex;
+  padding: 20px 24px;
+  border-bottom: 1px dashed #e2e8f0;
+  align-items: center;
+}
+
+.mgmt-info-row:last-child {
+  border-bottom: none;
+}
+
+.mgmt-info-label {
+  width: 150px;
+  font-weight: 700;
+  color: #64748b;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.mgmt-info-value {
+  flex: 1;
+}
+
+/* 저장 버튼 */
+.mgmt-save-btn {
+  width: 100%;
+  padding: 20px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  background-color: #1e293b;
+  color: #fff;
+  transition: all 0.2s;
+  margin-top: 20px;
+}
+
+.mgmt-save-btn:hover {
+  background-color: #0f172a;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(30, 41, 59, 0.2);
+}
+
+/* 💡 새로 추가된 스타일 (인라인 스타일 분리) */
+.mgmt-label-small {
+  font-size: 13px;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.mgmt-input-specialty {
+  width: 200px;
+  color: #2563eb;
+  font-weight: 700;
+  background-color: #eff6ff;
+}
+
+.mgmt-name-display {
+  font-size: 28px;
+  font-weight: 800;
+  margin-top: 8px;
+}
+
+.mgmt-office-wrapper {
+  margin-top: 4px;
+}
+
+.mgmt-summary-label {
+  font-size: 14px;
+  font-weight: 800;
+  color: #2563eb;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.mgmt-row-fee {
+  background-color: #fffbeb;
+}
+
+.mgmt-label-fee {
+  color: #b45309;
+}
+
+.mgmt-value-fee {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mgmt-input-fee {
+  width: 200px;
+  color: #e11d48;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.mgmt-unit-text {
+  font-weight: 700;
+  color: #475569;
+}

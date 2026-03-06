@@ -1,3 +1,4 @@
+// src/pages/consult/ConsultReservePage.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { createConsult, getAvailableTimes } from "../../api/consultApi";
@@ -70,23 +71,20 @@ const ConsultReservePage = () => {
       }
 
       // 2. TB_CONSULT 구조에 맞춘 데이터 매핑
-      // 💡 CONSULT_DATE는 보통 날짜+시간이 합쳐진 형태이므로 결합하여 전송
       const consultDateTime = `${selectedDate}T${selectedTime}:00`;
 
       const consultData = {
-        // memberId는 추후 로그인 상태에서 추가
         lawyerId: Number(lawyerId), // 💡 LAWYER_ID
-        consultDate: consultDateTime, // 💡 CONSULT_DATE (ISO String 등 서버 포맷 확인)
+        consultDate: consultDateTime, // 💡 CONSULT_DATE
         durationMin: duration, // 💡 DURATION_MIN
-        note: note, // 💡 NOTE (상담 요청 메모)
-        attachmentNos: attachmentNos, // (첨부파일 매핑 테이블용)
+        note: note, // 💡 NOTE
+        attachmentNos: attachmentNos,
       };
 
       const res = await createConsult(consultData);
 
       alert("상담 예약이 접수되었습니다.");
 
-      // 💡 CONSULT_ID를 받아 결제 페이지로 이동
       const consultId = res.data?.consultId || res.data?.data?.consultId;
       navigate(`/payment/pay?consultId=${consultId}`);
     } catch (e) {
@@ -103,8 +101,10 @@ const ConsultReservePage = () => {
         <div style={lawyerCardStyle}>
           <img
             src={
-              lawyer.savePath
-                ? `http://localhost:8080${lawyer.savePath}`
+              lawyer.savePath || lawyer.profileUrl
+                ? (lawyer.savePath || lawyer.profileUrl).startsWith("http") 
+                  ? (lawyer.savePath || lawyer.profileUrl) 
+                  : `http://localhost:8080${lawyer.savePath || lawyer.profileUrl}`
                 : DEFAULT_IMAGE
             }
             alt={lawyer.name}
@@ -238,7 +238,6 @@ const ConsultReservePage = () => {
   );
 };
 
-// --- 스타일 (생략/기존 유지) ---
 const lawyerCardStyle = {
   background: "#F0F4FF",
   borderRadius: "12px",
@@ -252,7 +251,7 @@ const avatarStyle = {
   height: "50px",
   borderRadius: "50%",
   objectFit: "cover",
-  background: "#1A6DFF",
+  background: "#f8fafc",
 };
 const fieldStyle = { marginBottom: "20px" };
 const labelStyle = {
