@@ -30,7 +30,7 @@ const QuestionWritePage = () => {
     try {
       await questionApi.writeQuestion({
         ...formData,
-        memberId: user?.loginId,
+        memberId: user?.memberId,
       });
       alert("질문이 성공적으로 등록되었습니다.");
       navigate("/question/list");
