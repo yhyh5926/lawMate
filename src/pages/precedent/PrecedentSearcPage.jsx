@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import precedentApi from "../../api/precedentApi";
-import LegalTooltip from "./LegalTooltip";
+// LegalTooltip 임포트 제거 (상세 페이지에서만 사용)
 import "../../styles/precedent/PrecedentSearchPage.css";
 
 const PrecedentSearchPage = () => {
@@ -51,7 +51,7 @@ const PrecedentSearchPage = () => {
         setList(data.list || []);
         setTotalPages(data.totalPages || 1);
       } catch (err) {
-        console.error("목록 로드 에러:", err);
+        console.error("판례 목록 로딩 에러:", err);
       } finally {
         setLoading(false);
       }
@@ -66,11 +66,9 @@ const PrecedentSearchPage = () => {
       page: page,
       ...newParams,
     };
-
     Object.keys(nextParams).forEach((key) => {
       if (!nextParams[key]) delete nextParams[key];
     });
-
     setSearchParams(nextParams);
   };
 
@@ -80,8 +78,7 @@ const PrecedentSearchPage = () => {
   };
 
   const handleCategoryChange = (e) => {
-    const selectedType = e.target.value;
-    updateParams({ caseType: selectedType, page: 1 });
+    updateParams({ caseType: e.target.value, page: 1 });
   };
 
   const handleReset = () => {
@@ -125,13 +122,11 @@ const PrecedentSearchPage = () => {
                   value={tempQuery}
                   onChange={(e) => setTempQuery(e.target.value)}
                 />
-                {/* 텍스트가 있을 때만 X 버튼 노출 */}
                 {tempQuery && (
                   <button
                     type="button"
                     className="ps-clear-btn"
                     onClick={() => setTempQuery("")}
-                    aria-label="검색어 지우기"
                   >
                     &times;
                   </button>
@@ -154,7 +149,10 @@ const PrecedentSearchPage = () => {
       </header>
 
       {loading ? (
-        <div className="ps-loading">데이터 로딩 중...</div>
+        <div className="ps-loading-state">
+          <div className="spinner"></div>
+          <p>법률 데이터를 불러오는 중입니다...</p>
+        </div>
       ) : (
         <>
           <div className="ps-list-grid">
@@ -170,16 +168,18 @@ const PrecedentSearchPage = () => {
                     <small className="ps-case-no">{item.caseNo}</small>
                   </div>
                   <h3 className="ps-title">{item.title}</h3>
-                  <div className="ps-one-line">
-                    <LegalTooltip text={item.oneLine} />
-                  </div>
+                  {/* 툴팁 제거: 일반 텍스트 렌더링으로 가독성 확보 */}
+                  <div className="ps-one-line">{item.oneLine}</div>
                   <div className="ps-footer-info">
                     {item.court} | {item.judgeDate}
                   </div>
                 </div>
               ))
             ) : (
-              <div className="ps-no-data">데이터가 없습니다.</div>
+              <div className="ps-no-data">
+                <p>검색 결과가 없습니다.</p>
+                <span>다른 검색어나 카테고리를 선택해 보세요.</span>
+              </div>
             )}
           </div>
 
@@ -189,9 +189,8 @@ const PrecedentSearchPage = () => {
               disabled={page === 1}
               onClick={() => handlePageChange(page - 1)}
             >
-              &lt;
+              &larr;
             </button>
-
             {pageNumbers.map((num) => (
               <button
                 key={num}
@@ -201,13 +200,12 @@ const PrecedentSearchPage = () => {
                 {num}
               </button>
             ))}
-
             <button
               className="ps-page-arrow"
               disabled={page === totalPages}
               onClick={() => handlePageChange(page + 1)}
             >
-              &gt;
+              &rarr;
             </button>
           </div>
         </>
