@@ -1,10 +1,17 @@
 // src/components/mypage/EditInfoTab.jsx
+/**
+ * 파일 위치: src/components/mypage/EditInfoTab.jsx
+ * 수정사항: 변호사(전문회원) 정보 수정 시 전문 분야를 텍스트 입력 대신 버튼 다중 선택 방식으로 변경했습니다.
+ */
 import React, { useState, useRef } from "react";
 import { useAuthStore } from "../../store/authStore.js";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 
 const GOOGLE_CLIENT_ID =
   "244554224995-kcgsjp47k8flns89ldv9stpfga219kut.apps.googleusercontent.com";
+
+// 💡 전문 분야 카테고리 배열 ("전체" 제외)
+const SPECIALTIES = ["민사", "형사", "가사", "이혼", "노동", "행정", "기업", "부동산"];
 
 const EditInfoContent = ({ onVerifyReset }) => {
   const { user } = useAuthStore();
@@ -46,7 +53,7 @@ const EditInfoContent = ({ onVerifyReset }) => {
           "https://www.googleapis.com/oauth2/v3/userinfo",
           {
             headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-          },
+          }
         ).then((res) => res.json());
 
         if (userInfo.email === user.email) {
@@ -96,6 +103,19 @@ const EditInfoContent = ({ onVerifyReset }) => {
 
   const handleEditChange = (e) =>
     setEditData({ ...editData, [e.target.name]: e.target.value });
+
+  // 💡 전문 분야 다중 선택 토글 핸들러 추가
+  const handleSpecialtyToggle = (spec) => {
+    let currentList = editData.specialty ? editData.specialty.split(",") : [];
+    
+    if (currentList.includes(spec)) {
+      currentList = currentList.filter((item) => item !== spec); // 이미 선택되어 있으면 제거
+    } else {
+      currentList.push(spec); // 선택되어 있지 않으면 추가
+    }
+    
+    setEditData({ ...editData, specialty: currentList.join(",") });
+  };
 
   const handleEditPhoneChange = (e, nextRef) => {
     const val = e.target.value.replace(/[^0-9]/g, "");
@@ -315,15 +335,34 @@ const EditInfoContent = ({ onVerifyReset }) => {
                   style={{ padding: "10px" }}
                 />
               </div>
+
+              {/* 💡 전문 분야 다중 선택 버튼 UI 적용 */}
               <div className="form-group">
-                <label className="form-label">전문 분야 (카테고리)</label>
-                <input
-                  type="text"
-                  name="specialty"
-                  value={editData.specialty}
-                  onChange={handleEditChange}
-                  className="form-input"
-                />
+                <label className="form-label">주요 전문 분야 (다중 선택 가능)</label>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "8px" }}>
+                  {SPECIALTIES.map((spec) => {
+                    const isSelected = editData.specialty ? editData.specialty.split(",").includes(spec) : false;
+                    return (
+                      <button
+                        type="button"
+                        key={spec}
+                        onClick={() => handleSpecialtyToggle(spec)}
+                        style={{
+                          padding: "8px 16px",
+                          borderRadius: "20px",
+                          border: isSelected ? "1px solid #007BFF" : "1px solid #ddd",
+                          backgroundColor: isSelected ? "#007BFF" : "#fff",
+                          color: isSelected ? "#fff" : "#555",
+                          cursor: "pointer",
+                          fontWeight: isSelected ? "bold" : "normal",
+                          transition: "all 0.2s ease-in-out",
+                        }}
+                      >
+                        {spec}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </>
           ) : (

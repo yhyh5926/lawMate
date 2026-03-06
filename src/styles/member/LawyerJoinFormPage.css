@@ -171,3 +171,29 @@
 .lawyer-join-file-remove:hover {
   background-color: #fee2e2;
 }
+
+/* 💡 추가된 전문 분야 다중 선택 버튼 UI 스타일 */
+.lawyer-join-specialty-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.lawyer-join-specialty-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  color: #555;
+  cursor: pointer;
+  font-weight: normal;
+  transition: all 0.2s ease-in-out;
+}
+
+.lawyer-join-specialty-btn.active {
+  border: 1px solid #007BFF;
+  background-color: #007BFF;
+  color: #fff;
+  font-weight: bold;
+}

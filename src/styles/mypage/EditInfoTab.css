@@ -1,0 +1,159 @@
+/* src/styles/mypage/EditInfoTab.css */
+/**
+ * 팀원분이 만드신 LawyerDetailPage.css의 디자인 시스템을 기반으로 하며,
+ * 정보 수정을 위한 입력창(Input, Textarea) 스타일이 통합되었습니다.
+ */
+
+.edit-tab-container {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 프로필 이미지 편집 오버레이 */
+.detail-img-wrapper.edit-mode {
+  position: relative;
+  cursor: pointer;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s;
+}
+
+.detail-img-wrapper.edit-mode:hover {
+  filter: brightness(0.9);
+}
+
+.edit-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.2s;
+  gap: 5px;
+}
+
+.detail-img-wrapper.edit-mode:hover .edit-img-overlay {
+  opacity: 1;
+}
+
+/* 수정용 입력창 및 텍스트 박스 스타일 */
+.edit-input-field {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 15px;
+  background-color: #f8fafc;
+  color: #1e293b;
+  font-family: inherit;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.edit-input-field:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.edit-textarea-field {
+  width: 100%;
+  padding: 16px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  font-size: 15px;
+  line-height: 1.6;
+  font-family: inherit;
+  background-color: #f8fafc;
+  resize: vertical;
+  min-height: 180px;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.edit-textarea-field:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: #fff;
+}
+
+/* 전문 분야 다중 선택 버튼 그룹 */
+.edit-spec-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.edit-spec-btn {
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1px solid #cbd5e1;
+  background-color: #fff;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.edit-spec-btn:hover {
+  background-color: #f1f5f9;
+}
+
+.edit-spec-btn.active {
+  background-color: #eff6ff;
+  color: #2563eb;
+  border-color: #2563eb;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);
+}
+
+/* 저장/수정 완료 버튼 */
+.btn-save-submit {
+  width: 100%;
+  padding: 18px;
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.2s;
+}
+
+.btn-save-submit:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
+}
+
+/* 본인 인증 화면 전용 */
+.verify-container {
+  max-width: 500px;
+  margin: 60px auto;
+  text-align: center;
+  padding: 60px 40px;
+  background: white;
+  border-radius: 24px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.verify-input-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}

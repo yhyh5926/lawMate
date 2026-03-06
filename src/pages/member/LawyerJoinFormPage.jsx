@@ -2,6 +2,7 @@
 /**
  * 파일 위치: src/pages/member/LawyerJoinFormPage.jsx
  * 수정사항: 변호사 사무소 주소 입력칸을 2개로 간소화하고, 자격증 다중 파일 업로드 시 파일 목록 확인 및 미리보기(클릭) 기능이 추가되었습니다.
+ * 추가수정: 주요 전문 분야를 직접 입력하는 방식에서 버튼 다중 선택 방식으로 변경되었으며, 인라인 스타일을 CSS로 분리했습니다.
  */
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +11,9 @@ import JoinStepIndicator from "../../components/member/JoinStepIndicator.jsx";
 import { memberApi } from "../../api/memberApi.js";
 import { validateId, validatePassword } from "../../utils/validationUtil.js";
 import "../../styles/member/LawyerJoinFormPage.css";
+
+// 💡 전문 분야 카테고리 배열 ("전체" 제외)
+const SPECIALTIES = ["민사", "형사", "가사", "이혼", "노동", "행정", "기업", "부동산"];
 
 const useLawyerJoinStore = create((set) => ({
   formData: {
@@ -24,7 +28,7 @@ const useLawyerJoinStore = create((set) => ({
     emailDomain: "naver.com",
     licenseNumber: "",
     officeName: "",
-    specialty: "",
+    specialty: "", // 💡 쉼표(,)로 연결된 문자열로 저장됨
     officeAddress: "",
     officeDetailAddress: "",
   },
@@ -81,6 +85,19 @@ const LawyerJoinFormPage = () => {
       setIdSuccess("");
       setIdError("");
     }
+  };
+
+  // 💡 전문 분야 다중 선택 토글 핸들러
+  const handleSpecialtyToggle = (spec) => {
+    let currentList = formData.specialty ? formData.specialty.split(",") : [];
+    
+    if (currentList.includes(spec)) {
+      currentList = currentList.filter((item) => item !== spec); // 이미 선택되어 있으면 제거
+    } else {
+      currentList.push(spec); // 선택되어 있지 않으면 추가
+    }
+    
+    setFormData({ specialty: currentList.join(",") });
   };
 
   // 💡 여러 파일을 선택할 때 기존 파일에 추가되도록 수정
@@ -328,19 +345,27 @@ const LawyerJoinFormPage = () => {
             className="lawyer-join-input"
           />
         </div>
+        
+        {/* 💡 CSS로 스타일을 분리한 전문 분야 다중 선택 버튼 UI */}
         <div className="lawyer-join-group">
-          <label className="lawyer-join-label">주요 전문 분야 (카테고리)</label>
-          <input
-            type="text"
-            name="specialty"
-            placeholder="예: 형사, 이혼, 민사"
-            value={formData.specialty}
-            onChange={handleChange}
-            className="lawyer-join-input"
-          />
+          <label className="lawyer-join-label">주요 전문 분야 (다중 선택 가능)</label>
+          <div className="lawyer-join-specialty-container">
+            {SPECIALTIES.map((spec) => {
+              const isSelected = formData.specialty ? formData.specialty.split(",").includes(spec) : false;
+              return (
+                <button
+                  type="button"
+                  key={spec}
+                  onClick={() => handleSpecialtyToggle(spec)}
+                  className={`lawyer-join-specialty-btn ${isSelected ? "active" : ""}`}
+                >
+                  {spec}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* 💡 사무소 주소 2개로 간소화 (기본/상세) */}
         <div className="lawyer-join-group">
           <label className="lawyer-join-label">사무소 기본 주소</label>
           <input
@@ -364,7 +389,6 @@ const LawyerJoinFormPage = () => {
           />
         </div>
 
-        {/* 💡 증빙서류 멀티 업로드 및 미리보기 영역 */}
         <div className="lawyer-join-group">
           <label className="lawyer-join-label">
             변호사 자격증 증빙서류 (다중 선택 가능)
@@ -381,11 +405,9 @@ const LawyerJoinFormPage = () => {
             ※ 파일을 여러 개 추가로 선택할 수 있습니다.
           </div>
 
-          {/* 업로드된 파일 목록 표시 */}
           {files.length > 0 && (
             <ul className="lawyer-join-file-list">
               {files.map((file, index) => {
-                // 클릭 시 브라우저에서 확인할 수 있는 임시 URL 생성
                 const fileUrl = URL.createObjectURL(file);
                 return (
                   <li key={index} className="lawyer-join-file-item">
