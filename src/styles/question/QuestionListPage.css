@@ -1,0 +1,269 @@
+/* QuestionListPage.css */
+
+.ql-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: "Pretendard", sans-serif;
+  color: #1e293b;
+}
+
+/* 헤더 영역 */
+.ql-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.ql-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.ql-write-btn {
+  padding: 12px 24px;
+  background-color: #1e293b;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ql-write-btn:hover {
+  background-color: #0f172a;
+}
+
+/* 검색 및 필터 섹션 */
+
+.ql-search-section {
+  display: flex;
+  gap: 12px;
+  background-color: #f8fafc;
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  border: 1px solid #e2e8f0;
+}
+
+.ql-category-select {
+  padding: 0 12px;
+  height: 48px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background-color: #fff;
+  font-weight: 600;
+  min-width: 130px;
+  cursor: pointer;
+}
+
+.ql-search-form {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+}
+
+.ql-search-input {
+  flex: 1;
+  padding: 0 16px;
+  height: 48px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  font-size: 1rem;
+}
+
+.ql-search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.ql-search-btn {
+  padding: 0 24px;
+  background-color: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* 테이블 영역 */
+.ql-table-wrapper {
+  background-color: #fff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.ql-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.ql-table thead tr {
+  background-color: #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.ql-table th {
+  padding: 18px 15px;
+  font-weight: 700;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.ql-row {
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.2s;
+}
+
+.ql-row:hover {
+  background-color: #f8fafc;
+}
+
+.ql-row td {
+  padding: 20px 15px;
+}
+
+/* 상태별 스타일 */
+.ql-id {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.ql-type-badge {
+  background-color: #eff6ff;
+  color: #2563eb;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.ql-subject {
+  font-weight: 700;
+}
+.ql-link {
+  text-decoration: none;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ql-count {
+  color: #3b82f6;
+  font-size: 0.85rem;
+}
+
+.ql-status {
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+.is-adopted {
+  color: #10b981;
+}
+.is-waiting {
+  color: #f59e0b;
+}
+
+.ql-no-data {
+  padding: 100px;
+  text-align: center;
+  color: #94a3b8;
+}
+
+/* 컬럼 너비 설정 */
+.w-id {
+  width: 8%;
+}
+.w-type {
+  width: 12%;
+}
+.w-title {
+  width: 47%;
+}
+.w-author {
+  width: 15%;
+}
+.w-status {
+  width: 18%;
+}
+
+/* 페이지네이션 컨테이너 */
+.ql-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
+}
+
+/* 개별 페이지 버튼 */
+.ql-page-btn {
+  min-width: 38px;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  color: #475569;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ql-page-btn:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background-color: #f0f7ff;
+}
+
+.ql-page-btn.active {
+  background-color: #1e293b;
+  color: #ffffff;
+  border-color: #1e293b;
+  box-shadow: 0 4px 10px rgba(30, 41, 59, 0.2);
+}
+
+/* 이전/다음 화살표 버튼 */
+.ql-page-arrow {
+  width: 38px;
+  height: 38px;
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  color: #94a3b8;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ql-page-arrow:disabled {
+  background-color: #f8fafc;
+  color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.ql-page-arrow:not(:disabled):hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+/* 데이터 없음 스타일 */
+.ql-no-data {
+  text-align: center;
+  padding: 80px 0;
+  color: #94a3b8;
+  font-size: 1.1rem;
+  font-weight: 500;
+  background-color: #fcfcfc;
+}
