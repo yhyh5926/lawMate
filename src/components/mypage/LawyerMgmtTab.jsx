@@ -48,7 +48,7 @@ const LawyerMgmtTab = () => {
         
         setLawyerId(data.lawyerId);
         
-        // 💡 중요: 서버 데이터를 formData에 세팅하면 specialty 버튼들이 자동으로 체크됩니다.
+        // 서버 데이터를 formData에 세팅
         setFormData({
           officeName: data.officeName || "",
           officeAddr: data.officeAddr || "",
@@ -87,7 +87,7 @@ const LawyerMgmtTab = () => {
     }));
   };
 
-  // 💡 전문 분야 클릭 토글 핸들러
+  // 💡 전문 분야 클릭 토글 핸들러 (다중 선택 로직)
   const handleSpecToggle = (spec) => {
     // 기존 문자열을 배열로 변환하여 공백 제거 및 필터링
     let currentList = formData.specialty 
@@ -126,12 +126,14 @@ const LawyerMgmtTab = () => {
         return;
       }
 
+      // 이미지 파일이 선택되었다면 백엔드로 전송
       if (selectedFile) {
         const fileData = new FormData();
         fileData.append("file", selectedFile);
         await lawyerApi.uploadProfileImage(lawyerId, fileData);
       }
 
+      // 나머지 텍스트 정보 전송
       await lawyerApi.updateLawyer(lawyerId, formData);
       alert("변호사 프로필 및 상담 설정이 성공적으로 저장되었습니다!");
     } catch (err) {
@@ -144,7 +146,7 @@ const LawyerMgmtTab = () => {
     return <div className="empty-tab-content">변호사 정보를 불러오는 중입니다...</div>;
   }
 
-  // 💡 현재 선택된 분야들을 실시간으로 확인하기 위한 배열 변환
+  // 💡 현재 선택된 분야들을 확인하기 위한 배열 변환 (버튼 active 클래스 적용용)
   const selectedList = formData.specialty 
     ? formData.specialty.split(",").map(s => s.trim()) 
     : [];
@@ -185,6 +187,7 @@ const LawyerMgmtTab = () => {
           <div className="mgmt-info">
             <div>
               <label className="mgmt-label-small">주요 전문 분야 (다중 선택)</label>
+              {/* 💡 직접 입력하는 input 대신 버튼 클릭 방식으로 변경 */}
               <div className="mgmt-spec-group">
                 {SPECIALTIES.map((spec) => (
                   <button

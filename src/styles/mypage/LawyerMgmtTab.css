@@ -99,7 +99,7 @@
   gap: 12px;
 }
 
-/* 💡 전문 분야 버튼 그룹 스타일 (수정됨) */
+/* 💡 전문 분야 버튼 그룹 스타일 (사진 속 필터 칩 스타일 적용) */
 .mgmt-spec-group {
   display: flex;
   flex-wrap: wrap;
