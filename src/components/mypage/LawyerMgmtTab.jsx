@@ -101,20 +101,14 @@ const LawyerMgmtTab = () => {
         return;
       }
 
+      // 💡 1. 이미지 파일이 선택되었다면 백엔드로 전송 (주석 완전 해제됨!)
       if (selectedFile) {
         const fileData = new FormData();
         fileData.append("file", selectedFile);
-        
-        // 백엔드에 사진 업로드 API가 완성되면 주석을 풀고 사용하세요!
-        /*
-        try {
-          await lawyerApi.uploadProfileImage(lawyerId, fileData);
-        } catch (imgErr) {
-          console.warn("이미지 업로드 API가 아직 준비되지 않았을 수 있습니다.", imgErr);
-        }
-        */
+        await lawyerApi.uploadProfileImage(lawyerId, fileData);
       }
 
+      // 💡 2. 나머지 텍스트 정보 전송
       await lawyerApi.updateLawyer(lawyerId, formData);
       
       alert("변호사 프로필 및 상담 설정이 성공적으로 저장되었습니다!");
