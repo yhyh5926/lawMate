@@ -9,6 +9,7 @@ const QuestionAnswerForm = ({ questionId, onAnswerSuccess }) => {
   // 💡 Zustand에서 유저 정보 가져오기
   const { user } = useAuthStore();
 
+  console.log(user);
   const handleSubmit = async (e) => {
     e.preventDefault();
 

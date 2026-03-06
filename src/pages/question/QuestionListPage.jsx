@@ -14,9 +14,19 @@ const QuestionListPage = () => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [tempQuery, setTempQuery] = useState(searchQuery);
-  const [totalPages, setTotalPages] = useState(1); // 백엔드 데이터에 맞게 초기화
+  const [totalPages, setTotalPages] = useState(1);
 
-  const categories = ["전체", "민사", "형사", "가사", "행정", "기타"];
+  const categories = [
+    "전체",
+    "민사",
+    "형사",
+    "가사",
+    "이혼",
+    "노동",
+    "행정",
+    "기업",
+    "부동산",
+  ];
 
   useEffect(() => {
     fetchQuestions();
@@ -26,13 +36,13 @@ const QuestionListPage = () => {
     try {
       setLoading(true);
       const response = await questionApi.getQuestionList({
-        caseType: caseTypeFilter || undefined,
+        caseType:
+          caseTypeFilter === "전체" ? undefined : caseTypeFilter || undefined,
         title: searchQuery || undefined,
         page: currentPage,
         size: 10,
       });
 
-      // 백엔드 QuestionController의 반환 구조에 맞게 매핑
       setQuestions(response.data.data || []);
       setTotalPages(response.data.totalPages || 1);
     } catch (error) {
@@ -52,7 +62,8 @@ const QuestionListPage = () => {
       ...newParams,
     };
     Object.keys(nextParams).forEach((key) => {
-      if (!nextParams[key]) delete nextParams[key];
+      if (!nextParams[key] || nextParams[key] === "전체")
+        delete nextParams[key];
     });
     setSearchParams(nextParams);
   };
@@ -63,13 +74,22 @@ const QuestionListPage = () => {
   };
 
   const handleCategoryChange = (e) => {
-    updateParams({
-      caseType: e.target.value === "전체" ? "" : e.target.value,
-      page: 1,
-    });
+    const val = e.target.value;
+    updateParams({ caseType: val === "전체" ? "" : val, page: 1 });
   };
 
-  // 페이지 번호 배열 생성 로직
+  // 💡 검색창의 X 버튼 클릭 시: 입력값만 초기화
+  const handleClearInput = () => {
+    setTempQuery("");
+    updateParams({ query: "", page: 1 });
+  };
+
+  // 💡 초기화 버튼 클릭 시: 카테고리와 검색어 모두 초기화
+  const handleResetAll = () => {
+    setTempQuery("");
+    setSearchParams({}); // 모든 쿼리 파라미터 제거
+  };
+
   const renderPagination = () => {
     const pages = [];
     for (let i = 1; i <= totalPages; i++) {
@@ -112,15 +132,37 @@ const QuestionListPage = () => {
         </select>
 
         <form className="ql-search-form" onSubmit={handleSearch}>
-          <input
-            type="text"
-            className="ql-search-input"
-            placeholder="궁금한 법률 내용을 검색해보세요..."
-            value={tempQuery}
-            onChange={(e) => setTempQuery(e.target.value)}
-          />
+          <div className="ql-search-input-wrapper">
+            <input
+              type="text"
+              className="ql-search-input"
+              placeholder="궁금한 법률 내용을 검색해보세요..."
+              value={tempQuery}
+              onChange={(e) => setTempQuery(e.target.value)}
+            />
+            {/* 💡 검색어 클리어 버튼(X) */}
+            {tempQuery && (
+              <button
+                type="button"
+                className="search-clear-btn"
+                onClick={handleClearInput}
+              >
+                ✕
+              </button>
+            )}
+          </div>
           <button type="submit" className="ql-search-btn">
             검색
+          </button>
+
+          {/* 💡 필터 초기화 버튼(↺) */}
+          <button
+            type="button"
+            className="ql-reset-btn"
+            onClick={handleResetAll}
+            title="검색 초기화"
+          >
+            ↺
           </button>
         </form>
       </section>
@@ -153,7 +195,7 @@ const QuestionListPage = () => {
                           to={`/question/detail/${q.questionId}`}
                           className="ql-link"
                         >
-                          {q.title}{" "}
+                          {q.title}
                           {q.answerCount > 0 && (
                             <span className="ql-count">[{q.answerCount}]</span>
                           )}
@@ -180,7 +222,6 @@ const QuestionListPage = () => {
             </table>
           </div>
 
-          {/* 데이터가 있을 때만 페이지네이션 표시 */}
           {questions.length > 0 && (
             <div className="ql-pagination">
               <button
@@ -188,17 +229,17 @@ const QuestionListPage = () => {
                 disabled={currentPage === 1}
                 onClick={() => updateParams({ page: currentPage - 1 })}
               >
-                &lt;
+                {" "}
+                &lt;{" "}
               </button>
-
               {renderPagination()}
-
               <button
                 className="ql-page-arrow"
                 disabled={currentPage === totalPages}
                 onClick={() => updateParams({ page: currentPage + 1 })}
               >
-                &gt;
+                {" "}
+                &gt;{" "}
               </button>
             </div>
           )}

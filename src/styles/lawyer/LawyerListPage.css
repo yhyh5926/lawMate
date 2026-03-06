@@ -293,35 +293,6 @@
 }
 
 /* ============================
-   스페셜리티 배지
-============================ */
-.lawyer-specialty-badge {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(12px);
-  color: #667eea;
-  padding: 10px 18px;
-  border-radius: 50px;
-  font-size: 0.8rem;
-  font-weight: 900;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  z-index: 2;
-  border: 2px solid #667eea;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  transition: all 0.3s ease;
-}
-
-.lawyer-card:hover .lawyer-specialty-badge {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-color: transparent;
-  transform: scale(1.05);
-}
-
-/* ============================
    카드 정보
 ============================ */
 .lawyer-card-info {

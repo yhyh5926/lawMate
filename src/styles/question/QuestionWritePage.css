@@ -1,0 +1,109 @@
+/* QuestionWritePage.css */
+
+.qw-container {
+  max-width: 850px;
+  margin: 60px auto;
+  padding: 40px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.qw-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: #0f172a;
+}
+
+.qw-subtitle {
+  color: #64748b;
+  margin-bottom: 40px;
+  font-size: 0.95rem;
+}
+
+.qw-form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.qw-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qw-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+/* 입력 요소 공통 */
+.qw-select,
+.qw-input,
+.qw-textarea {
+  padding: 14px 18px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  font-size: 1rem;
+  background-color: #f8fafc;
+  transition: all 0.2s;
+}
+
+.qw-select:focus,
+.qw-input:focus,
+.qw-textarea:focus {
+  outline: none;
+  background-color: #fff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.qw-select {
+  width: 220px;
+  cursor: pointer;
+}
+
+.qw-textarea {
+  height: 350px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* 버튼 영역 */
+.qw-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.qw-cancel-btn {
+  padding: 14px 30px;
+  background-color: #f1f5f9;
+  color: #64748b;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.qw-submit-btn {
+  padding: 14px 40px;
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.qw-submit-btn:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-2px);
+}

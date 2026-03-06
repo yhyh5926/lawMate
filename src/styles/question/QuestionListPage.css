@@ -1,269 +1,335 @@
 /* QuestionListPage.css */
 
 .ql-container {
-  max-width: 1100px;
-  margin: 40px auto;
-  padding: 0 20px;
-  font-family: "Pretendard", sans-serif;
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 0 24px;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    sans-serif;
   color: #1e293b;
+  line-height: 1.6;
 }
 
-/* 헤더 영역 */
+/* --- 헤더 영역 --- */
 .ql-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
+  align-items: flex-end; /* 제목과 버튼 하단 정렬 */
+  margin-bottom: 40px;
 }
 
 .ql-title {
-  font-size: 1.8rem;
+  font-size: 2.2rem;
   font-weight: 800;
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  color: #0f172a;
 }
 
 .ql-write-btn {
-  padding: 12px 24px;
-  background-color: #1e293b;
+  padding: 14px 28px;
+  background-color: #2563eb; /* 좀 더 밝은 블루로 변경 */
   color: #fff;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-weight: 700;
+  font-size: 1rem;
   cursor: pointer;
-  transition: background 0.2s;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .ql-write-btn:hover {
-  background-color: #0f172a;
+  background-color: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
 }
 
-/* 검색 및 필터 섹션 */
-
+/* --- 검색 및 필터 섹션 --- */
 .ql-search-section {
   display: flex;
   gap: 12px;
-  background-color: #f8fafc;
-  padding: 20px;
-  border-radius: 16px;
-  margin-bottom: 30px;
+  background-color: #ffffff;
+  padding: 24px;
+  border-radius: 20px;
+  margin-bottom: 40px;
   border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); /* 플로팅 효과 */
 }
 
 .ql-category-select {
-  padding: 0 12px;
-  height: 48px;
-  border-radius: 10px;
+  padding: 0 16px;
+  height: 52px;
+  border-radius: 12px;
   border: 1px solid #cbd5e1;
-  background-color: #fff;
+  background-color: #f8fafc;
   font-weight: 600;
-  min-width: 130px;
+  color: #475569;
+  min-width: 140px;
   cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ql-category-select:focus {
+  outline: none;
+  border-color: #2563eb;
+  background-color: #fff;
 }
 
 .ql-search-form {
   flex: 1;
   display: flex;
-  gap: 8px;
+  gap: 10px;
+  align-items: center;
+}
+
+.ql-search-input-wrapper {
+  position: relative;
+  flex: 1;
 }
 
 .ql-search-input {
-  flex: 1;
-  padding: 0 16px;
-  height: 48px;
-  border-radius: 10px;
+  width: 100%;
+  height: 52px;
+  padding: 0 45px 0 20px;
+  border-radius: 12px;
   border: 1px solid #cbd5e1;
   font-size: 1rem;
+  background-color: #f8fafc;
+  transition: all 0.2s;
 }
 
 .ql-search-input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: #fff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+/* 입력창 클리어 버튼 (X) */
+.search-clear-btn {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #cbd5e1;
+  color: white;
+  border: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.search-clear-btn:hover {
+  background: #94a3b8;
 }
 
 .ql-search-btn {
-  padding: 0 24px;
-  background-color: #3b82f6;
+  padding: 0 28px;
+  height: 52px;
+  background-color: #1e293b;
   color: #fff;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-weight: 700;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
-/* 테이블 영역 */
+.ql-search-btn:hover {
+  background-color: #0f172a;
+}
+
+/* 필터 초기화 버튼 (↺) */
+.ql-reset-btn {
+  width: 52px;
+  height: 52px;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  color: #64748b;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.ql-reset-btn:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+/* --- 테이블 영역 --- */
 .ql-table-wrapper {
   background-color: #fff;
-  border-radius: 16px;
+  border-radius: 20px;
   border: 1px solid #e2e8f0;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
 }
 
 .ql-table {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
 }
 
 .ql-table thead tr {
-  background-color: #f1f5f9;
-  border-bottom: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  border-bottom: 2px solid #f1f5f9;
 }
 
 .ql-table th {
-  padding: 18px 15px;
+  padding: 20px 15px;
   font-weight: 700;
-  color: #475569;
-  font-size: 0.9rem;
+  color: #64748b;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .ql-row {
   border-bottom: 1px solid #f1f5f9;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 
 .ql-row:hover {
-  background-color: #f8fafc;
+  background-color: #f1f5f9; /* 호버 시 약간 더 진한 회색 */
 }
 
 .ql-row td {
-  padding: 20px 15px;
+  padding: 22px 15px;
+  vertical-align: middle;
 }
 
-/* 상태별 스타일 */
+/* --- 데이터 상세 스타일 --- */
 .ql-id {
   color: #94a3b8;
-  font-size: 0.9rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85rem;
 }
 
 .ql-type-badge {
   background-color: #eff6ff;
   color: #2563eb;
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 800;
+  border: 1px solid #dbeafe;
 }
 
 .ql-subject {
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 1.05rem;
 }
+
 .ql-link {
   text-decoration: none;
-  color: #1e293b;
+  color: #334155;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  transition: color 0.2s;
+}
+
+.ql-link:hover {
+  color: #2563eb;
 }
 
 .ql-count {
-  color: #3b82f6;
+  color: #2563eb;
   font-size: 0.85rem;
+  background: #f0f7ff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 700;
 }
 
 .ql-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.85rem;
-  font-weight: 800;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
 }
+
 .is-adopted {
-  color: #10b981;
+  background-color: #ecfdf5;
+  color: #059669;
 }
+
 .is-waiting {
-  color: #f59e0b;
+  background-color: #fffbeb;
+  color: #d97706;
 }
 
-.ql-no-data {
-  padding: 100px;
-  text-align: center;
-  color: #94a3b8;
-}
-
-/* 컬럼 너비 설정 */
-.w-id {
-  width: 8%;
-}
-.w-type {
-  width: 12%;
-}
-.w-title {
-  width: 47%;
-}
-.w-author {
-  width: 15%;
-}
-.w-status {
-  width: 18%;
-}
-
-/* 페이지네이션 컨테이너 */
+/* --- 페이지네이션 --- */
 .ql-pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  margin-top: 40px;
+  gap: 8px;
+  margin-top: 50px;
 }
 
-/* 개별 페이지 버튼 */
 .ql-page-btn {
-  min-width: 38px;
-  height: 38px;
-  padding: 0 12px;
+  width: 40px;
+  height: 40px;
   border: 1px solid #e2e8f0;
-  background-color: #ffffff;
-  color: #475569;
+  background-color: #fff;
+  color: #64748b;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
 }
 
-.ql-page-btn:hover {
-  border-color: #3b82f6;
-  color: #3b82f6;
-  background-color: #f0f7ff;
+.ql-page-btn:hover:not(.active) {
+  border-color: #cbd5e1;
+  background-color: #f8fafc;
+  color: #0f172a;
 }
 
 .ql-page-btn.active {
   background-color: #1e293b;
   color: #ffffff;
   border-color: #1e293b;
-  box-shadow: 0 4px 10px rgba(30, 41, 59, 0.2);
+  transform: scale(1.05);
 }
 
-/* 이전/다음 화살표 버튼 */
 .ql-page-arrow {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border: 1px solid #e2e8f0;
-  background-color: #ffffff;
+  background-color: #fff;
+  border-radius: 10px;
   color: #94a3b8;
-  border-radius: 8px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .ql-page-arrow:disabled {
-  background-color: #f8fafc;
-  color: #cbd5e1;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
-.ql-page-arrow:not(:disabled):hover {
-  border-color: #3b82f6;
-  color: #3b82f6;
-}
-
-/* 데이터 없음 스타일 */
+/* --- 기타 --- */
 .ql-no-data {
   text-align: center;
-  padding: 80px 0;
+  padding: 120px 0;
   color: #94a3b8;
   font-size: 1.1rem;
-  font-weight: 500;
-  background-color: #fcfcfc;
+  background-color: #fafafa;
 }

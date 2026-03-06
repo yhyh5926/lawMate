@@ -203,9 +203,6 @@ const LawyerListPage = () => {
                 onClick={() => navigate(`/lawyer/detail/${lawyer.lawyerId}`)}
               >
                 <div className="lawyer-card-img-wrapper">
-                  <span className="lawyer-specialty-badge">
-                    {lawyer.specialty?.split(",")[0]}
-                  </span>
                   <img
                     src={getImageUrl(lawyer)}
                     alt={lawyer.name}

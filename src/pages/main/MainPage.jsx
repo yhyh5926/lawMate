@@ -127,11 +127,6 @@ export default function MainPage() {
         {/* ===== HeroBar ===== */}
         <section className="lm-hero" style={styles.hero}>
           <div style={styles.heroLeft}>
-            <div style={styles.heroBadgeRow}>
-              <span style={styles.heroBadge}>LAW MATE</span>
-              <span style={styles.heroBadgeMuted}>/ main</span>
-            </div>
-
             <div style={styles.heroTitle}>법률 상담을 더 쉽고 빠르게</div>
             <div style={styles.heroSubtitle}>
               사건 통계와 실시간 커뮤니티 글을 확인하고,
