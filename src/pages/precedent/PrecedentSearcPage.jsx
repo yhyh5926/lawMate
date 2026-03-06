@@ -1,24 +1,53 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import precedentApi from "../../api/precedentApi";
-import LegalTooltip from "./LegalTooltip"; // 💡 외부에서 임포트
+import LegalTooltip from "./LegalTooltip";
+import "../../styles/precedent/PrecedentSearchPage.css";
 
 const PrecedentSearchPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // URL에서 페이지 번호 추출 (기본값 1)
+  // URL 파라미터 추출
   const page = parseInt(searchParams.get("page") || "1", 10);
+  const searchQuery = searchParams.get("query") || "";
+  const caseType = searchParams.get("caseType") || "";
 
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
+  const [tempQuery, setTempQuery] = useState(searchQuery);
+
+  const categories = [
+    "전체",
+    "금융보험",
+    "보험민사",
+    "가사",
+    "세무",
+    "부동산임대차",
+    "부동산매매",
+    "교통형사",
+    "교통민사",
+    "형사재산",
+    "형사강력",
+    "가사상속",
+    "근로산재",
+  ];
+
+  const PAGE_GROUP_SIZE = 5;
+  const currentGroup = Math.ceil(page / PAGE_GROUP_SIZE);
+  const startPage = (currentGroup - 1) * PAGE_GROUP_SIZE + 1;
+  const endPage = Math.min(startPage + PAGE_GROUP_SIZE - 1, totalPages);
 
   useEffect(() => {
     const fetchList = async () => {
       try {
         setLoading(true);
-        const data = await precedentApi.getPrecedentList(page);
+        const data = await precedentApi.getPrecedentList(
+          page,
+          searchQuery,
+          caseType,
+        );
         setList(data.list || []);
         setTotalPages(data.totalPages || 1);
       } catch (err) {
@@ -28,117 +57,163 @@ const PrecedentSearchPage = () => {
       }
     };
     fetchList();
-  }, [page]);
+  }, [page, searchQuery, caseType]);
+
+  const updateParams = (newParams) => {
+    const nextParams = {
+      query: searchQuery,
+      caseType: caseType,
+      page: page,
+      ...newParams,
+    };
+
+    Object.keys(nextParams).forEach((key) => {
+      if (!nextParams[key]) delete nextParams[key];
+    });
+
+    setSearchParams(nextParams);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    updateParams({ query: tempQuery, page: 1 });
+  };
+
+  const handleCategoryChange = (e) => {
+    const selectedType = e.target.value;
+    updateParams({ caseType: selectedType, page: 1 });
+  };
+
+  const handleReset = () => {
+    setTempQuery("");
+    setSearchParams({});
+  };
 
   const handlePageChange = (newPage) => {
-    setSearchParams({ page: newPage });
+    updateParams({ page: newPage });
     window.scrollTo(0, 0);
   };
 
-  if (loading) return <div style={loadingStyle}>데이터 로딩 중...</div>;
+  const pageNumbers = [];
+  for (let i = startPage; i <= endPage; i++) {
+    pageNumbers.push(i);
+  }
 
   return (
-    <div style={containerStyle}>
-      <h1 style={headerStyle}>판례 검색</h1>
-
-      <div style={listGridStyle}>
-        {list.length > 0 ? (
-          list.map((item) => (
-            <div
-              key={item.precId}
-              onClick={() => navigate(`/precedent/detail/${item.precId}`)}
-              style={cardStyle}
+    <div className="ps-container">
+      <header className="ps-header">
+        <h1>판례 검색</h1>
+        <div className="ps-search-controls">
+          <form className="ps-search-bar" onSubmit={handleSearch}>
+            <select
+              className="ps-category-select"
+              value={caseType}
+              onChange={handleCategoryChange}
             >
-              <div style={{ marginBottom: "5px" }}>
-                <span style={badgeStyle}>{item.caseType}</span>
-                <small style={{ marginLeft: "10px", color: "#999" }}>
-                  {item.caseNo}
-                </small>
-              </div>
-              <h3 style={{ margin: "5px 0" }}>{item.title}</h3>
-              <p style={{ color: "#666", fontSize: "0.95rem" }}>
-                {/* 💡 분리된 툴팁 컴포넌트 사용 */}
-                <LegalTooltip text={item.oneLine} />
-              </p>
-              <div style={footerInfoStyle}>
-                {item.court} | {item.judgeDate}
-              </div>
-            </div>
-          ))
-        ) : (
-          <div style={{ textAlign: "center", padding: "50px" }}>
-            데이터가 없습니다.
-          </div>
-        )}
-      </div>
+              {categories.map((cat) => (
+                <option key={cat} value={cat === "전체" ? "" : cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
 
-      <div style={paginationContainer}>
-        <button
-          disabled={page === 1}
-          onClick={() => handlePageChange(page - 1)}
-          style={pageBtnStyle}
-        >
-          이전
-        </button>
-        <span style={pageIndicator}>
-          <strong>{page}</strong> / {totalPages}
-        </span>
-        <button
-          disabled={page === totalPages}
-          onClick={() => handlePageChange(page + 1)}
-          style={pageBtnStyle}
-        >
-          다음
-        </button>
-      </div>
+            <div className="ps-input-group">
+              <div className="ps-input-wrapper">
+                <input
+                  type="text"
+                  placeholder="사건명, 사건번호, 키워드 검색..."
+                  value={tempQuery}
+                  onChange={(e) => setTempQuery(e.target.value)}
+                />
+                {/* 텍스트가 있을 때만 X 버튼 노출 */}
+                {tempQuery && (
+                  <button
+                    type="button"
+                    className="ps-clear-btn"
+                    onClick={() => setTempQuery("")}
+                    aria-label="검색어 지우기"
+                  >
+                    &times;
+                  </button>
+                )}
+              </div>
+              <button type="submit" className="ps-search-btn">
+                검색
+              </button>
+            </div>
+
+            <button
+              type="button"
+              className="ps-reset-btn"
+              onClick={handleReset}
+            >
+              초기화
+            </button>
+          </form>
+        </div>
+      </header>
+
+      {loading ? (
+        <div className="ps-loading">데이터 로딩 중...</div>
+      ) : (
+        <>
+          <div className="ps-list-grid">
+            {list.length > 0 ? (
+              list.map((item) => (
+                <div
+                  key={item.precId}
+                  className="ps-card"
+                  onClick={() => navigate(`/precedent/detail/${item.precId}`)}
+                >
+                  <div className="ps-card-top">
+                    <span className="ps-badge">{item.caseType}</span>
+                    <small className="ps-case-no">{item.caseNo}</small>
+                  </div>
+                  <h3 className="ps-title">{item.title}</h3>
+                  <div className="ps-one-line">
+                    <LegalTooltip text={item.oneLine} />
+                  </div>
+                  <div className="ps-footer-info">
+                    {item.court} | {item.judgeDate}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="ps-no-data">데이터가 없습니다.</div>
+            )}
+          </div>
+
+          <div className="ps-pagination">
+            <button
+              className="ps-page-arrow"
+              disabled={page === 1}
+              onClick={() => handlePageChange(page - 1)}
+            >
+              &lt;
+            </button>
+
+            {pageNumbers.map((num) => (
+              <button
+                key={num}
+                className={`ps-page-num ${page === num ? "active" : ""}`}
+                onClick={() => handlePageChange(num)}
+              >
+                {num}
+              </button>
+            ))}
+
+            <button
+              className="ps-page-arrow"
+              disabled={page === totalPages}
+              onClick={() => handlePageChange(page + 1)}
+            >
+              &gt;
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
-
-// 스타일 가독성을 위해 하단 배치
-const containerStyle = {
-  padding: "20px",
-  maxWidth: "1000px",
-  margin: "0 auto",
-};
-const headerStyle = { borderBottom: "2px solid #333", paddingBottom: "10px" };
-const listGridStyle = { display: "grid", gap: "15px", marginTop: "20px" };
-const loadingStyle = { padding: "50px", textAlign: "center" };
-const footerInfoStyle = {
-  fontSize: "0.8rem",
-  color: "#888",
-  marginTop: "10px",
-};
-const cardStyle = {
-  border: "1px solid #ddd",
-  padding: "20px",
-  borderRadius: "10px",
-  cursor: "pointer",
-  backgroundColor: "#fff",
-  boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-};
-const badgeStyle = {
-  backgroundColor: "#f0f7ff",
-  color: "#007bff",
-  padding: "2px 8px",
-  borderRadius: "4px",
-  fontSize: "0.8rem",
-  fontWeight: "bold",
-};
-const paginationContainer = {
-  marginTop: "40px",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  gap: "20px",
-};
-const pageBtnStyle = {
-  padding: "8px 16px",
-  border: "1px solid #ddd",
-  borderRadius: "4px",
-  backgroundColor: "#fff",
-  cursor: "pointer",
-};
-const pageIndicator = { fontSize: "16px", color: "#333" };
 
 export default PrecedentSearchPage;
