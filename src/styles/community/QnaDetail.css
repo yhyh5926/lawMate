@@ -88,6 +88,51 @@
   background: #e4e7f5;
 }
 
+/* 수정 / 삭제 버튼 묶음 */
+.detail-action-box {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.detail-edit-btn {
+  padding: 7px 18px;
+  background: transparent;
+  color: #5a6082;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid #e4e7f5;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.detail-edit-btn:hover {
+  border-color: #4f6ef7;
+  color: #4f6ef7;
+  background: #f7f8ff;
+}
+
+.detail-delete-btn {
+  padding: 7px 18px;
+  background: transparent;
+  color: #b0b5cc;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid #e4e7f5;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.detail-delete-btn:hover {
+  border-color: #f87171;
+  color: #ef4444;
+  background: #fff5f5;
+}
+
 /* Post body */
 .detail-body {
   padding: 28px 32px;
@@ -99,7 +144,67 @@
   word-break: break-word;
 }
 
+/* 좋아요 영역 */
+.detail-like-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 32px;
+  border-top: 1px solid #f0f2fb;
+}
+
+.detail-like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 22px;
+  background: #f7f8ff;
+  color: #4f6ef7;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  border: 1.5px solid #c7d0fd;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, transform 0.13s;
+}
+
+.detail-like-btn:hover {
+  background: #eef1ff;
+  border-color: #4f6ef7;
+  transform: scale(1.03);
+}
+
+.detail-like-btn:active {
+  transform: scale(0.98);
+}
+
+.detail-like-count {
+  font-size: 14px;
+  font-weight: 700;
+  color: #4f6ef7;
+  min-width: 20px;
+  text-align: left;
+}
+
 /* Comment section */
 .detail-comment-section {
   margin-top: 20px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .detail-header,
+  .detail-body {
+    padding: 20px 18px;
+  }
+
+  .detail-like-box {
+    padding: 14px 18px;
+  }
+
+  .detail-title {
+    font-size: 17px;
+  }
 }
