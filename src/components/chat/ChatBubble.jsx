@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { deleteChatMsg, updateChatMsg } from "../../api/chatApi";
 
-const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
+const ChatBubble = ({ message, myNo, targetRole, targetMemberNo, onDelete, onUpdate }) => {
   const isMine = message.senderNo === myNo;
   const [showPopup, setShowPopup] = useState(false);
   const [imageModal, setImageModal] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
+  const [editing, setEditing] = useState(false);
+  const [editText, setEditText] = useState(message.content);
+  const menuBtnRef = useRef(null);
   const navigate = useNavigate();
 
   const time = message.sentAt
@@ -19,6 +25,156 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
       navigate("/lawyer/detail/" + targetMemberNo);
     }
     setShowPopup(false);
+  };
+
+  const handleDownload = async (url, filename) => {
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename || "download";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (e) {
+      alert("다운로드에 실패했습니다.");
+    }
+  };
+
+  const handleMenuOpen = () => {
+    if (menuBtnRef.current) {
+      const rect = menuBtnRef.current.getBoundingClientRect();
+      const menuHeight = 80;
+      const spaceBelow = window.innerHeight - rect.bottom;
+      if (spaceBelow < menuHeight) {
+        // 아래 공간 부족 → 버튼 위에 표시
+        setMenuPos({ top: rect.top - menuHeight, left: rect.right - 90 });
+      } else {
+        // 아래에 표시
+        setMenuPos({ top: rect.bottom + 4, left: rect.right - 90 });
+      }
+    }
+    setShowMenu((prev) => !prev);
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("메시지를 삭제하시겠습니까?")) return;
+    const msgNo = message.msgNo || message.msgId;
+    try {
+      await deleteChatMsg(msgNo);
+    } catch (e) {
+      alert("삭제에 실패했습니다.");
+      setShowMenu(false);
+      return;
+    }
+    alert("삭제되었습니다.");
+    if (onDelete) onDelete(msgNo);
+    setShowMenu(false);
+  };
+
+  const handleEdit = async () => {
+    if (!editText.trim()) return;
+    const msgNo = message.msgNo || message.msgId;
+    try {
+      await updateChatMsg(msgNo, editText.trim());
+    } catch (e) {
+      alert("수정에 실패했습니다.");
+      return;
+    }
+    alert("수정되었습니다.");
+    if (onUpdate) onUpdate(msgNo, editText.trim());
+    setEditing(false);
+  };
+
+  const isText = message.type === "TEXT" || !message.type;
+
+  const renderMenu = () => {
+    if (!isMine) return null;
+    return (
+      <div style={{ position: "relative" }}>
+        <button
+          ref={menuBtnRef}
+          onClick={handleMenuOpen}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            color: "#aaa",
+            fontSize: "16px",
+            padding: "2px 6px",
+            borderRadius: "4px",
+            lineHeight: 1,
+            letterSpacing: "1px",
+          }}
+        >
+          ...
+        </button>
+        {showMenu && (
+          <>
+            <div
+              onClick={() => setShowMenu(false)}
+              style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 999 }}
+            />
+            <div
+              style={{
+                position: "fixed",
+                top: menuPos.top,
+                left: menuPos.left,
+                background: "#fff",
+                borderRadius: "10px",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+                border: "1px solid #E8ECF0",
+                zIndex: 1000,
+                overflow: "hidden",
+                minWidth: "90px",
+              }}
+            >
+              {isText && (
+                <button
+                  onClick={() => { setEditing(true); setShowMenu(false); }}
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    padding: "10px 16px",
+                    background: "none",
+                    border: "none",
+                    textAlign: "left",
+                    fontSize: "13px",
+                    cursor: "pointer",
+                    color: "#1A1A2E",
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = "#F7F9FB"}
+                  onMouseLeave={(e) => e.currentTarget.style.background = "none"}
+                >
+                  수정
+                </button>
+              )}
+              <button
+                onClick={handleDelete}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  padding: "10px 16px",
+                  background: "none",
+                  border: "none",
+                  textAlign: "left",
+                  fontSize: "13px",
+                  cursor: "pointer",
+                  color: "#FF3B30",
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = "#FFF0F0"}
+                onMouseLeave={(e) => e.currentTarget.style.background = "none"}
+              >
+                삭제
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    );
   };
 
   const renderContent = () => {
@@ -41,10 +197,7 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
               onClick={() => setImageModal(false)}
               style={{
                 position: "fixed",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
+                top: 0, left: 0, right: 0, bottom: 0,
                 background: "rgba(0,0,0,0.75)",
                 zIndex: 999,
                 display: "flex",
@@ -69,21 +222,21 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
                 style={{ display: "flex", gap: "12px" }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <a
-                  href={message.fileUrl}
-                  download={message.content}
+                <button
+                  onClick={() => handleDownload(message.fileUrl, message.content)}
                   style={{
                     padding: "10px 24px",
                     background: "#1A6DFF",
                     color: "#fff",
                     borderRadius: "8px",
-                    textDecoration: "none",
+                    border: "none",
                     fontSize: "14px",
                     fontWeight: "600",
+                    cursor: "pointer",
                   }}
                 >
                   다운로드
-                </a>
+                </button>
                 <button
                   onClick={() => setImageModal(false)}
                   style={{
@@ -108,16 +261,66 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
 
     if (message.type === "FILE") {
       return (
-        <a
-          href={message.fileUrl}
-          download={message.content}
+        <span
+          onClick={() => handleDownload(message.fileUrl, message.content)}
           style={{
             color: isMine ? "#cce0ff" : "#1A6DFF",
             textDecoration: "underline",
+            cursor: "pointer",
           }}
         >
           {message.content}
-        </a>
+        </span>
+      );
+    }
+
+    if (editing) {
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <textarea
+            value={editText}
+            onChange={(e) => setEditText(e.target.value)}
+            style={{
+              padding: "6px 10px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              fontSize: "14px",
+              resize: "none",
+              minWidth: "150px",
+            }}
+            rows={2}
+          />
+          <div style={{ display: "flex", gap: "6px", justifyContent: "flex-end" }}>
+            <button
+              onClick={handleEdit}
+              style={{
+                padding: "4px 12px",
+                background: "#1A6DFF",
+                color: "#fff",
+                border: "none",
+                borderRadius: "6px",
+                fontSize: "12px",
+                cursor: "pointer",
+              }}
+            >
+              저장
+            </button>
+            <button
+              onClick={() => { setEditing(false); setEditText(message.content); }}
+              style={{
+                padding: "4px 12px",
+                background: "#eee",
+                color: "#333",
+                border: "none",
+                borderRadius: "6px",
+                fontSize: "12px",
+                cursor: "pointer",
+              }}
+            >
+              취소
+            </button>
+          </div>
+        </div>
       );
     }
 
@@ -161,14 +364,7 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
             <div>
               <div
                 onClick={() => setShowPopup(false)}
-                style={{
-                  position: "fixed",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  zIndex: 99,
-                }}
+                style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 99 }}
               />
               <div
                 style={{
@@ -184,14 +380,7 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
                   border: "1px solid #E8ECF0",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    marginBottom: "12px",
-                  }}
-                >
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
                   <div
                     style={{
                       width: "44px",
@@ -209,20 +398,13 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
                     {message.senderName ? message.senderName[0] : "?"}
                   </div>
                   <div>
-                    <div
-                      style={{
-                        fontWeight: "700",
-                        fontSize: "14px",
-                        color: "#1A1A2E",
-                      }}
-                    >
+                    <div style={{ fontWeight: "700", fontSize: "14px", color: "#1A1A2E" }}>
                       {message.senderName}
                     </div>
                     <span
                       style={{
                         fontSize: "11px",
-                        background:
-                          targetRole === "LAWYER" ? "#E8F0FF" : "#F0F4F8",
+                        background: targetRole === "LAWYER" ? "#E8F0FF" : "#F0F4F8",
                         color: targetRole === "LAWYER" ? "#1A6DFF" : "#666",
                         padding: "2px 7px",
                         borderRadius: "4px",
@@ -264,14 +446,7 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
         }}
       >
         {!isMine && (
-          <span
-            style={{
-              fontSize: "12px",
-              color: "#888",
-              marginBottom: "4px",
-              fontWeight: "600",
-            }}
-          >
+          <span style={{ fontSize: "12px", color: "#888", marginBottom: "4px", fontWeight: "600" }}>
             {message.senderName}
           </span>
         )}
@@ -284,12 +459,12 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
             flexDirection: isMine ? "row-reverse" : "row",
           }}
         >
+          {renderMenu()}
+
           <div
             style={{
               padding: message.type === "IMAGE" ? "6px" : "10px 14px",
-              borderRadius: isMine
-                ? "18px 4px 18px 18px"
-                : "4px 18px 18px 18px",
+              borderRadius: isMine ? "18px 4px 18px 18px" : "4px 18px 18px 18px",
               background: isMine ? "#1A6DFF" : "#F0F2F5",
               color: isMine ? "#fff" : "#1A1A2E",
               fontSize: "14px",
@@ -310,18 +485,11 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
             }}
           >
             {isMine && (
-              <span
-                style={{
-                  fontSize: "10px",
-                  color: message.readYn === "Y" ? "#1A6DFF" : "#bbb",
-                }}
-              >
+              <span style={{ fontSize: "10px", color: message.readYn === "Y" ? "#1A6DFF" : "#bbb" }}>
                 {message.readYn === "Y" ? "읽음" : ""}
               </span>
             )}
-            <span
-              style={{ fontSize: "11px", color: "#aaa", whiteSpace: "nowrap" }}
-            >
+            <span style={{ fontSize: "11px", color: "#aaa", whiteSpace: "nowrap" }}>
               {time}
             </span>
           </div>

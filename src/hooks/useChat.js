@@ -54,7 +54,13 @@ export const useChat = (roomNo) => {
             fileUrl: msg.fileUrl || msg.savePath || null,
             type: msg.type || msg.msgType,
           };
-          setMessages((prev) => [...prev, normalized]);
+          setMessages((prev) => {
+            if (!normalized.senderName) {
+              const found = prev.find((m) => Number(m.senderNo) === Number(normalized.senderNo));
+              if (found?.senderName) normalized.senderName = found.senderName;
+            }
+            return [...prev, normalized];
+          });
         });
       },
       onDisconnect: () => setConnected(false),
@@ -92,5 +98,5 @@ export const useChat = (roomNo) => {
     [roomNo]
   );
 
-  return { messages, connected, loading, sendMessage };
+  return { messages, setMessages, connected, loading, sendMessage };
 };

@@ -23,3 +23,9 @@ export const leaveChatRoom = (roomNo) =>
 // 채팅방 삭제
 export const deleteChatRoom = (roomNo) =>
   axiosInstance.delete(`/chat/rooms/${roomNo}`);
+
+export const deleteChatMsg = (msgNo) =>
+  axiosInstance.delete(`/chat/messages/${msgNo}`);
+
+export const updateChatMsg = (msgNo, content) =>
+  axiosInstance.put(`/chat/messages/${msgNo}`, { content });

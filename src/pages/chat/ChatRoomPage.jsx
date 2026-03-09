@@ -32,7 +32,7 @@ const ChatRoomPage = () => {
       : "PERSONAL"
     : null;
 
-  const { messages, connected, loading, sendMessage } = useChat(roomNo);
+  const { messages, setMessages, connected, loading, sendMessage } = useChat(roomNo);
 
   useEffect(() => {
     getChatRooms()
@@ -186,16 +186,15 @@ const ChatRoomPage = () => {
 
         {/* 메시지 목록 */}
         <div style={{ flex: 1, overflowY: "auto", padding: "20px 16px", background: "#F7F9FB", display: "flex", flexDirection: "column" }}>
-          {loading ? (
+          {loading || !user ? (
             <div style={{ textAlign: "center", color: "#aaa", marginTop: "60px" }}>메시지 불러오는 중...</div>
           ) : messages.length === 0 ? (
             <div style={{ textAlign: "center", color: "#aaa", marginTop: "60px" }}>
               <div style={{ fontSize: "36px", marginBottom: "12px" }}>👋</div>
               <p>대화를 시작해보세요</p>
             </div>
-          ) : !user ? (
-            <div style={{ textAlign: "center", color: "#aaa", marginTop: "60px" }}>로딩 중...</div>
           ) : (
+            // ChatRoomPage.jsx messages.map 부분 수정
             messages.map((msg, idx) => (
               <ChatBubble
                 key={msg.msgNo ?? idx}
@@ -203,6 +202,12 @@ const ChatRoomPage = () => {
                 myNo={user?.memberId}
                 targetRole={targetRole}
                 targetMemberNo={currentRoom?.memberNo2}
+                onDelete={(msgNo) => setMessages((prev) => prev.filter((m) => Number(m.msgNo) !== Number(msgNo)))}
+                onUpdate={(msgNo, content) =>
+                  setMessages((prev) =>
+                    prev.map((m) => Number(m.msgNo) === Number(msgNo) ? { ...m, content } : m)
+                  )
+                }
               />
             ))
           )}
