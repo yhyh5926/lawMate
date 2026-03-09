@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { questionApi } from "../../api/questionApi.js";
 import { useAuthStore } from "../../store/authStore.js";
 import QuestionAnswerForm from "../../components/question/questionAnswerForm.jsx";
+import QuestionAnswerEditForm from "../../components/question/QuestionAnswerEditForm.jsx"; // 💡 추가
 import "../../styles/question/QuestionDetailPage.css";
 import { formatDate } from "../../utils/formatDate.js";
 
@@ -12,7 +13,7 @@ const QuestionDetailPage = () => {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // --- [인라인 수정 상태] ---
+  // --- [질문 인라인 수정 상태] ---
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     title: "",
@@ -20,9 +21,11 @@ const QuestionDetailPage = () => {
     caseType: "",
   });
 
+  // --- [답변 인라인 수정 상태] ---
+  const [editingAnswerId, setEditingAnswerId] = useState(null); // 수정 중인 답변 ID 관리
+
   const { user, isAuthenticated } = useAuthStore();
 
-  // 권한 및 상태 체크 변수
   const isLawyer = isAuthenticated && user?.role === "LAWYER";
   const isOwner =
     isAuthenticated && String(user?.memberId) === String(detail?.memberId);
@@ -54,7 +57,6 @@ const QuestionDetailPage = () => {
       const response = await questionApi.getQuestionDetail(questionId);
       const data = response.data.data;
       setDetail(data);
-      // 수정 폼 초기값 동기화
       setEditForm({
         title: data.title,
         content: data.content,
@@ -67,40 +69,14 @@ const QuestionDetailPage = () => {
     }
   };
 
-  // 통합 입력 핸들러
-  const handleEditChange = (e) => {
+  // 질문 수정 관련 핸들러
+  const handleEditChange = (e) =>
     setEditForm({ ...editForm, [e.target.name]: e.target.value });
-  };
-
-  // 질문 삭제 핸들러
-  const handleDeleteQuestion = async () => {
-    if (hasAnswers) {
-      alert("이미 답변이 등록된 질문은 삭제할 수 없습니다.");
-      return;
-    }
-    if (!window.confirm("정말로 이 질문을 삭제하시겠습니까?")) return;
-
-    try {
-      const res = await questionApi.deleteQuestion(questionId);
-      if (res.data.success) {
-        alert("삭제되었습니다.");
-        navigate("/question/list");
-      }
-    } catch (error) {
-      alert("삭제 실패: " + (error.response?.data?.message || "오류 발생"));
-    }
-  };
-
-  // 수정 모드 전환
   const handleEditToggle = () => {
-    if (isAlreadyAdopted) {
-      alert("이미 채택된 질문은 수정할 수 없습니다.");
-      return;
-    }
+    if (isAlreadyAdopted)
+      return alert("이미 채택된 질문은 수정할 수 없습니다.");
     setIsEditing(true);
   };
-
-  // 수정 취소
   const handleCancelEdit = () => {
     setEditForm({
       title: detail.title,
@@ -109,14 +85,7 @@ const QuestionDetailPage = () => {
     });
     setIsEditing(false);
   };
-
-  // 수정 제출
   const handleUpdateSubmit = async () => {
-    if (!editForm.title.trim() || !editForm.content.trim()) {
-      alert("제목과 내용을 모두 입력해주세요.");
-      return;
-    }
-
     try {
       const res = await questionApi.updateQuestion({
         questionId: detail.questionId,
@@ -128,7 +97,35 @@ const QuestionDetailPage = () => {
         fetchDetail();
       }
     } catch (error) {
-      alert("수정 실패: " + (error.response?.data?.message || "오류 발생"));
+      alert("수정 실패", error);
+    }
+  };
+
+  // 질문 삭제 핸들러
+  const handleDeleteQuestion = async () => {
+    if (hasAnswers)
+      return alert("이미 답변이 등록된 질문은 삭제할 수 없습니다.");
+    if (!window.confirm("정말로 이 질문을 삭제하시겠습니까?")) return;
+    try {
+      const res = await questionApi.deleteQuestion(questionId);
+      if (res.data.success) {
+        alert("삭제되었습니다.");
+        navigate("/question/list");
+      }
+    } catch (error) {
+      alert("삭제 실패", error);
+    }
+  };
+
+  // 답변 삭제 핸들러 💡 추가
+  const handleDeleteAnswer = async (answerId) => {
+    if (!window.confirm("정말 이 답변을 삭제하시겠습니까?")) return;
+    try {
+      await questionApi.deleteAnswer(answerId);
+      alert("답변이 삭제되었습니다.");
+      fetchDetail();
+    } catch (error) {
+      (alert("삭제 실패"), error);
     }
   };
 
@@ -147,7 +144,7 @@ const QuestionDetailPage = () => {
         fetchDetail();
       }
     } catch (error) {
-      alert(error.response?.data?.message || "채택 오류 발생");
+      alert("채택 오류 발생", error);
     }
   };
 
@@ -178,7 +175,6 @@ const QuestionDetailPage = () => {
           ) : (
             <span className="case-type-badge">{detail.caseType}</span>
           )}
-          {/* 상단 액션 버튼을 제거하여 깔끔한 헤더 유지 */}
         </div>
 
         {isEditing ? (
@@ -188,14 +184,12 @@ const QuestionDetailPage = () => {
               className="edit-title-input"
               value={editForm.title}
               onChange={handleEditChange}
-              placeholder="제목을 입력하세요"
             />
             <textarea
               name="content"
               className="edit-content-textarea"
               value={editForm.content}
               onChange={handleEditChange}
-              placeholder="내용을 입력하세요"
             />
           </div>
         ) : (
@@ -216,7 +210,6 @@ const QuestionDetailPage = () => {
           </>
         )}
 
-        {/* --- [UX 개선] 수정/삭제 버튼을 본문 바로 아래로 이동 --- */}
         <div className="question-footer-actions">
           {isEditing ? (
             <div className="edit-control-group">
@@ -249,10 +242,6 @@ const QuestionDetailPage = () => {
       {/* 2. 답변 작성 (변호사 전용) */}
       {isLawyer && !hasAlreadyAnswered && !isAlreadyAdopted && (
         <section className="answer-form-section">
-          <div className="form-notice">
-            ⚖️ <strong>{user?.name} 변호사님</strong>, 전문적인 답변으로 도움을
-            주세요.
-          </div>
           <QuestionAnswerForm
             questionId={questionId}
             onAnswerSuccess={fetchDetail}
@@ -267,7 +256,7 @@ const QuestionDetailPage = () => {
       </h3>
 
       <div className="answers-wrapper">
-        {detail.answers && detail.answers.length > 0 ? (
+        {detail.answers?.length > 0 ? (
           detail.answers.map((ans) => (
             <div
               key={ans.answerId}
@@ -276,32 +265,60 @@ const QuestionDetailPage = () => {
               {ans.isAdopted === "Y" && (
                 <div className="adopted-label">의뢰인 채택 답변</div>
               )}
+
               <div className="answer-header">
                 <div
                   className="lawyer-profile clickable"
                   onClick={() => navigate(`/lawyer/detail/${ans.lawyerId}`)}
                 >
-                  <div className="lawyer-avatar-wrapper">
-                    <div className="lawyer-avatar">
-                      {ans.isAdopted === "Y" ? "✅" : "👨‍⚖️"}
-                    </div>
-                    <div className="hover-tooltip">프로필 보기</div>
+                  <div className="lawyer-avatar">
+                    {ans.isAdopted === "Y" ? "✅" : "👨‍⚖️"}
                   </div>
                   <div className="lawyer-meta">
-                    <div className="name-row">
-                      <span className="lawyer-name">
-                        {ans.lawyerName} 변호사
-                      </span>
-                      <span className="go-arrow">→</span>
-                    </div>
+                    <span className="lawyer-name">{ans.lawyerName} 변호사</span>
                     <span className="ans-date">
                       {formatDate(ans.createdAt)}
                     </span>
                   </div>
                 </div>
+
+                {/* 💡 답변 수정/삭제 버튼 (작성자 본인만 표시) */}
+                {!isAlreadyAdopted &&
+                  user?.lawyerId === ans.lawyerId &&
+                  editingAnswerId !== ans.answerId && (
+                    <div className="ans-owner-actions">
+                      <button
+                        className="ans-minor-btn"
+                        onClick={() => setEditingAnswerId(ans.answerId)}
+                      >
+                        수정
+                      </button>
+                      <button
+                        className="ans-minor-btn delete"
+                        onClick={() => handleDeleteAnswer(ans.answerId)}
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  )}
               </div>
-              <div className="answer-body">{ans.content}</div>
-              {isOwner && !isAlreadyAdopted && (
+
+              {/* 💡 수정 모드일 때 EditForm 노출 */}
+              {editingAnswerId === ans.answerId ? (
+                <QuestionAnswerEditForm
+                  answerId={ans.answerId}
+                  initialContent={ans.content}
+                  onSaveSuccess={() => {
+                    setEditingAnswerId(null);
+                    fetchDetail();
+                  }}
+                  onCancel={() => setEditingAnswerId(null)}
+                />
+              ) : (
+                <div className="answer-body">{ans.content}</div>
+              )}
+
+              {isOwner && !isAlreadyAdopted && ans.isAdopted !== "Y" && (
                 <div className="adopt-action-area">
                   <button
                     className="btn-adopt"

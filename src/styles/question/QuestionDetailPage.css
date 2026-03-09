@@ -1,8 +1,6 @@
-/* --- [QuestionDetailPage.css - 전체 코드] --- */
-
-/* 1. 기본 레이아웃 및 컨테이너 */
+/* --- [1. 기본 레이아웃] --- */
 .question-detail-container {
-  max-width: 1000px;
+  max-width: 850px;
   margin: 50px auto;
   padding: 0 20px;
   font-family:
@@ -13,48 +11,42 @@
   line-height: 1.6;
 }
 
-/* 2. 로딩 및 에러 상태 */
 .loading-spinner-container,
 .error-msg {
   text-align: center;
   padding: 100px 0;
-  font-size: 1.2rem;
-  color: #64748b;
+  font-size: 1.1rem;
+  color: #94a3b8;
 }
 
-/* 3. 질문 카드 (본문 영역) */
+/* --- [2. 질문(Question) 카드 영역] --- */
 .question-card {
   background: #ffffff;
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-  margin-bottom: 50px;
-  border: 1px solid #f1f5f9;
-  position: relative;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 35px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  margin-bottom: 40px;
 }
 
-/* 헤더: 카테고리 및 배지 */
 .question-header-top {
-  margin-bottom: 24px;
-  display: flex;
-  align-items: center;
+  margin-bottom: 12px;
 }
 
 .case-type-badge {
-  background-color: #eff6ff;
-  color: #2563eb;
-  padding: 6px 16px;
-  border-radius: 50px;
-  font-size: 0.9rem;
-  font-weight: 700;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
-/* 제목 및 메타정보 */
 .question-title {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 800;
-  color: #1e293b;
-  margin-bottom: 20px;
+  color: #0f172a;
+  margin-bottom: 16px;
   letter-spacing: -0.02em;
 }
 
@@ -62,184 +54,90 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 24px;
   border-bottom: 1px solid #f1f5f9;
-  margin-bottom: 30px;
+  padding-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .question-meta {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: #64748b;
 }
 
-.question-meta strong {
-  color: #334155;
-  font-weight: 600;
-}
-
 .status-badge {
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
   font-weight: 700;
 }
 
 .status-badge.is-waiting {
-  background-color: #fff7ed;
+  background: #fff7ed;
   color: #ea580c;
 }
-
 .status-badge.is-adopted {
-  background-color: #f0fdf4;
+  background: #f0fdf4;
   color: #16a34a;
 }
 
-/* 질문 상세 본문 */
 .question-content-text {
-  font-size: 1.15rem;
-  line-height: 1.9;
-  color: #475569;
+  font-size: 1.05rem;
   white-space: pre-wrap;
-  min-height: 200px;
+  color: #334155;
+  min-height: 120px;
 }
 
-/* --- [핵심: 본문 하단 수정/삭제 버튼 영역] --- */
-.question-footer-actions {
-  margin-top: 40px;
-  padding-top: 30px;
-  border-top: 1px dashed #e2e8f0;
-  display: flex;
-  justify-content: flex-end; /* 우측 정렬 */
-}
-
-.owner-control-group,
-.edit-control-group {
-  display: flex;
-  gap: 12px;
-}
-
-.action-btn {
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid transparent;
-}
-
-/* 일반 상태 버튼 */
-.action-btn.edit {
-  background-color: #f8fafc;
-  color: #475569;
-  border-color: #e2e8f0;
-}
-
-.action-btn.edit:hover {
-  background-color: #f1f5f9;
-  transform: translateY(-2px);
-}
-
-.action-btn.delete {
-  background-color: #fff1f2;
-  color: #e11d48;
-}
-
-.action-btn.delete:hover {
-  background-color: #ffe4e6;
-  transform: translateY(-2px);
-}
-
-/* 수정 모드 버튼 */
-.action-btn.save {
-  background-color: #2563eb;
-  color: #ffffff;
-}
-
-.action-btn.save:hover {
-  background-color: #1d4ed8;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-}
-
-.action-btn.cancel {
-  background-color: #ffffff;
-  color: #64748b;
-  border-color: #e2e8f0;
-}
-
-/* --- [인라인 수정 폼] --- */
+/* --- [3. 인라인 수정 폼 (질문/답변 공통)] --- */
 .inline-edit-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 
-.edit-select {
-  width: 180px;
-  padding: 10px;
-  border: 2px solid #e2e8f0;
+.edit-select,
+.edit-title-input,
+.edit-content-textarea {
+  width: 100%;
+  border: 2px solid #3b82f6; /* 수정 모드 시 파란 테두리로 강조 */
   border-radius: 8px;
+  padding: 12px;
+  outline: none;
   font-family: inherit;
 }
 
 .edit-title-input {
-  width: 100%;
-  padding: 15px;
-  font-size: 1.75rem;
-  font-weight: 800;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  outline: none;
-}
-
-.edit-title-input:focus,
-.edit-content-textarea:focus {
-  border-color: #3b82f6;
-  background-color: #f8faff;
-}
-
-.edit-content-textarea {
-  width: 100%;
-  min-height: 300px;
-  padding: 20px;
-  font-size: 1.15rem;
-  line-height: 1.8;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  outline: none;
-  resize: vertical;
-}
-
-/* 4. 답변 작성 섹션 (변호사) */
-.answer-form-section {
-  background: #f8fafc;
-  border-radius: 16px;
-  padding: 30px;
-  margin-bottom: 50px;
-}
-
-.form-notice {
-  margin-bottom: 20px;
-  font-size: 1.1rem;
-  color: #1e293b;
-}
-
-/* 5. 답변 리스트 영역 */
-.section-title {
   font-size: 1.4rem;
   font-weight: 700;
-  margin-bottom: 25px;
+}
+.edit-content-textarea {
+  min-height: 200px;
+  resize: vertical;
+  font-size: 1rem;
+}
+
+.edit-control-group {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+
+/* --- [4. 답변(Answer) 영역] --- */
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
 .count-badge {
-  background-color: #334155;
-  color: white;
+  background: #1e293b;
+  color: #fff;
   padding: 2px 10px;
   border-radius: 12px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .answers-wrapper {
@@ -249,129 +147,170 @@
 }
 
 .answer-item {
-  background: white;
-  border: 1px solid #f1f5f9;
-  border-radius: 16px;
-  padding: 30px;
-  transition: transform 0.2s;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  position: relative;
+  transition: all 0.2s ease;
 }
 
 .answer-item.selected-answer {
   border: 2px solid #16a34a;
-  background-color: #f0fdf4;
+  background: #fcfdfc;
 }
 
 .adopted-label {
-  display: inline-block;
-  background-color: #16a34a;
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background: #16a34a;
   color: white;
   padding: 4px 12px;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  margin-bottom: 15px;
 }
 
 .answer-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .lawyer-profile {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
 }
 
 .lawyer-avatar {
-  width: 50px;
-  height: 50px;
-  background: #f1f5f9;
-  border-radius: 50%;
+  font-size: 1.5rem;
+  width: 45px;
+  height: 45px;
+  background: #f8fafc;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  border-radius: 50%;
 }
 
 .lawyer-name {
   font-weight: 700;
-  font-size: 1.1rem;
+  color: #1e293b;
+  display: block;
 }
-
 .ans-date {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #94a3b8;
 }
 
 .answer-body {
-  font-size: 1.05rem;
+  font-size: 1rem;
   line-height: 1.7;
+  white-space: pre-wrap;
   color: #475569;
-  margin-bottom: 25px;
 }
 
-/* 채택 버튼 영역 */
+/* --- [5. 버튼 및 액션 스타일] --- */
+.action-btn {
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: 0.2s;
+}
+
+.action-btn.edit {
+  background: #f1f5f9;
+  color: #475569;
+}
+.action-btn.delete {
+  background: #fef2f2;
+  color: #ef4444;
+}
+.action-btn.save {
+  background: #1e293b;
+  color: white;
+}
+.action-btn.cancel {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.action-btn:hover {
+  opacity: 0.8;
+}
+
+/* 답변 수정/삭제 작은 버튼 */
+.ans-owner-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.ans-minor-btn {
+  background: none;
+  border: 1px solid #e2e8f0;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.ans-minor-btn:hover {
+  background: #f8fafc;
+  color: #1e293b;
+}
+.ans-minor-btn.delete:hover {
+  border-color: #fecaca;
+  color: #ef4444;
+}
+
+/* 답변 채택 버튼 */
 .adopt-action-area {
-  text-align: right;
+  margin-top: 20px;
+  border-top: 1px dashed #e2e8f0;
+  padding-top: 15px;
 }
 
 .btn-adopt {
-  background-color: #16a34a;
+  width: 100%;
+  padding: 10px;
+  background: white;
+  border: 1px solid #16a34a;
+  color: #16a34a;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-adopt:hover {
+  background: #16a34a;
+  color: white;
+}
+
+/* 하단 목록가기 버튼 */
+.footer-nav {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.btn-back-list {
+  padding: 12px 30px;
+  background: #94a3b8;
   color: white;
   border: none;
-  padding: 10px 20px;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
 }
 
-.btn-adopt:hover {
-  background-color: #15803d;
-}
-
-/* 6. 하단 네비게이션 */
-.footer-nav {
-  margin-top: 60px;
+.empty-answer {
   text-align: center;
-}
-
-.btn-back-list {
-  background: none;
-  border: 1px solid #cbd5e1;
-  padding: 12px 30px;
-  border-radius: 10px;
-  color: #64748b;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn-back-list:hover {
-  background-color: #f8fafc;
-  color: #334155;
-}
-
-/* 7. 반응형 디자인 */
-@media (max-width: 768px) {
-  .question-title {
-    font-size: 1.5rem;
-  }
-  .question-card {
-    padding: 25px;
-  }
-
-  .question-footer-actions {
-    justify-content: center;
-  }
-
-  .owner-control-group,
-  .edit-control-group {
-    width: 100%;
-  }
-
-  .action-btn {
-    flex: 1;
-    text-align: center;
-  }
+  padding: 40px;
+  background: #f8fafc;
+  border-radius: 12px;
+  color: #94a3b8;
 }

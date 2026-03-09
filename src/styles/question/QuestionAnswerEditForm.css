@@ -1,0 +1,93 @@
+/* --- [1. 수정 폼 컨테이너] --- */
+.answer-edit-form-container {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #ffffff;
+  border: 2px solid #3b82f6; /* 수정 중임을 나타내는 블루 테두리 */
+  border-radius: 12px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- [2. 텍스트 영역] --- */
+.answer-edit-textarea {
+  width: 100%;
+  min-height: 180px;
+  padding: 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #334155;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.answer-edit-textarea:focus {
+  border-color: #3b82f6;
+}
+
+.answer-edit-textarea:disabled {
+  background-color: #f8fafc;
+  color: #94a3b8;
+}
+
+/* --- [3. 하단 버튼 영역] --- */
+.answer-edit-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+/* --- [4. 공통 버튼 스타일] --- */
+.ans-action-btn {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+/* 취소 버튼 */
+.ans-action-btn.cancel {
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+.ans-action-btn.cancel:hover {
+  background-color: #e2e8f0;
+  color: #1e293b;
+}
+
+/* 저장(수정 완료) 버튼 */
+.ans-action-btn.save {
+  background-color: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.ans-action-btn.save:hover:not(:disabled) {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.ans-action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
