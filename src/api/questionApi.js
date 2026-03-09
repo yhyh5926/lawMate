@@ -26,17 +26,18 @@ export const questionApi = {
   writeQuestion: (data) => axiosInstance.post("/question/write", data),
 
   /**
-   * 3-1. 법률 질문 수정
+   * 3-1. 법률 질문 수정 (PathVariable 방식 적용)
    * @param {Object} data - { questionId, title, content, caseType }
    */
-  updateQuestion: (data) => axiosInstance.put("/question/update", data),
+  updateQuestion: (data) =>
+    axiosInstance.put(`/question/update/${data.questionId}`, data),
 
   /**
-   * 3-2. 법률 질문 삭제
+   * 3-2. 법률 질문 삭제 (PathVariable 방식 적용)
    * @param {number|string} questionId
    */
   deleteQuestion: (questionId) =>
-    axiosInstance.delete("/question/delete", { params: { questionId } }),
+    axiosInstance.delete(`/question/delete/${questionId}`),
 
   /**
    * 4. 변호사 답변 등록 (TB_ANSWER)
@@ -47,4 +48,16 @@ export const questionApi = {
    * 5. 변호사 답변 채택
    */
   adoptAnswer: (data) => axiosInstance.post("/question/adopt", data),
+
+  /**
+   * 6. 변호사 답변 수정
+   */
+  updateAnswer: (data) =>
+    axiosInstance.put(`/question/answer/update/${data.answerId}`, data),
+
+  /**
+   * 7. 변호사 답변 삭제
+   */
+  deleteAnswer: (answerId) =>
+    axiosInstance.delete(`/question/answer/delete/${answerId}`),
 };
