@@ -41,6 +41,39 @@
   margin-bottom: 10px;
 }
 
+/* ✅ 정렬 + 글쓰기 버튼 묶음 */
+.board-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ✅ 정렬 셀렉터 */
+.sort-selector {
+  appearance: none;
+  -webkit-appearance: none;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%239398b0' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center;
+  border: 2px solid #e4e7f5;
+  border-radius: 8px;
+  padding: 8px 34px 8px 13px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #5a6082;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.sort-selector:focus {
+  outline: none;
+  border-color: #4f6ef7;
+  box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.1);
+}
+
+.sort-selector:hover {
+  border-color: #c0c4d8;
+}
+
 .write-btn {
   display: flex;
   align-items: center;
@@ -66,6 +99,82 @@
 
 .write-btn:active {
   transform: translateY(0);
+}
+
+/* 인기글 TOP 3 박스 */
+.top-liked-box {
+  background: #eef1ff;
+  border-radius: 12px;
+  padding: 16px 22px;
+  margin-bottom: 16px;
+}
+
+.top-liked-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4f6ef7;
+  margin: 0 0 12px;
+  letter-spacing: 0.01em;
+}
+
+.top-liked-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.top-liked-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 순위 뱃지 */
+.top-liked-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  background: #c7d0fd;
+  color: #3a57e8;
+}
+
+.top-liked-item:nth-child(1) .top-liked-rank {
+  background: #4f6ef7;
+  color: #fff;
+}
+
+/* 인기글 링크 */
+.top-liked-link {
+  flex: 1;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #2c3050;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+
+.top-liked-link:hover {
+  color: #4f6ef7;
+}
+
+/* 인기글 좋아요 수 */
+.top-liked-count {
+  font-size: 12px;
+  color: #6a80f5;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 /* Stats bar */
@@ -255,5 +364,18 @@
 
   .post-link {
     font-size: 13.5px;
+  }
+
+  .top-liked-box {
+    padding: 14px 16px;
+  }
+
+  .board-controls {
+    gap: 8px;
+  }
+
+  .sort-selector {
+    font-size: 13px;
+    padding: 7px 30px 7px 10px;
   }
 }
