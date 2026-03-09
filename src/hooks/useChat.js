@@ -17,7 +17,13 @@ export const useChat = (roomNo) => {
     try {
       setLoading(true);
       const res = await getChatMessages(roomNo);
-      setMessages(res.data.data || []);
+      const normalized = (res.data.data || []).map((m) => ({
+        ...m,
+        sentAt: m.sentAt || m.createdAt,
+        fileUrl: m.fileUrl || m.savePath || null,
+        type: m.type || m.msgType,
+      }));
+      setMessages(normalized);
     } catch (e) {
       console.error('메시지 로드 실패', e);
     } finally {
@@ -33,7 +39,6 @@ export const useChat = (roomNo) => {
     markMessagesRead(roomNo).catch(() => {});
 
     const token = localStorage.getItem('token');
-    console.log('=== STOMP 연결 토큰:', token);  // ← 추가
 
     const client = new Client({
       webSocketFactory: () => new SockJS(WS_URL),
@@ -43,7 +48,13 @@ export const useChat = (roomNo) => {
         setConnected(true);
         client.subscribe(`/sub/chat/room/${roomNo}`, (frame) => {
           const msg = JSON.parse(frame.body);
-          setMessages((prev) => [...prev, msg]);
+          const normalized = {
+            ...msg,
+            sentAt: msg.sentAt || msg.createdAt || new Date().toISOString(),
+            fileUrl: msg.fileUrl || msg.savePath || null,
+            type: msg.type || msg.msgType,
+          };
+          setMessages((prev) => [...prev, normalized]);
         });
       },
       onDisconnect: () => setConnected(false),
@@ -66,14 +77,13 @@ export const useChat = (roomNo) => {
     (content, type = 'TEXT', fileUrl = null) => {
       if (!clientRef.current?.connected) return;
       const token = localStorage.getItem('token');
-      console.log('=== 전송 토큰:', token);  // ← 추가
 
       clientRef.current.publish({
         destination: `/pub/chat/message`,
         headers: { Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           roomNo,
-          type,       // TEXT | FILE | IMAGE
+          type,
           content,
           fileUrl,
         }),

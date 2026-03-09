@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
   const isMine = message.senderNo === myNo;
   const [showPopup, setShowPopup] = useState(false);
+  const [imageModal, setImageModal] = useState(false);
   const navigate = useNavigate();
 
   const time = message.sentAt
@@ -15,9 +16,112 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
 
   const goToProfile = () => {
     if (targetRole === "LAWYER") {
-      navigate(`/lawyer/detail/${targetMemberNo}`);
+      navigate("/lawyer/detail/" + targetMemberNo);
     }
     setShowPopup(false);
+  };
+
+  const renderContent = () => {
+    if (message.type === "IMAGE") {
+      return (
+        <div>
+          <img
+            src={message.fileUrl}
+            alt="첨부이미지"
+            onClick={() => setImageModal(true)}
+            style={{
+              maxWidth: "200px",
+              borderRadius: "8px",
+              cursor: "pointer",
+              display: "block",
+            }}
+          />
+          {imageModal && (
+            <div
+              onClick={() => setImageModal(false)}
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: "rgba(0,0,0,0.75)",
+                zIndex: 999,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+                gap: "16px",
+              }}
+            >
+              <img
+                src={message.fileUrl}
+                alt="첨부이미지"
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  maxWidth: "90vw",
+                  maxHeight: "80vh",
+                  borderRadius: "12px",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+                }}
+              />
+              <div
+                style={{ display: "flex", gap: "12px" }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <a
+                  href={message.fileUrl}
+                  download={message.content}
+                  style={{
+                    padding: "10px 24px",
+                    background: "#1A6DFF",
+                    color: "#fff",
+                    borderRadius: "8px",
+                    textDecoration: "none",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                  }}
+                >
+                  다운로드
+                </a>
+                <button
+                  onClick={() => setImageModal(false)}
+                  style={{
+                    padding: "10px 24px",
+                    background: "#fff",
+                    color: "#333",
+                    border: "none",
+                    borderRadius: "8px",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                  }}
+                >
+                  닫기
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (message.type === "FILE") {
+      return (
+        <a
+          href={message.fileUrl}
+          download={message.content}
+          style={{
+            color: isMine ? "#cce0ff" : "#1A6DFF",
+            textDecoration: "underline",
+          }}
+        >
+          {message.content}
+        </a>
+      );
+    }
+
+    return <span>{message.content}</span>;
   };
 
   return (
@@ -30,7 +134,6 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
         marginBottom: "12px",
       }}
     >
-      {/* 상대방 아바타 */}
       {!isMine && (
         <div style={{ position: "relative" }}>
           <div
@@ -51,18 +154,19 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
               boxShadow: "0 2px 6px rgba(74,144,217,0.3)",
             }}
           >
-            {message.senderName?.[0] ?? "?"}
+            {message.senderName ? message.senderName[0] : "?"}
           </div>
 
-          {/* 미니 프로필 팝업 */}
           {showPopup && (
-            <>
-              {/* 외부 클릭 시 닫기 */}
+            <div>
               <div
                 onClick={() => setShowPopup(false)}
                 style={{
                   position: "fixed",
-                  inset: 0,
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
                   zIndex: 99,
                 }}
               />
@@ -80,7 +184,6 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
                   border: "1px solid #E8ECF0",
                 }}
               >
-                {/* 프로필 아바타 */}
                 <div
                   style={{
                     display: "flex",
@@ -103,7 +206,7 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
                       fontSize: "18px",
                     }}
                   >
-                    {message.senderName?.[0] ?? "?"}
+                    {message.senderName ? message.senderName[0] : "?"}
                   </div>
                   <div>
                     <div
@@ -130,8 +233,6 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
                     </span>
                   </div>
                 </div>
-
-                {/* 프로필 보기 버튼 */}
                 <button
                   onClick={goToProfile}
                   style={{
@@ -149,7 +250,7 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
                   프로필 보기
                 </button>
               </div>
-            </>
+            </div>
           )}
         </div>
       )}
@@ -185,7 +286,7 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
         >
           <div
             style={{
-              padding: "10px 14px",
+              padding: message.type === "IMAGE" ? "6px" : "10px 14px",
               borderRadius: isMine
                 ? "18px 4px 18px 18px"
                 : "4px 18px 18px 18px",
@@ -197,29 +298,7 @@ const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
               boxShadow: "0 1px 2px rgba(0,0,0,0.08)",
             }}
           >
-            {message.type === "FILE" || message.type === "IMAGE" ? (
-              <a
-                href={message.fileUrl}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  color: isMine ? "#cce0ff" : "#1A6DFF",
-                  textDecoration: "underline",
-                }}
-              >
-                {message.type === "IMAGE" ? (
-                  <img
-                    src={message.fileUrl}
-                    alt="첨부이미지"
-                    style={{ maxWidth: "200px", borderRadius: "8px" }}
-                  />
-                ) : (
-                  `📎 ${message.content}`
-                )}
-              </a>
-            ) : (
-              message.content
-            )}
+            {renderContent()}
           </div>
 
           <div
