@@ -1,27 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getPostList } from '../../api/communityApi';
+import { getPostList, getTopLikedPosts } from '../../api/communityApi';
 import '../../styles/community/Qnalist.css';
 
 const QnaList = () => {
   const [posts, setPosts] = useState([]);
+  const [topLikedPosts, setTopLikedPosts] = useState([]);
   const [sortType, setSortType] = useState('latest');
-  const [caseType, setCaseType] = useState("all");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchPosts();
-  }, [sortType, caseType]);
 
   const fetchPosts = async () => {
     try {
-      const data = await getPostList(sortType, caseType);
+      const data = await getPostList(sortType);
       console.log(data);
       setPosts(data);
     } catch (error) {
       console.error("게시글 목록 조회 실패:", error);
     }
   };
+
+  const fetchTopLikedPosts = async () => {
+    try {
+      const data = await getTopLikedPosts();
+      console.log("인기글:", data);
+      setTopLikedPosts(data);
+    } catch (error) {
+      console.error("인기글 조회 실패:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+    fetchTopLikedPosts();
+  }, [sortType]);
+
+  const topLikedList = topLikedPosts.map((post, idx) => (
+    <li key={post.postId} className="top-liked-item">
+      <span className="top-liked-rank">{idx + 1}</span>
+      <Link className="top-liked-link" to={`/community/detail/${post.postId}`}>
+        {post.title}[{post.commentCnt}]
+      </Link>
+      <span className="top-liked-count"> {post.likeCnt}</span>
+    </li>
+  ));
 
   let postTr = posts.map((post, idx) => (
     <tr key={post.postId} style={{ animationDelay: `${idx * 0.04}s` }}>
@@ -69,6 +90,15 @@ const QnaList = () => {
             </button>
           </div>
         </div>
+
+        {topLikedPosts.length > 0 && (
+          <div className="top-liked-box">
+            <h3 className="top-liked-title">인기글 TOP 3</h3>
+            <ul className="top-liked-list">
+              {topLikedList}
+            </ul>
+          </div>
+        )}
 
         {posts.length > 0 && (
           <p className="board-stats">총 <span>{posts.length}</span>개의 게시물</p>

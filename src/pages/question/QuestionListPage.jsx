@@ -212,7 +212,7 @@ const QuestionListPage = () => {
                         <span
                           className={`ql-status ${q.status === "ADOPTED" ? "is-adopted" : "is-waiting"}`}
                         >
-                          {q.status === "ADOPTED" ? "● 채택완료" : "○ 답변대기"}
+                          {q.status === "ADOPTED" ? "● 채택완료" : "○ 채택대기"}
                         </span>
                       </td>
                     </tr>

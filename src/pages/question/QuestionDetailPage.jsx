@@ -203,7 +203,7 @@ const QuestionDetailPage = () => {
               <div
                 className={`status-badge ${isAlreadyAdopted ? "is-adopted" : "is-waiting"}`}
               >
-                {isAlreadyAdopted ? "채택완료" : "답변대기"}
+                {isAlreadyAdopted ? "채택완료" : "채택대기"}
               </div>
             </div>
             <div className="question-content-text">{detail.content}</div>

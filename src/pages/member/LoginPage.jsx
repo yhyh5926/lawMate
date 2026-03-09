@@ -21,7 +21,7 @@ const LoginContent = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    
+
     try {
       const response = await memberApi.login(formData);
       const { token, member } = response.data;
@@ -30,7 +30,7 @@ const LoginContent = () => {
         // 로그인시 아이디 저장 (수빈 수정)
         localStorage.setItem("memberId", member.memberId);
 
-        navigate("/main.do");
+        navigate("/main");
       }
     } catch (err) {
       setError(err.response?.data?.message || "로그인 중 오류가 발생했습니다.");

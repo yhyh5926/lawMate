@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getPost, deletePost } from '../../api/communityApi';
+import { getPost, getPostWithoutView, deletePost, togglePostLike, getPostLikeStatus } from '../../api/communityApi';
 import CommentList from '../../components/community/CommentList';
 import '../../styles/community/QnaDetail.css';
 
@@ -9,12 +9,20 @@ const QnaDetail = () => {
   const navigate = useNavigate();
 
   const [qnaDetail, setQnaDetail] = useState(null);
+  const [liked, setLiked] = useState(false);
 
   useEffect(() => {
     getPost(postId).then(data => {
       console.log(data);
       setQnaDetail(data);
     });
+    // 좋아요 상태
+    const memberId = Number(localStorage.getItem("memberId"));
+    if (memberId) {
+      getPostLikeStatus(postId, memberId).then(count => {
+        setLiked(count > 0);
+      });
+    }
   }, [postId]);
 
   if (!qnaDetail) return <div className="detail-loading">불러오는 중...</div>;
@@ -40,6 +48,27 @@ const QnaDetail = () => {
       alert("게시글 삭제 실패");
     }
   };
+
+  const handleLike = async () => {
+  if (!loginMemberId) {
+    alert("로그인이 필요합니다.");
+    return;
+  }
+
+  try {
+    await togglePostLike(postId, loginMemberId);
+
+    const data = await getPostWithoutView(postId);
+    setQnaDetail(data);
+
+    const count = await getPostLikeStatus(postId, loginMemberId);
+    setLiked(count > 0);
+  } catch (error) {
+    console.error("좋아요 처리 실패:", error);
+    console.error("응답 데이터:", error.response?.data);
+    alert("좋아요 처리 실패");
+  }
+};
 
   return (
     <div className="detail-wrapper">
@@ -79,6 +108,13 @@ const QnaDetail = () => {
 
           <div className="detail-body">
             {qnaDetail.content}
+          </div>
+
+          <div className="detail-like-box">
+            <button className="detail-like-btn" onClick={handleLike}>
+              {liked ? "💙 좋아요 취소" : "🤍 좋아요"}
+            </button>
+            <span className="detail-like-count">{qnaDetail.likeCnt}</span>
           </div>
         </div>
 
