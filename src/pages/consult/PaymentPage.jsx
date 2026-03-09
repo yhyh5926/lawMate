@@ -15,7 +15,7 @@ const PAYMENT_METHODS = [
 
 const PaymentPage = () => {
   const [searchParams] = useSearchParams();
-  const consultNo = searchParams.get("consultNo");
+  const consultNo = searchParams.get("consultId");
   const navigate = useNavigate();
 
   const [consult, setConsult] = useState(null);
@@ -23,9 +23,13 @@ const PaymentPage = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log("consultNo:", consultNo);
     if (!consultNo) return;
     axiosInstance.get(`/consult/${consultNo}`).then((res) => {
+      console.log("consult 응답:", res.data);
       setConsult(res.data.data);
+    }).catch((err) => {
+      console.error("consult 에러:", err);
     });
   }, [consultNo]);
 
@@ -79,7 +83,7 @@ const PaymentPage = () => {
     );
   }
 
-  const totalAmount = (consult.consultFee || 0) * (consult.duration / 60);
+  const totalAmount = (consult.consultFee || 0) * (consult.durationMin / 30);
 
   return (
     <div style={{ maxWidth: "560px", margin: "0 auto", padding: "32px 16px" }}>
@@ -113,12 +117,9 @@ const PaymentPage = () => {
         >
           예약 정보
         </h3>
-        <Row label="변호사" value={`${consult.lawyerName} 변호사`} />
-        <Row
-          label="상담 일시"
-          value={`${consult.consultDate} ${consult.consultTime}`}
-        />
-        <Row label="상담 시간" value={`${consult.duration}분`} />
+          <Row label="변호사" value={`${consult.lawyerName} 변호사`} />
+          <Row label="상담 일시" value={consult.consultDate} />
+          <Row label="상담 시간" value={`${consult.durationMin}분`} />  {/* duration → durationMin */}
         <div
           style={{
             borderTop: "1px dashed #D0D8E4",
