@@ -1,11 +1,13 @@
-// src/components/mypage/EditInfoTab.jsx
 /**
  * 파일 위치: src/components/mypage/EditInfoTab.jsx
- * 수정사항: 변호사(전문회원) 정보 수정 시 전문 분야를 텍스트 입력 대신 버튼 다중 선택 방식으로 변경했습니다.
+ * 수정사항: 
+ * 1. memberApi 임포트 추가
+ * 2. handleEditSubmit에 폼 데이터를 백엔드로 전송하는 API 연동 로직 추가
  */
 import React, { useState, useRef } from "react";
 import { useAuthStore } from "../../store/authStore.js";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
+import { memberApi } from "../../api/memberApi.js"; // 💡 API 연동을 위해 임포트 추가
 
 const GOOGLE_CLIENT_ID =
   "244554224995-kcgsjp47k8flns89ldv9stpfga219kut.apps.googleusercontent.com";
@@ -123,12 +125,42 @@ const EditInfoContent = ({ onVerifyReset }) => {
     if (val.length === 4 && nextRef) nextRef.current.focus();
   };
 
+  // 💡 API 호출 로직으로 교체
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     if (editData.password && editData.password !== editData.passwordConfirm) {
       return alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
     }
-    alert("정보 수정 요청이 완료되었습니다.");
+    
+    try {
+      // 1. 전화번호 3칸을 하나의 문자열로 합침
+      const fullPhone = `${editData.phone1}${editData.phone2}${editData.phone3}`;
+      
+      // 2. 백엔드로 보낼 데이터 조립
+      const submitData = {
+        loginId: user.loginId, // 업데이트할 회원의 ID 필수 포함
+        name: editData.name,
+        password: editData.password || null, // 비밀번호를 변경하지 않으면 null
+        phone: fullPhone,
+        address: editData.address,
+        detailAddress: editData.detailAddress,
+        // 아래는 변호사 전용 데이터 (백엔드에서 조건부 처리)
+        licenseNo: editData.licenseNo,
+        specialty: editData.specialty,
+        officeName: editData.officeAddress, // 기획에 따라 필드명 매핑 확인 필요
+      };
+
+      // 3. memberApi.js 에 있는 함수 호출
+      await memberApi.editProfile(submitData);
+      
+      alert("정보 수정 요청이 완료되었습니다.");
+      
+      // 필요 시 여기서 전역 user 정보를 갱신하거나 창을 새로고침 할 수 있습니다.
+      
+    } catch (error) {
+      console.error("정보 수정 실패:", error);
+      alert("정보 수정 중 문제가 발생했습니다. 다시 시도해주세요.");
+    }
   };
 
   const handleViewFile = () => {
