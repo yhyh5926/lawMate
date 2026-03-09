@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import lawyerApi from "../../api/lawyerApi";
 import { DEFAULT_IMAGE } from "./LawyerListPage";
 import "../../styles/lawyer/LawyerDetailPage.css";
+import { getOrCreateChatRoom } from "../../api/chatApi";
 
 const LawyerDetailPage = () => {
   const { id } = useParams();
@@ -216,7 +217,15 @@ const LawyerDetailPage = () => {
               <div className="sticky-actions">
                 <button
                   className="btn-chat"
-                  onClick={() => alert("준비 중인 서비스입니다.")}
+                  onClick={async () => {
+                    try {
+                      const res = await getOrCreateChatRoom(lawyer.memberId);
+                      const roomNo = res.data?.data?.roomNo;
+                      navigate(`/chat/room?roomNo=${roomNo}`);
+                    } catch (e) {
+                      alert("채팅방 생성 중 오류가 발생했습니다.");
+                    }
+                  }}
                 >
                   💬 실시간 채팅 문의
                 </button>

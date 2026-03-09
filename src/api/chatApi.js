@@ -19,3 +19,7 @@ export const markMessagesRead = (roomNo) =>
 // 채팅방 나가기
 export const leaveChatRoom = (roomNo) =>
   axiosInstance.delete(`/chat/rooms/${roomNo}`);
+
+// 채팅방 삭제
+export const deleteChatRoom = (roomNo) =>
+  axiosInstance.delete(`/chat/rooms/${roomNo}`);

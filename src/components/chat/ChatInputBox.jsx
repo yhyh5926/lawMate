@@ -6,7 +6,7 @@ import axiosInstance from "../../api/axiosInstance";
  * @param {function} onSend - (content, type, fileUrl) => void
  * @param {boolean} disabled - WebSocket 연결 여부
  */
-const ChatInputBox = ({ onSend, disabled }) => {
+const ChatInputBox = ({ onSend, disabled, roomNo }) => {
   const [text, setText] = useState("");
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef();
@@ -34,7 +34,7 @@ const ChatInputBox = ({ onSend, disabled }) => {
 
     try {
       setUploading(true);
-      const res = await axiosInstance.post("/attachment/upload", formData, {
+      const res = await axiosInstance.post(`/attachment/upload?roomNo=${roomNo}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       const { fileUrl, originalName } = res.data.data;

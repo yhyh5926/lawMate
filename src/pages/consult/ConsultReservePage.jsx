@@ -1,7 +1,7 @@
 // src/pages/consult/ConsultReservePage.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { createConsult, getAvailableTimes } from "../../api/consultApi";
+import { createConsult } from "../../api/consultApi";
 import lawyerApi from "../../api/lawyerApi";
 import { DEFAULT_IMAGE } from "../lawyer/LawyerListPage";
 
@@ -53,46 +53,36 @@ const ConsultReservePage = () => {
   };
 
   const handleSubmit = async () => {
-    if (!selectedDate || !selectedTime) {
-      alert("날짜와 시간을 선택해주세요.");
-      return;
-    }
+  if (!selectedDate || !selectedTime) {
+    alert("날짜와 시간을 선택해주세요.");
+    return;
+  }
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      // 1. 파일 업로드 (기존 로직 유지)
-      let attachmentNos = [];
-      if (files.length > 0) {
-        const formData = new FormData();
-        files.forEach((f) => formData.append("files", f));
-        const uploadRes = await lawyerApi.uploadFiles(formData);
-        attachmentNos = uploadRes.data.map((a) => a.attachmentNo);
-      }
+    // 파일 업로드 제거 (uploadFiles 없으므로)
+    const consultDateTime = `${selectedDate}T${selectedTime}:00`;
 
-      // 2. TB_CONSULT 구조에 맞춘 데이터 매핑
-      const consultDateTime = `${selectedDate}T${selectedTime}:00`;
+    const consultData = {
+      lawyerId: Number(lawyerId),
+      consultDate: consultDateTime,
+      durationMin: duration,
+      note: note,
+      attachmentNos: [],
+    };
 
-      const consultData = {
-        lawyerId: Number(lawyerId), // 💡 LAWYER_ID
-        consultDate: consultDateTime, // 💡 CONSULT_DATE
-        durationMin: duration, // 💡 DURATION_MIN
-        note: note, // 💡 NOTE
-        attachmentNos: attachmentNos,
-      };
+    const res = await createConsult(consultData);
+    alert("상담 예약이 접수되었습니다.");
 
-      const res = await createConsult(consultData);
-
-      alert("상담 예약이 접수되었습니다.");
-
-      const consultId = res.data?.consultId || res.data?.data?.consultId;
-      navigate(`/payment/pay?consultId=${consultId}`);
-    } catch (e) {
-      alert(e.response?.data?.message || "예약 신청 중 오류가 발생했습니다.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const consultId = res.data?.consultId || res.data?.data?.consultId;
+    navigate(`/payment/pay?consultId=${consultId}`);
+  } catch (e) {
+    alert(e.response?.data?.message || "예약 신청 중 오류가 발생했습니다.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div style={{ maxWidth: "640px", margin: "0 auto", padding: "32px 16px" }}>
