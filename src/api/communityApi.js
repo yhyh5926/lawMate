@@ -57,6 +57,21 @@ export const getComments = async (postId) => {
   return response.data; // 받은 객체에서 json만 꺼내온 것
 };
 
+export const getCommentList = async (postId) => {
+  const response = await axiosInstance.get(`/comments/${postId}`);
+  return response.data;
+};
+
+export const writeComment = async (payload) => {
+  const response = await axiosInstance.post("/comments", payload);
+  return response.data;
+};
+
+export const deleteComment = async (commentId) => {
+  const response = await axiosInstance.delete(`/comments/${commentId}`);
+  return response.data;
+};
+
 // 투표게시물
 export const getPollList = async () => {
   const response = await axiosInstance.get("/polls");

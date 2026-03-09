@@ -73,6 +73,7 @@ const ConsultReservePage = () => {
     };
 
     const res = await createConsult(consultData);
+    console.log("예약 응답:", res.data);
     alert("상담 예약이 접수되었습니다.");
 
     const consultId = res.data?.consultId || res.data?.data?.consultId;

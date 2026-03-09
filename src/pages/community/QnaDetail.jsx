@@ -112,9 +112,8 @@ const QnaDetail = () => {
 
           <div className="detail-like-box">
             <button className="detail-like-btn" onClick={handleLike}>
-              {liked ? "💙 좋아요 취소" : "🤍 좋아요"}
+              {liked ? "💙 좋아요 취소" : "🤍 좋아요"} ({qnaDetail.likeCnt})
             </button>
-            <span className="detail-like-count">{qnaDetail.likeCnt}</span>
           </div>
         </div>
 

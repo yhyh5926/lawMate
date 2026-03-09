@@ -38,7 +38,7 @@ const QnaList = () => {
     <li key={post.postId} className="top-liked-item">
       <span className="top-liked-rank">{idx + 1}</span>
       <Link className="top-liked-link" to={`/community/detail/${post.postId}`}>
-        {post.title}[{post.commentCnt}]
+        {post.title} [{post.commentCnt}]
       </Link>
       <span className="top-liked-count"> {post.likeCnt}</span>
     </li>
