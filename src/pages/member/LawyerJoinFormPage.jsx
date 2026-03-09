@@ -1,7 +1,6 @@
 /**
  * 파일 위치: src/pages/member/LawyerJoinFormPage.jsx
- * 수정사항: 변호사 사무소 주소 입력칸을 2개로 간소화하고, 자격증 다중 파일 업로드 시 파일 목록 확인 및 미리보기(클릭) 기능이 추가되었습니다.
- * 추가수정: 가입하기 버튼 클릭 시 필수 항목 누락 여부를 검증하고 라벨을 붉은색으로 하이라이트하는 기능이 추가되었습니다.
+ * 수정사항: 사무소 기본 주소와 함께 사무소 상세 주소(officeDetailAddress) 항목에도 빈칸 검증 로직을 적용했습니다.
  */
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +10,6 @@ import { memberApi } from "../../api/memberApi.js";
 import { validateId, validatePassword } from "../../utils/validationUtil.js";
 import "../../styles/member/LawyerJoinFormPage.css";
 
-// 💡 전문 분야 카테고리 배열 ("전체" 제외)
 const SPECIALTIES = ["민사", "형사", "가사", "이혼", "노동", "행정", "기업", "부동산"];
 
 const useLawyerJoinStore = create((set) => ({
@@ -27,7 +25,7 @@ const useLawyerJoinStore = create((set) => ({
     emailDomain: "naver.com",
     licenseNumber: "",
     officeName: "",
-    specialty: "", // 💡 쉼표(,)로 연결된 문자열로 저장됨
+    specialty: "",
     officeAddress: "",
     officeDetailAddress: "",
   },
@@ -71,23 +69,17 @@ const LawyerJoinFormPage = () => {
   } = useLawyerJoinStore();
   const [idError, setIdError] = useState("");
   const [idSuccess, setIdSuccess] = useState("");
-  const [files, setFiles] = useState([]); // 💡 파일 다중 업로드용 상태
-  
-  // 💡 필수 입력값 누락 검증 상태 추가
+  const [files, setFiles] = useState([]);
   const [errors, setErrors] = useState({});
-
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ [name]: value });
-    
-    // 사용자가 입력하면 해당 필드의 에러 표시 해제
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: false }));
     }
-
     if (name === "loginId") {
       setIdChecked(false, "");
       setIdSuccess("");
@@ -96,27 +88,22 @@ const LawyerJoinFormPage = () => {
     }
   };
 
-  // 💡 전문 분야 다중 선택 토글 핸들러
   const handleSpecialtyToggle = (spec) => {
     let currentList = formData.specialty ? formData.specialty.split(",") : [];
-    
     if (currentList.includes(spec)) {
-      currentList = currentList.filter((item) => item !== spec); // 이미 선택되어 있으면 제거
+      currentList = currentList.filter((item) => item !== spec);
     } else {
-      currentList.push(spec); // 선택되어 있지 않으면 추가
+      currentList.push(spec);
     }
-    
     setFormData({ specialty: currentList.join(",") });
     if (errors.specialty) setErrors((prev) => ({ ...prev, specialty: false }));
   };
 
-  // 💡 여러 파일을 선택할 때 기존 파일에 추가되도록 수정
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
   };
 
-  // 💡 선택한 파일 목록에서 특정 파일을 제거하는 기능
   const handleRemoveFile = (indexToRemove) => {
     setFiles((prevFiles) => prevFiles.filter((_, index) => index !== indexToRemove));
   };
@@ -157,8 +144,6 @@ const LawyerJoinFormPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // 💡 빈칸 검증 로직 추가
     const newErrors = {};
     if (!formData.loginId) newErrors.loginId = true;
     if (!isIdChecked || formData.loginId !== checkedId) newErrors.loginIdCheck = true;
@@ -172,8 +157,9 @@ const LawyerJoinFormPage = () => {
     if (!formData.officeName) newErrors.officeName = true;
     if (!formData.specialty) newErrors.specialty = true;
     if (!formData.officeAddress) newErrors.officeAddress = true;
+    // 💡 사무소 상세 주소 검증 추가
+    if (!formData.officeDetailAddress) newErrors.officeDetailAddress = true;
 
-    // 에러가 하나라도 있으면 상태 업데이트 후 중단
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       alert("필수 항목을 모두 확인해주세요.");
@@ -202,10 +188,7 @@ const LawyerJoinFormPage = () => {
     submitData.append("officeAddress", formData.officeAddress);
     submitData.append("officeDetailAddr", formData.officeDetailAddress);
 
-    // 선택된 파일들을 순회하며 Append
-    files.forEach((file) => {
-      submitData.append("files", file);
-    });
+    files.forEach((file) => { submitData.append("files", file); });
 
     try {
       const res = await memberApi.join(submitData);
@@ -383,7 +366,6 @@ const LawyerJoinFormPage = () => {
           />
         </div>
         
-        {/* 💡 CSS로 스타일을 분리한 전문 분야 다중 선택 버튼 UI */}
         <div className="lawyer-join-group">
           <label className={`lawyer-join-label ${errors.specialty ? "error" : ""}`}>
             주요 전문 분야 (다중 선택 가능) {errors.specialty && "[분야 선택]"}
@@ -418,15 +400,19 @@ const LawyerJoinFormPage = () => {
             className={`lawyer-join-input ${errors.officeAddress ? "input-error" : ""}`}
           />
         </div>
+        
+        {/* 💡 사무소 상세 주소 라벨 및 인풋에 에러 하이라이트 적용 */}
         <div className="lawyer-join-group">
-          <label className="lawyer-join-label">사무소 상세 주소</label>
+          <label className={`lawyer-join-label ${errors.officeDetailAddress ? "error" : ""}`}>
+            사무소 상세 주소 {errors.officeDetailAddress && "[상세 주소 입력]"}
+          </label>
           <input
             type="text"
             name="officeDetailAddress"
             value={formData.officeDetailAddress}
             onChange={handleChange}
             placeholder="예: 대법원빌딩 3층"
-            className="lawyer-join-input"
+            className={`lawyer-join-input ${errors.officeDetailAddress ? "input-error" : ""}`}
           />
         </div>
 

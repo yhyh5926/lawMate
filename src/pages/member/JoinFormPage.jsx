@@ -1,7 +1,6 @@
 /**
  * 파일 위치: src/pages/member/JoinFormPage.jsx
- * 수정사항: 일반 회원의 주소, 상세주소 입력 필드가 추가되었습니다.
- * 추가수정: 가입하기 버튼 클릭 시 필수 항목 누락 여부를 검증하고 에러 상태(errors)를 통해 라벨을 붉은색으로 하이라이트하는 기능이 추가되었습니다.
+ * 수정사항: 기본 주소뿐만 아니라 상세 주소(detailAddress)까지 빈칸 검증 및 빨간색 하이라이트 로직을 적용했습니다.
  */
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -62,21 +61,16 @@ const JoinFormPage = () => {
   } = useJoinFormStore();
   const [idError, setIdError] = useState("");
   const [idSuccess, setIdSuccess] = useState("");
-  
-  // 💡 필수 입력값 누락 검증 상태 추가
   const [errors, setErrors] = useState({});
-  
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ [name]: value });
-    // 사용자가 입력하면 해당 필드의 에러 표시 해제
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: false }));
     }
-    
     if (name === "loginId") {
       setIdChecked(false, "");
       setIdSuccess("");
@@ -122,8 +116,6 @@ const JoinFormPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // 💡 빈칸 검증 로직 추가
     const newErrors = {};
     if (!formData.loginId) newErrors.loginId = true;
     if (!isIdChecked || formData.loginId !== checkedId) newErrors.loginIdCheck = true;
@@ -133,8 +125,10 @@ const JoinFormPage = () => {
     if (!formData.phone2) newErrors.phone2 = true;
     if (!formData.phone3) newErrors.phone3 = true;
     if (!formData.emailId) newErrors.emailId = true;
+    if (!formData.address) newErrors.address = true;
+    // 💡 상세 주소 검증 추가
+    if (!formData.detailAddress) newErrors.detailAddress = true;
     
-    // 에러가 하나라도 있으면 상태 업데이트 후 중단
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       alert("필수 항목을 모두 확인해주세요.");
@@ -178,7 +172,6 @@ const JoinFormPage = () => {
 
       <form onSubmit={handleSubmit}>
         <div className="join-form-group">
-          {/* 💡 에러 발생 시 label에 error 클래스 추가 */}
           <label className={`join-label ${errors.loginId || errors.loginIdCheck ? "error" : ""}`}>
             아이디 {errors.loginIdCheck ? "[중복 확인 필요]" : (errors.loginId ? "[아이디 입력]" : "")}
           </label>
@@ -309,25 +302,31 @@ const JoinFormPage = () => {
         </div>
 
         <div className="join-form-group">
-          <label className="join-label">기본 주소</label>
+          <label className={`join-label ${errors.address ? "error" : ""}`}>
+            기본 주소 {errors.address && "[주소 입력]"}
+          </label>
           <input
             type="text"
             name="address"
             value={formData.address}
             onChange={handleChange}
             placeholder="예: 서울시 강남구 테헤란로"
-            className="join-input"
+            className={`join-input ${errors.address ? "input-error" : ""}`}
           />
         </div>
+        
+        {/* 💡 상세 주소 라벨 및 인풋에 에러 하이라이트 적용 */}
         <div className="join-form-group">
-          <label className="join-label">상세 주소</label>
+          <label className={`join-label ${errors.detailAddress ? "error" : ""}`}>
+            상세 주소 {errors.detailAddress && "[상세 주소 입력]"}
+          </label>
           <input
             type="text"
             name="detailAddress"
             value={formData.detailAddress}
             onChange={handleChange}
             placeholder="예: 101동 202호"
-            className="join-input"
+            className={`join-input ${errors.detailAddress ? "input-error" : ""}`}
           />
         </div>
 
