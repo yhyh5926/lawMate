@@ -1,7 +1,7 @@
-// src/pages/member/JoinFormPage.jsx
 /**
  * 파일 위치: src/pages/member/JoinFormPage.jsx
  * 수정사항: 일반 회원의 주소, 상세주소 입력 필드가 추가되었습니다.
+ * 추가수정: 가입하기 버튼 클릭 시 필수 항목 누락 여부를 검증하고 에러 상태(errors)를 통해 라벨을 붉은색으로 하이라이트하는 기능이 추가되었습니다.
  */
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -62,28 +62,40 @@ const JoinFormPage = () => {
   } = useJoinFormStore();
   const [idError, setIdError] = useState("");
   const [idSuccess, setIdSuccess] = useState("");
+  
+  // 💡 필수 입력값 누락 검증 상태 추가
+  const [errors, setErrors] = useState({});
+  
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ [name]: value });
+    // 사용자가 입력하면 해당 필드의 에러 표시 해제
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: false }));
+    }
+    
     if (name === "loginId") {
       setIdChecked(false, "");
       setIdSuccess("");
       setIdError("");
+      if (errors.loginIdCheck) setErrors((prev) => ({ ...prev, loginIdCheck: false }));
     }
   };
 
   const handlePhone2Change = (e) => {
     const val = e.target.value.replace(/[^0-9]/g, "");
     setFormData({ phone2: val });
+    if (errors.phone2) setErrors((prev) => ({ ...prev, phone2: false }));
     if (val.length === 4) phone3Ref.current.focus();
   };
 
   const handlePhone3Change = (e) => {
     const val = e.target.value.replace(/[^0-9]/g, "");
     setFormData({ phone3: val });
+    if (errors.phone3) setErrors((prev) => ({ ...prev, phone3: false }));
   };
 
   const handleCheckId = async () => {
@@ -97,6 +109,7 @@ const JoinFormPage = () => {
         setIdSuccess("사용 가능한 아이디입니다.");
         setIdError("");
         setIdChecked(true, formData.loginId);
+        if (errors.loginIdCheck) setErrors((prev) => ({ ...prev, loginIdCheck: false }));
       } else {
         setIdError("이미 사용 중인 아이디입니다.");
         setIdSuccess("");
@@ -109,21 +122,29 @@ const JoinFormPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isIdChecked || formData.loginId !== checkedId)
-      return alert("아이디 중복 확인을 해주세요.");
+    
+    // 💡 빈칸 검증 로직 추가
+    const newErrors = {};
+    if (!formData.loginId) newErrors.loginId = true;
+    if (!isIdChecked || formData.loginId !== checkedId) newErrors.loginIdCheck = true;
+    if (!formData.password) newErrors.password = true;
+    if (!formData.passwordConfirm) newErrors.passwordConfirm = true;
+    if (!formData.name) newErrors.name = true;
+    if (!formData.phone2) newErrors.phone2 = true;
+    if (!formData.phone3) newErrors.phone3 = true;
+    if (!formData.emailId) newErrors.emailId = true;
+    
+    // 에러가 하나라도 있으면 상태 업데이트 후 중단
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      alert("필수 항목을 모두 확인해주세요.");
+      return;
+    }
+
     if (!validatePassword(formData.password))
-      return alert(
-        "비밀번호는 8~20자의 영문, 숫자, 특수문자를 포함해야 합니다.",
-      );
+      return alert("비밀번호는 8~20자의 영문, 숫자, 특수문자를 포함해야 합니다.");
     if (formData.password !== formData.passwordConfirm)
       return alert("비밀번호가 일치하지 않습니다.");
-    if (
-      !formData.name ||
-      !formData.phone2 ||
-      !formData.phone3 ||
-      !formData.emailId
-    )
-      return alert("모든 정보를 입력해주세요.");
 
     const phone = `${formData.phone1}-${formData.phone2}-${formData.phone3}`;
     const email = `${formData.emailId}@${formData.emailDomain}`;
@@ -157,7 +178,10 @@ const JoinFormPage = () => {
 
       <form onSubmit={handleSubmit}>
         <div className="join-form-group">
-          <label className="join-label">아이디</label>
+          {/* 💡 에러 발생 시 label에 error 클래스 추가 */}
+          <label className={`join-label ${errors.loginId || errors.loginIdCheck ? "error" : ""}`}>
+            아이디 {errors.loginIdCheck ? "[중복 확인 필요]" : (errors.loginId ? "[아이디 입력]" : "")}
+          </label>
           <div className="join-flex-row">
             <input
               type="text"
@@ -165,12 +189,12 @@ const JoinFormPage = () => {
               value={formData.loginId}
               onChange={handleChange}
               placeholder="4~20자 영문, 숫자"
-              className="join-input"
+              className={`join-input ${errors.loginId ? "input-error" : ""}`}
             />
             <button
               type="button"
               onClick={handleCheckId}
-              className="join-btn-secondary"
+              className={`join-btn-secondary ${errors.loginIdCheck ? "btn-error" : ""}`}
             >
               중복 확인
             </button>
@@ -180,41 +204,49 @@ const JoinFormPage = () => {
         </div>
 
         <div className="join-form-group">
-          <label className="join-label">비밀번호</label>
+          <label className={`join-label ${errors.password ? "error" : ""}`}>
+            비밀번호 {errors.password && "[비밀번호 입력]"}
+          </label>
           <input
             type="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
             placeholder="8~20자 영문, 숫자, 특수문자"
-            className="join-input"
+            className={`join-input ${errors.password ? "input-error" : ""}`}
           />
         </div>
         <div className="join-form-group">
-          <label className="join-label">비밀번호 확인</label>
+          <label className={`join-label ${errors.passwordConfirm ? "error" : ""}`}>
+            비밀번호 확인 {errors.passwordConfirm && "[비밀번호 다시 입력]"}
+          </label>
           <input
             type="password"
             name="passwordConfirm"
             value={formData.passwordConfirm}
             onChange={handleChange}
             placeholder="비밀번호 다시 입력"
-            className="join-input"
+            className={`join-input ${errors.passwordConfirm ? "input-error" : ""}`}
           />
         </div>
         <div className="join-form-group">
-          <label className="join-label">이름</label>
+          <label className={`join-label ${errors.name ? "error" : ""}`}>
+            이름 {errors.name && "[실명 입력]"}
+          </label>
           <input
             type="text"
             name="name"
             value={formData.name}
             onChange={handleChange}
             placeholder="실명 입력"
-            className="join-input"
+            className={`join-input ${errors.name ? "input-error" : ""}`}
           />
         </div>
 
         <div className="join-form-group">
-          <label className="join-label">휴대전화</label>
+          <label className={`join-label ${errors.phone2 || errors.phone3 ? "error" : ""}`}>
+            휴대전화 {(errors.phone2 || errors.phone3) && "[전화번호 입력]"}
+          </label>
           <div className="join-flex-row">
             <select
               name="phone1"
@@ -233,7 +265,7 @@ const JoinFormPage = () => {
               value={formData.phone2}
               onChange={handlePhone2Change}
               maxLength={4}
-              className="join-input"
+              className={`join-input ${errors.phone2 ? "input-error" : ""}`}
               style={{ textAlign: "center" }}
             />
             <span>-</span>
@@ -243,14 +275,16 @@ const JoinFormPage = () => {
               value={formData.phone3}
               onChange={handlePhone3Change}
               maxLength={4}
-              className="join-input"
+              className={`join-input ${errors.phone3 ? "input-error" : ""}`}
               style={{ textAlign: "center" }}
             />
           </div>
         </div>
 
         <div className="join-form-group">
-          <label className="join-label">이메일</label>
+          <label className={`join-label ${errors.emailId ? "error" : ""}`}>
+            이메일 {errors.emailId && "[이메일 아이디 입력]"}
+          </label>
           <div className="join-flex-row">
             <input
               type="text"
@@ -258,7 +292,7 @@ const JoinFormPage = () => {
               value={formData.emailId}
               onChange={handleChange}
               placeholder="이메일 아이디"
-              className="join-input"
+              className={`join-input ${errors.emailId ? "input-error" : ""}`}
             />
             <span>@</span>
             <select

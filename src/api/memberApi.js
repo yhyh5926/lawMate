@@ -1,4 +1,3 @@
-// src/api/memberApi.js
 import axiosInstance from "./axiosInstance";
 
 export const memberApi = {
@@ -27,7 +26,9 @@ export const memberApi = {
   // 기타 기능 유지
   findIdPw: (data) => axiosInstance.post("/member/find", data),
   editProfile: (data) => axiosInstance.put("/api/mypage/edit", data),
-  withdraw: () => axiosInstance.delete("/api/mypage/withdraw"),
+  
+  // 💡 [수정] 탈퇴 시 loginId를 백엔드로 보내도록 변경 (DELETE 대신 상태 업데이트를 위한 PUT 사용)
+  withdraw: (loginId) => axiosInstance.put(`/api/mypage/withdraw?loginId=${loginId}`),
 
   // 💡 [신규 추가] 일반 회원의 상담 예약 내역 조회 및 취소 API
   getMyReservations: (memberId) => axiosInstance.get(`/api/reservations/member/${memberId}`),
