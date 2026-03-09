@@ -6,9 +6,11 @@ import EditInfoTab from "../../components/mypage/EditInfoTab.jsx";
 import MyPostsTab from "../../components/mypage/MyPostsTab.jsx";
 import LawyerMgmtTab from "../../components/mypage/LawyerMgmtTab.jsx"; 
 import ClientConsultTab from "../../components/mypage/ClientConsultTab.jsx";
-import CaseMgmtTab from "../../components/mypage/CaseMgmtTab.jsx"; // 💡 새로 만든 사건 기록 탭 임포트
-import "../../styles/mypage/MyPage.css";
+import CaseMgmtTab from "../../components/mypage/CaseMgmtTab.jsx"; 
 import ConsultListPage from "../mypage/ConsultListPage.jsx";
+// 💡 [추가] 아까 새로 만든 변호사용 접수 관리(사건 목록) 컴포넌트 임포트
+import LawyerReceptionTab from "../../components/mypage/LawyerReceptionTab.jsx"; 
+import "../../styles/mypage/MyPage.css";
 
 const MyPage = () => {
   const { user } = useAuthStore();
@@ -31,10 +33,12 @@ const MyPage = () => {
     { id: "consult", label: "상담 내역" },
   ];
 
-  // 💡 2. 변호사(LAWYER) 계정일 경우에만 '변호사 관리' 및 '받은 상담 관리' 탭 추가
-  if (user.role === "LAWYER") {
+  // 💡 2. 변호사(LAWYER) 계정일 경우 탭 추가
+  // user.role 이나 user.memberType 둘 다 대응할 수 있게 방어 로직 추가
+  if (user.role === "LAWYER" || user.memberType === "LAWYER") {
     tabs.push({ id: "lawyerMgmt", label: "변호사 관리" });
-    tabs.push({ id: "consultMgmt", label: "받은 상담 관리" }); 
+    // 💡 [수정] 받은 상담 관리 -> 접수 관리로 이름 변경 및 id 변경
+    tabs.push({ id: "receptionMgmt", label: "접수 관리" }); 
   }
 
   return (
@@ -60,13 +64,13 @@ const MyPage = () => {
           {activeTab === "info" && <MyInfoTab />}
           {activeTab === "edit" && <EditInfoTab />}
           {activeTab === "posts" && <MyPostsTab />}
-          
-          {/* 💡 사건 기록 탭 렌더링 */}
           {activeTab === "cases" && <CaseMgmtTab />}
-          
           {activeTab === "clientConsult" && <ClientConsultTab />}
           {activeTab === "lawyerMgmt" && <LawyerMgmtTab />}
           {activeTab === "consult" && <ConsultListPage />}
+          
+          {/* 💡 [핵심 수정] 접수 관리 버튼을 눌렀을 때 화면이 나오도록 연결 한 줄 추가! */}
+          {activeTab === "receptionMgmt" && <LawyerReceptionTab />}
         </section>
       </div>
     </div>

@@ -1,0 +1,122 @@
+/* src/styles/mypage/LawyerReceptionTab.css */
+
+.reception-mgmt-wrapper {
+  width: 100%;
+}
+
+/* 상단 헤더 */
+.reception-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.reception-header .content-title {
+  margin: 0;
+  font-size: 20px;
+}
+
+.btn-register-case {
+  padding: 8px 16px;
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.btn-register-case:hover {
+  background-color: #1d4ed8;
+}
+
+/* 메시지 표시 (로딩/데이터없음) */
+.reception-message {
+  text-align: center;
+  padding: 40px;
+  color: #64748b;
+}
+
+.reception-message.empty {
+  background-color: #f8fafc;
+  border-radius: 8px;
+}
+
+/* 테이블 레이아웃 */
+.reception-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.reception-table thead {
+  background-color: #f1f5f9;
+  border-bottom: 2px solid #cbd5e1;
+}
+
+.reception-table th {
+  padding: 12px;
+}
+
+.th-title { width: 40%; }
+.th-type { width: 15%; }
+.th-status { width: 15%; }
+.th-date { width: 15%; }
+.th-action { width: 15%; text-align: center; }
+
+.reception-table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.reception-table td {
+  padding: 12px;
+}
+
+.td-title {
+  font-weight: bold;
+  color: #333;
+}
+
+.td-type, .td-date {
+  color: #555;
+}
+
+.td-action {
+  text-align: center;
+}
+
+/* 상세 보기 버튼 */
+.btn-detail-view {
+  padding: 6px 12px;
+  background-color: #fff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.2s;
+}
+
+.btn-detail-view:hover {
+  background-color: #f1f5f9;
+}
+
+/* 상태 배지 (Status Badge) */
+.status-badge {
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.step-receive { background-color: #f59e0b; } /* 접수 - 주황 */
+.step-assign { background-color: #3b82f6; } /* 배정 - 파랑 */
+.step-progress { background-color: #10b981; } /* 진행 중 - 초록 */
+.step-opinion { background-color: #8b5cf6; } /* 의견 완료 - 보라 */
+.step-end { background-color: #6b7280; } /* 종료 - 짙은 회색 */
+.step-default { background-color: #9ca3af; } /* 기본 - 옅은 회색 */
