@@ -21,12 +21,16 @@ const LoginContent = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    
     try {
       const response = await memberApi.login(formData);
       const { token, member } = response.data;
       if (token) {
         login(token, member);
-        navigate("/main");
+        // 로그인시 아이디 저장 (수빈 수정)
+        localStorage.setItem("memberId", member.memberId);
+
+        navigate("/main.do");
       }
     } catch (err) {
       setError(err.response?.data?.message || "로그인 중 오류가 발생했습니다.");
@@ -54,6 +58,9 @@ const LoginContent = () => {
         const response = await memberApi.socialLogin(googleData);
         if (response.data.token) {
           login(response.data.token, response.data.member);
+          // 로그인시 아이디 저장 (수빈 수정)
+          localStorage.setItem("memberId", response.data.member.memberId);
+
           navigate("/main");
         }
       } catch (err) {

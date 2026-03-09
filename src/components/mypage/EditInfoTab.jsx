@@ -1,20 +1,18 @@
 // src/components/mypage/EditInfoTab.jsx
-/**
- * 파일 위치: src/components/mypage/EditInfoTab.jsx
- * 수정사항: 변호사(전문회원) 정보 수정 시 전문 분야를 텍스트 입력 대신 버튼 다중 선택 방식으로 변경했습니다.
- */
 import React, { useState, useRef } from "react";
 import { useAuthStore } from "../../store/authStore.js";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
+import { useNavigate } from "react-router-dom"; // 💡 라우팅을 위해 추가
+// import { memberApi } from "../../api/memberApi"; // 💡 실제 백엔드 연동 시 주석 해제
 
 const GOOGLE_CLIENT_ID =
   "244554224995-kcgsjp47k8flns89ldv9stpfga219kut.apps.googleusercontent.com";
 
-// 💡 전문 분야 카테고리 배열 ("전체" 제외)
 const SPECIALTIES = ["민사", "형사", "가사", "이혼", "노동", "행정", "기업", "부동산"];
 
 const EditInfoContent = ({ onVerifyReset }) => {
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore(); // 💡 스토어에서 로그아웃(초기화) 함수 가져오기
+  const navigate = useNavigate(); // 💡 이동을 위한 훅
   const [isVerified, setIsVerified] = useState(false);
   const [verifyPassword, setVerifyPassword] = useState("");
 
@@ -104,14 +102,13 @@ const EditInfoContent = ({ onVerifyReset }) => {
   const handleEditChange = (e) =>
     setEditData({ ...editData, [e.target.name]: e.target.value });
 
-  // 💡 전문 분야 다중 선택 토글 핸들러 추가
   const handleSpecialtyToggle = (spec) => {
     let currentList = editData.specialty ? editData.specialty.split(",") : [];
     
     if (currentList.includes(spec)) {
-      currentList = currentList.filter((item) => item !== spec); // 이미 선택되어 있으면 제거
+      currentList = currentList.filter((item) => item !== spec); 
     } else {
-      currentList.push(spec); // 선택되어 있지 않으면 추가
+      currentList.push(spec); 
     }
     
     setEditData({ ...editData, specialty: currentList.join(",") });
@@ -134,6 +131,31 @@ const EditInfoContent = ({ onVerifyReset }) => {
   const handleViewFile = () => {
     if (user.licenseFileUrl) window.open(user.licenseFileUrl, "_blank");
     else alert("등록된 첨부파일이 없습니다.");
+  };
+
+  // 💡 4. 회원 탈퇴 핸들러 추가
+  const handleWithdraw = async () => {
+    const confirmWithdraw = window.confirm(
+      "정말 탈퇴하시겠습니까?\n탈퇴 시 모든 개인정보 및 상담 내역이 삭제되며 복구할 수 없습니다."
+    );
+
+    if (confirmWithdraw) {
+      try {
+        // 백엔드 연동 시 주석 해제 및 알맞은 API 호출
+        // await memberApi.withdrawMember(user.memberId);
+        
+        alert("회원 탈퇴가 완료되었습니다. 그동안 이용해 주셔서 감사합니다.");
+        
+        // zustand 스토어의 유저 정보 초기화 (로그아웃 처리)
+        if(logout) logout(); 
+        
+        // 메인 페이지로 이동
+        navigate("/");
+      } catch (error) {
+        console.error("회원 탈퇴 중 오류 발생:", error);
+        alert("서버 오류로 인해 탈퇴 처리에 실패했습니다. 다시 시도해 주세요.");
+      }
+    }
   };
 
   return (
@@ -180,220 +202,233 @@ const EditInfoContent = ({ onVerifyReset }) => {
           )}
         </div>
       ) : (
-        <form onSubmit={handleEditSubmit} className="edit-form">
-          <div className="form-group">
-            <label className="form-label">아이디 (변경 불가)</label>
-            <input
-              type="text"
-              value={user.loginId}
-              className="form-input"
-              disabled
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">이메일 (변경 불가)</label>
-            <input
-              type="text"
-              value={user.email}
-              className="form-input"
-              disabled
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">
-              {user.role === "LAWYER" ? "이름 (실명 필수)" : "이름"}
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={editData.name}
-              onChange={handleEditChange}
-              className="form-input"
-              required
-            />
-          </div>
-
-          {user.provider !== "GOOGLE" && (
-            <>
-              <div className="form-group">
-                <label className="form-label">새 비밀번호</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={editData.password}
-                  onChange={handleEditChange}
-                  className="form-input"
-                  placeholder="변경하지 않으려면 빈칸으로 두세요."
-                />
-              </div>
-              <div className="form-group">
-                <label className="form-label">새 비밀번호 확인</label>
-                <input
-                  type="password"
-                  name="passwordConfirm"
-                  value={editData.passwordConfirm}
-                  onChange={handleEditChange}
-                  className="form-input"
-                  placeholder="새 비밀번호를 한번 더 입력해주세요."
-                />
-              </div>
-            </>
-          )}
-
-          <div className="form-group">
-            <label className="form-label">전화번호</label>
-            <div className="form-row">
+        <>
+          <form onSubmit={handleEditSubmit} className="edit-form">
+            <div className="form-group">
+              <label className="form-label">아이디 (변경 불가)</label>
+              <input type="text" value={user.loginId} className="form-input" disabled />
+            </div>
+            <div className="form-group">
+              <label className="form-label">이메일 (변경 불가)</label>
+              <input type="text" value={user.email} className="form-input" disabled />
+            </div>
+            <div className="form-group">
+              <label className="form-label">
+                {user.role === "LAWYER" ? "이름 (실명 필수)" : "이름"}
+              </label>
               <input
                 type="text"
-                name="phone1"
-                value={editData.phone1}
-                readOnly
+                name="name"
+                value={editData.name}
+                onChange={handleEditChange}
                 className="form-input"
-                style={{
-                  flex: 1,
-                  textAlign: "center",
-                  backgroundColor: "#f8fafc",
-                }}
-              />
-              <span>-</span>
-              <input
-                type="text"
-                name="phone2"
-                ref={phone2Ref}
-                value={editData.phone2}
-                onChange={(e) => handleEditPhoneChange(e, phone3Ref)}
-                maxLength={4}
-                className="form-input"
-                style={{ flex: 1, textAlign: "center" }}
-              />
-              <span>-</span>
-              <input
-                type="text"
-                name="phone3"
-                ref={phone3Ref}
-                value={editData.phone3}
-                onChange={(e) => handleEditPhoneChange(e, null)}
-                maxLength={4}
-                className="form-input"
-                style={{ flex: 1, textAlign: "center" }}
+                required
               />
             </div>
-          </div>
 
-          {user.role === "LAWYER" ? (
-            <>
-              <div className="form-group">
-                <label className="form-label">사무소 기본 주소</label>
-                <input
-                  type="text"
-                  name="officeAddress"
-                  value={editData.officeAddress}
-                  onChange={handleEditChange}
-                  className="form-input"
-                />
-              </div>
-              <div className="form-group">
-                <label className="form-label">사무소 상세 주소</label>
-                <input
-                  type="text"
-                  name="officeDetailAddress"
-                  value={editData.officeDetailAddress}
-                  onChange={handleEditChange}
-                  className="form-input"
-                />
-              </div>
-              <div className="form-group">
-                <label className="form-label">
-                  변호사 자격증 번호 (변경 시 재승인 필요)
-                </label>
-                <div className="form-row">
+            {user.provider !== "GOOGLE" && (
+              <>
+                <div className="form-group">
+                  <label className="form-label">새 비밀번호</label>
                   <input
-                    type="text"
-                    name="licenseNo"
-                    value={editData.licenseNo}
+                    type="password"
+                    name="password"
+                    value={editData.password}
                     onChange={handleEditChange}
                     className="form-input"
-                    style={{ flex: 1 }}
+                    placeholder="변경하지 않으려면 빈칸으로 두세요."
                   />
-                  <button
-                    type="button"
-                    onClick={handleViewFile}
-                    className="view-file-btn"
-                    style={{ padding: "14px" }}
-                  >
-                    기존 파일 보기
-                  </button>
                 </div>
-              </div>
-              <div className="form-group">
-                <label className="form-label">자격증 증빙서류 다시 첨부</label>
-                <input
-                  type="file"
-                  multiple
-                  onChange={(e) => setFiles(Array.from(e.target.files))}
-                  className="form-input"
-                  style={{ padding: "10px" }}
-                />
-              </div>
+                <div className="form-group">
+                  <label className="form-label">새 비밀번호 확인</label>
+                  <input
+                    type="password"
+                    name="passwordConfirm"
+                    value={editData.passwordConfirm}
+                    onChange={handleEditChange}
+                    className="form-input"
+                    placeholder="새 비밀번호를 한번 더 입력해주세요."
+                  />
+                </div>
+              </>
+            )}
 
-              {/* 💡 전문 분야 다중 선택 버튼 UI 적용 */}
-              <div className="form-group">
-                <label className="form-label">주요 전문 분야 (다중 선택 가능)</label>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "8px" }}>
-                  {SPECIALTIES.map((spec) => {
-                    const isSelected = editData.specialty ? editData.specialty.split(",").includes(spec) : false;
-                    return (
-                      <button
-                        type="button"
-                        key={spec}
-                        onClick={() => handleSpecialtyToggle(spec)}
-                        style={{
-                          padding: "8px 16px",
-                          borderRadius: "20px",
-                          border: isSelected ? "1px solid #007BFF" : "1px solid #ddd",
-                          backgroundColor: isSelected ? "#007BFF" : "#fff",
-                          color: isSelected ? "#fff" : "#555",
-                          cursor: "pointer",
-                          fontWeight: isSelected ? "bold" : "normal",
-                          transition: "all 0.2s ease-in-out",
-                        }}
-                      >
-                        {spec}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="form-group">
-                <label className="form-label">기본 주소</label>
+            <div className="form-group">
+              <label className="form-label">전화번호</label>
+              <div className="form-row">
                 <input
                   type="text"
-                  name="address"
-                  value={editData.address}
-                  onChange={handleEditChange}
+                  name="phone1"
+                  value={editData.phone1}
+                  readOnly
                   className="form-input"
+                  style={{ flex: 1, textAlign: "center", backgroundColor: "#f8fafc" }}
                 />
-              </div>
-              <div className="form-group">
-                <label className="form-label">상세 주소</label>
+                <span>-</span>
                 <input
                   type="text"
-                  name="detailAddress"
-                  value={editData.detailAddress}
-                  onChange={handleEditChange}
+                  name="phone2"
+                  ref={phone2Ref}
+                  value={editData.phone2}
+                  onChange={(e) => handleEditPhoneChange(e, phone3Ref)}
+                  maxLength={4}
                   className="form-input"
+                  style={{ flex: 1, textAlign: "center" }}
+                />
+                <span>-</span>
+                <input
+                  type="text"
+                  name="phone3"
+                  ref={phone3Ref}
+                  value={editData.phone3}
+                  onChange={(e) => handleEditPhoneChange(e, null)}
+                  maxLength={4}
+                  className="form-input"
+                  style={{ flex: 1, textAlign: "center" }}
                 />
               </div>
-            </>
-          )}
+            </div>
 
-          <button type="submit" className="submit-edit-btn">
-            수정 완료
-          </button>
-        </form>
+            {user.role === "LAWYER" ? (
+              <>
+                <div className="form-group">
+                  <label className="form-label">사무소 기본 주소</label>
+                  <input
+                    type="text"
+                    name="officeAddress"
+                    value={editData.officeAddress}
+                    onChange={handleEditChange}
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">사무소 상세 주소</label>
+                  <input
+                    type="text"
+                    name="officeDetailAddress"
+                    value={editData.officeDetailAddress}
+                    onChange={handleEditChange}
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">변호사 자격증 번호 (변경 시 재승인 필요)</label>
+                  <div className="form-row">
+                    <input
+                      type="text"
+                      name="licenseNo"
+                      value={editData.licenseNo}
+                      onChange={handleEditChange}
+                      className="form-input"
+                      style={{ flex: 1 }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleViewFile}
+                      className="view-file-btn"
+                      style={{ padding: "14px" }}
+                    >
+                      기존 파일 보기
+                    </button>
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">자격증 증빙서류 다시 첨부</label>
+                  <input
+                    type="file"
+                    multiple
+                    onChange={(e) => setFiles(Array.from(e.target.files))}
+                    className="form-input"
+                    style={{ padding: "10px" }}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">주요 전문 분야 (다중 선택 가능)</label>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "8px" }}>
+                    {SPECIALTIES.map((spec) => {
+                      const isSelected = editData.specialty ? editData.specialty.split(",").includes(spec) : false;
+                      return (
+                         <button
+                           type="button"
+                           key={spec}
+                           onClick={() => handleSpecialtyToggle(spec)}
+                           style={{
+                             padding: "8px 16px",
+                             borderRadius: "20px",
+                             border: isSelected ? "1px solid #007BFF" : "1px solid #ddd",
+                             backgroundColor: isSelected ? "#007BFF" : "#fff",
+                             color: isSelected ? "#fff" : "#555",
+                             cursor: "pointer",
+                             fontWeight: isSelected ? "bold" : "normal",
+                             transition: "all 0.2s ease-in-out",
+                           }}
+                         >
+                           {spec}
+                         </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="form-group">
+                  <label className="form-label">기본 주소</label>
+                  <input
+                    type="text"
+                    name="address"
+                    value={editData.address}
+                    onChange={handleEditChange}
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">상세 주소</label>
+                  <input
+                    type="text"
+                    name="detailAddress"
+                    value={editData.detailAddress}
+                    onChange={handleEditChange}
+                    className="form-input"
+                  />
+                </div>
+              </>
+            )}
+
+            <button type="submit" className="submit-edit-btn">
+              수정 완료
+            </button>
+          </form>
+
+          {/* 💡 회원 탈퇴 섹션 추가 */}
+          <div 
+            className="withdraw-section" 
+            style={{ 
+              marginTop: "40px", 
+              paddingTop: "20px", 
+              borderTop: "1px solid #e2e8f0", 
+              textAlign: "right" 
+            }}
+          >
+            <button 
+              type="button" 
+              onClick={handleWithdraw} 
+              style={{ 
+                background: "none", 
+                border: "none", 
+                color: "#94a3b8", 
+                textDecoration: "underline", 
+                cursor: "pointer", 
+                fontSize: "14px" 
+              }}
+              onMouseOver={(e) => e.target.style.color = "#dc2626"}
+              onMouseOut={(e) => e.target.style.color = "#94a3b8"}
+            >
+              회원 탈퇴하기
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

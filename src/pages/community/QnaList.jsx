@@ -5,20 +5,32 @@ import '../../styles/community/Qnalist.css';
 
 const QnaList = () => {
   const [posts, setPosts] = useState([]);
+  const [sortType, setSortType] = useState('latest');
+  const [caseType, setCaseType] = useState("all");
   const navigate = useNavigate();
 
   useEffect(() => {
-    getPostList().then(data => {
+    fetchPosts();
+  }, [sortType, caseType]);
+
+  const fetchPosts = async () => {
+    try {
+      const data = await getPostList(sortType, caseType);
       console.log(data);
       setPosts(data);
-    });
-  }, []);
+    } catch (error) {
+      console.error("게시글 목록 조회 실패:", error);
+    }
+  };
 
   let postTr = posts.map((post, idx) => (
     <tr key={post.postId} style={{ animationDelay: `${idx * 0.04}s` }}>
       <td className="td-no col-no">{post.postId}</td>
+      <td>{post.caseType}</td>
       <td className="col-title">
-        <Link className="post-link" to={`/community/detail/${post.postId}`}>{post.title}</Link>
+        <Link className="post-link" to={`/community/detail/${post.postId}`}>
+          {post.title}
+        </Link>
       </td>
       <td><span className="comment-badge">{post.commentCnt}</span></td>
       <td className="td-author">{post.name}</td>
@@ -37,9 +49,25 @@ const QnaList = () => {
       <div className="qna-container">
         <div className="board-header">
           <h2 className="board-title">💬 자유게시판</h2>
-          <button className="write-btn" onClick={() => navigate('/community/write')}>
-            ✏️ 글쓰기
-          </button>
+
+          <div className="board-controls">
+            <select
+              className="sort-selector"
+              value={sortType}
+              onChange={(e) => setSortType(e.target.value)}
+            >
+              <option value="latest">최신순</option>
+              <option value="views">조회수순</option>
+              <option value="comments">댓글순</option>
+            </select>
+
+            <button
+              className="write-btn"
+              onClick={() => navigate('/community/write')}
+            >
+              ✏️ 글쓰기
+            </button>
+          </div>
         </div>
 
         {posts.length > 0 && (
@@ -57,6 +85,7 @@ const QnaList = () => {
               <thead>
                 <tr>
                   <th className="col-no">No</th>
+                  <th>분류</th>
                   <th className="col-title">제목</th>
                   <th>댓글</th>
                   <th>작성자</th>

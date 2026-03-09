@@ -15,4 +15,16 @@ export const caseApi = {
 
   // [변호사] 답변 채택 후 정식 사건 전환/등록
   registerCase: (data) => axiosInstance.post("/register", data),
+
+  // 💡 [신규 추가] 변호사 - 사건 진행 상태 업데이트 (접수 -> 진행 중 등)
+  updateCaseStatus: (caseId, status) => 
+    axiosInstance.put(`/cases/${caseId}/status`, { status }),
+
+  // 💡 [신규 추가] 변호사 - 사건 상세 정보(내용, 파일, 코멘트) 수정
+  updateCaseInfo: (caseId, data) => 
+    axiosInstance.put(`/cases/${caseId}`, data),
+
+  // 💡 [신규 추가] 의뢰인(일반) - 사건 종료 후 별점 및 후기 등록
+  submitReview: (caseId, data) => 
+    axiosInstance.post(`/cases/${caseId}/review`, data),
 };

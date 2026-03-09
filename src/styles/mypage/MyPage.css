@@ -1,6 +1,6 @@
 /* src/styles/mypage/MyPage.css */
 .mypage-container {
-  max-width: 1100px;
+  max-width: 1250px; /* 💡 전체 화면을 더 넓게 쓰도록 수정 (1100px -> 1250px) */
   margin: 50px auto;
   padding: 0 20px;
 }
@@ -23,7 +23,7 @@
 
 /* 왼쪽 사이드바 탭 메뉴 */
 .mypage-sidebar {
-  width: 240px;
+  width: 200px; /* 💡 탭 버튼 영역 좌우 너비 축소 (240px -> 200px) */
   display: flex;
   flex-direction: column;
   background-color: #fff;
@@ -60,7 +60,7 @@
 
 /* 오른쪽 컨텐츠 영역 */
 .mypage-content {
-  flex: 1;
+  flex: 1; /* 💡 늘어난 여유 공간을 컨텐츠 영역이 모두 차지하도록 유지 */
   background-color: #fff;
   border-radius: 16px;
   padding: 40px;
