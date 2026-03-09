@@ -4,7 +4,9 @@ import { useAuthStore } from "../../store/authStore.js";
 import MyInfoTab from "../../components/mypage/MyInfoTab.jsx";
 import EditInfoTab from "../../components/mypage/EditInfoTab.jsx";
 import MyPostsTab from "../../components/mypage/MyPostsTab.jsx";
-import LawyerMgmtTab from "../../components/mypage/LawyerMgmtTab.jsx"; // 💡 새로 만든 변호사 관리 탭 임포트
+import LawyerMgmtTab from "../../components/mypage/LawyerMgmtTab.jsx"; 
+import ClientConsultTab from "../../components/mypage/ClientConsultTab.jsx";
+import CaseMgmtTab from "../../components/mypage/CaseMgmtTab.jsx"; // 💡 새로 만든 사건 기록 탭 임포트
 import "../../styles/mypage/MyPage.css";
 import ConsultListPage from "../mypage/ConsultListPage.jsx";
 
@@ -29,9 +31,10 @@ const MyPage = () => {
     { id: "consult", label: "상담 내역" },
   ];
 
-  // 💡 2. 변호사(LAWYER) 계정일 경우에만 '변호사 관리' 탭 추가
+  // 💡 2. 변호사(LAWYER) 계정일 경우에만 '변호사 관리' 및 '받은 상담 관리' 탭 추가
   if (user.role === "LAWYER") {
     tabs.push({ id: "lawyerMgmt", label: "변호사 관리" });
+    tabs.push({ id: "consultMgmt", label: "받은 상담 관리" }); 
   }
 
   return (
@@ -57,12 +60,11 @@ const MyPage = () => {
           {activeTab === "info" && <MyInfoTab />}
           {activeTab === "edit" && <EditInfoTab />}
           {activeTab === "posts" && <MyPostsTab />}
-          {activeTab === "cases" && (
-            <div className="empty-tab-content">
-              ⚖️ 진행 중인 사건 및 과거 기록을 불러오는 중입니다.
-            </div>
-          )}
-          {/* 💡 변호사 관리 탭 렌더링 */}
+          
+          {/* 💡 사건 기록 탭 렌더링 */}
+          {activeTab === "cases" && <CaseMgmtTab />}
+          
+          {activeTab === "clientConsult" && <ClientConsultTab />}
           {activeTab === "lawyerMgmt" && <LawyerMgmtTab />}
           {activeTab === "consult" && <ConsultListPage />}
         </section>

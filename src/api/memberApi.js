@@ -1,8 +1,4 @@
 // src/api/memberApi.js
-/**
- * 파일 위치: src/api/memberApi.js
- * 기능: 로그인(JSON)과 회원가입(Multipart) API를 분리하여 500 에러를 해결했습니다.
- */
 import axiosInstance from "./axiosInstance";
 
 export const memberApi = {
@@ -32,4 +28,8 @@ export const memberApi = {
   findIdPw: (data) => axiosInstance.post("/member/find", data),
   editProfile: (data) => axiosInstance.put("/api/mypage/edit", data),
   withdraw: () => axiosInstance.delete("/api/mypage/withdraw"),
+
+  // 💡 [신규 추가] 일반 회원의 상담 예약 내역 조회 및 취소 API
+  getMyReservations: (memberId) => axiosInstance.get(`/api/reservations/member/${memberId}`),
+  cancelReservation: (id) => axiosInstance.put(`/api/reservations/${id}/cancel`),
 };
