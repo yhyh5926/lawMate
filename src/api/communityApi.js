@@ -18,6 +18,16 @@ export const writePost = async (payload) => {
   return response.data;
 };
 
+export const updatePost = async (payload) => {
+  const response = await axiosInstance.put("/edit", payload);
+  return response.data;
+};
+
+export const deletePost = async (postId) => {
+  const response = await axiosInstance.delete(`/posts/${postId}`);
+  return response.data;
+};
+
 export const getComments = async (postId) => {
   const response = await axiosInstance.get(`/comment/list/${postId}`);
   return response.data; // 받은 객체에서 json만 꺼내온 것
