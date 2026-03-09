@@ -2,27 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { questionApi } from "../../api/questionApi.js";
 import { useAuthStore } from "../../store/authStore.js";
-import QuestionAnswerForm from "../../components/question/questionAnswerForm.jsx";
-import QuestionAnswerEditForm from "../../components/question/QuestionAnswerEditForm.jsx"; // 💡 추가
+import QuestionAnswerForm from "../../components/question/QuestionAnswerForm.jsx";
+import QuestionAnswerEditForm from "../../components/question/QuestionAnswerEditForm.jsx";
+import QuestionEditForm from "../../components/question/QuestionEditForm.jsx";
 import "../../styles/question/QuestionDetailPage.css";
 import { formatDate } from "../../utils/formatDate.js";
+import { baseURL } from "../../constants/baseURL.js";
 
 const QuestionDetailPage = () => {
   const { questionId } = useParams();
   const navigate = useNavigate();
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // --- [질문 인라인 수정 상태] ---
   const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState({
-    title: "",
-    content: "",
-    caseType: "",
-  });
+  const [editingAnswerId, setEditingAnswerId] = useState(null);
 
-  // --- [답변 인라인 수정 상태] ---
-  const [editingAnswerId, setEditingAnswerId] = useState(null); // 수정 중인 답변 ID 관리
+  // 💡 선택된 메인 이미지의 인덱스 상태 (기본값: 0)
+  const [selectedImgIdx, setSelectedImgIdx] = useState(0);
 
   const { user, isAuthenticated } = useAuthStore();
 
@@ -35,18 +31,6 @@ const QuestionDetailPage = () => {
     (ans) => ans.lawyerId === user?.lawyerId,
   );
 
-  const categories = [
-    "민사",
-    "형사",
-    "가사",
-    "이혼",
-    "노동",
-    "행정",
-    "기업",
-    "부동산",
-    "기타",
-  ];
-
   useEffect(() => {
     fetchDetail();
   }, [questionId]);
@@ -55,13 +39,7 @@ const QuestionDetailPage = () => {
     try {
       setLoading(true);
       const response = await questionApi.getQuestionDetail(questionId);
-      const data = response.data.data;
-      setDetail(data);
-      setEditForm({
-        title: data.title,
-        content: data.content,
-        caseType: data.caseType,
-      });
+      setDetail(response.data.data);
     } catch (error) {
       console.error("질문 상세 조회 실패", error);
     } finally {
@@ -69,39 +47,18 @@ const QuestionDetailPage = () => {
     }
   };
 
-  // 질문 수정 관련 핸들러
-  const handleEditChange = (e) =>
-    setEditForm({ ...editForm, [e.target.name]: e.target.value });
-  const handleEditToggle = () => {
-    if (isAlreadyAdopted)
-      return alert("이미 채택된 질문은 수정할 수 없습니다.");
-    setIsEditing(true);
-  };
-  const handleCancelEdit = () => {
-    setEditForm({
-      title: detail.title,
-      content: detail.content,
-      caseType: detail.caseType,
-    });
-    setIsEditing(false);
-  };
-  const handleUpdateSubmit = async () => {
-    try {
-      const res = await questionApi.updateQuestion({
-        questionId: detail.questionId,
-        ...editForm,
-      });
-      if (res.data.success) {
-        alert("수정되었습니다.");
-        setIsEditing(false);
-        fetchDetail();
-      }
-    } catch (error) {
-      alert("수정 실패", error);
-    }
-  };
+  // 💡 이미지 파일과 일반 파일 분류
+  const imageExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
+  const imageFiles =
+    detail?.files?.filter((f) =>
+      imageExtensions.includes(f.origName.split(".").pop().toLowerCase()),
+    ) || [];
+  const otherFiles =
+    detail?.files?.filter(
+      (f) =>
+        !imageExtensions.includes(f.origName.split(".").pop().toLowerCase()),
+    ) || [];
 
-  // 질문 삭제 핸들러
   const handleDeleteQuestion = async () => {
     if (hasAnswers)
       return alert("이미 답변이 등록된 질문은 삭제할 수 없습니다.");
@@ -113,23 +70,10 @@ const QuestionDetailPage = () => {
         navigate("/question/list");
       }
     } catch (error) {
-      alert("삭제 실패", error);
+      alert("삭제 실패");
     }
   };
 
-  // 답변 삭제 핸들러 💡 추가
-  const handleDeleteAnswer = async (answerId) => {
-    if (!window.confirm("정말 이 답변을 삭제하시겠습니까?")) return;
-    try {
-      await questionApi.deleteAnswer(answerId);
-      alert("답변이 삭제되었습니다.");
-      fetchDetail();
-    } catch (error) {
-      (alert("삭제 실패"), error);
-    }
-  };
-
-  // 답변 채택 핸들러
   const handleAdopt = async (answerId, lawyerId) => {
     if (!window.confirm("이 답변을 채택하시겠습니까?")) return;
     try {
@@ -144,7 +88,7 @@ const QuestionDetailPage = () => {
         fetchDetail();
       }
     } catch (error) {
-      alert("채택 오류 발생", error);
+      alert("채택 오류 발생");
     }
   };
 
@@ -154,46 +98,24 @@ const QuestionDetailPage = () => {
     );
   if (!detail) return <div className="error-msg">질문을 찾을 수 없습니다.</div>;
 
+  console.log(detail);
   return (
     <div className="question-detail-container">
-      {/* 1. 질문 카드 영역 */}
       <section className="question-card">
-        <div className="question-header-top">
-          {isEditing ? (
-            <select
-              name="caseType"
-              className="edit-select"
-              value={editForm.caseType}
-              onChange={handleEditChange}
-            >
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <span className="case-type-badge">{detail.caseType}</span>
-          )}
-        </div>
-
         {isEditing ? (
-          <div className="inline-edit-form">
-            <input
-              name="title"
-              className="edit-title-input"
-              value={editForm.title}
-              onChange={handleEditChange}
-            />
-            <textarea
-              name="content"
-              className="edit-content-textarea"
-              value={editForm.content}
-              onChange={handleEditChange}
-            />
-          </div>
+          <QuestionEditForm
+            detail={detail}
+            onSaveSuccess={() => {
+              setIsEditing(false);
+              fetchDetail();
+            }}
+            onCancel={() => setIsEditing(false)}
+          />
         ) : (
           <>
+            <div className="question-header-top">
+              <span className="case-type-badge">{detail.caseType}</span>
+            </div>
             <h2 className="question-title">{detail.title}</h2>
             <div className="status-row">
               <div className="question-meta">
@@ -206,40 +128,87 @@ const QuestionDetailPage = () => {
                 {isAlreadyAdopted ? "채택완료" : "채택대기"}
               </div>
             </div>
+
+            {/* 🖼️ 갤러리 뷰 (큰 이미지 + 하단 썸네일) */}
+            {imageFiles.length > 0 && (
+              <div className="image-gallery-container">
+                {/* 메인 이미지 영역 */}
+                <div className="main-image-view">
+                  <img
+                    src={baseURL + imageFiles[selectedImgIdx]?.savePath}
+                    alt="메인 이미지"
+                    className="gallery-main-img"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/images/no-image.png";
+                    }}
+                  />
+                </div>
+
+                {/* 하단 썸네일 리스트 (이미지가 2개 이상일 때만 노출) */}
+                {imageFiles.length > 1 && (
+                  <div className="thumbnail-list">
+                    {imageFiles.map((file, idx) => (
+                      <button
+                        key={file.attachId}
+                        className={`thumb-item ${selectedImgIdx === idx ? "active" : ""}`}
+                        onClick={() => setSelectedImgIdx(idx)}
+                      >
+                        <img
+                          src={baseURL + file.savePath}
+                          alt={`썸네일 ${idx}`}
+                          className="thumb-img"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="question-content-text">{detail.content}</div>
+
+            {/* 📎 일반 첨부 파일 리스트 (이미지 제외) */}
+            {otherFiles.length > 0 && (
+              <div className="detail-file-section">
+                <p className="file-label">첨부파일 ({otherFiles.length})</p>
+                <div className="file-list-box">
+                  {otherFiles.map((file) => (
+                    <a
+                      key={file.attachId}
+                      href={`/api/files/download/${file.attachId}`}
+                      className="download-link"
+                    >
+                      <span className="icon">💾</span> {file.origName}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="question-footer-actions">
+              {isOwner && !isAlreadyAdopted && (
+                <div className="owner-control-group">
+                  <button
+                    className="action-btn edit"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    질문 수정
+                  </button>
+                  <button
+                    className="action-btn delete"
+                    onClick={handleDeleteQuestion}
+                  >
+                    질문 삭제
+                  </button>
+                </div>
+              )}
+            </div>
           </>
         )}
-
-        <div className="question-footer-actions">
-          {isEditing ? (
-            <div className="edit-control-group">
-              <button className="action-btn save" onClick={handleUpdateSubmit}>
-                저장하기
-              </button>
-              <button className="action-btn cancel" onClick={handleCancelEdit}>
-                취소
-              </button>
-            </div>
-          ) : (
-            isOwner &&
-            !isAlreadyAdopted && (
-              <div className="owner-control-group">
-                <button className="action-btn edit" onClick={handleEditToggle}>
-                  질문 수정
-                </button>
-                <button
-                  className="action-btn delete"
-                  onClick={handleDeleteQuestion}
-                >
-                  질문 삭제
-                </button>
-              </div>
-            )
-          )}
-        </div>
       </section>
 
-      {/* 2. 답변 작성 (변호사 전용) */}
+      {/* 2. 답변 작성 영역 (변호사) */}
       {isLawyer && !hasAlreadyAnswered && !isAlreadyAdopted && (
         <section className="answer-form-section">
           <QuestionAnswerForm
@@ -281,29 +250,8 @@ const QuestionDetailPage = () => {
                     </span>
                   </div>
                 </div>
-
-                {/* 💡 답변 수정/삭제 버튼 (작성자 본인만 표시) */}
-                {!isAlreadyAdopted &&
-                  user?.lawyerId === ans.lawyerId &&
-                  editingAnswerId !== ans.answerId && (
-                    <div className="ans-owner-actions">
-                      <button
-                        className="ans-minor-btn"
-                        onClick={() => setEditingAnswerId(ans.answerId)}
-                      >
-                        수정
-                      </button>
-                      <button
-                        className="ans-minor-btn delete"
-                        onClick={() => handleDeleteAnswer(ans.answerId)}
-                      >
-                        삭제
-                      </button>
-                    </div>
-                  )}
               </div>
 
-              {/* 💡 수정 모드일 때 EditForm 노출 */}
               {editingAnswerId === ans.answerId ? (
                 <QuestionAnswerEditForm
                   answerId={ans.answerId}
@@ -331,9 +279,7 @@ const QuestionDetailPage = () => {
             </div>
           ))
         ) : (
-          <div className="empty-answer">
-            <p>아직 등록된 답변이 없습니다.</p>
-          </div>
+          <div className="empty-answer">아직 등록된 답변이 없습니다.</div>
         )}
       </div>
 

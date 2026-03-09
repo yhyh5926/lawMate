@@ -1,0 +1,202 @@
+/* 기본 컨테이너 */
+.inline-edit-form {
+  background: #ffffff;
+  border: 1px solid #e1e4e8;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 800px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 상단 카테고리 & 제목 영역 */
+.edit-field {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.edit-select {
+  padding: 10px 14px;
+  border: 1.5px solid #dcdfe6;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  font-size: 14px;
+  color: #4a4a4a;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  min-width: 120px;
+}
+
+.edit-title-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1.5px solid #dcdfe6;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+/* 텍스트 영역 */
+.edit-content-textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 16px;
+  border: 1.5px solid #dcdfe6;
+  border-radius: 8px;
+  font-size: 15px;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.edit-title-input:focus,
+.edit-content-textarea:focus,
+.edit-select:focus {
+  border-color: #4a90e2;
+}
+
+/* 파일 섹션 */
+.edit-file-section {
+  background: #fdfdfd;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.file-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+/* 파일 업로드 존 */
+.file-upload-zone {
+  border: 2px dashed #ccd0d5;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  color: #70757a;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #fafafa;
+  margin-bottom: 10px;
+}
+
+.file-upload-zone:hover {
+  background: #f0f7ff;
+  border-color: #4a90e2;
+  color: #4a90e2;
+}
+
+/* 파일 아이템 공통 */
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #fff;
+  border: 1px solid #eee;
+}
+
+.file-item.existing {
+  border-left: 4px solid #909399;
+}
+.file-item.new {
+  border-left: 4px solid #67c23a;
+  background: #f0f9eb;
+}
+
+.file-item button {
+  background: none;
+  border: none;
+  color: #f56c6c;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.file-item button:hover {
+  background: #fff1f1;
+  text-decoration: underline;
+}
+
+/* 버튼 그룹 */
+.edit-control-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.action-btn {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s;
+}
+
+.action-btn.save {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.action-btn.cancel {
+  background-color: #909399;
+  color: white;
+}
+
+.action-btn:hover {
+  opacity: 0.85;
+}
+
+/* 파일 정보 레이아웃 */
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 미리보기 이미지 스타일 */
+.edit-preview-img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.file-icon {
+  font-size: 20px;
+  width: 40px;
+  text-align: center;
+}
+
+.file-name {
+  font-size: 14px;
+  color: #555;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

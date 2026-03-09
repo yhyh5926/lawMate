@@ -6,23 +6,37 @@ import "../../styles/precedent/PrecedentDetailPage.css";
 
 const PrecedentDetailPage = () => {
   const { id } = useParams();
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const [data, setData] = useState(null);
+  const [relatedList, setRelatedList] = useState([]); // 유사 판례 상태 추가
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    const fetchDetail = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
+        // 1. 메인 판례 상세 정보 로드
         const result = await precedentApi.getPrecedentDetail(id);
         setData(result);
+
+        // 2. 유사 판례 로드 (메인 데이터 로드 성공 시)
+        if (result) {
+          const related = await precedentApi.getRelatedPrecedents(
+            result.caseType,
+            result.keywordCsv,
+            id,
+          );
+          setRelatedList(related);
+        }
       } catch (err) {
-        console.error("상세 정보 로드 에러:", err);
+        console.error("데이터 로드 에러:", err);
       } finally {
         setLoading(false);
       }
     };
-    if (id) fetchDetail();
+
+    if (id) fetchData();
   }, [id]);
 
   if (loading) {
@@ -76,7 +90,6 @@ const PrecedentDetailPage = () => {
             <h2 className="ai-section-title">핵심 요약 리포트</h2>
 
             <div className="ai-content-card">
-              {/* 사건의 발단 */}
               <div className="ai-item">
                 <h4>📝 사건의 발단</h4>
                 <div className="ai-text">
@@ -86,7 +99,6 @@ const PrecedentDetailPage = () => {
                 </div>
               </div>
 
-              {/* 핵심 쟁점 */}
               <div className="ai-item">
                 <h4>⚖️ 핵심 쟁점</h4>
                 <div className="ai-text">
@@ -96,11 +108,10 @@ const PrecedentDetailPage = () => {
                 </div>
               </div>
 
-              {/* 법원의 판단 로직 */}
               <div className="ai-item">
                 <h4>🏛️ 법원의 판단 로직</h4>
                 <ul className="ai-logic-list">
-                  {data.aiSummary.logic && data.aiSummary.logic.length > 0 ? (
+                  {data.aiSummary.logic?.length > 0 ? (
                     data.aiSummary.logic.map((text, index) => (
                       <li key={index}>
                         <LegalTooltip text={text} />
@@ -112,7 +123,6 @@ const PrecedentDetailPage = () => {
                 </ul>
               </div>
 
-              {/* 전문가 가이드 */}
               <div className="ai-expert-tip">
                 <span className="tip-icon">💡</span>
                 <div className="tip-body">
@@ -124,6 +134,32 @@ const PrecedentDetailPage = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </section>
+        )}
+
+        {/* 유사 판례 추천 섹션 (추가됨) */}
+        {relatedList.length > 0 && (
+          <section className="prec-related-section">
+            <h3 className="related-title">⚖️ 함께 보면 좋은 비슷한 사건</h3>
+            <div className="related-grid">
+              {relatedList.map((item) => (
+                <div
+                  key={item.precId}
+                  className="related-card"
+                  onClick={() => {
+                    navigate(`/precedent/detail/${item.precId}`);
+                    window.scrollTo(0, 0); // 새 판례 이동 시 스크롤 상단으로
+                  }}
+                >
+                  <div className="related-card-top">
+                    <span className="related-badge">{item.caseType}</span>
+                    <span className="related-judgment">{item.judgment}</span>
+                  </div>
+                  <h4 className="related-card-title">{item.title}</h4>
+                  <p className="related-case-no">{item.caseNo}</p>
+                </div>
+              ))}
             </div>
           </section>
         )}

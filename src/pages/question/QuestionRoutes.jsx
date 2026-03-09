@@ -19,6 +19,7 @@ const QuestionRoutes = [
   <Route key="q-write-guard" element={<PrivateRoute />}>
     <Route path="/question/write" element={<QuestionWritePage />} />
   </Route>,
+  
 ];
 
 export default QuestionRoutes;

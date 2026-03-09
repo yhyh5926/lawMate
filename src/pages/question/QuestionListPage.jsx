@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { questionApi } from "../../api/questionApi.js";
 import "../../styles/question/QuestionListPage.css";
-
+import { categories } from "../../constants/categories.js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faImage, faImages } from "@fortawesome/free-solid-svg-icons";
 const QuestionListPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -15,18 +17,6 @@ const QuestionListPage = () => {
   const [loading, setLoading] = useState(true);
   const [tempQuery, setTempQuery] = useState(searchQuery);
   const [totalPages, setTotalPages] = useState(1);
-
-  const categories = [
-    "전체",
-    "민사",
-    "형사",
-    "가사",
-    "이혼",
-    "노동",
-    "행정",
-    "기업",
-    "부동산",
-  ];
 
   useEffect(() => {
     fetchQuestions();
@@ -180,8 +170,7 @@ const QuestionListPage = () => {
                   <th className="w-type">유형</th>
                   <th className="w-title">질문 제목</th>
                   <th className="w-author">작성자</th>
-                  <th className="w-date">작성일</th>{" "}
-                  {/* 💡 번호 삭제 후 작성일 추가 */}
+                  <th className="w-date">작성일</th>
                   <th className="w-status">진행 상태</th>
                 </tr>
               </thead>
@@ -198,16 +187,37 @@ const QuestionListPage = () => {
                           className="ql-link"
                         >
                           {q.title}
+
+                          {q.fileCount > 0 && (
+                            <span
+                              className="ql-file-icon-wrapper"
+                              title={`첨부파일 ${q.fileCount}개`}
+                            >
+                              {q.fileCount >= 2 ? (
+                                <FontAwesomeIcon
+                                  icon={faImages}
+                                  className="icon-multiple"
+                                />
+                              ) : (
+                                <FontAwesomeIcon
+                                  icon={faImage}
+                                  className="icon-single"
+                                />
+                              )}
+                              {/* 숫자를 옆에 작게 표시하면 더 친절합니다 */}
+                              <span className="file-count-num">
+                                {q.fileCount}
+                              </span>
+                            </span>
+                          )}
+
                           {q.answerCount > 0 && (
                             <span className="ql-count">[{q.answerCount}]</span>
                           )}
                         </Link>
                       </td>
                       <td className="ql-author">{q.memberName}</td>
-                      <td className="ql-date">
-                        {formatDate(q.createdAt)}
-                      </td>{" "}
-                      {/* 💡 작성일 출력 */}
+                      <td className="ql-date">{formatDate(q.createdAt)}</td>
                       <td>
                         <span
                           className={`ql-status ${q.status === "ADOPTED" ? "is-adopted" : "is-waiting"}`}
@@ -235,8 +245,7 @@ const QuestionListPage = () => {
                 disabled={currentPage === 1}
                 onClick={() => updateParams({ page: currentPage - 1 })}
               >
-                {" "}
-                &lt;{" "}
+                &lt;
               </button>
               {renderPagination()}
               <button
@@ -244,8 +253,7 @@ const QuestionListPage = () => {
                 disabled={currentPage === totalPages}
                 onClick={() => updateParams({ page: currentPage + 1 })}
               >
-                {" "}
-                &gt;{" "}
+                &gt;
               </button>
             </div>
           )}

@@ -1,32 +1,37 @@
-/* QuestionWritePage.css */
-
+/* 컨테이너 및 기본 설정 */
 .qw-container {
-  max-width: 850px;
-  margin: 60px auto;
-  padding: 40px;
-  background: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e2e8f0;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  font-family:
+    "Pretendard",
+    -apple-system,
+    sans-serif;
 }
 
 .qw-title {
-  font-size: 1.8rem;
+  font-size: 28px;
   font-weight: 800;
-  margin-bottom: 10px;
-  color: #0f172a;
+  color: #1a1f27;
+  margin-bottom: 8px;
+  text-align: center;
 }
 
 .qw-subtitle {
-  color: #64748b;
+  font-size: 16px;
+  color: #636e72;
+  text-align: center;
   margin-bottom: 40px;
-  font-size: 0.95rem;
 }
 
+/* 폼 필드 공통 */
 .qw-form {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 28px;
 }
 
 .qw-field {
@@ -36,74 +41,260 @@
 }
 
 .qw-label {
+  font-size: 15px;
   font-weight: 700;
-  font-size: 0.95rem;
-  color: #334155;
+  color: #343a40;
+  margin-left: 4px;
 }
 
-/* 입력 요소 공통 */
+/* 입력 요소 */
 .qw-select,
 .qw-input,
 .qw-textarea {
-  padding: 14px 18px;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  font-size: 1rem;
-  background-color: #f8fafc;
-  transition: all 0.2s;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #e9ecef;
+  border-radius: 10px;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  outline: none;
 }
 
 .qw-select:focus,
 .qw-input:focus,
 .qw-textarea:focus {
-  outline: none;
-  background-color: #fff;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-}
-
-.qw-select {
-  width: 220px;
-  cursor: pointer;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.1);
 }
 
 .qw-textarea {
-  height: 350px;
+  min-height: 250px;
   resize: vertical;
   line-height: 1.6;
 }
 
-/* 버튼 영역 */
+/* 유사 판례 검색 상태 */
+.qw-searching-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #4a90e2;
+  margin-top: 5px;
+}
+
+.mini-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(74, 144, 226, 0.2);
+  border-top-color: #4a90e2;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 유사 판례 힌트 영역 */
+.qw-related-hints {
+  background: #f1f7ff;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.hint-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2c5282;
+  margin-bottom: 8px;
+}
+
+.hint-item {
+  font-size: 14px;
+  color: #4a5568;
+  padding: 6px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hint-item:hover {
+  color: #4a90e2;
+  text-decoration: underline;
+}
+
+.hint-tag {
+  background: #4a90e2;
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* 파일 업로드 드롭존 */
+.qw-file-dropzone {
+  border: 2px dashed #cbd5e0;
+  background: #f8fafc;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.qw-file-dropzone:hover {
+  background: #edf2f7;
+  border-color: #4a90e2;
+}
+
+.upload-icon {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.qw-file-dropzone p {
+  font-size: 14px;
+  color: #718096;
+}
+
+/* 📎 파일 리스트 및 이미지 미리보기 */
+.qw-file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  transition: transform 0.2s ease;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 미리보기 이미지 전용 */
+.qw-preview-img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #edf2f7;
+}
+
+.file-icon {
+  font-size: 24px;
+  width: 48px;
+  text-align: center;
+}
+
+.file-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4a5568;
+  max-width: 350px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-remove {
+  background: none;
+  border: none;
+  color: #a0aec0;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.file-remove:hover {
+  color: #e53e3e;
+}
+
+/* 스마트 가이드 */
+.qw-smart-guide {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background-color: #fff9db;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 5px;
+}
+
+.guide-icon {
+  font-size: 18px;
+}
+.guide-text {
+  font-size: 13.5px;
+  color: #856404;
+  line-height: 1.5;
+}
+
+/* 하단 액션 버튼 */
 .qw-actions {
   display: flex;
-  gap: 12px;
   justify-content: flex-end;
-  padding-top: 20px;
-  border-top: 1px solid #f1f5f9;
+  gap: 12px;
+  margin-top: 20px;
 }
 
 .qw-cancel-btn {
-  padding: 14px 30px;
-  background-color: #f1f5f9;
-  color: #64748b;
+  padding: 14px 28px;
+  background: #f1f3f5;
+  color: #495057;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
 }
 
 .qw-submit-btn {
-  padding: 14px 40px;
-  background-color: #2563eb;
-  color: #fff;
+  padding: 14px 32px;
+  background: #4a90e2;
+  color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   font-weight: 700;
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  transition: transform 0.2s ease;
 }
 
 .qw-submit-btn:hover {
-  background-color: #1d4ed8;
   transform: translateY(-2px);
+  background: #357abd;
+}
+
+/* 반응형 처리 */
+@media (max-width: 600px) {
+  .qw-container {
+    padding: 20px;
+    margin: 10px;
+  }
+  .qw-actions {
+    flex-direction: column-reverse;
+  }
+  .qw-submit-btn,
+  .qw-cancel-btn {
+    width: 100%;
+  }
+  .file-name {
+    max-width: 180px;
+  }
 }

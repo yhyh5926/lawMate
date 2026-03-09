@@ -21,17 +21,29 @@ export const questionApi = {
     axiosInstance.get("/question/detail", { params: { questionId } }),
 
   /**
-   * 3. 새로운 법률 질문 작성 (TB_QUESTION)
+   * 3. 새로운 법률 질문 작성 (파일 포함 가능)
+   * @param {FormData} formData - FormData 객체 (title, content, caseType, files 등 포함)
    */
-  writeQuestion: (data) => axiosInstance.post("/question/write", data),
+  writeQuestion: (formData) =>
+    axiosInstance.post("/question/write", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }),
 
   /**
-   * 3-1. 법률 질문 수정 (PathVariable 방식 적용)
-   * @param {Object} data - { questionId, title, content, caseType }
+   * 3-1. 법률 질문 수정 (파일 수정 포함 가능)
+   * @param {FormData} formData - FormData 객체 (questionId 필수 포함)
    */
-  updateQuestion: (data) =>
-    axiosInstance.put(`/question/update/${data.questionId}`, data),
-
+  updateQuestion: (formData) => {
+    // FormData에서 questionId를 꺼내서 URL에 넣어야 함 (전달 방식에 따라 다름)
+    const questionId = formData.get("questionId");
+    return axiosInstance.put(`/question/update/${questionId}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
   /**
    * 3-2. 법률 질문 삭제 (PathVariable 방식 적용)
    * @param {number|string} questionId

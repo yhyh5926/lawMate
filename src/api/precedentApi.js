@@ -3,20 +3,15 @@ import axiosInstance from "./axiosInstance";
 const precedentApi = {
   /**
    * 1. 판례 목록 가져오기 (검색어 + 카테고리 필터 포함)
-   * @param {number} page - 현재 페이지 번호
-   * @param {string} query - 검색 키워드 (사건명, 사건번호 등)
-   * @param {string} caseType - 선택된 카테고리 (필터)
-   * @param {number} size - 한 페이지당 보여줄 개수
    */
   getPrecedentList: async (page = 1, query = "", caseType = "", size = 10) => {
     try {
-      // 💡 params 객체에 전달된 속성들은 ?page=1&query=...&caseType=... 형태로 변환됩니다.
       const response = await axiosInstance.get("/precedents", {
         params: {
           page,
           size,
-          query: query || undefined, // 값이 없을 경우 URL에서 제외
-          caseType: caseType || undefined, // 값이 없을 경우 URL에서 제외
+          query: query || undefined,
+          caseType: caseType || undefined,
         },
       });
       return response.data;
@@ -28,7 +23,6 @@ const precedentApi = {
 
   /**
    * 2. 판례 상세 정보 가져오기
-   * @param {string|number} id - 판례 고유 ID (precId)
    */
   getPrecedentDetail: async (id) => {
     try {
@@ -47,6 +41,33 @@ const precedentApi = {
     } catch (error) {
       console.error(`판례 상세(${id}) API 호출 실패:`, error);
       throw error;
+    }
+  },
+
+  /**
+   * 💡 3. 유사 판례 목록 가져오기 (추가됨)
+   * 테이블 구조의 CASE_TYPE과 KEYWORD_CSV를 기반으로 유사 사건을 조회합니다.
+   * * @param {string} caseType - 현재 판례의 사건 유형
+   * @param {string} keywordCsv - 현재 판례의 키워드 리스트
+   * @param {number|string} excludeId - 현재 보고 있는 판례 ID (목록 제외용)
+   */
+  getRelatedPrecedents: async (caseType, keywordCsv = "", excludeId) => {
+    try {
+      // 키워드 CSV 중 첫 번째 혹은 두 번째 핵심 키워드만 추출하여 전달 (정확도 향상)
+      const mainKeyword = keywordCsv ? keywordCsv.split(",")[0].trim() : "";
+
+      const response = await axiosInstance.get("/precedents/related", {
+        params: {
+          caseType,
+          keyword: mainKeyword || undefined,
+          excludeId: excludeId || undefined,
+          limit: 4, // 추천 개수 고정
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("유사 판례 로드 실패:", error);
+      return []; // 추천 실패 시 빈 배열 반환하여 상세 페이지 렌더링 유지
     }
   },
 };
