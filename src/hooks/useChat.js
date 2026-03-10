@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { getChatMessages, markMessagesRead } from '../api/chatApi';
+import { getChatMessages, markMessagesRead, updateChatMsg, deleteChatMsg } from '../api/chatApi';
 
 const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:8080/ws-stomp';
 
@@ -11,7 +11,6 @@ export const useChat = (roomNo) => {
   const [loading, setLoading] = useState(true);
   const clientRef = useRef(null);
 
-  // 과거 메시지 로드
   const loadMessages = useCallback(async () => {
     if (!roomNo) return;
     try {
@@ -31,7 +30,6 @@ export const useChat = (roomNo) => {
     }
   }, [roomNo]);
 
-  // STOMP 연결
   useEffect(() => {
     if (!roomNo) return;
 
@@ -48,6 +46,32 @@ export const useChat = (roomNo) => {
         setConnected(true);
         client.subscribe(`/sub/chat/room/${roomNo}`, (frame) => {
           const msg = JSON.parse(frame.body);
+
+          // ── 수정 이벤트 ──
+          if (msg.type === 'UPDATE') {
+            setMessages((prev) =>
+              prev.map((m) =>
+                Number(m.msgNo) === Number(msg.msgNo)
+                  ? { ...m, content: msg.content, editedYn: 'Y' }
+                  : m
+              )
+            );
+            return;
+          }
+
+          // ── 삭제 이벤트 ──
+          if (msg.type === 'DELETE') {
+            setMessages((prev) =>
+              prev.map((m) =>
+                Number(m.msgNo) === Number(msg.msgNo)
+                  ? { ...m, deletedYn: 'Y' }
+                  : m
+              )
+            );
+            return;
+          }
+
+          // ── 일반 메시지 ──
           const normalized = {
             ...msg,
             sentAt: msg.sentAt || msg.createdAt || new Date().toISOString(),
@@ -78,25 +102,56 @@ export const useChat = (roomNo) => {
     };
   }, [roomNo]);
 
-  // 메시지 전송
   const sendMessage = useCallback(
     (content, type = 'TEXT', fileUrl = null) => {
       if (!clientRef.current?.connected) return;
       const token = localStorage.getItem('token');
-
       clientRef.current.publish({
         destination: `/pub/chat/message`,
         headers: { Authorization: `Bearer ${token}` },
-        body: JSON.stringify({
-          roomNo,
-          type,
-          content,
-          fileUrl,
-        }),
+        body: JSON.stringify({ roomNo, type, content, fileUrl }),
       });
     },
     [roomNo]
   );
 
-  return { messages, setMessages, connected, loading, sendMessage };
+  // WebSocket으로 수정 브로드캐스트
+  const updateMessage = useCallback(
+    async (msgNo, content) => {
+      if (!clientRef.current?.connected) return;
+      const token = localStorage.getItem('token');
+      try {
+        await updateChatMsg(msgNo, content); // DB 저장
+        clientRef.current.publish({
+          destination: `/pub/chat/message/update`,
+          headers: { Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ roomNo, msgNo, content }),
+        });
+      } catch (e) {
+        alert('수정에 실패했습니다.');
+      }
+    },
+    [roomNo]
+  );
+
+  // WebSocket으로 삭제 브로드캐스트
+  const deleteMessage = useCallback(
+    async (msgNo) => {
+      if (!clientRef.current?.connected) return;
+      const token = localStorage.getItem('token');
+      try {
+        await deleteChatMsg(msgNo); // DB soft delete
+        clientRef.current.publish({
+          destination: `/pub/chat/message/delete`,
+          headers: { Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ roomNo, msgNo }),
+        });
+      } catch (e) {
+        alert('삭제에 실패했습니다.');
+      }
+    },
+    [roomNo]
+  );
+
+  return { messages, setMessages, connected, loading, sendMessage, updateMessage, deleteMessage };
 };
