@@ -4,9 +4,10 @@
 
 import axios from "axios";
 import { getToken } from "../utils/tokenUtil.js";
+import { baseURL } from "../constants/baseURL.js";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080/api", // 스프링 부트 서버 주소
+  baseURL: baseURL + "/api", // 스프링 부트 서버 주소
   headers: {
     "Content-Type": "application/json",
   },
