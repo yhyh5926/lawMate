@@ -1,40 +1,39 @@
-/* LawyerDetailPage.css */
-
+/* --- 전체 페이지 레이아웃 --- */
 .lawyer-detail-page {
   background-color: #f8fafc;
   min-height: 100vh;
-  padding: 50px 0;
-  font-family: "Pretendard", sans-serif;
+  padding: 40px 20px;
 }
 
 .lawyer-detail-container {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
-/* --- 헤더 카드 --- */
+/* --- 1. 상단 프로필 카드 섹션 --- */
 .detail-header-card {
-  background: white;
+  background: #ffffff;
   border-radius: 24px;
   padding: 40px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-  margin-bottom: 30px;
-  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 .header-flex {
   display: flex;
-  gap: 40px;
+  gap: 35px;
   align-items: center;
 }
 
 .detail-img-wrapper {
-  width: 160px;
-  height: 160px;
-  border-radius: 20px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
   overflow: hidden;
-  background: #f1f5f9;
+  border: 4px solid #f1f5f9;
+  background-color: #fff;
 }
 
 .detail-img-wrapper img {
@@ -43,11 +42,24 @@
   object-fit: cover;
 }
 
+.detail-img-wrapper .default-avatar {
+  padding: 25px;
+  opacity: 0.6;
+}
+
+.detail-main-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .specialty-badge {
+  display: inline-block;
+  width: fit-content;
   background: #eff6ff;
   color: #2563eb;
-  padding: 6px 12px;
-  border-radius: 8px;
+  padding: 4px 12px;
+  border-radius: 6px;
   font-size: 14px;
   font-weight: 700;
 }
@@ -55,35 +67,37 @@
 .lawyer-fullname {
   font-size: 32px;
   font-weight: 800;
-  margin: 15px 0 5px;
   color: #1e293b;
+  margin: 0;
 }
 
 .title-suffix {
   font-size: 20px;
   font-weight: 500;
   color: #64748b;
+  margin-left: 4px;
 }
 
 .office-text {
   font-size: 18px;
   color: #475569;
-  margin-bottom: 12px;
+  margin: 0;
 }
 
 .rating-summary {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  margin-top: 5px;
 }
 
 .star-icon {
-  color: #f59e0b;
-  font-size: 20px;
+  color: #fbbf24;
+  font-size: 18px;
 }
 .rating-score {
-  font-size: 18px;
   font-weight: 700;
+  font-size: 18px;
   color: #1e293b;
 }
 .review-count {
@@ -93,162 +107,172 @@
 
 .intro-text-box {
   margin-top: 30px;
-  padding-top: 25px;
-  border-top: 1px solid #f1f5f9;
+  padding: 20px 30px;
+  background: #f8fafc;
+  border-radius: 16px;
   font-size: 18px;
   color: #334155;
   font-style: italic;
-  text-align: center;
+  line-height: 1.6;
+  border-left: 4px solid #e2e8f0;
 }
 
-/* --- 컨텐츠 그리드 --- */
+/* --- 2. 하단 그리드 레이아웃 (7:3 비율) --- */
 .detail-content-grid {
   display: grid;
-  grid-template-columns: 1.8fr 1.2fr;
+  grid-template-columns: 1.5fr 1fr; /* 6:4 or 7:3 비율 */
   gap: 30px;
+  align-items: start;
 }
 
+/* 왼쪽 영역 스타일 */
 .info-section {
-  background: white;
-  border-radius: 20px;
+  background: #ffffff;
+  border-radius: 24px;
   padding: 30px;
   margin-bottom: 30px;
-  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
 }
 
 .section-title {
   font-size: 20px;
   font-weight: 700;
+  color: #1e293b;
   margin-bottom: 20px;
-  color: #1e293b;
-  display: flex;
-  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f1f5f9;
 }
 
-.career-line {
-  font-size: 16px;
-  color: #475569;
-  margin-bottom: 8px;
-  line-height: 1.6;
-}
-
-/* --- 후기 스타일 --- */
-.review-card {
-  background: #f8fafc;
-  padding: 20px;
-  border-radius: 16px;
-  margin-bottom: 15px;
-}
-
-.review-card-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.review-stars {
-  color: #f59e0b;
-  font-size: 14px;
-}
-.review-date {
-  color: #94a3b8;
-  font-size: 13px;
-}
-.review-body {
-  font-size: 15px;
-  color: #334155;
-  margin-bottom: 8px;
-}
-.review-author {
-  font-size: 13px;
-  color: #64748b;
-  font-weight: 600;
-}
-
-/* --- 연락처 및 액션 카드 --- */
-.contact-card {
-  background: white;
-  border-radius: 20px;
-  padding: 30px;
-  border: 1px solid #f1f5f9;
-  position: sticky;
-  top: 30px;
-}
-
-.contact-info-list {
-  margin-bottom: 30px;
-}
-
-.contact-item {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-  font-size: 15px;
-}
-
-.contact-item label {
-  color: #94a3b8;
-  font-weight: 500;
-}
-.contact-item span {
-  color: #1e293b;
-  font-weight: 600;
-  text-align: right;
-}
-
-.fee-divider {
-  height: 1px;
-  background: #f1f5f9;
-  margin: 20px 0;
-}
-
-.fee-item label {
-  color: #1e293b;
-  font-weight: 700;
-  font-size: 16px;
-}
-.price-tag {
-  color: #2563eb !important;
-  font-size: 20px !important;
-}
-
-/* --- 버튼 그룹 --- */
-.sticky-actions {
+.career-list-box {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.btn-chat {
-  background: #f1f5f9;
+.career-line {
+  font-size: 16px;
+  line-height: 1.6;
   color: #475569;
-  border: none;
+  position: relative;
+  padding-left: 15px;
+}
+
+.career-line::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #cbd5e1;
+}
+
+/* 오른쪽 영역 (사무소 정보 카드) */
+.contact-card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  position: sticky;
+  top: 20px; /* 스크롤 시 상단에 고정 */
+}
+
+.contact-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.contact-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size: 15px;
+}
+
+.contact-item label {
+  color: #94a3b8;
+  width: 100px;
+  flex-shrink: 0;
+}
+
+.contact-item span {
+  color: #1e293b;
+  font-weight: 500;
+  text-align: right;
+}
+
+.address-text {
+  line-height: 1.4;
+}
+
+.fee-divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 10px 0;
+}
+
+.fee-item {
+  align-items: center;
+}
+
+.price-tag {
+  font-size: 20px;
+  font-weight: 800;
+  color: #2563eb;
+}
+
+/* 액션 버튼 */
+.sticky-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.btn-chat,
+.btn-reserve {
+  width: 100%;
   padding: 16px;
   border-radius: 12px;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-chat {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.btn-chat:hover {
+  background: #e2e8f0;
 }
 
 .btn-reserve {
-  background: #1e293b;
-  color: white;
-  border: none;
-  padding: 16px;
-  border-radius: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2);
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
 .btn-reserve:hover {
-  background: #0f172a;
+  background: #1d4ed8;
   transform: translateY(-2px);
 }
 
+/* 상태 메시지 (로딩 등) */
 .detail-status-msg {
   text-align: center;
   padding: 100px;
+  font-size: 18px;
   color: #94a3b8;
+}
+
+/* 반응형 처리 */
+@media (max-width: 992px) {
+  .detail-content-grid {
+    grid-template-columns: 1fr;
+  }
+  .contact-card {
+    position: static;
+  }
 }
