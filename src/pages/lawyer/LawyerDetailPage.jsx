@@ -2,26 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import lawyerApi from "../../api/lawyerApi";
 import { DEFAULT_IMAGE } from "./LawyerListPage";
-import "../../styles/lawyer/LawyerDetailPage.css";
 import { getOrCreateChatRoom } from "../../api/chatApi";
 import { baseURL } from "../../constants/baseURL";
+import LawyerReviewSection from "../../components/lawyer/LawyerReviewSection"; // 💡 컴포넌트 임포트
+import "../../styles/lawyer/LawyerDetailPage.css";
 
 const LawyerDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [lawyer, setLawyer] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // 날짜 포맷팅 함수 (예: 2026. 03. 06)
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("ko-KR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    }).format(date);
-  };
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -30,39 +20,7 @@ const LawyerDetailPage = () => {
         const data = await lawyerApi.getLawyerDetail(id);
         setLawyer(data);
       } catch (err) {
-        console.error("상세 정보 로드 실패:", err);
-        // 가상 데이터 (개발/테스트용)
-        setLawyer({
-          lawyerId: id,
-          name: "윤정의",
-          specialty: "행정,헌법",
-          officeName: "윤정의 법률사무소",
-          intro:
-            "행정소송 및 헌법소원 전문. 국가기관을 상대로 한 사건에 강합니다.",
-          career:
-            "• 행정부 법무담당 3년\n• 법무법인 로펌 파트너\n• 현) 윤정의 법률사무소 대표 변호사",
-          licenseNo: "LAW-2017-00654",
-          email: "yoon@law.com",
-          phone: "010-3456-7890",
-          officeAddr: "서울시 종로구 종로 30",
-          consultFee: 120000,
-          avgRating: 4.8,
-          reviewCnt: 12,
-          reviews: [
-            {
-              authorName: "김*한",
-              content: "친절하고 명쾌한 상담 감사합니다.",
-              rating: 5,
-              createdAt: "2026-02-15T10:00:00",
-            },
-            {
-              authorName: "이*영",
-              content: "행정 처리에 큰 도움을 받았습니다.",
-              rating: 4,
-              createdAt: "2026-01-20T14:30:00",
-            },
-          ],
-        });
+        console.error("데이터 로드 실패:", err);
       } finally {
         setLoading(false);
       }
@@ -72,29 +30,23 @@ const LawyerDetailPage = () => {
 
   if (loading)
     return (
-      <div className="detail-status-msg">변호사 프로필을 분석 중입니다...</div>
+      <div className="detail-status-msg">프로필을 불러오는 중입니다...</div>
     );
   if (!lawyer)
-    return (
-      <div className="detail-status-msg">해당 정보를 찾을 수 없습니다.</div>
-    );
+    return <div className="detail-status-msg">정보를 찾을 수 없습니다.</div>;
 
+  // 이미지 경로 처리
   const imageUrl = (() => {
-    const path =
-      lawyer.savePath ||
-      lawyer.profileUrl ||
-      lawyer.profileImage ||
-      lawyer.imagePath ||
-      lawyer.imageUrl;
+    const path = lawyer.savePath || lawyer.profileUrl || lawyer.lawyerProfile;
     if (path) return path.startsWith("http") ? path : baseURL + path;
     return DEFAULT_IMAGE;
   })();
 
-  console.log(imageUrl);
+  console.log(lawyer);
   return (
     <div className="lawyer-detail-page">
       <div className="lawyer-detail-container">
-        {/* 1. 헤더 섹션: 프로필 이미지 및 기본 정보 */}
+        {/* 1. 상단 프로필 카드 */}
         <section className="detail-header-card">
           <div className="header-flex">
             <div className="detail-img-wrapper">
@@ -131,57 +83,34 @@ const LawyerDetailPage = () => {
             </div>
           </div>
           <div className="intro-text-box">
-            "{lawyer.intro || "의뢰인의 권익을 위해 최선을 다하겠습니다."}"
+            "
+            {lawyer.intro || "의뢰인의 신뢰를 바탕으로 최선의 결과를 만듭니다."}
+            "
           </div>
         </section>
 
-        {/* 2. 상세 정보 영역 */}
         <div className="detail-content-grid">
-          {/* 왼쪽: 경력 및 이력 */}
+          {/* 2. 왼쪽 영역: 경력 및 후기 */}
           <div className="content-left">
             <section className="info-section">
               <h3 className="section-title">주요 경력</h3>
               <div className="career-list-box">
-                {lawyer.career
-                  ? lawyer.career.split("\n").map((line, i) => (
-                      <p key={i} className="career-line">
-                        {line}
-                      </p>
-                    ))
-                  : "등록된 경력 정보가 없습니다."}
-              </div>
-            </section>
-
-            <section className="info-section">
-              <h3 className="section-title">의뢰인 후기</h3>
-              <div className="review-container">
-                {lawyer.reviews && lawyer.reviews.length > 0 ? (
-                  lawyer.reviews.map((review, index) => (
-                    <div key={index} className="review-card">
-                      <div className="review-card-header">
-                        <span className="review-stars">
-                          {"★".repeat(review.rating)}
-                        </span>
-                        <span className="review-date">
-                          {formatDate(review.createdAt)}
-                        </span>
-                      </div>
-                      <p className="review-body">{review.content}</p>
-                      <span className="review-author">
-                        {review.authorName} 의뢰인
-                      </span>
-                    </div>
+                {lawyer.career ? (
+                  lawyer.career.split("\n").map((line, i) => (
+                    <p key={i} className="career-line">
+                      {line}
+                    </p>
                   ))
                 ) : (
-                  <div className="no-reviews">
-                    아직 작성된 후기가 없습니다. 첫 번째 후기를 남겨주세요!
-                  </div>
+                  <p className="no-data">등록된 경력 정보가 없습니다.</p>
                 )}
               </div>
             </section>
+
+            <LawyerReviewSection lawyerId={lawyer.lawyerId} />
           </div>
 
-          {/* 오른쪽: 연락처 및 정보 테이블 */}
+          {/* 3. 오른쪽 영역: 사무소 정보 및 액션 버튼 */}
           <div className="content-right">
             <section className="contact-card">
               <h3 className="section-title">사무소 정보</h3>
@@ -224,7 +153,7 @@ const LawyerDetailPage = () => {
                       const roomNo = res.data?.data?.roomNo;
                       navigate(`/chat/room?roomNo=${roomNo}`);
                     } catch (e) {
-                      alert("채팅방 생성 중 오류가 발생했습니다.");
+                      alert("채팅 연결에 실패했습니다.");
                     }
                   }}
                 >

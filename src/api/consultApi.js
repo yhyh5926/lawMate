@@ -4,9 +4,11 @@ import axiosInstance from './axiosInstance';
 export const createConsult = (consultData) =>
   axiosInstance.post('/consult', consultData);
 
-// 나의 상담 예약 목록
-export const getMyConsults = (status = '') =>
-  axiosInstance.get('/consult/my', { params: { status } });
+// 💡 [수정됨] 나의 상담 예약 목록 (status가 비어있으면 파라미터에서 제외)
+export const getMyConsults = (status = '') => {
+  const params = status ? { status } : {}; // 값이 있을 때만 params에 넣음
+  return axiosInstance.get('/consult/my', { params });
+};
 
 // 상담 예약 상세
 export const getConsultDetail = (consultNo) =>
@@ -29,3 +31,12 @@ export const restoreConsult = (consultId) =>
 
 export const deleteConsult = (consultId) =>
   axiosInstance.delete(`/consult/${consultId}`);
+
+export const getLawyerConsults = () =>
+  axiosInstance.get('/consult/lawyer');
+
+export const confirmConsult = (consultId) =>
+  axiosInstance.put(`/consult/${consultId}/confirm`);
+
+export const rejectConsult = (consultId) =>
+  axiosInstance.put(`/consult/${consultId}/reject`);

@@ -1,6 +1,14 @@
+// src/pages/mypage/ConsultListPage.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMyConsults, cancelConsult, restoreConsult, deleteConsult } from "../../api/consultApi";
+// 💡 복구 및 삭제 API 추가, CSS 임포트 유지
+import {
+  getMyConsults,
+  cancelConsult,
+  restoreConsult,
+  deleteConsult,
+} from "../../api/consultApi";
+import "../../styles/mypage/ConsultListPage.css";
 
 const STATUS_TABS = [
   { value: "", label: "전체" },
@@ -11,15 +19,16 @@ const STATUS_TABS = [
 ];
 
 const STATUS_META = {
-  PENDING: { label: "대기중", color: "#FF9500", bg: "#FFF3E0" },
-  CONFIRMED: { label: "확정", color: "#1A6DFF", bg: "#E8F0FF" },
-  DONE: { label: "완료", color: "#34C759", bg: "#E8F8ED" },
-  CANCELLED: { label: "취소", color: "#FF3B30", bg: "#FFE8E8" },
+  PENDING: { label: "대기중", className: "badge-pending" },
+  CONFIRMED: { label: "확정", className: "badge-confirmed" },
+  DONE: { label: "완료", className: "badge-done" },
+  CANCELLED: { label: "취소", className: "badge-cancelled" },
 };
 
 const getDeleteDday = (updatedAt) => {
   if (!updatedAt) return null;
-  const diff = 7 - Math.floor((Date.now() - new Date(updatedAt)) / (1000 * 60 * 60 * 24));
+  const diff =
+    7 - Math.floor((Date.now() - new Date(updatedAt)) / (1000 * 60 * 60 * 24));
   return diff > 0 ? `${diff}일 후 자동 삭제` : "곧 자동 삭제";
 };
 
@@ -29,6 +38,7 @@ const ConsultListPage = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  console.log(consults);
   useEffect(() => {
     fetchConsults();
   }, [activeTab]);
@@ -37,9 +47,10 @@ const ConsultListPage = () => {
     try {
       setLoading(true);
       const res = await getMyConsults(activeTab);
-      setConsults(res.data.data || []);
+      setConsults(res.data?.data || res.data || []);
     } catch (e) {
       console.error(e);
+      setConsults([]);
     } finally {
       setLoading(false);
     }
@@ -50,7 +61,7 @@ const ConsultListPage = () => {
     try {
       await cancelConsult(consultId);
       alert("취소되었습니다.");
-      fetchConsults();
+      fetchConsults(); // 취소 후 목록 새로고침
     } catch (e) {
       alert(e.response?.data?.message || "취소 실패");
     }
@@ -79,106 +90,110 @@ const ConsultListPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: "760px", margin: "0 auto", padding: "28px 16px" }}>
-      <h2 style={{ fontSize: "22px", fontWeight: "800", color: "#1A1A2E", marginBottom: "20px" }}>
-        상담 예약 내역
-      </h2>
+    <div className="consult-list-container">
+      <h2 className="consult-list-title">상담 예약 내역</h2>
 
-      {/* 탭 */}
-      <div style={{ display: "flex", gap: "4px", marginBottom: "24px", background: "#F0F2F5", borderRadius: "10px", padding: "4px" }}>
+      {/* 상단 필터 탭 */}
+      <div className="consult-tabs-container">
         {STATUS_TABS.map((tab) => (
           <button
             key={tab.value}
             onClick={() => setActiveTab(tab.value)}
-            style={{
-              flex: 1,
-              padding: "8px",
-              border: "none",
-              borderRadius: "8px",
-              background: activeTab === tab.value ? "#fff" : "transparent",
-              color: activeTab === tab.value ? "#1A6DFF" : "#888",
-              fontWeight: activeTab === tab.value ? "700" : "500",
-              fontSize: "13px",
-              cursor: "pointer",
-              boxShadow: activeTab === tab.value ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
-              transition: "all 0.15s",
-            }}
+            className={`consult-tab-btn ${activeTab === tab.value ? "active" : ""}`}
           >
             {tab.label}
           </button>
         ))}
       </div>
 
+      {/* 리스트 출력 영역 */}
       {loading ? (
-        <div style={{ textAlign: "center", padding: "60px", color: "#aaa" }}>불러오는 중...</div>
+        <div className="consult-empty-state">불러오는 중...</div>
       ) : consults.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "60px", background: "#F7F9FB", borderRadius: "16px", color: "#aaa" }}>
-          예약 내역이 없습니다
-        </div>
+        <div className="consult-empty-state">예약 내역이 없습니다</div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          {consults.map((c) => {
+        <div className="consult-list-wrapper">
+          {consults.map((c, index) => {
             const meta = STATUS_META[c.status] || STATUS_META.PENDING;
+
+            // 💡 핵심 수정: 백엔드에서 주는 정확한 고유 번호(ID) 추출 (만능 방어막)
+            const uniqueId = c.consultId || c.id || c.consultNo;
+
             return (
-              <div
-                key={c.consultId}
-                style={{
-                  background: "#fff",
-                  border: "1px solid #E8ECF0",
-                  borderRadius: "14px",
-                  padding: "18px 20px",
-                  boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
-                }}
-              >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
+              <div key={uniqueId || index} className="consult-card">
+                <div className="consult-card-header">
                   <div>
-                    <div style={{ fontWeight: "700", fontSize: "16px", color: "#1A1A2E" }}>
-                      {c.lawyerName} 변호사
+                    <div className="consult-lawyer-name">
+                      {c.lawyerName || "담당"} 변호사
                     </div>
-                    <div style={{ fontSize: "13px", color: "#888", marginTop: "2px" }}>
-                      {c.consultDate} · {c.durationMin}분
+                    <div className="consult-datetime">
+                      {c.consultDate || c.createdAt?.split("T")[0]}{" "}
+                      {c.consultTime && `· ${c.consultTime}`} (
+                      {c.durationMin || c.duration || 30}분)
                     </div>
                   </div>
-                  <span style={{ padding: "4px 10px", borderRadius: "20px", background: meta.bg, color: meta.color, fontSize: "12px", fontWeight: "700" }}>
+                  <span className={`consult-status-badge ${meta.className}`}>
                     {meta.label}
                   </span>
                 </div>
 
-                {c.memo && (
-                  <p style={{ margin: "0 0 12px", fontSize: "13px", color: "#555", background: "#F7F9FB", padding: "8px 12px", borderRadius: "8px" }}>
-                    {c.memo}
-                  </p>
+                {/* 💡 백엔드 변수명이 note인지 memo인지 몰라 둘 다 호환되도록 처리 */}
+                {(c.note || c.memo) && (
+                  <p className="consult-memo">{c.note || c.memo}</p>
                 )}
 
-                <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end", alignItems: "center" }}>
+                <div className="consult-card-actions">
                   {/* 결제 이동 (확정 상태) */}
                   {c.status === "CONFIRMED" && !c.paid && (
-                    <button onClick={() => navigate(`/payment/pay?consultId=${c.consultId}`)} style={btnStyle("#1A6DFF", "#fff")}>
+                    <button
+                      onClick={() =>
+                        navigate(`/payment/pay?consultId=${uniqueId}`)
+                      }
+                      className="consult-action-btn btn-pay"
+                    >
                       결제하기
                     </button>
                   )}
                   {/* 후기 작성 (완료 상태) */}
                   {c.status === "DONE" && !c.reviewed && (
-                    <button onClick={() => navigate(`/lawyer/review/write?consultId=${c.consultId}`)} style={btnStyle("#34C759", "#fff")}>
+                    <button
+                      onClick={() => navigate(`/lawyer/detail/${c.lawyerId}`)}
+                      className="consult-action-btn btn-review"
+                    >
                       후기 작성
                     </button>
                   )}
-                  {/* 취소 (대기/확정 상태) */}
+                  {/* 예약 취소 (대기/확정 상태) */}
                   {["PENDING", "CONFIRMED"].includes(c.status) && (
-                    <button onClick={() => handleCancel(c.consultId)} style={btnStyle("#fff", "#FF3B30", "1px solid #FF3B30")}>
+                    <button
+                      onClick={() => handleCancel(uniqueId)}
+                      className="consult-action-btn btn-cancel"
+                    >
                       예약 취소
                     </button>
                   )}
                   {/* 복구 / 즉시삭제 (취소 상태) */}
                   {c.status === "CANCELLED" && (
                     <>
-                      <span style={{ fontSize: "11px", color: "#FF3B30", alignSelf: "center" }}>
+                      <span
+                        style={{
+                          fontSize: "11px",
+                          color: "#FF3B30",
+                          alignSelf: "center",
+                        }}
+                      >
                         🗑 {getDeleteDday(c.updatedAt)}
                       </span>
-                      <button onClick={() => handleRestore(c.consultId)} style={btnStyle("#E8F0FF", "#1A6DFF")}>
+                      <button
+                        onClick={() => handleRestore(uniqueId)}
+                        className="consult-action-btn btn-restore"
+                      >
                         복구
                       </button>
-                      <button onClick={() => handleDelete(c.consultId)} style={btnStyle("#FF3B30", "#fff")}>
+                      <button
+                        onClick={() => handleDelete(uniqueId)}
+                        className="consult-action-btn btn-delete"
+                      >
                         즉시 삭제
                       </button>
                     </>
@@ -192,16 +207,5 @@ const ConsultListPage = () => {
     </div>
   );
 };
-
-const btnStyle = (bg, color, border = "none") => ({
-  padding: "8px 16px",
-  background: bg,
-  color,
-  border,
-  borderRadius: "8px",
-  fontSize: "13px",
-  fontWeight: "600",
-  cursor: "pointer",
-});
 
 export default ConsultListPage;
