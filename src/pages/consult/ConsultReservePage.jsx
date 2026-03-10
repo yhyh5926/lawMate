@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { createConsult } from "../../api/consultApi";
 import lawyerApi from "../../api/lawyerApi";
 import { DEFAULT_IMAGE } from "../lawyer/LawyerListPage";
+import { baseURL } from "../../constants/baseURL";
 
 const ConsultReservePage = () => {
   const [searchParams] = useSearchParams();
@@ -53,37 +54,37 @@ const ConsultReservePage = () => {
   };
 
   const handleSubmit = async () => {
-  if (!selectedDate || !selectedTime) {
-    alert("날짜와 시간을 선택해주세요.");
-    return;
-  }
+    if (!selectedDate || !selectedTime) {
+      alert("날짜와 시간을 선택해주세요.");
+      return;
+    }
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    // 파일 업로드 제거 (uploadFiles 없으므로)
-    const consultDateTime = `${selectedDate}T${selectedTime}:00`;
+      // 파일 업로드 제거 (uploadFiles 없으므로)
+      const consultDateTime = `${selectedDate}T${selectedTime}:00`;
 
-    const consultData = {
-      lawyerId: Number(lawyerId),
-      consultDate: consultDateTime,
-      durationMin: duration,
-      note: note,
-      attachmentNos: [],
-    };
+      const consultData = {
+        lawyerId: Number(lawyerId),
+        consultDate: consultDateTime,
+        durationMin: duration,
+        note: note,
+        attachmentNos: [],
+      };
 
-    const res = await createConsult(consultData);
-    console.log("예약 응답:", res.data);
-    alert("상담 예약이 접수되었습니다.");
+      const res = await createConsult(consultData);
+      console.log("예약 응답:", res.data);
+      alert("상담 예약이 접수되었습니다.");
 
-    const consultId = res.data?.consultId || res.data?.data?.consultId;
-    navigate(`/payment/pay?consultId=${consultId}`);
-  } catch (e) {
-    alert(e.response?.data?.message || "예약 신청 중 오류가 발생했습니다.");
-  } finally {
-    setLoading(false);
-  }
-};
+      const consultId = res.data?.consultId || res.data?.data?.consultId;
+      navigate(`/payment/pay?consultId=${consultId}`);
+    } catch (e) {
+      alert(e.response?.data?.message || "예약 신청 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div style={{ maxWidth: "640px", margin: "0 auto", padding: "32px 16px" }}>
@@ -93,9 +94,9 @@ const ConsultReservePage = () => {
           <img
             src={
               lawyer.savePath || lawyer.profileUrl
-                ? (lawyer.savePath || lawyer.profileUrl).startsWith("http") 
-                  ? (lawyer.savePath || lawyer.profileUrl) 
-                  : `http://localhost:8080${lawyer.savePath || lawyer.profileUrl}`
+                ? (lawyer.savePath || lawyer.profileUrl).startsWith("http")
+                  ? lawyer.savePath || lawyer.profileUrl
+                  : `${baseURL + lawyer.savePath || lawyer.profileUrl}`
                 : DEFAULT_IMAGE
             }
             alt={lawyer.name}

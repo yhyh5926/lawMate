@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
-import { getChatMessages, markMessagesRead } from '../api/chatApi';
+import { useEffect, useRef, useState, useCallback } from "react";
+import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+import { getChatMessages, markMessagesRead } from "../api/chatApi";
+import { baseURL } from "../constants/baseURL";
 
-const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:8080/ws-stomp';
+const WS_URL = import.meta.env.VITE_WS_URL || baseURL + "/ws-stomp";
 
 export const useChat = (roomNo) => {
   const [messages, setMessages] = useState([]);
@@ -25,7 +26,7 @@ export const useChat = (roomNo) => {
       }));
       setMessages(normalized);
     } catch (e) {
-      console.error('메시지 로드 실패', e);
+      console.error("메시지 로드 실패", e);
     } finally {
       setLoading(false);
     }
@@ -38,7 +39,7 @@ export const useChat = (roomNo) => {
     loadMessages();
     markMessagesRead(roomNo).catch(() => {});
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     const client = new Client({
       webSocketFactory: () => new SockJS(WS_URL),
@@ -56,7 +57,9 @@ export const useChat = (roomNo) => {
           };
           setMessages((prev) => {
             if (!normalized.senderName) {
-              const found = prev.find((m) => Number(m.senderNo) === Number(normalized.senderNo));
+              const found = prev.find(
+                (m) => Number(m.senderNo) === Number(normalized.senderNo),
+              );
               if (found?.senderName) normalized.senderName = found.senderName;
             }
             return [...prev, normalized];
@@ -65,7 +68,7 @@ export const useChat = (roomNo) => {
       },
       onDisconnect: () => setConnected(false),
       onStompError: (frame) => {
-        console.error('STOMP error', frame);
+        console.error("STOMP error", frame);
         setConnected(false);
       },
     });
@@ -80,9 +83,9 @@ export const useChat = (roomNo) => {
 
   // 메시지 전송
   const sendMessage = useCallback(
-    (content, type = 'TEXT', fileUrl = null) => {
+    (content, type = "TEXT", fileUrl = null) => {
       if (!clientRef.current?.connected) return;
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
 
       clientRef.current.publish({
         destination: `/pub/chat/message`,
@@ -95,7 +98,7 @@ export const useChat = (roomNo) => {
         }),
       });
     },
-    [roomNo]
+    [roomNo],
   );
 
   return { messages, setMessages, connected, loading, sendMessage };
