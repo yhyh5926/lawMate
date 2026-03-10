@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMyConsults, cancelConsult } from "../../api/consultApi";
+import { getMyConsults, cancelConsult, restoreConsult, deleteConsult } from "../../api/consultApi";
 
 const STATUS_TABS = [
   { value: "", label: "전체" },
@@ -15,6 +15,12 @@ const STATUS_META = {
   CONFIRMED: { label: "확정", color: "#1A6DFF", bg: "#E8F0FF" },
   DONE: { label: "완료", color: "#34C759", bg: "#E8F8ED" },
   CANCELLED: { label: "취소", color: "#FF3B30", bg: "#FFE8E8" },
+};
+
+const getDeleteDday = (updatedAt) => {
+  if (!updatedAt) return null;
+  const diff = 7 - Math.floor((Date.now() - new Date(updatedAt)) / (1000 * 60 * 60 * 24));
+  return diff > 0 ? `${diff}일 후 자동 삭제` : "곧 자동 삭제";
 };
 
 const ConsultListPage = () => {
@@ -39,10 +45,10 @@ const ConsultListPage = () => {
     }
   };
 
-  const handleCancel = async (consultNo) => {
+  const handleCancel = async (consultId) => {
     if (!window.confirm("예약을 취소하시겠습니까?")) return;
     try {
-      await cancelConsult(consultNo);
+      await cancelConsult(consultId);
       alert("취소되었습니다.");
       fetchConsults();
     } catch (e) {
@@ -50,30 +56,36 @@ const ConsultListPage = () => {
     }
   };
 
+  const handleRestore = async (consultId) => {
+    if (!window.confirm("예약을 복구하시겠습니까?")) return;
+    try {
+      await restoreConsult(consultId);
+      alert("복구되었습니다.");
+      fetchConsults();
+    } catch (e) {
+      alert("복구 실패");
+    }
+  };
+
+  const handleDelete = async (consultId) => {
+    if (!window.confirm("즉시 삭제하시겠습니까? 복구할 수 없습니다.")) return;
+    try {
+      await deleteConsult(consultId);
+      alert("삭제되었습니다.");
+      fetchConsults();
+    } catch (e) {
+      alert("삭제 실패");
+    }
+  };
+
   return (
     <div style={{ maxWidth: "760px", margin: "0 auto", padding: "28px 16px" }}>
-      <h2
-        style={{
-          fontSize: "22px",
-          fontWeight: "800",
-          color: "#1A1A2E",
-          marginBottom: "20px",
-        }}
-      >
+      <h2 style={{ fontSize: "22px", fontWeight: "800", color: "#1A1A2E", marginBottom: "20px" }}>
         상담 예약 내역
       </h2>
 
       {/* 탭 */}
-      <div
-        style={{
-          display: "flex",
-          gap: "4px",
-          marginBottom: "24px",
-          background: "#F0F2F5",
-          borderRadius: "10px",
-          padding: "4px",
-        }}
-      >
+      <div style={{ display: "flex", gap: "4px", marginBottom: "24px", background: "#F0F2F5", borderRadius: "10px", padding: "4px" }}>
         {STATUS_TABS.map((tab) => (
           <button
             key={tab.value}
@@ -88,8 +100,7 @@ const ConsultListPage = () => {
               fontWeight: activeTab === tab.value ? "700" : "500",
               fontSize: "13px",
               cursor: "pointer",
-              boxShadow:
-                activeTab === tab.value ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
+              boxShadow: activeTab === tab.value ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
               transition: "all 0.15s",
             }}
           >
@@ -99,19 +110,9 @@ const ConsultListPage = () => {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: "center", padding: "60px", color: "#aaa" }}>
-          불러오는 중...
-        </div>
+        <div style={{ textAlign: "center", padding: "60px", color: "#aaa" }}>불러오는 중...</div>
       ) : consults.length === 0 ? (
-        <div
-          style={{
-            textAlign: "center",
-            padding: "60px",
-            background: "#F7F9FB",
-            borderRadius: "16px",
-            color: "#aaa",
-          }}
-        >
+        <div style={{ textAlign: "center", padding: "60px", background: "#F7F9FB", borderRadius: "16px", color: "#aaa" }}>
           예약 내역이 없습니다
         </div>
       ) : (
@@ -120,7 +121,7 @@ const ConsultListPage = () => {
             const meta = STATUS_META[c.status] || STATUS_META.PENDING;
             return (
               <div
-                key={c.consultNo}
+                key={c.consultId}
                 style={{
                   background: "#fff",
                   border: "1px solid #E8ECF0",
@@ -129,102 +130,58 @@ const ConsultListPage = () => {
                   boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    marginBottom: "12px",
-                  }}
-                >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
                   <div>
-                    <div
-                      style={{
-                        fontWeight: "700",
-                        fontSize: "16px",
-                        color: "#1A1A2E",
-                      }}
-                    >
+                    <div style={{ fontWeight: "700", fontSize: "16px", color: "#1A1A2E" }}>
                       {c.lawyerName} 변호사
                     </div>
-                    <div
-                      style={{
-                        fontSize: "13px",
-                        color: "#888",
-                        marginTop: "2px",
-                      }}
-                    >
-                      {c.consultDate} {c.consultTime} ({c.duration}분)
+                    <div style={{ fontSize: "13px", color: "#888", marginTop: "2px" }}>
+                      {c.consultDate} · {c.durationMin}분
                     </div>
                   </div>
-                  <span
-                    style={{
-                      padding: "4px 10px",
-                      borderRadius: "20px",
-                      background: meta.bg,
-                      color: meta.color,
-                      fontSize: "12px",
-                      fontWeight: "700",
-                    }}
-                  >
+                  <span style={{ padding: "4px 10px", borderRadius: "20px", background: meta.bg, color: meta.color, fontSize: "12px", fontWeight: "700" }}>
                     {meta.label}
                   </span>
                 </div>
 
                 {c.memo && (
-                  <p
-                    style={{
-                      margin: "0 0 12px",
-                      fontSize: "13px",
-                      color: "#555",
-                      background: "#F7F9FB",
-                      padding: "8px 12px",
-                      borderRadius: "8px",
-                    }}
-                  >
+                  <p style={{ margin: "0 0 12px", fontSize: "13px", color: "#555", background: "#F7F9FB", padding: "8px 12px", borderRadius: "8px" }}>
                     {c.memo}
                   </p>
                 )}
 
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "8px",
-                    justifyContent: "flex-end",
-                  }}
-                >
+                <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end", alignItems: "center" }}>
                   {/* 결제 이동 (확정 상태) */}
                   {c.status === "CONFIRMED" && !c.paid && (
-                    <button
-                      onClick={() =>
-                        navigate(`/payment/pay?consultNo=${c.consultNo}`)
-                      }
-                      style={btnStyle("#1A6DFF", "#fff")}
-                    >
+                    <button onClick={() => navigate(`/payment/pay?consultId=${c.consultId}`)} style={btnStyle("#1A6DFF", "#fff")}>
                       결제하기
                     </button>
                   )}
                   {/* 후기 작성 (완료 상태) */}
                   {c.status === "DONE" && !c.reviewed && (
-                    <button
-                      onClick={() =>
-                        navigate(
-                          `/lawyer/review/write?consultNo=${c.consultNo}`,
-                        )
-                      }
-                      style={btnStyle("#34C759", "#fff")}
-                    >
+                    <button onClick={() => navigate(`/lawyer/review/write?consultId=${c.consultId}`)} style={btnStyle("#34C759", "#fff")}>
                       후기 작성
                     </button>
                   )}
                   {/* 취소 (대기/확정 상태) */}
                   {["PENDING", "CONFIRMED"].includes(c.status) && (
-                    <button
-                      onClick={() => handleCancel(c.consultNo)}
-                      style={btnStyle("#fff", "#FF3B30", "1px solid #FF3B30")}
-                    >
+                    <button onClick={() => handleCancel(c.consultId)} style={btnStyle("#fff", "#FF3B30", "1px solid #FF3B30")}>
                       예약 취소
                     </button>
+                  )}
+                  {/* 복구 / 즉시삭제 (취소 상태) */}
+                  {c.status === "CANCELLED" && (
+                    <>
+                      <span style={{ fontSize: "11px", color: "#FF3B30", alignSelf: "center" }}>
+                        🗑 {getDeleteDday(c.updatedAt)}
+                      </span>
+                      <button onClick={() => handleRestore(c.consultId)} style={btnStyle("#E8F0FF", "#1A6DFF")}>
+                        복구
+                      </button>
+                      <button onClick={() => handleDelete(c.consultId)} style={btnStyle("#FF3B30", "#fff")}>
+                        즉시 삭제
+                      </button>
+                    </>
                   )}
                 </div>
               </div>

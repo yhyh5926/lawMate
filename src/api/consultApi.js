@@ -23,3 +23,9 @@ export const getAvailableTimes = (lawyerId, date) =>
 // 환불 신청
 export const requestRefund = (paymentNo, reason) =>
   axiosInstance.post(`/payment/${paymentNo}/refund`, { reason });
+
+export const restoreConsult = (consultId) =>
+  axiosInstance.put(`/consult/${consultId}/restore`);
+
+export const deleteConsult = (consultId) =>
+  axiosInstance.delete(`/consult/${consultId}`);
