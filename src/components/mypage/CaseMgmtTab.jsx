@@ -45,7 +45,7 @@ const CaseMgmtTab = () => {
           status: STEP_MAPPING[c.step] !== undefined ? STEP_MAPPING[c.step] : 0,
           content: c.description || "",
           opinion: c.expertOpinion || "",
-          lawyerName: "담당 변호사", 
+          lawyerName: c.lawyerName || "담당 변호사", 
           clientName: c.clientName || "의뢰인",
           files: "" 
       }));
@@ -130,6 +130,7 @@ const CaseMgmtTab = () => {
         await caseApi.updateCaseStatus(id, STEP_KEYS[currentStatus - 1]);
         setCases(cases.map(c => c.id === id ? { ...c, status: currentStatus - 1 } : c));
       } catch (error) {
+        console.error("상태 변경 실패:", error);
         alert("상태 변경 중 오류가 발생했습니다.");
       }
     }
@@ -139,9 +140,11 @@ const CaseMgmtTab = () => {
     if (currentStatus >= 4) return;
     if (window.confirm(`[${STEPS[currentStatus + 1]}] 단계로 업데이트 하시겠습니까?`)) {
       try {
+        // 💡 백엔드 400 에러 해결: 문자열 키값 전송
         await caseApi.updateCaseStatus(id, STEP_KEYS[currentStatus + 1]);
         setCases(cases.map(c => c.id === id ? { ...c, status: currentStatus + 1 } : c));
       } catch (error) {
+        console.error("상태 변경 실패:", error);
         alert("상태 변경 중 오류가 발생했습니다.");
       }
     }
@@ -158,15 +161,17 @@ const CaseMgmtTab = () => {
 
   const saveEdit = async (id) => {
     try {
-      const updateData = {
-        content: editFormData.content,
-        opinion: editFormData.opinion
-      };
-      await caseApi.updateCaseInfo(id, updateData);
-      setCases(cases.map(c => c.id === id ? { ...c, ...updateData } : c));
+      const formData = new FormData();
+      formData.append("description", editFormData.content || "");
+      formData.append("expertOpinion", editFormData.opinion || "");
+
+      await caseApi.updateCaseInfo(id, formData);
+      
+      setCases(cases.map(c => c.id === id ? { ...c, content: editFormData.content, opinion: editFormData.opinion } : c));
       setEditModeId(null);
       alert("사건 내용이 성공적으로 수정되었습니다.");
     } catch (error) {
+      console.error("사건 수정 실패:", error);
       alert("사건 내용을 수정하는데 실패했습니다.");
     }
   };
@@ -199,6 +204,7 @@ const CaseMgmtTab = () => {
       setReviewModeId(null);
       alert("소중한 후기가 등록되었습니다!");
     } catch (error) {
+      console.error("후기 등록 실패:", error);
       alert("후기 등록 중 오류가 발생했습니다.");
     }
   };
@@ -208,6 +214,7 @@ const CaseMgmtTab = () => {
   return (
     <div className="case-mgmt-wrapper">
       
+      {/* 상단 헤더: 제목 및 등록 버튼 */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h3 className="content-title" style={{ margin: 0 }}>사건 기록</h3>
         {isLawyer && (
@@ -220,12 +227,13 @@ const CaseMgmtTab = () => {
         )}
       </div>
 
+      {/* 💡 사건 직접 등록 폼 (토글 방식) */}
       {isRegisterOpen && (
         <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
           <h4 style={{ margin: '0 0 16px 0', color: '#1e293b' }}>새로운 의뢰인 사건 등록</h4>
           <div style={{ display: 'grid', gap: '10px', gridTemplateColumns: '1fr 1fr' }}>
             
-            {/* 💡 텍스트 입력창 대신 드롭다운(select)으로 교체 */}
+            {/* 💡 드롭다운으로 의뢰인 선택 */}
             <select 
               value={regForm.clientId} 
               onChange={e=>setRegForm({...regForm, clientId: e.target.value})} 
@@ -239,7 +247,13 @@ const CaseMgmtTab = () => {
               ))}
             </select>
 
-            <input type="text" placeholder="사건 유형 (예: 민사, 이혼)" value={regForm.caseType} onChange={e=>setRegForm({...regForm, caseType: e.target.value})} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}/>
+            <input 
+              type="text" 
+              placeholder="사건 유형 (예: 민사, 이혼)" 
+              value={regForm.caseType} 
+              onChange={e=>setRegForm({...regForm, caseType: e.target.value})} 
+              style={{ padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+            />
           </div>
           
           {clientList.length === 0 && (
@@ -248,14 +262,26 @@ const CaseMgmtTab = () => {
             </p>
           )}
 
-          <input type="text" placeholder="사건 제목 (예: 임대차 보증금 반환 소송)" value={regForm.title} onChange={e=>setRegForm({...regForm, title: e.target.value})} style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1', marginTop: '10px', boxSizing: 'border-box' }}/>
-          <textarea placeholder="사전 상담 내용 및 요약" value={regForm.description} onChange={e=>setRegForm({...regForm, description: e.target.value})} style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1', marginTop: '10px', minHeight: '80px', boxSizing: 'border-box', resize: 'vertical' }}/>
+          <input 
+            type="text" 
+            placeholder="사건 제목 (예: 임대차 보증금 반환 소송)" 
+            value={regForm.title} 
+            onChange={e=>setRegForm({...regForm, title: e.target.value})} 
+            style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1', marginTop: '10px', boxSizing: 'border-box' }}
+          />
+          <textarea 
+            placeholder="사전 상담 내용 및 요약" 
+            value={regForm.description} 
+            onChange={e=>setRegForm({...regForm, description: e.target.value})} 
+            style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1', marginTop: '10px', minHeight: '80px', boxSizing: 'border-box', resize: 'vertical' }}
+          />
           <div style={{ textAlign: 'right', marginTop: '10px' }}>
             <button onClick={handleManualRegister} style={{ padding: '10px 20px', background: '#10b981', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>사건 등록하기</button>
           </div>
         </div>
       )}
 
+      {/* 서브 탭: 진행 중 / 이전 내역 */}
       <div className="case-subtabs">
         <button
           className={`case-subtab-btn ${subTab === "active" ? "active" : ""}`}
@@ -271,6 +297,7 @@ const CaseMgmtTab = () => {
         </button>
       </div>
 
+      {/* 리스트 영역 */}
       {filteredCases.length === 0 ? (
         <div className="empty-tab-content">
           {subTab === "active" ? "현재 진행 중인 사건이 없습니다." : "이전 사건 내역이 없습니다."}
@@ -280,6 +307,7 @@ const CaseMgmtTab = () => {
           {filteredCases.map((caseItem) => (
             <div key={caseItem.id} className="case-card">
               
+              {/* 사건 헤더 (클릭 시 토글) */}
               <div className="case-header" onClick={() => toggleDetail(caseItem.id)}>
                 <div className="case-header-left">
                   <span className="case-type-badge">{caseItem.type || "일반"} 사건</span>
@@ -291,6 +319,7 @@ const CaseMgmtTab = () => {
                 </div>
               </div>
 
+              {/* 진행 상태 바 (색상 구분) */}
               <div className="case-progress-container">
                 <div className="progress-line-background"></div>
                 <div 
@@ -311,6 +340,7 @@ const CaseMgmtTab = () => {
                 </div>
               </div>
 
+              {/* 상세 정보 박스 (토글) */}
               {expandedId === caseItem.id && (
                 <div className="case-detail-box">
                   <div className="detail-section">
@@ -318,6 +348,7 @@ const CaseMgmtTab = () => {
                     <p className="detail-text">👨‍⚖️ 담당 변호사: <b>{caseItem.lawyerName}</b> &nbsp;&nbsp;|&nbsp;&nbsp; 👤 의뢰인: <b>{caseItem.clientName}</b></p>
                   </div>
                   
+                  {/* 수정 모드 분기 */}
                   {editModeId === caseItem.id ? (
                     <div className="edit-form-box">
                       <div className="detail-section">
@@ -355,7 +386,8 @@ const CaseMgmtTab = () => {
                         </p>
                       </div>
                       
-                      {user?.role === "LAWYER" && caseItem.status < 4 && (
+                      {/* 변호사 전용 컨트롤 바 */}
+                      {isLawyer && caseItem.status < 4 && (
                         <div className="lawyer-control-bar">
                           <div className="left-controls">
                             <button 
@@ -380,7 +412,8 @@ const CaseMgmtTab = () => {
                     </>
                   )}
 
-                  {caseItem.status === 4 && user?.role !== "LAWYER" && (
+                  {/* 의뢰인 후기 섹션 (종료 시에만 노출) */}
+                  {caseItem.status === 4 && !isLawyer && (
                     <div className="review-section-wrapper">
                       {caseItem.review ? (
                         <div className="client-review-box">
