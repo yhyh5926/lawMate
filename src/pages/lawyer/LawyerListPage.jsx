@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import lawyerApi from "../../api/lawyerApi";
 import defaultLawyerImg from "../../styles/images/Lawyers.png";
 import "../../styles/lawyer/LawyerListPage.css";
+import { baseURL } from "../../constants/baseURL";
 
 export const DEFAULT_IMAGE = defaultLawyerImg;
 
@@ -142,7 +143,7 @@ const LawyerListPage = () => {
     return path
       ? path.startsWith("http")
         ? path
-        : `http://localhost:8080${path}`
+        : baseURL + path
       : DEFAULT_IMAGE;
   };
 

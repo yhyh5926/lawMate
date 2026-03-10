@@ -11,6 +11,7 @@ export const useChat = (roomNo) => {
   const [loading, setLoading] = useState(true);
   const clientRef = useRef(null);
 
+  // 과거 메시지 로드 (REST API)
   const loadMessages = useCallback(async () => {
     if (!roomNo) return;
     try {
@@ -30,6 +31,7 @@ export const useChat = (roomNo) => {
     }
   }, [roomNo]);
 
+  // STOMP WebSocket 연결
   useEffect(() => {
     if (!roomNo) return;
 
@@ -47,7 +49,7 @@ export const useChat = (roomNo) => {
         client.subscribe(`/sub/chat/room/${roomNo}`, (frame) => {
           const msg = JSON.parse(frame.body);
 
-          // ── 수정 이벤트 ──
+          // ── 수정 이벤트: 상대방 화면에도 수정 내용 반영 ──
           if (msg.type === 'UPDATE') {
             setMessages((prev) =>
               prev.map((m) =>
@@ -59,7 +61,7 @@ export const useChat = (roomNo) => {
             return;
           }
 
-          // ── 삭제 이벤트 ──
+          // ── 삭제 이벤트: 상대방 화면에도 삭제됨 표시 ──
           if (msg.type === 'DELETE') {
             setMessages((prev) =>
               prev.map((m) =>
@@ -71,7 +73,7 @@ export const useChat = (roomNo) => {
             return;
           }
 
-          // ── 일반 메시지 ──
+          // ── 일반 메시지 수신 ──
           const normalized = {
             ...msg,
             sentAt: msg.sentAt || msg.createdAt || new Date().toISOString(),
@@ -79,6 +81,7 @@ export const useChat = (roomNo) => {
             type: msg.type || msg.msgType,
           };
           setMessages((prev) => {
+            // senderName이 없으면 기존 메시지에서 찾아서 채움
             if (!normalized.senderName) {
               const found = prev.find((m) => Number(m.senderNo) === Number(normalized.senderNo));
               if (found?.senderName) normalized.senderName = found.senderName;
@@ -102,6 +105,7 @@ export const useChat = (roomNo) => {
     };
   }, [roomNo]);
 
+  // 메시지 전송 (WebSocket)
   const sendMessage = useCallback(
     (content, type = 'TEXT', fileUrl = null) => {
       if (!clientRef.current?.connected) return;
@@ -115,13 +119,13 @@ export const useChat = (roomNo) => {
     [roomNo]
   );
 
-  // WebSocket으로 수정 브로드캐스트
+  // 메시지 수정: DB 업데이트 + WebSocket으로 상대방에게 브로드캐스트
   const updateMessage = useCallback(
     async (msgNo, content) => {
       if (!clientRef.current?.connected) return;
       const token = localStorage.getItem('token');
       try {
-        await updateChatMsg(msgNo, content); // DB 저장
+        await updateChatMsg(msgNo, content); // REST API로 DB 저장
         clientRef.current.publish({
           destination: `/pub/chat/message/update`,
           headers: { Authorization: `Bearer ${token}` },
@@ -134,13 +138,13 @@ export const useChat = (roomNo) => {
     [roomNo]
   );
 
-  // WebSocket으로 삭제 브로드캐스트
+  // 메시지 삭제: DB soft delete + WebSocket으로 상대방에게 브로드캐스트
   const deleteMessage = useCallback(
     async (msgNo) => {
       if (!clientRef.current?.connected) return;
       const token = localStorage.getItem('token');
       try {
-        await deleteChatMsg(msgNo); // DB soft delete
+        await deleteChatMsg(msgNo); // REST API로 DB soft delete
         clientRef.current.publish({
           destination: `/pub/chat/message/delete`,
           headers: { Authorization: `Bearer ${token}` },

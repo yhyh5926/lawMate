@@ -17,7 +17,7 @@ axiosInstance.interceptors.request.use(
   (config) => {
     // 로컬 스토리지에서 JWT 토큰을 가져옵니다.
     const token = getToken();
-    
+
     // 토큰이 존재한다면, 모든 요청의 헤더에 Authorization 값으로 추가합니다.
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -26,7 +26,7 @@ axiosInstance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosInstance;
