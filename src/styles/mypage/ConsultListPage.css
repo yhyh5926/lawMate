@@ -145,3 +145,13 @@
   color: #ff3b30;
   border: 1px solid #ff3b30;
 }
+
+.btn-restore {
+  background: #e8f0ff;
+  color: #1a6dff;
+}
+
+.btn-delete {
+  background: #ff3b30;
+  color: #fff;
+}
