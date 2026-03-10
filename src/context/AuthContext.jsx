@@ -2,32 +2,29 @@
 // 파일 위치: src/context/AuthContext.jsx
 // 설명: 앱 전역에서 로그인 사용자 정보(상태)와 로그인/로그아웃 기능을 제공하는 Context
 
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState } from "react";
 import { getToken, removeToken, parseJwt } from "../utils/tokenUtil";
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+// useEffect 대신 함수로 즉시 토큰 파싱
+// → 첫 렌더링부터 user가 세팅되어 채팅창 좌우 반전 문제 해결
+const getInitialUser = () => {
+  const token = getToken();
+  if (!token) return null;
+  const decoded = parseJwt(token);
+  if (!decoded) return null;
+  return {
+    loginId: decoded.sub,
+    role: decoded.role,       // PERSONAL, LAWYER, ADMIN
+    memberId: decoded.memberId,
+  };
+};
 
-  // 앱 실행 시 로컬스토리지의 토큰을 확인하여 자동 로그인 유지
-  useEffect(() => {
-    const token = getToken();
-    if (token) {
-      const decoded = parseJwt(token);
-      if (decoded) {
-        setUser({
-          loginId: decoded.sub,
-          role: decoded.role, // PERSONAL, LAWYER, ADMIN
-          memberId: decoded.memberId,  // ← 추가
-        });
-        setIsAuthenticated(true);
-      } else {
-        handleLogout();
-      }
-    }
-  }, []);
+export const AuthProvider = ({ children }) => {
+  // useState 초기값으로 즉시 토큰 파싱 (앱 실행 시 바로 user 세팅)
+  const [user, setUser] = useState(getInitialUser);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!getInitialUser());
 
   // 로그인 성공 시 호출될 함수
   const handleLogin = (userInfo) => {

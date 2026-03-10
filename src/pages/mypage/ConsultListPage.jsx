@@ -1,7 +1,8 @@
 // src/pages/mypage/ConsultListPage.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMyConsults, cancelConsult } from "../../api/consultApi";
+// 💡 복구 및 삭제 API 추가, CSS 임포트 유지
+import { getMyConsults, cancelConsult, restoreConsult, deleteConsult } from "../../api/consultApi";
 import "../../styles/mypage/ConsultListPage.css";
 
 const STATUS_TABS = [
@@ -17,6 +18,12 @@ const STATUS_META = {
   CONFIRMED: { label: "확정", className: "badge-confirmed" },
   DONE: { label: "완료", className: "badge-done" },
   CANCELLED: { label: "취소", className: "badge-cancelled" },
+};
+
+const getDeleteDday = (updatedAt) => {
+  if (!updatedAt) return null;
+  const diff = 7 - Math.floor((Date.now() - new Date(updatedAt)) / (1000 * 60 * 60 * 24));
+  return diff > 0 ? `${diff}일 후 자동 삭제` : "곧 자동 삭제";
 };
 
 const ConsultListPage = () => {
@@ -42,14 +49,36 @@ const ConsultListPage = () => {
     }
   };
 
-  const handleCancel = async (id) => {
+  const handleCancel = async (consultId) => {
     if (!window.confirm("예약을 취소하시겠습니까?")) return;
     try {
-      await cancelConsult(id);
+      await cancelConsult(consultId);
       alert("취소되었습니다.");
       fetchConsults(); // 취소 후 목록 새로고침
     } catch (e) {
       alert(e.response?.data?.message || "취소 실패");
+    }
+  };
+
+  const handleRestore = async (consultId) => {
+    if (!window.confirm("예약을 복구하시겠습니까?")) return;
+    try {
+      await restoreConsult(consultId);
+      alert("복구되었습니다.");
+      fetchConsults();
+    } catch (e) {
+      alert("복구 실패");
+    }
+  };
+
+  const handleDelete = async (consultId) => {
+    if (!window.confirm("즉시 삭제하시겠습니까? 복구할 수 없습니다.")) return;
+    try {
+      await deleteConsult(consultId);
+      alert("삭제되었습니다.");
+      fetchConsults();
+    } catch (e) {
+      alert("삭제 실패");
     }
   };
 
@@ -92,7 +121,7 @@ const ConsultListPage = () => {
                       {c.lawyerName || "담당"} 변호사
                     </div>
                     <div className="consult-datetime">
-                      {c.consultDate || c.createdAt?.split('T')[0]} {c.consultTime} ({c.durationMin || c.duration || 30}분)
+                      {c.consultDate || c.createdAt?.split('T')[0]} {c.consultTime && `· ${c.consultTime}`} ({c.durationMin || c.duration || 30}분)
                     </div>
                   </div>
                   <span className={`consult-status-badge ${meta.className}`}>
@@ -100,12 +129,13 @@ const ConsultListPage = () => {
                   </span>
                 </div>
 
-                {c.note && (
-                  <p className="consult-memo">{c.note}</p>
+                {/* 💡 백엔드 변수명이 note인지 memo인지 몰라 둘 다 호환되도록 처리 */}
+                {(c.note || c.memo) && (
+                  <p className="consult-memo">{c.note || c.memo}</p>
                 )}
 
                 <div className="consult-card-actions">
-                  {/* 💡 모든 액션 버튼에 고유 ID(uniqueId)를 넘기도록 수정 */}
+                  {/* 결제 이동 (확정 상태) */}
                   {c.status === "CONFIRMED" && !c.paid && (
                     <button
                       onClick={() => navigate(`/payment/pay?consultId=${uniqueId}`)}
@@ -114,6 +144,7 @@ const ConsultListPage = () => {
                       결제하기
                     </button>
                   )}
+                  {/* 후기 작성 (완료 상태) */}
                   {c.status === "DONE" && !c.reviewed && (
                     <button
                       onClick={() => navigate(`/lawyer/review/write?consultId=${uniqueId}`)}
@@ -122,6 +153,7 @@ const ConsultListPage = () => {
                       후기 작성
                     </button>
                   )}
+                  {/* 예약 취소 (대기/확정 상태) */}
                   {["PENDING", "CONFIRMED"].includes(c.status) && (
                     <button
                       onClick={() => handleCancel(uniqueId)}
@@ -129,6 +161,26 @@ const ConsultListPage = () => {
                     >
                       예약 취소
                     </button>
+                  )}
+                  {/* 복구 / 즉시삭제 (취소 상태) */}
+                  {c.status === "CANCELLED" && (
+                    <>
+                      <span style={{ fontSize: "11px", color: "#FF3B30", alignSelf: "center" }}>
+                        🗑 {getDeleteDday(c.updatedAt)}
+                      </span>
+                      <button 
+                        onClick={() => handleRestore(uniqueId)} 
+                        className="consult-action-btn btn-restore"
+                      >
+                        복구
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(uniqueId)} 
+                        className="consult-action-btn btn-delete"
+                      >
+                        즉시 삭제
+                      </button>
+                    </>
                   )}
                 </div>
 

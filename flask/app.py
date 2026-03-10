@@ -6,6 +6,7 @@ app = Flask(__name__)
 
 SPRING_API = "http://localhost:8080/api"
 
+
 @app.route("/poll/chart/<int:poll_id>")
 def poll_chart(poll_id):
     res = requests.get(f"{SPRING_API}/poll/{poll_id}/options")

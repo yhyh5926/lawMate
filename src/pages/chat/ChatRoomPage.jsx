@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import ChatBubble from "../../components/chat/ChatBubble";
 import ChatInputBox from "../../components/chat/ChatInputBox";
 import { useChat } from "../../hooks/useChat";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuthStore } from "../../store/authStore";
 import { getChatRooms, deleteChatRoom } from "../../api/chatApi";
 
 const formatTime = (dateStr) => {
@@ -21,18 +21,15 @@ const ChatRoomPage = () => {
   const [searchParams] = useSearchParams();
   const roomNo = Number(searchParams.get("roomNo"));
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const bottomRef = useRef(null);
 
   const [rooms, setRooms] = useState([]);
-  const currentRoom = rooms.find((r) => r.roomNo === roomNo);
-  const targetRole = currentRoom
-    ? Number(currentRoom.memberNo1) === Number(user?.memberId)
-      ? "LAWYER"
-      : "PERSONAL"
-    : null;
 
-  const { messages, setMessages, connected, loading, sendMessage } = useChat(roomNo);
+  const currentRoom = rooms.find((r) => r.roomNo === roomNo);
+  const targetRole = !user ? null : user.role === "LAWYER" ? "PERSONAL" : "LAWYER";
+
+  const { messages, setMessages, connected, loading, sendMessage, updateMessage, deleteMessage } = useChat(roomNo);
 
   useEffect(() => {
     getChatRooms()
@@ -51,7 +48,6 @@ const ChatRoomPage = () => {
       await deleteChatRoom(targetRoomNo);
       const updated = rooms.filter((r) => r.roomNo !== targetRoomNo);
       setRooms(updated);
-      // 현재 보고 있는 방을 삭제했으면 다른 방으로 이동
       if (targetRoomNo === roomNo) {
         if (updated.length > 0) {
           navigate(`/chat/room?roomNo=${updated[0].roomNo}`);
@@ -68,10 +64,15 @@ const ChatRoomPage = () => {
     return <div style={{ textAlign: "center", padding: "60px", color: "#aaa" }}>잘못된 접근입니다.</div>;
   }
 
+  console.log("=== 렌더링 확인 ===");
+  console.log("user:", user);
+  console.log("loading:", loading);
+  console.log("messages 개수:", messages.length);
+
   return (
     <div style={{ display: "flex", height: "100vh", maxWidth: "1100px", margin: "0 auto", background: "#fff", border: "1px solid #E8ECF0" }}>
-      
-      {/* ── 왼쪽 채팅목록 사이드바 ── */}
+
+      {/* ── 왼쪽 채팅방 목록 사이드바 ── */}
       <div style={{ width: "300px", borderRight: "1px solid #E8ECF0", display: "flex", flexDirection: "column", flexShrink: 0 }}>
         <div style={{ padding: "20px 16px 12px", borderBottom: "1px solid #E8ECF0" }}>
           <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: "#1A1A2E" }}>메시지</h2>
@@ -100,7 +101,6 @@ const ChatRoomPage = () => {
                   e.currentTarget.querySelector(".room-delete-btn").style.opacity = "0";
                 }}
               >
-                {/* 아바타 */}
                 <div style={{ position: "relative", flexShrink: 0 }}>
                   <div style={{
                     width: "44px", height: "44px", borderRadius: "10px",
@@ -112,9 +112,10 @@ const ChatRoomPage = () => {
                   </div>
                   {room.unreadCount > 0 && (
                     <span style={{
-                      position: "absolute", top: "-4px", right: "-4px", background: "#FF3B30",
-                      color: "#fff", borderRadius: "10px", fontSize: "10px", fontWeight: "700",
-                      minWidth: "16px", height: "16px", display: "flex", alignItems: "center",
+                      position: "absolute", top: "-4px", right: "-4px",
+                      background: "#FF3B30", color: "#fff", borderRadius: "10px",
+                      fontSize: "10px", fontWeight: "700", minWidth: "16px",
+                      height: "16px", display: "flex", alignItems: "center",
                       justifyContent: "center", padding: "0 3px", border: "2px solid #fff",
                     }}>
                       {room.unreadCount > 99 ? "99+" : room.unreadCount}
@@ -122,7 +123,6 @@ const ChatRoomPage = () => {
                   )}
                 </div>
 
-                {/* 텍스트 */}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3px" }}>
                     <span style={{ fontWeight: "700", fontSize: "14px", color: "#1A1A2E" }}>
@@ -140,7 +140,6 @@ const ChatRoomPage = () => {
                   </p>
                 </div>
 
-                {/* 삭제 버튼 - 호버 시 나타남 */}
                 <button
                   className="room-delete-btn"
                   onClick={(e) => handleDelete(e, room.roomNo)}
@@ -162,7 +161,6 @@ const ChatRoomPage = () => {
 
       {/* ── 오른쪽 채팅창 ── */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-        {/* 헤더 */}
         <div style={{
           display: "flex", alignItems: "center", gap: "12px",
           padding: "14px 20px", borderBottom: "1px solid #E8ECF0",
@@ -186,7 +184,7 @@ const ChatRoomPage = () => {
 
         {/* 메시지 목록 */}
         <div style={{ flex: 1, overflowY: "auto", padding: "20px 16px", background: "#F7F9FB", display: "flex", flexDirection: "column" }}>
-          {loading || !user ? (
+          {loading || !user || !targetRole ? (
             <div style={{ textAlign: "center", color: "#aaa", marginTop: "60px" }}>메시지 불러오는 중...</div>
           ) : messages.length === 0 ? (
             <div style={{ textAlign: "center", color: "#aaa", marginTop: "60px" }}>
@@ -194,27 +192,25 @@ const ChatRoomPage = () => {
               <p>대화를 시작해보세요</p>
             </div>
           ) : (
-            // ChatRoomPage.jsx messages.map 부분 수정
-            messages.map((msg, idx) => (
-              <ChatBubble
-                key={msg.msgNo ?? idx}
-                message={msg}
-                myNo={user?.memberId}
-                targetRole={targetRole}
-                targetMemberNo={currentRoom?.memberNo2}
-                onDelete={(msgNo) => setMessages((prev) => prev.filter((m) => Number(m.msgNo) !== Number(msgNo)))}
-                onUpdate={(msgNo, content) =>
-                  setMessages((prev) =>
-                    prev.map((m) => Number(m.msgNo) === Number(msgNo) ? { ...m, content } : m)
-                  )
-                }
-              />
-            ))
+            messages.map((msg, idx) => {
+              // 디버깅: myNo와 senderNo 비교 확인
+              console.log("myNo:", user?.memberId, "| senderNo:", msg.senderNo, "| isMine:", Number(msg.senderNo) === Number(user?.memberId));
+              return (
+                <ChatBubble
+                  key={msg.msgNo ?? idx}
+                  message={msg}
+                  myNo={user?.memberId}
+                  targetRole={targetRole}
+                  targetMemberNo={currentRoom?.memberNo2}
+                  onDelete={deleteMessage}
+                  onUpdate={updateMessage}
+                />
+              );
+            })
           )}
           <div ref={bottomRef} />
         </div>
 
-        {/* 입력창 */}
         <ChatInputBox onSend={sendMessage} disabled={!connected} roomNo={roomNo} />
       </div>
     </div>

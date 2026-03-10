@@ -4,6 +4,7 @@ import lawyerApi from "../../api/lawyerApi";
 import { DEFAULT_IMAGE } from "./LawyerListPage";
 import "../../styles/lawyer/LawyerDetailPage.css";
 import { getOrCreateChatRoom } from "../../api/chatApi";
+import { baseURL } from "../../constants/baseURL";
 
 const LawyerDetailPage = () => {
   const { id } = useParams();
@@ -85,11 +86,11 @@ const LawyerDetailPage = () => {
       lawyer.profileImage ||
       lawyer.imagePath ||
       lawyer.imageUrl;
-    if (path)
-      return path.startsWith("http") ? path : `http://localhost:8080${path}`;
+    if (path) return path.startsWith("http") ? path : baseURL + path;
     return DEFAULT_IMAGE;
   })();
 
+  console.log(imageUrl);
   return (
     <div className="lawyer-detail-page">
       <div className="lawyer-detail-container">

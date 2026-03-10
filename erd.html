@@ -1,0 +1,1668 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LawMate ERD</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: #2b2b2b;
+        font-family: "Consolas", "Courier New", monospace;
+        font-size: 11px;
+        overflow: auto;
+        min-height: 100vh;
+      }
+      .toolbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #3c3f41;
+        border-bottom: 1px solid #555;
+        padding: 6px 14px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        z-index: 1000;
+        height: 36px;
+      }
+      .toolbar span {
+        color: #bbb;
+        font-size: 12px;
+        font-family: sans-serif;
+      }
+      .toolbar strong {
+        color: #fff;
+        font-size: 13px;
+        font-family: sans-serif;
+      }
+      .legend {
+        display: flex;
+        gap: 14px;
+        margin-left: auto;
+      }
+      .leg {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: #bbb;
+        font-size: 11px;
+        font-family: sans-serif;
+      }
+      .leg-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+      }
+
+      #canvas {
+        position: relative;
+        width: 4200px;
+        height: 3000px;
+        margin-top: 36px;
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+
+      svg#lines {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      /* ── Table Card ── */
+      .tbl {
+        position: absolute;
+        border-radius: 3px;
+        overflow: hidden;
+        border: 1.5px solid #555;
+        box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.5);
+        min-width: 220px;
+        user-select: none;
+      }
+      .tbl-head {
+        padding: 5px 8px;
+        font-size: 11.5px;
+        font-weight: bold;
+        color: #fff;
+        letter-spacing: 0.3px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .tbl-head .icon {
+        font-size: 10px;
+        opacity: 0.8;
+      }
+      .tbl-body {
+        background: #1e1e1e;
+      }
+      .tbl-row {
+        display: flex;
+        align-items: center;
+        border-top: 1px solid #333;
+        padding: 2px 6px;
+        gap: 4px;
+        height: 22px;
+      }
+      .tbl-row:hover {
+        background: #2a2a2a;
+      }
+      .col-key {
+        font-size: 10px;
+        width: 28px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+      .pk {
+        color: #e5c07b;
+        font-weight: bold;
+      }
+      .fk {
+        color: #98c379;
+      }
+      .uk {
+        color: #c678dd;
+      }
+      .col-name {
+        color: #abb2bf;
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .col-name.nn {
+        color: #e06c75;
+      } /* NOT NULL key columns */
+      .col-type {
+        color: #61afef;
+        font-size: 10px;
+        white-space: nowrap;
+      }
+      .col-check {
+        color: #e5c07b;
+        font-size: 9px;
+        margin-left: 2px;
+        opacity: 0.7;
+      }
+
+      /* colour themes per group */
+      .grp-member .tbl-head {
+        background: #1a4a6e;
+      }
+      .grp-member {
+        border-color: #2d7db3;
+      }
+      .grp-case .tbl-head {
+        background: #4a2d1a;
+      }
+      .grp-case {
+        border-color: #b36a2d;
+      }
+      .grp-chat .tbl-head {
+        background: #1a4a2a;
+      }
+      .grp-chat {
+        border-color: #2db352;
+      }
+      .grp-consult .tbl-head {
+        background: #3a1a4a;
+      }
+      .grp-consult {
+        border-color: #8b2db3;
+      }
+      .grp-prec .tbl-head {
+        background: #4a3a1a;
+      }
+      .grp-prec {
+        border-color: #b38b2d;
+      }
+      .grp-comm .tbl-head {
+        background: #1a3a4a;
+      }
+      .grp-comm {
+        border-color: #2d8bb3;
+      }
+      .grp-qa .tbl-head {
+        background: #4a1a3a;
+      }
+      .grp-qa {
+        border-color: #b32d8b;
+      }
+      .grp-misc .tbl-head {
+        background: #2a2a2a;
+      }
+      .grp-misc {
+        border-color: #666;
+      }
+
+      /* group label */
+      .grp-label {
+        position: absolute;
+        color: rgba(255, 255, 255, 0.18);
+        font-size: 48px;
+        font-weight: 900;
+        font-family: sans-serif;
+        letter-spacing: 2px;
+        pointer-events: none;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toolbar">
+      <strong>LawMate ERD</strong>
+      <span>|</span>
+      <span>Oracle DB · 23 Tables · 2026-03-06</span>
+      <div class="legend">
+        <div class="leg">
+          <div class="leg-dot" style="background: #e5c07b"></div>
+          PK
+        </div>
+        <div class="leg">
+          <div class="leg-dot" style="background: #98c379"></div>
+          FK
+        </div>
+        <div class="leg">
+          <div class="leg-dot" style="background: #c678dd"></div>
+          UK
+        </div>
+        <div class="leg">
+          <div class="leg-dot" style="background: #1a4a6e"></div>
+          회원
+        </div>
+        <div class="leg">
+          <div class="leg-dot" style="background: #4a2d1a"></div>
+          사건
+        </div>
+        <div class="leg">
+          <div class="leg-dot" style="background: #1a4a2a"></div>
+          채팅
+        </div>
+        <div class="leg">
+          <div class="leg-dot" style="background: #3a1a4a"></div>
+          상담/결제
+        </div>
+        <div class="leg">
+          <div class="leg-dot" style="background: #1a3a4a"></div>
+          커뮤니티
+        </div>
+        <div class="leg">
+          <div class="leg-dot" style="background: #4a1a3a"></div>
+          지식인
+        </div>
+        <div class="leg">
+          <div class="leg-dot" style="background: #4a3a1a"></div>
+          판례/기타
+        </div>
+      </div>
+    </div>
+
+    <div id="canvas">
+      <svg id="lines"></svg>
+
+      <!-- ════════════════ 회원 그룹 ════════════════ -->
+      <div class="grp-label" style="left: 30px; top: 56px">회원</div>
+
+      <!-- TB_MEMBER -->
+      <div
+        class="tbl grp-member"
+        id="TB_MEMBER"
+        style="left: 60px; top: 80px; width: 240px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_MEMBER</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">MEMBER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key uk">UK</span
+            ><span class="col-name nn">LOGIN_ID</span
+            ><span class="col-type">VARCHAR2(50)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name nn">PASSWORD</span
+            ><span class="col-type">VARCHAR2(256)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name nn">MEMBER_TYPE</span
+            ><span class="col-type">VARCHAR2(10)</span
+            ><span class="col-check">✓</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name nn">NAME</span
+            ><span class="col-type">VARCHAR2(100)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name nn">PHONE</span
+            ><span class="col-type">VARCHAR2(20)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">EMAIL</span
+            ><span class="col-type">VARCHAR2(200)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name">PHONE_VERIFIED</span
+            ><span class="col-type">CHAR(1)</span
+            ><span class="col-check">✓</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">STATUS</span
+            ><span class="col-type">VARCHAR2(20)</span
+            ><span class="col-check">✓</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">PROVIDER</span
+            ><span class="col-type">VARCHAR2(30)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">ADDRESS</span
+            ><span class="col-type">VARCHAR2(500)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name">WITHDRAWN_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_LAWYER -->
+      <div
+        class="tbl grp-member"
+        id="TB_LAWYER"
+        style="left: 360px; top: 80px; width: 250px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_LAWYER</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">LAWYER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">MEMBER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key uk">UK</span
+            ><span class="col-name nn">LICENSE_NO</span
+            ><span class="col-type">VARCHAR2(50)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">SPECIALTY</span
+            ><span class="col-type">VARCHAR2(200)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">INTRO</span
+            ><span class="col-type">CLOB</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CAREER</span
+            ><span class="col-type">CLOB</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name">OFFICE_NAME</span
+            ><span class="col-type">VARCHAR2(200)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name">OFFICE_ADDR</span
+            ><span class="col-type">VARCHAR2(500)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name">CONSULT_FEE</span
+            ><span class="col-type">NUMBER(12,2)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">AVG_RATING</span
+            ><span class="col-type">NUMBER(3,2)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">REVIEW_CNT</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name">APPROVE_STATUS</span
+            ><span class="col-type">VARCHAR2(20)</span
+            ><span class="col-check">✓</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name">APPROVED_BY</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_SOCIAL_LOGIN -->
+      <div
+        class="tbl grp-member"
+        id="TB_SOCIAL_LOGIN"
+        style="left: 60px; top: 420px; width: 230px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_SOCIAL_LOGIN</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">SOCIAL_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">MEMBER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name nn">PROVIDER</span
+            ><span class="col-type">VARCHAR2(20)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name nn">PROVIDER_UID</span
+            ><span class="col-type">VARCHAR2(200)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_NOTIFY_SETTING -->
+      <div
+        class="tbl grp-member"
+        id="TB_NOTIFY_SETTING"
+        style="left: 360px; top: 420px; width: 220px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_NOTIFY_SETTING</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk fk">PK/FK</span
+            ><span class="col-name">MEMBER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">INAPP_YN</span
+            ><span class="col-type">CHAR(1)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">EMAIL_YN</span
+            ><span class="col-type">CHAR(1)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">SMS_YN</span
+            ><span class="col-type">CHAR(1)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">UPDATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════ 사건 그룹 ════════════════ -->
+      <div class="grp-label" style="left: 660px; top: 56px">사건</div>
+
+      <!-- TB_CASE -->
+      <div
+        class="tbl grp-case"
+        id="TB_CASE"
+        style="left: 660px; top: 80px; width: 240px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_CASE</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">CASE_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">MEMBER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name">LAWYER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name nn">TITLE</span
+            ><span class="col-type">VARCHAR2(300)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CASE_TYPE</span
+            ><span class="col-type">VARCHAR2(100)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name">DESCRIPTION</span
+            ><span class="col-type">CLOB</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">STEP</span
+            ><span class="col-type">VARCHAR2(30)</span
+            ><span class="col-check">✓</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name">EXPERT_OPINION</span
+            ><span class="col-type">CLOB</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CLOSED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_ATTACHMENT -->
+      <div
+        class="tbl grp-case"
+        id="TB_ATTACHMENT"
+        style="left: 660px; top: 340px; width: 235px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_ATTACHMENT</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">ATTACH_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name nn">REF_TYPE</span
+            ><span class="col-type">VARCHAR2(30)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name nn">REF_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">UPLOADER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name nn">ORIG_NAME</span
+            ><span class="col-type">VARCHAR2(500)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name nn">SAVE_PATH</span
+            ><span class="col-type">VARCHAR2(1000)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">FILE_SIZE</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">MIME_TYPE</span
+            ><span class="col-type">VARCHAR2(100)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════ 채팅 그룹 ════════════════ -->
+      <div class="grp-label" style="left: 960px; top: 56px">채팅</div>
+
+      <!-- TB_CHAT_ROOM -->
+      <div
+        class="tbl grp-chat"
+        id="TB_CHAT_ROOM"
+        style="left: 960px; top: 80px; width: 235px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_CHAT_ROOM</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">ROOM_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name">CASE_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">MEMBER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">LAWYER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">STATUS</span
+            ><span class="col-type">VARCHAR2(20)</span
+            ><span class="col-check">✓</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CLOSED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_CHAT_MSG -->
+      <div
+        class="tbl grp-chat"
+        id="TB_CHAT_MSG"
+        style="left: 960px; top: 280px; width: 235px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_CHAT_MSG</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">MSG_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">ROOM_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">SENDER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">MSG_TYPE</span
+            ><span class="col-type">VARCHAR2(20)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CONTENT</span
+            ><span class="col-type">CLOB</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name">ATTACH_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">READ_YN</span
+            ><span class="col-type">CHAR(1)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════ 상담/결제/정산 그룹 ════════════════ -->
+      <div class="grp-label" style="left: 60px; top: 570px">상담·결제</div>
+
+      <!-- TB_CONSULT -->
+      <div
+        class="tbl grp-consult"
+        id="TB_CONSULT"
+        style="left: 60px; top: 620px; width: 240px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_CONSULT</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">CONSULT_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">MEMBER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">LAWYER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name">CASE_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name nn">CONSULT_DATE</span
+            ><span class="col-type">DATE</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name">DURATION_MIN</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">STATUS</span
+            ><span class="col-type">VARCHAR2(20)</span
+            ><span class="col-check">✓</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">NOTE</span
+            ><span class="col-type">VARCHAR2(1000)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_PAYMENT -->
+      <div
+        class="tbl grp-consult"
+        id="TB_PAYMENT"
+        style="left: 360px; top: 620px; width: 240px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_PAYMENT</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">PAYMENT_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">CONSULT_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">PAYER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name nn">AMOUNT</span
+            ><span class="col-type">NUMBER(12,2)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name nn">PAY_METHOD</span
+            ><span class="col-type">VARCHAR2(30)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">PAY_STATUS</span
+            ><span class="col-type">VARCHAR2(20)</span
+            ><span class="col-check">✓</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">PG_TXN_ID</span
+            ><span class="col-type">VARCHAR2(200)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">PAID_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">REFUND_AMT</span
+            ><span class="col-type">NUMBER(12,2)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_SETTLEMENT -->
+      <div
+        class="tbl grp-consult"
+        id="TB_SETTLEMENT"
+        style="left: 660px; top: 620px; width: 245px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_SETTLEMENT</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">SETTLE_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">LAWYER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">PAYMENT_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name nn">GROSS_AMT</span
+            ><span class="col-type">NUMBER(12,2)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name">COMMISSION_RATE</span
+            ><span class="col-type">NUMBER(5,2)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name nn">COMMISSION_AMT</span
+            ><span class="col-type">NUMBER(12,2)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name nn">NET_AMT</span
+            ><span class="col-type">NUMBER(12,2)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name">SETTLE_STATUS</span
+            ><span class="col-type">VARCHAR2(20)</span
+            ><span class="col-check">✓</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">SETTLED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════ 커뮤니티 그룹 ════════════════ -->
+      <div class="grp-label" style="left: 60px; top: 910px">커뮤니티</div>
+
+      <!-- TB_POST -->
+      <div
+        class="tbl grp-comm"
+        id="TB_POST"
+        style="left: 60px; top: 960px; width: 230px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_POST</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">POST_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">MEMBER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CASE_TYPE</span
+            ><span class="col-type">VARCHAR2(100)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name nn">TITLE</span
+            ><span class="col-type">VARCHAR2(500)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name nn">CONTENT</span
+            ><span class="col-type">CLOB</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">VIEW_CNT</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name">COMMENT_CNT</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">LIKE_CNT</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">STATUS</span
+            ><span class="col-type">VARCHAR2(20)</span
+            ><span class="col-check">✓</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_COMMENT -->
+      <div
+        class="tbl grp-comm"
+        id="TB_COMMENT"
+        style="left: 350px; top: 960px; width: 235px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_COMMENT</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">COMMENT_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">POST_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">MEMBER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name">PARENT_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name nn">CONTENT</span
+            ><span class="col-type">VARCHAR2(2000)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">STATUS</span
+            ><span class="col-type">VARCHAR2(20)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_POST_LIKE -->
+      <div
+        class="tbl grp-comm"
+        id="TB_POST_LIKE"
+        style="left: 645px; top: 960px; width: 220px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_POST_LIKE</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">LIKE_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk uk">FK/UK</span
+            ><span class="col-name nn">POST_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk uk">FK/UK</span
+            ><span class="col-name nn">MEMBER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_POLL -->
+      <div
+        class="tbl grp-comm"
+        id="TB_POLL"
+        style="left: 60px; top: 1200px; width: 230px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_POLL</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">POLL_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name">POST_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">MEMBER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name nn">TITLE</span
+            ><span class="col-type">VARCHAR2(500)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name">DESCRIPTION</span
+            ><span class="col-type">VARCHAR2(2000)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">DISCLAIMER</span
+            ><span class="col-type">VARCHAR2(500)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">END_DATE</span
+            ><span class="col-type">DATE</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">STATUS</span
+            ><span class="col-type">VARCHAR2(20)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_POLL_OPTION -->
+      <div
+        class="tbl grp-comm"
+        id="TB_POLL_OPTION"
+        style="left: 350px; top: 1200px; width: 225px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_POLL_OPTION</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">OPTION_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key pk fk">PK/FK</span
+            ><span class="col-name nn">POLL_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name nn">OPTION_TEXT</span
+            ><span class="col-type">VARCHAR2(500)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">VOTE_CNT</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_POLL_VOTE -->
+      <div
+        class="tbl grp-comm"
+        id="TB_POLL_VOTE"
+        style="left: 635px; top: 1200px; width: 230px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_POLL_VOTE</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">VOTE_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk uk">FK/UK</span
+            ><span class="col-name nn">POLL_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">OPTION_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk uk">FK/UK</span
+            ><span class="col-name nn">MEMBER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">VOTED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════ 지식인 그룹 ════════════════ -->
+      <div class="grp-label" style="left: 960px; top: 570px">지식인</div>
+
+      <!-- TB_QUESTION -->
+      <div
+        class="tbl grp-qa"
+        id="TB_QUESTION"
+        style="left: 960px; top: 620px; width: 240px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_QUESTION</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">QUESTION_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">MEMBER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name">CASE_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name nn">TITLE</span
+            ><span class="col-type">VARCHAR2(500)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name nn">CONTENT</span
+            ><span class="col-type">CLOB</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CASE_TYPE</span
+            ><span class="col-type">VARCHAR2(100)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name">ASSIGNED_LAWYER</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">STATUS</span
+            ><span class="col-type">VARCHAR2(20)</span
+            ><span class="col-check">✓</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_ANSWER -->
+      <div
+        class="tbl grp-qa"
+        id="TB_ANSWER"
+        style="left: 960px; top: 880px; width: 235px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_ANSWER</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">ANSWER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">QUESTION_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">LAWYER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name nn">CONTENT</span
+            ><span class="col-type">CLOB</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">IS_ADOPTED</span
+            ><span class="col-type">CHAR(1)</span
+            ><span class="col-check">✓</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_REVIEW -->
+      <div
+        class="tbl grp-qa"
+        id="TB_REVIEW"
+        style="left: 960px; top: 1110px; width: 240px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_REVIEW</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">REVIEW_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk uk">FK/UK</span
+            ><span class="col-name nn">CONSULT_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">MEMBER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">LAWYER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name nn">RATING</span
+            ><span class="col-type">NUMBER(1)</span
+            ><span class="col-check">✓</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CONTENT</span
+            ><span class="col-type">VARCHAR2(2000)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">STATUS</span
+            ><span class="col-type">VARCHAR2(20)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════ 판례 / 알림 / 신고 그룹 ════════════════ -->
+      <div class="grp-label" style="left: 1260px; top: 56px">
+        판례·알림·신고
+      </div>
+
+      <!-- TB_PRECEDENT -->
+      <div
+        class="tbl grp-prec"
+        id="TB_PRECEDENT"
+        style="left: 1270px; top: 80px; width: 245px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_PRECEDENT</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">PREC_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key uk">UK</span
+            ><span class="col-name nn">CASE_NO</span
+            ><span class="col-type">VARCHAR2(100)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">COURT</span
+            ><span class="col-type">VARCHAR2(100)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">JUDGE_DATE</span
+            ><span class="col-type">DATE</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CASE_TYPE</span
+            ><span class="col-type">VARCHAR2(100)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">TITLE</span
+            ><span class="col-type">VARCHAR2(500)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">ONE_LINE</span
+            ><span class="col-type">VARCHAR2(1000)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">JUDGMENT</span
+            ><span class="col-type">VARCHAR2(200)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">AI_SUMMARY</span
+            ><span class="col-type">CLOB</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name">KEYWORD_CSV</span
+            ><span class="col-type">VARCHAR2(1000)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_NOTIFICATION -->
+      <div
+        class="tbl grp-misc"
+        id="TB_NOTIFICATION"
+        style="left: 1270px; top: 360px; width: 250px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_NOTIFICATION</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">NOTIFY_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">MEMBER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name nn">NOTIFY_TYPE</span
+            ><span class="col-type">VARCHAR2(50)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name nn">TITLE</span
+            ><span class="col-type">VARCHAR2(300)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CONTENT</span
+            ><span class="col-type">VARCHAR2(1000)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">REF_TYPE</span
+            ><span class="col-type">VARCHAR2(30)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">REF_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CHANNEL</span
+            ><span class="col-type">VARCHAR2(20)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">READ_YN</span
+            ><span class="col-type">CHAR(1)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">SENT_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_REPORT -->
+      <div
+        class="tbl grp-misc"
+        id="TB_REPORT"
+        style="left: 1270px; top: 660px; width: 240px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_REPORT</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">REPORT_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">REPORTER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name nn">TARGET_TYPE</span
+            ><span class="col-type">VARCHAR2(30)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name nn">TARGET_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name nn">REASON</span
+            ><span class="col-type">VARCHAR2(100)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">DETAIL</span
+            ><span class="col-type">VARCHAR2(2000)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">STATUS</span
+            ><span class="col-type">VARCHAR2(20)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name">HANDLED_BY</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">HANDLED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TB_SANCTION -->
+      <div
+        class="tbl grp-misc"
+        id="TB_SANCTION"
+        style="left: 1270px; top: 950px; width: 240px"
+      >
+        <div class="tbl-head"><span class="icon">▤</span>TB_SANCTION</div>
+        <div class="tbl-body">
+          <div class="tbl-row">
+            <span class="col-key pk">PK</span
+            ><span class="col-name">SANCTION_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">MEMBER_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name">REPORT_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span
+            ><span class="col-name nn">SANCTION_TYPE</span
+            ><span class="col-type">VARCHAR2(30)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">REASON</span
+            ><span class="col-type">VARCHAR2(1000)</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">START_DATE</span
+            ><span class="col-type">DATE</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">END_DATE</span
+            ><span class="col-type">DATE</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key fk">FK</span
+            ><span class="col-name nn">ADMIN_ID</span
+            ><span class="col-type">NUMBER</span>
+          </div>
+          <div class="tbl-row">
+            <span class="col-key"></span><span class="col-name">CREATED_AT</span
+            ><span class="col-type">DATE</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /canvas -->
+
+    <script>
+      // ─── 관계선 그리기 ───────────────────────────────────────────────────────────
+      const svg = document.getElementById("lines");
+
+      function rect(id) {
+        const el = document.getElementById(id);
+        if (!el) return null;
+        return {
+          l: el.offsetLeft,
+          t: el.offsetTop,
+          r: el.offsetLeft + el.offsetWidth,
+          b: el.offsetTop + el.offsetHeight,
+          cx: el.offsetLeft + el.offsetWidth / 2,
+          cy: el.offsetTop + el.offsetHeight / 2,
+        };
+      }
+
+      /* relations: [from_table, to_table, label, color] */
+      const rels = [
+        // 회원 관계
+        ["TB_LAWYER", "TB_MEMBER", "MEMBER_ID", "#2d7db3"],
+        ["TB_SOCIAL_LOGIN", "TB_MEMBER", "MEMBER_ID", "#2d7db3"],
+        ["TB_NOTIFY_SETTING", "TB_MEMBER", "MEMBER_ID", "#2d7db3"],
+
+        // 사건
+        ["TB_CASE", "TB_MEMBER", "MEMBER_ID", "#b36a2d"],
+        ["TB_CASE", "TB_LAWYER", "LAWYER_ID", "#b36a2d"],
+        ["TB_ATTACHMENT", "TB_MEMBER", "UPLOADER_ID", "#b36a2d"],
+
+        // 채팅
+        ["TB_CHAT_ROOM", "TB_CASE", "CASE_ID", "#2db352"],
+        ["TB_CHAT_ROOM", "TB_MEMBER", "MEMBER_ID", "#2db352"],
+        ["TB_CHAT_ROOM", "TB_LAWYER", "LAWYER_ID", "#2db352"],
+        ["TB_CHAT_MSG", "TB_CHAT_ROOM", "ROOM_ID", "#2db352"],
+        ["TB_CHAT_MSG", "TB_MEMBER", "SENDER_ID", "#2db352"],
+        ["TB_CHAT_MSG", "TB_ATTACHMENT", "ATTACH_ID", "#2db352"],
+
+        // 상담/결제/정산
+        ["TB_CONSULT", "TB_MEMBER", "MEMBER_ID", "#8b2db3"],
+        ["TB_CONSULT", "TB_LAWYER", "LAWYER_ID", "#8b2db3"],
+        ["TB_CONSULT", "TB_CASE", "CASE_ID", "#8b2db3"],
+        ["TB_PAYMENT", "TB_CONSULT", "CONSULT_ID", "#8b2db3"],
+        ["TB_PAYMENT", "TB_MEMBER", "PAYER_ID", "#8b2db3"],
+        ["TB_SETTLEMENT", "TB_LAWYER", "LAWYER_ID", "#8b2db3"],
+        ["TB_SETTLEMENT", "TB_PAYMENT", "PAYMENT_ID", "#8b2db3"],
+
+        // 커뮤니티
+        ["TB_POST", "TB_MEMBER", "MEMBER_ID", "#2d8bb3"],
+        ["TB_COMMENT", "TB_POST", "POST_ID", "#2d8bb3"],
+        ["TB_COMMENT", "TB_MEMBER", "MEMBER_ID", "#2d8bb3"],
+        ["TB_POST_LIKE", "TB_POST", "POST_ID", "#2d8bb3"],
+        ["TB_POLL", "TB_POST", "POST_ID", "#2d8bb3"],
+        ["TB_POLL", "TB_MEMBER", "MEMBER_ID", "#2d8bb3"],
+        ["TB_POLL_OPTION", "TB_POLL", "POLL_ID", "#2d8bb3"],
+        ["TB_POLL_VOTE", "TB_POLL_OPTION", "OPTION_ID+POLL", "#2d8bb3"],
+        ["TB_POLL_VOTE", "TB_MEMBER", "MEMBER_ID", "#2d8bb3"],
+
+        // 지식인
+        ["TB_QUESTION", "TB_MEMBER", "MEMBER_ID", "#b32d8b"],
+        ["TB_QUESTION", "TB_CASE", "CASE_ID", "#b32d8b"],
+        ["TB_QUESTION", "TB_LAWYER", "ASSIGNED_LAWYER", "#b32d8b"],
+        ["TB_ANSWER", "TB_QUESTION", "QUESTION_ID", "#b32d8b"],
+        ["TB_ANSWER", "TB_LAWYER", "LAWYER_ID", "#b32d8b"],
+        ["TB_REVIEW", "TB_CONSULT", "CONSULT_ID", "#b32d8b"],
+        ["TB_REVIEW", "TB_MEMBER", "MEMBER_ID", "#b32d8b"],
+        ["TB_REVIEW", "TB_LAWYER", "LAWYER_ID", "#b32d8b"],
+
+        // 알림/신고/제재
+        ["TB_NOTIFICATION", "TB_MEMBER", "MEMBER_ID", "#888"],
+        ["TB_REPORT", "TB_MEMBER", "REPORTER_ID", "#888"],
+        ["TB_SANCTION", "TB_MEMBER", "MEMBER_ID", "#888"],
+        ["TB_SANCTION", "TB_REPORT", "REPORT_ID", "#888"],
+      ];
+
+      function drawLine(r1, r2, color) {
+        // pick best side to connect
+        const candidates = [
+          // right of r1 → left of r2
+          {
+            x1: r1.r,
+            y1: r1.cy,
+            x2: r2.l,
+            y2: r2.cy,
+            d: Math.abs(r1.r - r2.l) + Math.abs(r1.cy - r2.cy),
+          },
+          // left of r1 → right of r2
+          {
+            x1: r1.l,
+            y1: r1.cy,
+            x2: r2.r,
+            y2: r2.cy,
+            d: Math.abs(r1.l - r2.r) + Math.abs(r1.cy - r2.cy),
+          },
+          // bottom of r1 → top of r2
+          {
+            x1: r1.cx,
+            y1: r1.b,
+            x2: r2.cx,
+            y2: r2.t,
+            d: Math.abs(r1.cx - r2.cx) + Math.abs(r1.b - r2.t),
+          },
+          // top of r1 → bottom of r2
+          {
+            x1: r1.cx,
+            y1: r1.t,
+            x2: r2.cx,
+            y2: r2.b,
+            d: Math.abs(r1.cx - r2.cx) + Math.abs(r1.t - r2.b),
+          },
+        ];
+        candidates.sort((a, b) => a.d - b.d);
+        const best = candidates[0];
+
+        const mx = (best.x1 + best.x2) / 2;
+        const my = (best.y1 + best.y2) / 2;
+
+        // elbow path
+        let d;
+        if (Math.abs(best.x1 - best.x2) > Math.abs(best.y1 - best.y2)) {
+          d = `M${best.x1},${best.y1} L${mx},${best.y1} L${mx},${best.y2} L${best.x2},${best.y2}`;
+        } else {
+          d = `M${best.x1},${best.y1} L${best.x1},${my} L${best.x2},${my} L${best.x2},${best.y2}`;
+        }
+
+        const path = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "path",
+        );
+        path.setAttribute("d", d);
+        path.setAttribute("stroke", color);
+        path.setAttribute("stroke-width", "1.2");
+        path.setAttribute("fill", "none");
+        path.setAttribute("opacity", "0.7");
+        svg.appendChild(path);
+
+        // crow's foot at r2 side (many end) — small fork
+        const ex = best.x2,
+          ey = best.y2;
+        const dx = ex - best.x1,
+          dy = ey - best.y1;
+        const len = Math.sqrt(dx * dx + dy * dy) || 1;
+        const ux = dx / len,
+          uy = dy / len;
+        const px = -uy,
+          py = ux;
+        const sz = 7;
+        const fork = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "path",
+        );
+        fork.setAttribute(
+          "d",
+          `M${ex},${ey} L${ex - ux * sz + px * 4},${ey - uy * sz + py * 4}
+     M${ex},${ey} L${ex - ux * sz - px * 4},${ey - uy * sz - py * 4}
+     M${ex},${ey} L${ex - ux * sz},${ey - uy * sz}`,
+        );
+        fork.setAttribute("stroke", color);
+        fork.setAttribute("stroke-width", "1.5");
+        fork.setAttribute("fill", "none");
+        svg.appendChild(fork);
+
+        // circle at r1 (one end)
+        const circ = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "circle",
+        );
+        circ.setAttribute("cx", best.x1);
+        circ.setAttribute("cy", best.y1);
+        circ.setAttribute("r", "3");
+        circ.setAttribute("fill", color);
+        circ.setAttribute("opacity", "0.9");
+        svg.appendChild(circ);
+      }
+
+      window.addEventListener("load", () => {
+        for (const [from, to, , color] of rels) {
+          const r1 = rect(from),
+            r2 = rect(to);
+          if (r1 && r2) drawLine(r1, r2, color);
+        }
+      });
+    </script>
+  </body>
+</html>

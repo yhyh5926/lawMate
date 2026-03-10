@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { questionApi } from "../../api/questionApi.js";
 import { useAuthStore } from "../../store/authStore.js";
 import QuestionAnswerForm from "../../components/question/QuestionAnswerForm.jsx";
-import QuestionAnswerEditForm from "../../components/question/QuestionAnswerEditForm.jsx";
 import QuestionEditForm from "../../components/question/QuestionEditForm.jsx";
 import "../../styles/question/QuestionDetailPage.css";
 import { formatDate } from "../../utils/formatDate.js";
 import { baseURL } from "../../constants/baseURL.js";
+import QuestionAnswerList from "../../components/question/QuestionAnswerList.jsx";
 
 const QuestionDetailPage = () => {
   const { questionId } = useParams();
@@ -224,64 +224,15 @@ const QuestionDetailPage = () => {
         <span className="count-badge">{detail.answers?.length || 0}</span>
       </h3>
 
-      <div className="answers-wrapper">
-        {detail.answers?.length > 0 ? (
-          detail.answers.map((ans) => (
-            <div
-              key={ans.answerId}
-              className={`answer-item ${ans.isAdopted === "Y" ? "selected-answer" : ""}`}
-            >
-              {ans.isAdopted === "Y" && (
-                <div className="adopted-label">의뢰인 채택 답변</div>
-              )}
-
-              <div className="answer-header">
-                <div
-                  className="lawyer-profile clickable"
-                  onClick={() => navigate(`/lawyer/detail/${ans.lawyerId}`)}
-                >
-                  <div className="lawyer-avatar">
-                    {ans.isAdopted === "Y" ? "✅" : "👨‍⚖️"}
-                  </div>
-                  <div className="lawyer-meta">
-                    <span className="lawyer-name">{ans.lawyerName} 변호사</span>
-                    <span className="ans-date">
-                      {formatDate(ans.createdAt)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {editingAnswerId === ans.answerId ? (
-                <QuestionAnswerEditForm
-                  answerId={ans.answerId}
-                  initialContent={ans.content}
-                  onSaveSuccess={() => {
-                    setEditingAnswerId(null);
-                    fetchDetail();
-                  }}
-                  onCancel={() => setEditingAnswerId(null)}
-                />
-              ) : (
-                <div className="answer-body">{ans.content}</div>
-              )}
-
-              {isOwner && !isAlreadyAdopted && ans.isAdopted !== "Y" && (
-                <div className="adopt-action-area">
-                  <button
-                    className="btn-adopt"
-                    onClick={() => handleAdopt(ans.answerId, ans.lawyerId)}
-                  >
-                    답변 채택하기
-                  </button>
-                </div>
-              )}
-            </div>
-          ))
-        ) : (
-          <div className="empty-answer">아직 등록된 답변이 없습니다.</div>
-        )}
-      </div>
+      <QuestionAnswerList
+        answers={detail.answers}
+        isOwner={isOwner}
+        isAlreadyAdopted={isAlreadyAdopted}
+        editingAnswerId={editingAnswerId}
+        setEditingAnswerId={setEditingAnswerId}
+        handleAdopt={handleAdopt}
+        fetchDetail={fetchDetail}
+      />
 
       <div className="footer-nav">
         <button

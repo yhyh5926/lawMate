@@ -5,6 +5,8 @@ import "../../styles/question/QuestionListPage.css";
 import { categories } from "../../constants/categories.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faImages } from "@fortawesome/free-solid-svg-icons";
+import { formatDate } from "../../utils/formatDate.js";
+
 const QuestionListPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -76,13 +78,6 @@ const QuestionListPage = () => {
   const handleResetAll = () => {
     setTempQuery("");
     setSearchParams({});
-  };
-
-  // 날짜 포맷 함수 (YYYY-MM-DD 형식)
-  const formatDate = (dateString) => {
-    if (!dateString) return "-";
-    const date = new Date(dateString);
-    return date.toISOString().split("T")[0];
   };
 
   const renderPagination = () => {
@@ -171,14 +166,14 @@ const QuestionListPage = () => {
                   <th className="w-title">질문 제목</th>
                   <th className="w-author">작성자</th>
                   <th className="w-date">작성일</th>
-                  <th className="w-status">진행 상태</th>
+                  <th className="w-status">상태</th>
                 </tr>
               </thead>
               <tbody>
                 {questions.length > 0 ? (
                   questions.map((q) => (
                     <tr key={q.questionId} className="ql-row">
-                      <td>
+                      <td className="ql-type-cell">
                         <span className="ql-type-badge">{q.caseType}</span>
                       </td>
                       <td className="ql-subject">
@@ -186,34 +181,27 @@ const QuestionListPage = () => {
                           to={`/question/detail/${q.questionId}`}
                           className="ql-link"
                         >
-                          {q.title}
-
-                          {q.fileCount > 0 && (
-                            <span
-                              className="ql-file-icon-wrapper"
-                              title={`첨부파일 ${q.fileCount}개`}
-                            >
-                              {q.fileCount >= 2 ? (
+                          <span className="title-text">{q.title}</span>
+                          <div className="ql-icons">
+                            {q.fileCount > 0 && (
+                              <span
+                                className="ql-file-icon-wrapper"
+                                title={`첨부파일 ${q.fileCount}개`}
+                              >
                                 <FontAwesomeIcon
-                                  icon={faImages}
-                                  className="icon-multiple"
+                                  icon={q.fileCount >= 2 ? faImages : faImage}
                                 />
-                              ) : (
-                                <FontAwesomeIcon
-                                  icon={faImage}
-                                  className="icon-single"
-                                />
-                              )}
-                              {/* 숫자를 옆에 작게 표시하면 더 친절합니다 */}
-                              <span className="file-count-num">
-                                {q.fileCount}
+                                <span className="file-count-num">
+                                  {q.fileCount}
+                                </span>
                               </span>
-                            </span>
-                          )}
-
-                          {q.answerCount > 0 && (
-                            <span className="ql-count">[{q.answerCount}]</span>
-                          )}
+                            )}
+                            {q.answerCount > 0 && (
+                              <span className="ql-count">
+                                [{q.answerCount}]
+                              </span>
+                            )}
+                          </div>
                         </Link>
                       </td>
                       <td className="ql-author">{q.memberName}</td>
@@ -230,7 +218,7 @@ const QuestionListPage = () => {
                 ) : (
                   <tr>
                     <td colSpan="5" className="ql-no-data">
-                      검색 조건에 맞는 질문이 존재하지 않습니다.
+                      검색 결과가 없습니다.
                     </td>
                   </tr>
                 )}
