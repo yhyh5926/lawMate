@@ -2,7 +2,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // 💡 복구 및 삭제 API 추가, CSS 임포트 유지
-import { getMyConsults, cancelConsult, restoreConsult, deleteConsult } from "../../api/consultApi";
+import {
+  getMyConsults,
+  cancelConsult,
+  restoreConsult,
+  deleteConsult,
+} from "../../api/consultApi";
 import "../../styles/mypage/ConsultListPage.css";
 
 const STATUS_TABS = [
@@ -22,7 +27,8 @@ const STATUS_META = {
 
 const getDeleteDday = (updatedAt) => {
   if (!updatedAt) return null;
-  const diff = 7 - Math.floor((Date.now() - new Date(updatedAt)) / (1000 * 60 * 60 * 24));
+  const diff =
+    7 - Math.floor((Date.now() - new Date(updatedAt)) / (1000 * 60 * 60 * 24));
   return diff > 0 ? `${diff}일 후 자동 삭제` : "곧 자동 삭제";
 };
 
@@ -32,6 +38,7 @@ const ConsultListPage = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  console.log(consults);
   useEffect(() => {
     fetchConsults();
   }, [activeTab]);
@@ -108,20 +115,21 @@ const ConsultListPage = () => {
         <div className="consult-list-wrapper">
           {consults.map((c, index) => {
             const meta = STATUS_META[c.status] || STATUS_META.PENDING;
-            
+
             // 💡 핵심 수정: 백엔드에서 주는 정확한 고유 번호(ID) 추출 (만능 방어막)
-            const uniqueId = c.consultId || c.id || c.consultNo; 
+            const uniqueId = c.consultId || c.id || c.consultNo;
 
             return (
               <div key={uniqueId || index} className="consult-card">
-                
                 <div className="consult-card-header">
                   <div>
                     <div className="consult-lawyer-name">
                       {c.lawyerName || "담당"} 변호사
                     </div>
                     <div className="consult-datetime">
-                      {c.consultDate || c.createdAt?.split('T')[0]} {c.consultTime && `· ${c.consultTime}`} ({c.durationMin || c.duration || 30}분)
+                      {c.consultDate || c.createdAt?.split("T")[0]}{" "}
+                      {c.consultTime && `· ${c.consultTime}`} (
+                      {c.durationMin || c.duration || 30}분)
                     </div>
                   </div>
                   <span className={`consult-status-badge ${meta.className}`}>
@@ -138,7 +146,9 @@ const ConsultListPage = () => {
                   {/* 결제 이동 (확정 상태) */}
                   {c.status === "CONFIRMED" && !c.paid && (
                     <button
-                      onClick={() => navigate(`/payment/pay?consultId=${uniqueId}`)}
+                      onClick={() =>
+                        navigate(`/payment/pay?consultId=${uniqueId}`)
+                      }
                       className="consult-action-btn btn-pay"
                     >
                       결제하기
@@ -147,7 +157,7 @@ const ConsultListPage = () => {
                   {/* 후기 작성 (완료 상태) */}
                   {c.status === "DONE" && !c.reviewed && (
                     <button
-                      onClick={() => navigate(`/lawyer/review/write?consultId=${uniqueId}`)}
+                      onClick={() => navigate(`/lawyer/detail/${c.lawyerId}`)}
                       className="consult-action-btn btn-review"
                     >
                       후기 작성
@@ -165,17 +175,23 @@ const ConsultListPage = () => {
                   {/* 복구 / 즉시삭제 (취소 상태) */}
                   {c.status === "CANCELLED" && (
                     <>
-                      <span style={{ fontSize: "11px", color: "#FF3B30", alignSelf: "center" }}>
+                      <span
+                        style={{
+                          fontSize: "11px",
+                          color: "#FF3B30",
+                          alignSelf: "center",
+                        }}
+                      >
                         🗑 {getDeleteDday(c.updatedAt)}
                       </span>
-                      <button 
-                        onClick={() => handleRestore(uniqueId)} 
+                      <button
+                        onClick={() => handleRestore(uniqueId)}
                         className="consult-action-btn btn-restore"
                       >
                         복구
                       </button>
-                      <button 
-                        onClick={() => handleDelete(uniqueId)} 
+                      <button
+                        onClick={() => handleDelete(uniqueId)}
                         className="consult-action-btn btn-delete"
                       >
                         즉시 삭제
@@ -183,7 +199,6 @@ const ConsultListPage = () => {
                     </>
                   )}
                 </div>
-
               </div>
             );
           })}
