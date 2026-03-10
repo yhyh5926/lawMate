@@ -34,24 +34,24 @@ export default function MainPage() {
 
   const quickLinks = [
     {
-      label: "법률질문 작성",
+      label: "✍️ 법률질문 작성",
       desc: "궁금한 내용을 바로 등록",
       onClick: goToLogin,
     },
     {
-      label: "변호사 찾기",
+      label: "👨‍⚖️ 변호사 찾기",
       desc: "전문 변호사 바로 찾기",
-      onClick: () => navigate("/lawyer/search"),
+      onClick: () => navigate("/lawyer/list"),
     },
     {
-      label: "판례 검색",
+      label: "📚 판례 검색",
       desc: "판례 검색 페이지로 이동",
       onClick: () => navigate("/precedent/search"),
     },
     {
-      label: "의견조사 보기",
-      desc: "의견조사 게시판 바로가기",
-      onClick: () => navigate("/community/poll"),
+      label: "⚖️ 모의 판결 보기",
+      desc: "모의 판결 게시판 바로가기",
+      onClick: () => navigate("/community/pollList"),
     },
   ];
 
@@ -63,7 +63,7 @@ export default function MainPage() {
         setLoading(true);
         setErr("");
 
-        const [res, qRes, pollRes] = await Promise.all([
+        const [mainResult, questionResult, pollResult] = await Promise.allSettled([
           mainApi.getMainData(),
           questionApi.getQuestionList({}),
           getPollList(),
@@ -71,22 +71,41 @@ export default function MainPage() {
 
         if (!alive) return;
 
-        setData(res);
+        if (mainResult.status === "fulfilled") {
+          setData(mainResult.value);
+        } else {
+          console.error("mainApi.getMainData failed:", mainResult.reason);
+          setData(null);
+          setErr("메인 정보를 불러오지 못했습니다.");
+        }
 
-        const qList = Array.isArray(qRes?.data?.data) ? qRes.data.data : [];
-        const qSorted = [...qList].sort((a, b) =>
-          String(b?.createdAt ?? "").localeCompare(String(a?.createdAt ?? "")),
-        );
-        setRecentQuestions(qSorted.slice(0, 5));
+        if (questionResult.status === "fulfilled") {
+          const qRes = questionResult.value;
+          const qList = Array.isArray(qRes?.data?.data) ? qRes.data.data : [];
+          const qSorted = [...qList].sort((a, b) =>
+            String(b?.createdAt ?? "").localeCompare(String(a?.createdAt ?? "")),
+          );
+          setRecentQuestions(qSorted.slice(0, 5));
+        } else {
+          console.error("questionApi.getQuestionList failed:", questionResult.reason);
+          setRecentQuestions([]);
+        }
 
-        const pollList = Array.isArray(pollRes) ? pollRes : [];
-        const pollSorted = [...pollList].sort((a, b) =>
-          String(b?.createdAt ?? b?.updatedAt ?? "").localeCompare(
-            String(a?.createdAt ?? a?.updatedAt ?? ""),
-          ),
-        );
-        setRecentCommunity(pollSorted.slice(0, 5));
+        if (pollResult.status === "fulfilled") {
+          const pollRes = pollResult.value;
+          const pollList = Array.isArray(pollRes) ? pollRes : [];
+          const pollSorted = [...pollList].sort((a, b) =>
+            String(b?.createdAt ?? b?.updatedAt ?? "").localeCompare(
+              String(a?.createdAt ?? a?.updatedAt ?? ""),
+            ),
+          );
+          setRecentCommunity(pollSorted.slice(0, 5));
+        } else {
+          console.error("getPollList failed:", pollResult.reason);
+          setRecentCommunity([]);
+        }
       } catch (e) {
+        console.error("MainPage unexpected load error:", e);
         if (!alive) return;
         setErr("메인 데이터를 불러오지 못했습니다.");
         setData(null);
@@ -162,8 +181,9 @@ export default function MainPage() {
   };
 
   const trendStyle = (pct) => {
-    if (pct == null || Number.isNaN(pct) || pct === 0)
+    if (pct == null || Number.isNaN(pct) || pct === 0) {
       return styles.trendNeutral;
+    }
     return pct > 0 ? styles.trendUp : styles.trendDown;
   };
 
@@ -179,7 +199,7 @@ export default function MainPage() {
   const goCommunityDetail = (item) => {
     const pollId = item?.pollId;
     if (pollId) {
-      navigate(`/community/poll/${pollId}`);
+      navigate(`/community/pollList/${pollId}`);
       return;
     }
 
@@ -199,10 +219,10 @@ export default function MainPage() {
     return `일자: ${label}`;
   };
 
-  const tooltipValue = (val) => [`${val}건`, "상담/접수"];
+  const tooltipValue = (val) => [`${val}건`, "상담 건수"];
 
   const chartSummaryText = useMemo(() => {
-    if (!series.length) return "아직 집계된 통계 데이터가 없습니다.";
+    if (!series.length) return "아직 집계된 상담 통계 데이터가 없습니다.";
     if (weeklyChangePct == null || Number.isNaN(weeklyChangePct)) {
       return "최근 7일 상담 흐름을 기준으로 통계를 표시하고 있습니다.";
     }
@@ -240,7 +260,8 @@ export default function MainPage() {
           }
 
           .lm-listItem:hover {
-            background: #f8fbff;
+            background: #f5f9ff;
+            transform: translateY(-2px);
           }
 
           .lm-quickBtn:hover {
@@ -294,19 +315,20 @@ export default function MainPage() {
         <section className="lm-hero" style={styles.hero}>
           <div style={styles.heroMain}>
             <div style={styles.heroBadgeRow}>
-              <span style={styles.heroBadge}>LAW MATE</span>
-              <span style={styles.heroPath}>/ main</span>
+              <span style={styles.heroBadge}>LawMate</span>
+              <span style={styles.heroPath}></span>
             </div>
 
+            <div style={styles.welcomeText}>환영합니다. 필요한 법률 서비스를 빠르게 시작해보세요.</div>
             <h1 style={styles.heroTitle}>법률 상담을 더 쉽고 빠르게</h1>
             <p style={styles.heroSubtitle}>
-              공지사항, 통계, 최근 법률질문과 커뮤니티 활동을 한 번에 확인하고
-              필요한 기능으로 빠르게 이동하세요.
+              상담 통계, 최근 법률질문, 커뮤니티와 모의 판결 게시판까지
+              한 번에 확인하고 필요한 기능으로 빠르게 이동하세요.
             </p>
 
             <div className="lm-kpiGrid" style={styles.heroStatGrid}>
               <div style={styles.heroStatCard}>
-                <div style={styles.heroStatLabel}>오늘 접수 사건 수</div>
+                <div style={styles.heroStatLabel}>📅 오늘 상담 접수</div>
                 <div style={styles.heroStatValue}>{todayCount}</div>
                 <div
                   style={{ ...styles.heroTrendText, ...trendStyle(todayChangePct) }}
@@ -316,7 +338,7 @@ export default function MainPage() {
               </div>
 
               <div style={styles.heroStatCard}>
-                <div style={styles.heroStatLabel}>주간 누적 상담 건수</div>
+                <div style={styles.heroStatLabel}>📈 이번 주 상담 건수</div>
                 <div style={styles.heroStatValue}>{weeklyCount}</div>
                 <div
                   style={{ ...styles.heroTrendText, ...trendStyle(weeklyChangePct) }}
@@ -346,8 +368,8 @@ export default function MainPage() {
             <div style={styles.ctaCard}>
               <div style={styles.ctaTitle}>지금 바로 질문하세요</div>
               <div style={styles.ctaDesc}>
-                질문 등록은 로그인 후 이용할 수 있습니다. 필요한 경우 질문 목록을
-                먼저 둘러본 뒤 등록할 수 있습니다.
+                질문 등록은 로그인 후 이용할 수 있습니다. 질문 목록을 먼저 둘러본 뒤
+                필요한 내용을 바로 남길 수 있습니다.
               </div>
 
               <button
@@ -374,7 +396,7 @@ export default function MainPage() {
               </div>
               <div style={styles.trustItem}>
                 <span style={styles.trustDot} />
-                <span>최신 커뮤니티와 의견조사 제공</span>
+                <span>최신 커뮤니티와 모의 판결 게시판 제공</span>
               </div>
               <div style={styles.trustItem}>
                 <span style={styles.trustDot} />
@@ -389,53 +411,9 @@ export default function MainPage() {
         <section style={styles.section}>
           <div className="lm-sectionHead" style={styles.sectionHeader}>
             <div>
-              <h2 style={styles.sectionTitle}>공지사항</h2>
-              <div style={styles.sectionDesc}>서비스 공지 최신 3건</div>
-            </div>
-            <span style={styles.sectionHint}>최신 3건</span>
-          </div>
-
-          <div className="lm-grid3" style={styles.grid3}>
-            {loading ? (
-              Array.from({ length: 3 }).map((_, idx) => (
-                <div key={idx} style={styles.skeletonCard}>
-                  <div className="lm-skeleton" style={styles.skeletonTitle} />
-                  <div className="lm-skeleton" style={styles.skeletonMeta} />
-                  <div className="lm-skeleton" style={styles.skeletonMetaShort} />
-                </div>
-              ))
-            ) : topNotices.length === 0 ? (
-              <div style={{ ...styles.emptyCard, gridColumn: "1 / -1" }}>
-                등록된 공지사항이 없습니다.
-              </div>
-            ) : (
-              topNotices.map((n) => (
-                <button
-                  key={n.id}
-                  type="button"
-                  className="lm-hoverCard"
-                  style={styles.noticeCard}
-                  onClick={() => openNotice(n.id)}
-                >
-                  <div style={styles.noticeBadge}>NOTICE</div>
-                  <div style={styles.noticeTitle}>{n.title}</div>
-                  <div style={styles.noticeMeta}>
-                    {n.createdAt
-                      ? new Date(n.createdAt).toLocaleDateString()
-                      : ""}
-                  </div>
-                </button>
-              ))
-            )}
-          </div>
-        </section>
-
-        <section style={styles.section}>
-          <div className="lm-sectionHead" style={styles.sectionHeader}>
-            <div>
-              <h2 style={styles.sectionTitle}>오늘/주간 사건 통계</h2>
+              <h2 style={styles.sectionTitle}>상담 통계</h2>
               <div style={styles.sectionDesc}>
-                Python 집계 결과를 기반으로 최근 흐름을 보여줍니다.
+                Python 집계 결과를 기반으로 최근 상담 흐름을 보여줍니다.
               </div>
             </div>
             <span style={styles.sectionHint}>최근 7일 기준</span>
@@ -448,7 +426,7 @@ export default function MainPage() {
               <div style={styles.metricCard}>
                 <div style={styles.metricIcon}>📅</div>
                 <div style={styles.metricBody}>
-                  <div style={styles.metricLabel}>오늘 접수</div>
+                  <div style={styles.metricLabel}>오늘 상담 접수</div>
                   <div style={styles.metricValue}>{todayCount}건</div>
                   <div style={{ ...styles.metricTrend, ...trendStyle(todayChangePct) }}>
                     전일 대비 {trendText(todayChangePct)}
@@ -459,7 +437,7 @@ export default function MainPage() {
               <div style={styles.metricCard}>
                 <div style={styles.metricIcon}>📈</div>
                 <div style={styles.metricBody}>
-                  <div style={styles.metricLabel}>주간 상담</div>
+                  <div style={styles.metricLabel}>이번 주 상담 건수</div>
                   <div style={styles.metricValue}>{weeklyCount}건</div>
                   <div
                     style={{ ...styles.metricTrend, ...trendStyle(weeklyChangePct) }}
@@ -472,17 +450,21 @@ export default function MainPage() {
               <div style={styles.miniChartWrap}>
                 <div style={styles.miniChartTitle}>최근 7일 추이</div>
                 <div style={{ width: "100%", height: 84 }}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={series.slice(-7)}>
-                      <Area
-                        type="monotone"
-                        dataKey="count"
-                        stroke="#1e4d8c"
-                        fill="rgba(30, 77, 140, 0.12)"
-                        strokeWidth={2.5}
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
+                  {series.length ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={series.slice(-7)}>
+                        <Area
+                          type="monotone"
+                          dataKey="count"
+                          stroke="#1e4d8c"
+                          fill="rgba(30, 77, 140, 0.12)"
+                          strokeWidth={2.5}
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div style={styles.chartEmptyMini}>데이터 없음</div>
+                  )}
                 </div>
               </div>
 
@@ -502,41 +484,45 @@ export default function MainPage() {
               </div>
 
               <div style={{ width: "100%", height: 340 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    data={series}
-                    margin={{ top: 12, right: 16, left: 0, bottom: 10 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="date"
-                      tickMargin={8}
-                      tickFormatter={(v) => {
-                        const s = String(v);
-                        return s.length >= 10 ? s.slice(5) : s;
-                      }}
-                    />
-                    <YAxis tickMargin={8} />
-                    <Tooltip
-                      contentStyle={{
-                        borderRadius: 12,
-                        border: "1px solid #e8edf5",
-                        boxShadow: "0 10px 24px rgba(15, 23, 42, 0.10)",
-                      }}
-                      labelStyle={{ fontWeight: 800 }}
-                      labelFormatter={tooltipLabel}
-                      formatter={tooltipValue}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="count"
-                      stroke="#1e4d8c"
-                      strokeWidth={3}
-                      dot={false}
-                      activeDot={{ r: 5 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+                {series.length ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                      data={series}
+                      margin={{ top: 12, right: 16, left: 0, bottom: 10 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis
+                        dataKey="date"
+                        tickMargin={8}
+                        tickFormatter={(v) => {
+                          const s = String(v);
+                          return s.length >= 10 ? s.slice(5) : s;
+                        }}
+                      />
+                      <YAxis tickMargin={8} />
+                      <Tooltip
+                        contentStyle={{
+                          borderRadius: 12,
+                          border: "1px solid #e8edf5",
+                          boxShadow: "0 10px 24px rgba(15, 23, 42, 0.10)",
+                        }}
+                        labelStyle={{ fontWeight: 800 }}
+                        labelFormatter={tooltipLabel}
+                        formatter={tooltipValue}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="count"
+                        stroke="#1e4d8c"
+                        strokeWidth={3}
+                        dot={false}
+                        activeDot={{ r: 5 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div style={styles.chartEmpty}>아직 표시할 통계 데이터가 없습니다.</div>
+                )}
               </div>
             </div>
           </div>
@@ -545,9 +531,9 @@ export default function MainPage() {
         <section style={styles.section}>
           <div className="lm-sectionHead" style={styles.sectionHeader}>
             <div>
-              <h2 style={styles.sectionTitle}>최근 활동</h2>
+              <h2 style={styles.sectionTitle}>최근 게시물</h2>
               <div style={styles.sectionDesc}>
-                최근 게시글, 법률질문, 의견조사 게시판 최신 항목
+                최근 게시글, 법률질문, 모의 판결 게시판 최신 항목
               </div>
             </div>
             <span style={styles.sectionHint}>각 최신 5건</span>
@@ -621,10 +607,10 @@ export default function MainPage() {
             />
 
             <ActivityListCard
-              title="💬 최근 커뮤니티"
-              onMore={() => navigate("/community/poll")}
+              title="⚖️ 모의 판결 게시판"
+              onMore={() => navigate("/community/pollList")}
               loading={loading}
-              emptyText="의견조사 게시판 글이 없습니다."
+              emptyText="모의 판결 게시판 글이 없습니다."
               items={recentCommunity}
               renderItem={(p, idx, len) => (
                 <button
@@ -638,12 +624,23 @@ export default function MainPage() {
                   onClick={() => goCommunityDetail(p)}
                 >
                   <div style={styles.listMain}>
-                    <div style={styles.listTitle}>
-                      {p.title ?? p.subject ?? "제목 없음"}
+                    <div style={styles.questionTitleRow}>
+                      <span
+                        style={{
+                          ...styles.pollStatusBadge,
+                          ...(getPollStatusText(p) === "진행중"
+                            ? styles.pollStatusOpen
+                            : styles.pollStatusClosed),
+                        }}
+                      >
+                        {getPollStatusText(p)}
+                      </span>
+                      <span style={styles.ellipsisTitle}>
+                        {p.title ?? p.subject ?? "제목 없음"}
+                      </span>
                     </div>
                     <div style={styles.subMeta}>
-                      {getPollStatusText(p)}
-                      {getPollMetaText(p) ? ` · ${getPollMetaText(p)}` : ""}
+                      {getPollMetaText(p) || "모의 판결 게시판"}
                     </div>
                   </div>
                   <div style={styles.listMeta}>
@@ -662,10 +659,9 @@ export default function MainPage() {
         <section style={{ ...styles.section, marginBottom: 26 }}>
           <div className="lm-bottomCta" style={styles.bottomCta}>
             <div>
-              <div style={styles.bottomTitle}>법률 질문 등록</div>
+              <div style={styles.bottomTitle}>지금 법률 질문하기</div>
               <div style={styles.bottomDesc}>
-                질문 등록은 로그인 후 이용할 수 있습니다. 궁금한 점을 빠르게
-                남겨보세요.
+                질문 등록은 로그인 후 이용할 수 있습니다. 궁금한 점을 빠르게 남겨보세요.
               </div>
             </div>
 
@@ -783,7 +779,7 @@ function getPollStatusText(poll) {
     }
   }
 
-  return "의견조사";
+  return "모의 판결";
 }
 
 function getPollMetaText(poll) {
@@ -851,7 +847,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: 10,
-    marginBottom: 12,
+    marginBottom: 10,
   },
 
   heroBadge: {
@@ -871,6 +867,13 @@ const styles = {
     fontSize: 13,
     color: "rgba(255,255,255,0.75)",
     fontWeight: 700,
+  },
+
+  welcomeText: {
+    fontSize: 13,
+    fontWeight: 700,
+    color: "rgba(255,255,255,0.82)",
+    marginBottom: 8,
   },
 
   heroTitle: {
@@ -1063,45 +1066,6 @@ const styles = {
     gap: 16,
   },
 
-  noticeCard: {
-    textAlign: "left",
-    background: "#fff",
-    border: "1px solid #e7edf5",
-    borderRadius: 22,
-    padding: 18,
-    cursor: "pointer",
-    transition: "all 0.18s ease",
-    boxShadow: "0 12px 26px rgba(15, 23, 42, 0.05)",
-  },
-
-  noticeBadge: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 999,
-    padding: "5px 10px",
-    background: "#eef4ff",
-    color: "#1d4d8c",
-    border: "1px solid #d9e6fb",
-    fontSize: 11,
-    fontWeight: 900,
-    marginBottom: 12,
-  },
-
-  noticeTitle: {
-    fontWeight: 900,
-    color: "#0f172a",
-    lineHeight: 1.45,
-    fontSize: 18,
-    minHeight: 52,
-  },
-
-  noticeMeta: {
-    marginTop: 12,
-    color: "#64748b",
-    fontSize: 13,
-  },
-
   statRow: {
     display: "grid",
     gridTemplateColumns: "360px 1fr",
@@ -1217,6 +1181,32 @@ const styles = {
     fontWeight: 700,
   },
 
+  chartEmpty: {
+    height: "100%",
+    borderRadius: 18,
+    border: "1px dashed #dbe5f3",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#64748b",
+    background: "#fbfdff",
+    fontSize: 14,
+    fontWeight: 700,
+  },
+
+  chartEmptyMini: {
+    height: "100%",
+    borderRadius: 14,
+    border: "1px dashed #dbe5f3",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#64748b",
+    background: "#fbfdff",
+    fontSize: 12,
+    fontWeight: 700,
+  },
+
   listCardCol: {
     background: "#ffffff",
     borderRadius: 24,
@@ -1267,7 +1257,7 @@ const styles = {
     background: "#fff",
     border: "none",
     cursor: "pointer",
-    transition: "background 0.16s ease",
+    transition: "all 0.16s ease",
   },
 
   listMain: {
@@ -1329,20 +1319,34 @@ const styles = {
     flexShrink: 0,
   },
 
+  pollStatusBadge: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "4px 8px",
+    borderRadius: 999,
+    fontSize: 11,
+    fontWeight: 900,
+    flexShrink: 0,
+    border: "1px solid transparent",
+  },
+
+  pollStatusOpen: {
+    background: "#ecfdf3",
+    color: "#15803d",
+    borderColor: "#bbf7d0",
+  },
+
+  pollStatusClosed: {
+    background: "#fff1f2",
+    color: "#be123c",
+    borderColor: "#fecdd3",
+  },
+
   empty: {
     padding: 18,
     color: "#64748b",
     fontSize: 14,
-  },
-
-  emptyCard: {
-    background: "#fff",
-    border: "1px solid #e7edf5",
-    borderRadius: 22,
-    boxShadow: "0 12px 26px rgba(15, 23, 42, 0.05)",
-    padding: 20,
-    color: "#64748b",
-    fontWeight: 700,
   },
 
   bottomCta: {
