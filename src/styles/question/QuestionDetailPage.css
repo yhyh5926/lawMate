@@ -19,7 +19,7 @@
 /* ── 전체 레이아웃 ── */
 .question-detail-container {
   font-family: "Noto Sans KR", sans-serif;
-  max-width: 860px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 48px 24px 80px;
   color: var(--text-main);

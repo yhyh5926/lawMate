@@ -1,353 +1,74 @@
-/* ============================
-   법률 툴팁 컨테이너
-============================ */
-.tooltip-container {
-  position: relative;
-  display: inline;
-  line-height: 1.8;
-}
-
-/* ============================
-   법률 키워드 스타일
-============================ */
-.legal-keyword {
-  position: relative;
-  color: #1e40af;
-  font-weight: 700;
+/* ── 키워드 하이라이트 ── */
+.lt-keyword {
+  background: none;
+  color: inherit;
+  font-style: inherit;
+  border-bottom: 1.5px dashed #c9a84c;
   cursor: help;
-  text-decoration: underline;
-  text-decoration-color: rgba(30, 64, 175, 0.3);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 3px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 2px 4px;
-  border-radius: 4px;
+  padding-bottom: 1px;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
 }
 
-.legal-keyword:hover {
-  color: #1e3a8a;
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-  text-decoration-color: #1e40af;
-  transform: translateY(-1px);
+.lt-keyword:hover {
+  color: #0d1b2a;
+  border-color: #0d1b2a;
 }
 
-.legal-keyword::after {
-  content: "⚖️";
-  font-size: 0.7em;
-  margin-left: 3px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.legal-keyword:hover::after {
-  opacity: 1;
-}
-
-/* ============================
-   툴팁 박스
-============================ */
-.legal-tooltip-box {
+/* ── 툴팁 박스 ── */
+.lt-tooltip {
   position: fixed;
-  z-index: 10000;
-  min-width: 320px;
-  max-width: 420px;
-  background: rgba(255, 255, 255, 0.98);
-  border-radius: 16px;
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(30, 64, 175, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-  border: 2px solid #3b82f6;
-  overflow: hidden;
-  animation: tooltipFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 9999;
+  max-width: 280px;
+  background: #0d1b2a;
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
+  padding: 14px 16px;
   pointer-events: none;
+  animation: lt-in 0.14s ease;
 }
 
-@keyframes tooltipFadeIn {
+@keyframes lt-in {
   from {
     opacity: 0;
-    transform: translateY(-10px) scale(0.95);
+    transform: translateY(4px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
-/* ============================
-   툴팁 헤더
-============================ */
-.tooltip-header {
-  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-  color: white;
-  padding: 14px 20px;
+/* 헤더 */
+.lt-tooltip-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-weight: 800;
-  font-size: 1rem;
-  letter-spacing: -0.01em;
-  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
-}
-
-.tooltip-icon {
-  font-size: 1.3rem;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-  animation: iconBounce 2s ease-in-out infinite;
-}
-
-@keyframes iconBounce {
-  0%,
-  100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-3px) rotate(-5deg);
-  }
-}
-
-.tooltip-header strong {
-  flex: 1;
-  font-size: 1.05rem;
-}
-
-/* ============================
-   툴팁 본문
-============================ */
-.tooltip-body {
-  padding: 18px 20px;
-  font-size: 0.95rem;
-  line-height: 1.7;
-  color: #1e293b;
-  background: white;
-  position: relative;
-  font-weight: 500;
-}
-
-.tooltip-body::before {
-  content: "";
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  font-size: 3rem;
-  color: #e0f2fe;
-  font-family: Georgia, serif;
-  line-height: 1;
-  opacity: 0.6;
-  z-index: 0;
-}
-
-.tooltip-body::after {
-  content: "
-    "";
-  position: absolute;
-  bottom: 8px;
-  right: 12px;
-  font-size: 3rem;
-  color: #e0f2fe;
-  font-family: Georgia, serif;
-  line-height: 1;
-  opacity: 0.6;
-  z-index: 0;
-}
-
-/* ============================
-   반응형 툴팁
-============================ */
-@media (max-width: 768px) {
-  .legal-tooltip-box {
-    min-width: 280px;
-    max-width: 90vw;
-    font-size: 0.9rem;
-  }
-
-  .tooltip-header {
-    padding: 12px 16px;
-    font-size: 0.95rem;
-  }
-
-  .tooltip-icon {
-    font-size: 1.2rem;
-  }
-
-  .tooltip-body {
-    padding: 14px 16px;
-    font-size: 0.88rem;
-  }
-}
-
-/* ============================
-   추가 스타일 - 법률 문서 본문
-============================ */
-.legal-document-body {
-  font-size: 1.05rem;
-  line-height: 1.9;
-  color: #1e293b;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-
-.legal-document-body p {
-  margin-bottom: 1.2em;
-}
-
-/* ============================
-   강조 텍스트 스타일
-============================ */
-.legal-emphasis {
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: 700;
-  border-left: 3px solid #f59e0b;
-}
-
-/* ============================
-   법률 조항 스타일
-============================ */
-.legal-article {
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-  border-left: 4px solid #3b82f6;
-  padding: 16px 20px;
-  margin: 20px 0;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
-}
-
-.legal-article-title {
-  font-weight: 800;
-  color: #1e40af;
+  gap: 7px;
   margin-bottom: 8px;
-  font-size: 1.1rem;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.2);
 }
 
-/* ============================
-   인용문 스타일
-============================ */
-.legal-quote {
-  position: relative;
-  padding: 24px 28px 24px 52px;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-left: 5px solid #64748b;
-  border-radius: 12px;
-  margin: 24px 0;
-  font-style: italic;
-  color: #475569;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.legal-quote::before {
-  content: "⚖️";
-  position: absolute;
-  left: 18px;
-  top: 24px;
-  font-size: 1.5rem;
-  opacity: 0.6;
-}
-
-/* ============================
-   법률 정의 박스
-============================ */
-.legal-definition {
-  background: white;
-  border: 2px solid #3b82f6;
-  border-radius: 12px;
-  padding: 20px;
-  margin: 20px 0;
-  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
-}
-
-.legal-definition-term {
-  font-weight: 800;
-  color: #1e40af;
-  font-size: 1.1rem;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.legal-definition-term::before {
-  content: "📖";
-  font-size: 1.2rem;
-}
-
-.legal-definition-content {
-  color: #475569;
-  line-height: 1.7;
-  font-weight: 500;
-}
-
-/* ============================
-   주의사항 박스
-============================ */
-.legal-warning {
-  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-  border-left: 4px solid #ef4444;
-  padding: 16px 20px;
-  border-radius: 8px;
-  margin: 20px 0;
-  display: flex;
-  gap: 12px;
-  align-items: start;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
-}
-
-.legal-warning::before {
-  content: "⚠️";
-  font-size: 1.3rem;
+.lt-tooltip-icon {
+  font-size: 13px;
   flex-shrink: 0;
+  line-height: 1;
 }
 
-.legal-warning-content {
-  color: #7f1d1d;
-  font-weight: 600;
-  line-height: 1.6;
+.lt-tooltip-term {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #e8c97a;
+  letter-spacing: 0.02em;
 }
 
-/* ============================
-   법률 목록
-============================ */
-.legal-list {
-  list-style: none;
-  padding: 0;
-  margin: 20px 0;
-}
-
-.legal-list li {
-  position: relative;
-  padding-left: 32px;
-  margin-bottom: 12px;
-  color: #334155;
-  font-weight: 500;
-  line-height: 1.7;
-}
-
-.legal-list li::before {
-  content: "§";
-  position: absolute;
-  left: 0;
-  color: #3b82f6;
-  font-weight: 800;
-  font-size: 1.2rem;
-}
-
-/* ============================
-   인쇄 스타일
-============================ */
-@media print {
-  .legal-keyword {
-    text-decoration: none;
-    color: inherit;
-    font-weight: 600;
-  }
-
-  .legal-keyword::after {
-    display: none;
-  }
-
-  .legal-tooltip-box {
-    display: none;
-  }
+/* 설명 */
+.lt-tooltip-desc {
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.72);
+  font-weight: 300;
+  word-break: keep-all;
 }
