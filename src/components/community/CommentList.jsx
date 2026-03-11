@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { getComments, writeComment } from "../../api/communityApi";
 import "../../styles/community/CommentList.css";
 
-const CommentList = ({ postId }) => {
+const CommentList = ({ postId, boardType }) => {
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState(""); // 일반
   const [replyContent, setReplyContent] = useState({}); // 대댓글
@@ -10,7 +10,7 @@ const CommentList = ({ postId }) => {
 
   const fetchComments = async () => {
     try {
-      const data = await getComments(postId);
+      const data = await getComments(postId, boardType);
       console.log("댓글", data);
       setComments(data);
     } catch (error) {
@@ -46,7 +46,8 @@ const CommentList = ({ postId }) => {
         postId: Number(postId),
         memberId,
         parentId: null,
-        content
+        content,
+        boardType
       });
 
       setContent("");
@@ -73,7 +74,8 @@ const CommentList = ({ postId }) => {
         postId: Number(postId),
         memberId,
         parentId,
-        content: replyContent[parentId]
+        content: replyContent[parentId],
+        boardType
       });
 
       setReplyContent({

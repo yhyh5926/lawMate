@@ -118,7 +118,7 @@ const QnaDetail = () => {
         </div>
 
         <div className="detail-comment-section">
-          <CommentList postId={postId} />
+          <CommentList postId={postId} boardType="POST" />
         </div>
       </div>
     </div>

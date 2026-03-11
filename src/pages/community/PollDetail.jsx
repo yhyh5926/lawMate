@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { getPollDetail, getPollOptions, votePoll, checkVoted } from "../../api/communityApi";
+import { useParams, useNavigate } from "react-router-dom";
+import CommentList from "../../components/community/CommentList";
+import {
+  getPollDetail,
+  getPollOptions,
+  votePoll,
+  checkVoted,
+  deletePoll
+} from "../../api/communityApi";
 import "../../styles/community/PollDetail.css";
 
 import { Doughnut } from "react-chartjs-2";
@@ -11,6 +18,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 const PollDetail = () => {
   const memberId = Number(localStorage.getItem("memberId"));
   const { pollId } = useParams();
+  const navigate = useNavigate();
 
   const [poll, setPoll] = useState(null);
   const [options, setOptions] = useState([]);
@@ -32,7 +40,7 @@ const PollDetail = () => {
         setAlreadyVoted(res);
       });
     }
-  }, [pollId]);
+  }, [pollId, memberId]);
 
   const handleVote = async () => {
     if (!memberId) {
@@ -50,42 +58,66 @@ const PollDetail = () => {
       return;
     }
 
-    await votePoll({
-      pollId,
-      optionId: selectedOption,
-      memberId
-    });
+    try {
+      await votePoll({
+        pollId,
+        optionId: selectedOption,
+        memberId
+      });
 
-    alert("투표 완료!");
-    setAlreadyVoted(true);
+      alert("투표 완료!");
+      setAlreadyVoted(true);
 
-    const data = await getPollOptions(pollId);
-    setOptions(data);
-    const total = data.reduce((sum, opt) => sum + opt.voteCnt, 0);
-    setTotalVotes(total);
+      const data = await getPollOptions(pollId);
+      setOptions(data);
+      const total = data.reduce((sum, opt) => sum + opt.voteCnt, 0);
+      setTotalVotes(total);
+    } catch (error) {
+      console.error("투표 실패:", error);
+      console.error("응답 데이터:", error.response?.data);
+      alert("투표 처리 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleEdit = () => {
+    navigate(`/community/poll/edit/${pollId}`);
+  };
+
+  const handleDelete = async () => {
+    const isConfirm = window.confirm("정말 삭제하시겠습니까?");
+    if (!isConfirm) return;
+
+    try {
+      await deletePoll(pollId);
+      alert("의견조사가 삭제되었습니다.");
+      navigate("/community/poll/list");
+    } catch (error) {
+      console.error("의견조사 삭제 실패:", error);
+      console.error("응답 데이터:", error.response?.data);
+      alert("의견조사 삭제 실패");
+    }
   };
 
   if (!poll) return <div className="poll-loading">불러오는 중...</div>;
 
-  // ✅ 투표 결과 도넛 차트 데이터
+  const isWriter = memberId === poll.memberId;
+
   const labels = options.map(o => o.optionText);
   const values = options.map(o => o.voteCnt);
-
-  // ✅ 0표만 있는 경우 도넛이 이상해질 수 있어서 방어
   const safeValues = values.every(v => v === 0) ? values.map(() => 1) : values;
 
   const doughnutData = {
     labels,
     datasets: [
-    {
-      data: safeValues,
-      backgroundColor: ["#4f6ef7","#f97316","#10b981","#f59e0b","#8b5cf6","#ec4899"],
-      borderColor: "#ffffff",
-      borderWidth: 3,
-      hoverOffset: 6,
-      cutout: "65%",
-    }
-  ]
+      {
+        data: safeValues,
+        backgroundColor: ["#4f6ef7", "#f97316", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"],
+        borderColor: "#ffffff",
+        borderWidth: 3,
+        hoverOffset: 6,
+        cutout: "65%",
+      }
+    ]
   };
 
   const doughnutOptions = {
@@ -109,23 +141,36 @@ const PollDetail = () => {
       <div className="poll-container">
         <div className="poll-card">
 
-          {/* 헤더 */}
           <div className="poll-header">
             <h2 className="poll-title">{poll.title}</h2>
             <p className="poll-description">{poll.description}</p>
+
             <div className="poll-meta">
-              <span className="poll-meta-item"><strong>작성자</strong> {poll.name}</span>
+              <span className="poll-meta-item">
+                <strong>작성자</strong> {poll.name}
+              </span>
               <span className="poll-meta-divider" />
-              <span className="poll-meta-item"><strong>마감일</strong> {poll.endDate}</span>
+              <span className="poll-meta-item">
+                <strong>마감일</strong> {poll.endDate}
+              </span>
             </div>
+
+            {isWriter && (
+              <div className="poll-action-box">
+                <button className="poll-edit-btn" onClick={handleEdit}>
+                  수정
+                </button>
+                <button className="poll-delete-btn" onClick={handleDelete}>
+                  삭제
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* 고지사항 */}
           {poll.disclaimer && (
             <p className="poll-disclaimer">⚠ {poll.disclaimer}</p>
           )}
 
-          {/* ✅ 투표 전/후 UI 분기 */}
           {!alreadyVoted ? (
             <div className="poll-vote-section">
               <h3 className="poll-vote-title">투표하기</h3>
@@ -150,7 +195,9 @@ const PollDetail = () => {
                       <div className="poll-bar-bg">
                         <div className="poll-bar-fill" style={{ width: `${percent}%` }} />
                       </div>
-                      <span className="poll-bar-label">{opt.voteCnt}표 ({percent}%)</span>
+                      <span className="poll-bar-label">
+                        {opt.voteCnt}표 ({percent}%)
+                      </span>
                     </div>
                   </div>
                 );
@@ -168,7 +215,6 @@ const PollDetail = () => {
             <div className="poll-result-section">
               <h3 className="poll-vote-title">투표 결과</h3>
 
-              {/* ✅ Flask 이미지 대신 React 도넛 차트 */}
               <div className="poll-chart-wrap">
                 <Doughnut data={doughnutData} options={doughnutOptions} />
               </div>
@@ -179,6 +225,9 @@ const PollDetail = () => {
             </div>
           )}
 
+        </div>
+        <div className="poll-comment-section">
+          <CommentList postId={poll.postId} boardType="POLL" />
         </div>
       </div>
     </div>
