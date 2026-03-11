@@ -199,12 +199,6 @@ const QuestionDetailPage = () => {
         </section>
       )}
 
-      {/* 3. 답변 리스트 영역 */}
-      <h3 className="section-title">
-        변호사 답변{" "}
-        <span className="count-badge">{detail.answers?.length || 0}</span>
-      </h3>
-
       <QuestionAnswerList
         questionId={questionId}
         isOwner={isOwner}
