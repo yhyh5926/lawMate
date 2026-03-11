@@ -88,7 +88,7 @@ const PollList = () => {
               }}
             >
               <option value="latest">최신순</option>
-              <option value="endDate">마감임박순</option>
+              <option value="endDate">마감임일순</option>
               <option value="status">진행중 우선</option>
             </select>
 

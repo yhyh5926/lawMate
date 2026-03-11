@@ -18,7 +18,6 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Loading */
 .poll-loading {
   font-family: 'Noto Sans KR', sans-serif;
   display: flex;
@@ -29,7 +28,6 @@
   font-size: 15px;
 }
 
-/* Card */
 .poll-card {
   background: #fff;
   border-radius: 14px;
@@ -38,7 +36,6 @@
   margin-bottom: 16px;
 }
 
-/* Poll header */
 .poll-header {
   padding: 28px 32px 20px;
   border-bottom: 1px solid #f0f2fb;
@@ -57,6 +54,7 @@
   color: #444869;
   line-height: 1.7;
   margin: 0 0 16px;
+  padding: 0 32px 20px;
 }
 
 .poll-meta {
@@ -82,6 +80,51 @@
   background: #e4e7f5;
 }
 
+/* 수정 / 삭제 버튼 묶음 */
+.poll-action-box {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.poll-edit-btn {
+  padding: 7px 18px;
+  background: transparent;
+  color: #5a6082;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid #e4e7f5;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.poll-edit-btn:hover {
+  border-color: #4f6ef7;
+  color: #4f6ef7;
+  background: #f7f8ff;
+}
+
+.poll-delete-btn {
+  padding: 7px 18px;
+  background: transparent;
+  color: #b0b5cc;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid #e4e7f5;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.poll-delete-btn:hover {
+  border-color: #f87171;
+  color: #ef4444;
+  background: #fff5f5;
+}
+
 /* Disclaimer */
 .poll-disclaimer {
   margin: 0;
@@ -105,7 +148,6 @@
   margin: 0 0 16px;
 }
 
-/* Option item */
 .poll-option {
   border: 2px solid #e4e7f5;
   border-radius: 10px;
@@ -142,7 +184,6 @@
   color: #1a1d2e;
 }
 
-/* Progress bar */
 .poll-bar-wrap {
   display: flex;
   align-items: center;
@@ -172,7 +213,6 @@
   text-align: right;
 }
 
-/* Vote button */
 .poll-vote-btn {
   display: block;
   width: 100%;
@@ -200,7 +240,6 @@
   transform: translateY(0);
 }
 
-/* Total count */
 .poll-total {
   text-align: center;
   font-size: 13px;
@@ -227,7 +266,6 @@
   justify-content: center;
 }
 
-/* 항목별 결과 리스트 */
 .poll-result-list {
   display: flex;
   flex-direction: column;
@@ -271,4 +309,9 @@
   color: #9398b0;
   min-width: 36px;
   text-align: right;
+}
+
+/* 댓글 섹션 */
+.poll-comment-section {
+  margin-top: 20px;
 }

@@ -56,7 +56,7 @@ const Header = () => {
                   자유게시판
                 </Link>
                 <Link to="/community/pollList" className="dropdown-item">
-                  모의 판결 게시판
+                  의견 조사 게시판
                 </Link>
               </div>
             )}

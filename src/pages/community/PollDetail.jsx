@@ -27,7 +27,11 @@ const PollDetail = () => {
   const [alreadyVoted, setAlreadyVoted] = useState(false);
 
   useEffect(() => {
-    getPollDetail(pollId).then(setPoll);
+    getPollDetail(pollId).then(data => {
+      console.log("poll detail 응답:", data);
+      console.log("postId 값:", data.postId);
+      setPoll(data);
+    });
 
     getPollOptions(pollId).then(data => {
       setOptions(data);
@@ -90,7 +94,7 @@ const PollDetail = () => {
     try {
       await deletePoll(pollId);
       alert("의견조사가 삭제되었습니다.");
-      navigate("/community/poll/list");
+      navigate("/community/pollList");
     } catch (error) {
       console.error("의견조사 삭제 실패:", error);
       console.error("응답 데이터:", error.response?.data);
@@ -143,7 +147,6 @@ const PollDetail = () => {
 
           <div className="poll-header">
             <h2 className="poll-title">{poll.title}</h2>
-            <p className="poll-description">{poll.description}</p>
 
             <div className="poll-meta">
               <span className="poll-meta-item">
@@ -170,6 +173,7 @@ const PollDetail = () => {
           {poll.disclaimer && (
             <p className="poll-disclaimer">⚠ {poll.disclaimer}</p>
           )}
+          <p className="poll-description">{poll.description}</p>
 
           {!alreadyVoted ? (
             <div className="poll-vote-section">
@@ -224,7 +228,6 @@ const PollDetail = () => {
               </p>
             </div>
           )}
-
         </div>
         <div className="poll-comment-section">
           <CommentList postId={poll.postId} boardType="POLL" />

@@ -7,6 +7,8 @@ import QnaWrite from "./QnaWrite";
 import QnaEdit from "./QnaEdit";
 import PollList from "./PollList";
 import PollDetail from "./PollDetail";
+import PollWrite from "./PollWrite";
+import PollEdit from "./PollEdit";
 
 const CommunityRoutes = [
   <Route key="com-h" path="/community/home" element={<Home />} />,
@@ -22,13 +24,14 @@ const CommunityRoutes = [
   <Route
     key="pol-w"
     path="/community/poll/write"
-    element={<div>의견조사 생성</div>}
+    element={<PollWrite/>}
   />,
   <Route
     key="pol-d"
     path="/community/poll/detail/:pollId"
     element={<PollDetail />}
   />,
+  <Route path="/community/poll/edit/:pollId" element={<PollEdit />} />,
 ];
 
 export default CommunityRoutes;

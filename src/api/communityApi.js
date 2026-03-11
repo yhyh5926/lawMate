@@ -86,6 +86,11 @@ export const getPollOptions = async (pollId) => {
   return response.data;
 };
 
+export const writePoll = async (payload) => {
+  const response = await axiosInstance.post("/polls/write", payload);
+  return response.data;
+};
+
 export const votePoll = async (voteData) => {
   const response = await axiosInstance.post(`/poll/vote`, voteData);
   return response.data;
@@ -101,3 +106,7 @@ export const deletePoll = async (pollId) => {
   return response.data;
 };
 
+export const updatePoll = async (payload) => {
+  const response = await axiosInstance.post("/polls/edit", payload);
+  return response.data;
+};
