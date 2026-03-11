@@ -13,18 +13,19 @@ const LawyerDetailPage = () => {
   const [lawyer, setLawyer] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchDetail = async () => {
+    try {
+      setLoading(true);
+      const data = await lawyerApi.getLawyerDetail(id);
+      setLawyer(data);
+    } catch (err) {
+      console.error("데이터 로드 실패:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchDetail = async () => {
-      try {
-        setLoading(true);
-        const data = await lawyerApi.getLawyerDetail(id);
-        setLawyer(data);
-      } catch (err) {
-        console.error("데이터 로드 실패:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     if (id) fetchDetail();
   }, [id]);
 
@@ -107,7 +108,10 @@ const LawyerDetailPage = () => {
               </div>
             </section>
 
-            <LawyerReviewSection lawyerId={lawyer.lawyerId} />
+            <LawyerReviewSection
+              lawyerId={lawyer.lawyerId}
+              onReviewChange={fetchDetail}
+            />
           </div>
 
           {/* 3. 오른쪽 영역: 사무소 정보 및 액션 버튼 */}

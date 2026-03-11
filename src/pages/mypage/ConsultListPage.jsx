@@ -154,13 +154,20 @@ const ConsultListPage = () => {
                       결제하기
                     </button>
                   )}
-                  {/* 후기 작성 (완료 상태) */}
-                  {c.status === "DONE" && !c.reviewed && (
+
+                  {/* 후기 영역 */}
+                  {c.status === "DONE" && (
                     <button
-                      onClick={() => navigate(`/lawyer/detail/${c.lawyerId}`)}
-                      className="consult-action-btn btn-review"
+                      onClick={() => {
+                        // 💡 내 후기가 있다면 리뷰 섹션(#review-section)으로 바로 이동
+                        const targetPath = c.reviewed
+                          ? `/lawyer/detail/${c.lawyerId}#review-section`
+                          : `/lawyer/detail/${c.lawyerId}`;
+                        navigate(targetPath);
+                      }}
+                      className={`consult-action-btn ${c.reviewed ? "btn-view-review" : "btn-review"}`}
                     >
-                      후기 작성
+                      {c.reviewed ? "내 후기 보기" : "후기 작성"}
                     </button>
                   )}
                   {/* 예약 취소 (대기/확정 상태) */}

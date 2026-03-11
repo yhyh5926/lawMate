@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import "../../styles/common/Header.css";
+import { scrollToTop } from "../../utils/windowUtils";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -111,7 +112,7 @@ const Header = () => {
 
 const NavLink = ({ to, children }) => {
   return (
-    <Link to={to} className="nav-link">
+    <Link to={to} className="nav-link" onClick={() => scrollToTop()}>
       {children}
       <div className="nav-underline" />
     </Link>

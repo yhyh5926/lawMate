@@ -1,79 +1,89 @@
+/* src/styles/lawyer/LawyerReviewSection.css */
+
 .lawyer-review-section {
-  padding: 20px 0;
+  padding: 30px 0;
+  border-top: 1px solid #eee;
+  margin-top: 40px;
 }
 
 .section-title {
-  font-size: 1.4rem;
+  font-size: 20px;
   font-weight: 700;
-  margin-bottom: 20px;
   color: #333;
+  margin-bottom: 24px;
 }
 
-/* 📝 작성 유도 박스 스타일 */
+/* --- 후기 작성 박스 (미작성 후기가 있을 때) --- */
 .pending-review-box {
-  background-color: #fffaf0;
-  border: 1px solid #ffeeba;
+  background-color: #f9fbff;
+  border: 1px solid #e1e8f5;
   border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 40px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  padding: 20px;
+  margin-bottom: 30px;
 }
 
 .pending-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 20px;
-  color: #856404;
+  margin-bottom: 15px;
+}
+
+.pending-header p {
+  margin: 0;
+  font-size: 14px;
+  color: #444;
 }
 
 .info-icon {
-  font-size: 1.2rem;
+  font-size: 18px;
 }
 
-/* ⭐ 별점 선택 디자인 (1->5 우측 상승) */
+/* 별점 선택 */
 .rating-select {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   margin-bottom: 12px;
 }
 
 .star-btn {
   background: none;
   border: none;
-  font-size: 2rem;
-  color: #e9ecef;
+  font-size: 24px;
+  color: #ddd;
   cursor: pointer;
   padding: 0;
-  transition:
-    transform 0.1s,
-    color 0.2s;
+  transition: color 0.2s;
 }
 
 .star-btn.active {
-  color: #ffc107;
-}
-.star-btn:hover {
-  transform: scale(1.15);
+  color: #ffcc00; /* 활성화된 별 색상 */
 }
 
 .rating-label {
   margin-left: 10px;
-  font-weight: 700;
-  color: #444;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
 }
 
-/* 입력창 및 버튼 */
+/* 텍스트 입력창 */
 .review-write-form textarea {
   width: 100%;
-  height: 120px;
-  padding: 15px;
+  height: 100px;
+  padding: 12px;
   border: 1px solid #ddd;
   border-radius: 8px;
   resize: none;
-  font-size: 1rem;
-  margin-bottom: 15px;
+  font-size: 14px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+
+.review-write-form textarea:focus {
+  outline: none;
+  border-color: #1a6dff;
 }
 
 .form-footer {
@@ -82,80 +92,108 @@
 }
 
 .review-submit-btn {
-  background-color: #1a2a40;
+  background-color: #1a6dff;
   color: white;
   border: none;
-  padding: 12px 24px;
+  padding: 10px 20px;
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
 }
 
-.review-submit-btn:hover {
-  background-color: #2c3e50;
+/* --- 리뷰 리스트 영역 --- */
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-/* 💬 리뷰 리스트 아이템 스타일 */
 .review-item {
-  padding: 25px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 20px 0;
+  transition: all 0.3s ease;
+}
+
+/* 💡 내 후기 강조 스타일 */
+.review-item.my-review-highlight {
+  background-color: #f0f7ff;
+  border: 1px solid #cce0ff;
+  border-radius: 12px;
+  padding: 20px;
+  scroll-margin-top: 100px; /* 앵커 이동 시 상단 여유 공간 */
 }
 
 .review-item-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 12px;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .review-stars {
-  color: #ffc107;
-  font-size: 1.1rem;
-  letter-spacing: 2px;
+  color: #ffcc00;
+  font-size: 14px;
 }
+
 .empty-stars {
-  color: #e9ecef;
-}
-.review-date {
-  color: #999;
-  font-size: 0.9rem;
+  color: #ddd;
 }
 
-.review-content {
-  line-height: 1.6;
-  color: #444;
-  margin-bottom: 15px;
-  white-space: pre-wrap;
+/* 💡 내 후기 배지 */
+.my-review-badge {
+  display: inline-block;
+  background-color: #1a6dff;
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 10px;
+  vertical-align: middle;
 }
 
-.review-author {
-  font-size: 0.9rem;
-  color: #777;
-  font-weight: 500;
-}
-
-.no-reviews {
-  text-align: center;
-  padding: 50px 0;
-  color: #bbb;
-}
 .review-info-right {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
+.review-date {
+  font-size: 13px;
+  color: #999;
+}
+
 .delete-text-btn {
   background: none;
   border: none;
-  color: #ff4d4f;
-  font-size: 0.85rem;
+  color: #ff3b30;
+  font-size: 13px;
   cursor: pointer;
   padding: 0;
   text-decoration: underline;
-  opacity: 0.7;
-  transition: opacity 0.2s;
 }
 
-.delete-text-btn:hover {
-  opacity: 1;
+.review-content {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #333;
+  margin: 10px 0;
+  white-space: pre-wrap; /* 줄바꿈 유지 */
+}
+
+.review-footer {
+  font-size: 13px;
+  color: #777;
+}
+
+.no-reviews {
+  text-align: center;
+  padding: 40px;
+  color: #aaa;
+  font-size: 15px;
+}
+
+.review-loading {
+  text-align: center;
+  padding: 50px;
+  color: #666;
 }

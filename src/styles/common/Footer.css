@@ -1,8 +1,11 @@
-.lawmate-footer {
-  background-color: #1e293b;
-  color: #94a3b8;
-  padding: 50px 0 30px;
-  border-top: 1px solid #e2e8f0;
+/* src/styles/common/Footer.css */
+
+.footer-container {
+  background-color: #f8f9fa;
+  padding: 60px 0 40px;
+  border-top: 1px solid #e9ecef;
+  color: #495057;
+  font-size: 14px;
 }
 
 .footer-inner {
@@ -14,107 +17,101 @@
 .footer-top {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.footer-brand {
+  flex: 1;
+  min-width: 250px;
 }
 
 .footer-logo {
-  color: #ffffff;
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 10px;
+  height: 32px;
+  margin-bottom: 15px;
+  filter: grayscale(0.5); /* 푸터 로고는 살짝 차분하게 */
 }
 
-.footer-slogan {
-  font-size: 14px;
+.brand-desc {
+  line-height: 1.6;
+  color: #868e96;
 }
 
-.footer-nav {
+.footer-links-group {
   display: flex;
   gap: 60px;
 }
 
-.nav-group h4 {
-  color: #ffffff;
+.link-column h4 {
   font-size: 15px;
-  margin-bottom: 15px;
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 20px;
 }
 
-.nav-group ul {
-  list-style: none;
-  padding: 0;
-}
-
-.nav-group li {
-  margin-bottom: 8px;
-}
-
-.nav-group a {
-  color: #cbd5e1;
+.link-column a {
+  display: block;
   text-decoration: none;
-  font-size: 14px;
+  color: #868e96;
+  margin-bottom: 10px;
+  transition: color 0.2s;
 }
 
-.nav-group a:hover {
-  color: #38bdf8;
+.link-column a:hover {
+  color: #1a6dff;
 }
 
 .footer-divider {
   border: 0;
-  border-top: 1px solid #334155;
+  border-top: 1px solid #dee2e6;
   margin-bottom: 30px;
 }
 
 .footer-bottom {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: flex-start;
+  gap: 40px;
+  flex-wrap: wrap;
 }
 
-.company-info {
-  font-size: 12px;
-  line-height: 1.8;
-}
-
-.info-row {
-  display: flex;
-  gap: 15px;
-}
-
-.footer-legal {
-  text-align: right;
-}
-
-.legal-links {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 10px;
-  justify-content: flex-end;
-}
-
-.legal-links a {
-  color: #94a3b8;
-  text-decoration: none;
+.company-info p {
+  margin-bottom: 6px;
+  color: #adb5bd;
   font-size: 13px;
 }
 
-.legal-links a.bold {
-  color: #ffffff;
-  font-weight: 600;
+.company-info span {
+  padding: 0 4px;
 }
 
 .copyright {
+  margin-top: 15px;
+  font-weight: 500;
+}
+
+.disclaimer-box {
+  flex: 1;
+  max-width: 500px;
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.disclaimer-text {
   font-size: 12px;
-  color: #64748b;
+  line-height: 1.6;
+  color: #adb5bd;
+  margin: 0;
 }
 
 @media (max-width: 768px) {
-  .footer-top,
-  .footer-bottom {
-    flex-direction: column;
-    align-items: flex-start;
+  .footer-links-group {
     gap: 30px;
   }
-  .footer-nav {
-    gap: 30px;
+  .footer-bottom {
+    flex-direction: column;
   }
 }
