@@ -33,7 +33,7 @@
 /* --- [3. 텍스트 영역] --- */
 .answer-form-textarea {
   width: 100%;
-  min-height: 250px;
+  min-height: 150px;
   padding: 20px;
   border: 1px solid #cbd5e1;
   border-radius: 12px;

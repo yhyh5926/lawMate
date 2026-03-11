@@ -5,6 +5,19 @@ import LegalTooltip from "./LegalTooltip";
 import "../../styles/precedent/PrecedentDetailPage.css";
 import { scrollToTop } from "../../utils/windowUtils";
 
+// Font Awesome 도입
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faFileLines,
+  faQuestionCircle,
+  faScaleBalanced,
+  faLightbulb,
+  faMagnifyingGlass,
+  faArrowLeft,
+  faArrowRight,
+  faCircleNotch,
+} from "@fortawesome/free-solid-svg-icons";
+
 const PrecedentDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -53,7 +66,11 @@ const PrecedentDetailPage = () => {
   if (loading) {
     return (
       <div className="pd-state-screen">
-        <div className="pd-spinner" />
+        <FontAwesomeIcon
+          icon={faCircleNotch}
+          spin
+          className="pd-spinner-icon"
+        />
         <p className="pd-state-text">판례를 분석하고 있습니다...</p>
         <p className="pd-state-sub">복잡한 법률 내용을 쉽게 풀어드릴게요</p>
       </div>
@@ -63,10 +80,13 @@ const PrecedentDetailPage = () => {
   if (!data) {
     return (
       <div className="pd-state-screen">
-        <p className="pd-state-icon">🔍</p>
+        <FontAwesomeIcon
+          icon={faMagnifyingGlass}
+          className="pd-state-empty-icon"
+        />
         <p className="pd-state-text">해당 판례를 찾을 수 없습니다.</p>
         <button className="pd-back-btn" onClick={handleBack}>
-          목록으로 돌아가기
+          <FontAwesomeIcon icon={faArrowLeft} /> 목록으로 돌아가기
         </button>
       </div>
     );
@@ -104,13 +124,12 @@ const PrecedentDetailPage = () => {
         {/* ── AI 분석 ── */}
         {data.aiSummary && (
           <section className="pd-card">
-            <div className="pd-card-eyebrow">판례 분석</div>
             <h2 className="pd-card-title">이 사건, 어떤 내용인가요?</h2>
 
             <div className="pd-story-wrap">
               <div className="pd-story-block">
                 <div className="pd-story-icon-wrap">
-                  <span className="pd-story-icon">📋</span>
+                  <FontAwesomeIcon icon={faFileLines} className="pd-fa-icon" />
                 </div>
                 <div className="pd-story-body">
                   <h3 className="pd-story-heading">무슨 일이 있었나요?</h3>
@@ -124,7 +143,10 @@ const PrecedentDetailPage = () => {
 
               <div className="pd-story-block">
                 <div className="pd-story-icon-wrap">
-                  <span className="pd-story-icon">🤔</span>
+                  <FontAwesomeIcon
+                    icon={faQuestionCircle}
+                    className="pd-fa-icon"
+                  />
                 </div>
                 <div className="pd-story-body">
                   <h3 className="pd-story-heading">무엇이 문제였나요?</h3>
@@ -139,7 +161,10 @@ const PrecedentDetailPage = () => {
               {data.aiSummary.logic?.length > 0 && (
                 <div className="pd-story-block">
                   <div className="pd-story-icon-wrap">
-                    <span className="pd-story-icon">⚖️</span>
+                    <FontAwesomeIcon
+                      icon={faScaleBalanced}
+                      className="pd-fa-icon"
+                    />
                   </div>
                   <div className="pd-story-body">
                     <h3 className="pd-story-heading">
@@ -159,11 +184,11 @@ const PrecedentDetailPage = () => {
 
             {data.aiSummary.tip && (
               <div className="pd-tip-box">
-                <span className="pd-tip-icon">💡</span>
+                <div className="pd-tip-icon-wrap">
+                  <FontAwesomeIcon icon={faLightbulb} />
+                </div>
                 <div className="pd-tip-right">
-                  <strong className="pd-tip-label">
-                    이런 상황이라면 알아두세요
-                  </strong>
+                  <strong className="pd-tip-label">전문가 조언</strong>
                   <p className="pd-tip-text">
                     <LegalTooltip text={data.aiSummary.tip} />
                   </p>
@@ -202,7 +227,9 @@ const PrecedentDetailPage = () => {
         {relatedList.length > 0 && (
           <section className="pd-card">
             <h2 className="pd-card-title">비슷한 사건도 살펴보세요</h2>
-            <p className="pd-card-desc">이 판례와 유사한 사건들이에요</p>
+            <p className="pd-card-desc">
+              이 판례와 유사한 키워드를 가진 사건들이에요
+            </p>
             <ul className="pd-related-list">
               {relatedList.map((item) => (
                 <li
@@ -214,10 +241,6 @@ const PrecedentDetailPage = () => {
                   }}
                   role="button"
                   tabIndex={0}
-                  onKeyDown={(e) =>
-                    e.key === "Enter" &&
-                    navigate(`/precedent/detail/${item.precId}`)
-                  }
                 >
                   <div className="pd-related-top">
                     <span className="pd-badge pd-badge--type pd-badge--sm">
@@ -227,7 +250,9 @@ const PrecedentDetailPage = () => {
                   </div>
                   <p className="pd-related-title">{item.title}</p>
                   <p className="pd-related-case-no">{item.caseNo}</p>
-                  <span className="pd-related-arrow">→</span>
+                  <span className="pd-related-arrow">
+                    <FontAwesomeIcon icon={faArrowRight} />
+                  </span>
                 </li>
               ))}
             </ul>
@@ -237,7 +262,7 @@ const PrecedentDetailPage = () => {
         {/* ── 뒤로가기 ── */}
         <div className="pd-footer-nav">
           <button className="pd-back-btn" onClick={handleBack}>
-            ← 목록으로 돌아가기
+            <FontAwesomeIcon icon={faArrowLeft} /> 목록으로 돌아가기
           </button>
         </div>
       </div>

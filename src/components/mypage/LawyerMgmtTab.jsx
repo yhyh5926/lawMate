@@ -1,36 +1,26 @@
-// src/components/mypage/LawyerMgmtTab.jsx
 import React, { useState, useEffect, useRef } from "react";
 import lawyerApi from "../../api/lawyerApi";
 import { useAuthStore } from "../../store/authStore.js";
 import { DEFAULT_IMAGE } from "../../pages/lawyer/LawyerListPage";
-import "../../styles/mypage/LawyerMgmtTab.css";
-// 💡 LawyerDetailPage의 레이아웃과 CSS를 그대로 활용하기 위해 import 합니다.
-import "../../styles/lawyer/LawyerDetailPage.css";
 import { baseURL } from "../../constants/baseURL.js";
 
-// 💡 선택 가능한 전체 전문 분야 리스트
-const SPECIALTIES = [
-  "민사",
-  "형사",
-  "가사",
-  "이혼",
-  "노동",
-  "행정",
-  "기업",
-  "부동산",
-];
+// 스타일 임포트
+import "../../styles/lawyer/LawyerDetailPage.css"; // 기본 상세페이지 스타일
+import "../../styles/mypage/LawyerMgmtTab.css"; // 관리탭 전용 스타일 (앞서 드린 CSS)
+import { categories } from "../../constants/categories.js";
+
+//전문분야
+const SPECIALTIES = categories.slice(1, categories.length - 1);
 
 const LawyerMgmtTab = () => {
   const { user } = useAuthStore();
   const [loading, setLoading] = useState(true);
   const [lawyerId, setLawyerId] = useState(null);
 
-  // 프로필 사진 관련 상태
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewImg, setPreviewImg] = useState(DEFAULT_IMAGE);
 
-  // 읽기 전용 정보 (이름, 이메일, 전화번호, 자격번호, 평점, 후기수)
   const [readOnlyData, setReadOnlyData] = useState({
     name: user.name || "이름 없음",
     email: user.email || "-",
@@ -40,11 +30,10 @@ const LawyerMgmtTab = () => {
     reviewCnt: 0,
   });
 
-  // 수정 가능한 정보
   const [formData, setFormData] = useState({
     officeName: "",
     officeAddr: "",
-    specialty: "", // 서버에서 받아온 쉼표 구분 문자열
+    specialty: "",
     intro: "",
     career: "",
     consultFee: 0,
@@ -56,7 +45,6 @@ const LawyerMgmtTab = () => {
         setLoading(true);
         const res = await lawyerApi.getLawyerByMemberId(user.memberId);
         const data = res.data?.data || res.data || res;
-
         setLawyerId(data.lawyerId);
 
         setFormData({
@@ -74,22 +62,15 @@ const LawyerMgmtTab = () => {
           reviewCnt: data.reviewCnt || 0,
         }));
 
-        const path =
-          data.savePath ||
-          data.profileUrl ||
-          data.profileImage ||
-          data.imagePath ||
-          data.imageUrl;
-        if (path) {
+        const path = data.savePath || data.profileUrl || data.imageUrl;
+        if (path)
           setPreviewImg(path.startsWith("http") ? path : baseURL + path);
-        }
       } catch (err) {
-        console.error("변호사 정보 로드 실패:", err);
+        console.error("데이터 로드 실패:", err);
       } finally {
         setLoading(false);
       }
     };
-
     if (user?.memberId) fetchLawyerData();
   }, [user]);
 
@@ -101,21 +82,15 @@ const LawyerMgmtTab = () => {
     }));
   };
 
-  // 💡 전문 분야 클릭 토글 핸들러 (다중 선택)
   const handleSpecToggle = (spec) => {
     let currentList = formData.specialty
-      ? formData.specialty
-          .split(",")
-          .map((s) => s.trim())
-          .filter((s) => s !== "")
+      ? formData.specialty.split(",").map((s) => s.trim())
       : [];
-
     if (currentList.includes(spec)) {
       currentList = currentList.filter((item) => item !== spec);
     } else {
       currentList.push(spec);
     }
-
     setFormData((prev) => ({ ...prev, specialty: currentList.join(",") }));
   };
 
@@ -124,9 +99,7 @@ const LawyerMgmtTab = () => {
     if (file) {
       setSelectedFile(file);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImg(reader.result);
-      };
+      reader.onloadend = () => setPreviewImg(reader.result);
       reader.readAsDataURL(file);
     }
   };
@@ -134,109 +107,80 @@ const LawyerMgmtTab = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (!lawyerId) {
-        alert("변호사 고유 식별자(ID)를 찾을 수 없습니다.");
-        return;
-      }
-
       if (selectedFile) {
         const fileData = new FormData();
         fileData.append("file", selectedFile);
         await lawyerApi.uploadProfileImage(lawyerId, fileData);
       }
-
       await lawyerApi.updateLawyer(lawyerId, formData);
-      alert("변호사 프로필 및 상담 설정이 성공적으로 저장되었습니다!");
+      alert("성공적으로 저장되었습니다!");
     } catch (err) {
-      console.error(err);
-      alert("정보 저장에 실패했습니다. (API 연동 확인 필요)");
+      alert("저장 실패", err);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="detail-status-msg">
-        변호사 정보를 불러오는 중입니다...
-      </div>
-    );
-  }
 
   const selectedList = formData.specialty
     ? formData.specialty.split(",").map((s) => s.trim())
     : [];
 
-  const isDefaultImg = previewImg === DEFAULT_IMAGE;
+  if (loading)
+    return (
+      <div className="ld-status-screen">
+        <div className="ld-spinner"></div>
+      </div>
+    );
 
   return (
     <div
-      className="lawyer-mgmt-wrapper lawyer-detail-page"
-      style={{
-        padding: "0",
-        minHeight: "auto",
-        backgroundColor: "transparent",
-      }}
+      className="lawyer-mgmt-wrapper ld-root"
+      style={{ minHeight: "auto", paddingBottom: "0" }}
     >
-      <h3
-        className="mgmt-content-title"
-        style={{
-          fontSize: "24px",
-          fontWeight: "800",
-          color: "#1e293b",
-          marginBottom: "20px",
-        }}
-      >
-        프로필 및 상담 관리
-      </h3>
       <div className="mgmt-info-notice">
-        💡 아래 입력하신 내용과 디자인 그대로 실제 '전문 변호사 찾기' 상세
-        페이지에 노출됩니다.
+        💡 <strong>프로필 편집 모드:</strong> 수정하신 내용은 즉시 서비스 상세
+        페이지에 반영됩니다.
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="lawyer-detail-container"
-        style={{ padding: "0", maxWidth: "100%" }}
+        className="ld-container"
+        style={{ padding: "0" }}
       >
-        {/* 1. 헤더 섹션: 상세 페이지(LawyerDetailPage) 레이아웃 적용 */}
-        <section
-          className="detail-header-card"
-          style={{ position: "relative" }}
-        >
-          <div className="header-flex">
-            {/* 프로필 이미지 */}
-            <div
-              className="detail-img-wrapper mgmt-img-box-edit"
-              onClick={() => fileInputRef.current.click()}
-            >
-              <img
-                src={previewImg}
-                alt={readOnlyData.name}
-                className={isDefaultImg ? "default-avatar" : "real-profile"}
-                onError={(e) => {
-                  e.target.src = DEFAULT_IMAGE;
-                }}
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-              <div className="mgmt-img-overlay-edit">
-                <span>📷 사진 변경</span>
+        {/* ── 1. 헤더 섹션 (상세페이지 디자인 적용) ── */}
+        <header className="ld-header-card">
+          <div className="ld-header-glow" />
+          <div className="ld-header-content">
+            <div className="ld-profile-flex">
+              {/* 프로필 이미지 변경 영역 */}
+              <div
+                className="ld-img-wrapper mgmt-img-box-edit"
+                onClick={() => fileInputRef.current.click()}
+              >
+                <img
+                  src={previewImg}
+                  alt="Profile"
+                  onError={(e) => (e.target.src = DEFAULT_IMAGE)}
+                />
+                <div className="mgmt-img-overlay-edit">
+                  <span>📷 사진 변경</span>
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                />
               </div>
-              <input
-                type="file"
-                accept="image/*"
-                hidden
-                ref={fileInputRef}
-                onChange={handleFileChange}
-              />
-            </div>
 
-            {/* 메인 정보 (이름, 전문분야, 사무소, 평점) */}
-            <div className="detail-main-info" style={{ flex: 1 }}>
-              {/* 전문 분야 다중 선택 버튼 그룹 */}
-              <div style={{ marginBottom: "15px" }}>
+              <div className="ld-main-meta">
+                {/* 전문 분야 선택 */}
                 <label className="mgmt-label-small">
-                  주요 전문 분야 (다중 선택)
+                  전문 분야 설정 (클릭하여 토글)
                 </label>
-                <div className="mgmt-spec-group">
+                <div
+                  className="mgmt-spec-group"
+                  style={{ marginBottom: "15px" }}
+                >
                   {SPECIALTIES.map((spec) => (
                     <button
                       key={spec}
@@ -244,186 +188,141 @@ const LawyerMgmtTab = () => {
                       onClick={() => handleSpecToggle(spec)}
                       className={`mgmt-spec-btn ${selectedList.includes(spec) ? "active" : ""}`}
                     >
-                      {spec} 전문
+                      {spec}
                     </button>
                   ))}
                 </div>
+
+                <h1 className="ld-name">
+                  {readOnlyData.name}{" "}
+                  <span className="ld-name-suffix">변호사</span>
+                </h1>
+
+                <div className="ld-office" style={{ marginTop: "10px" }}>
+                  <label className="mgmt-label-small">사무소 명칭</label>
+                  <input
+                    type="text"
+                    name="officeName"
+                    value={formData.officeName}
+                    onChange={handleChange}
+                    className="mgmt-edit-input"
+                    placeholder="법무법인 또는 사무소 이름을 입력하세요"
+                  />
+                </div>
+
+                <div className="ld-rating-row" style={{ marginTop: "12px" }}>
+                  <span className="ld-score">
+                    ★ {readOnlyData.avgRating.toFixed(1)}
+                  </span>
+                  <span className="ld-rev-count">
+                    ({readOnlyData.reviewCnt}개의 후기)
+                  </span>
+                </div>
               </div>
+            </div>
 
-              <h1 className="lawyer-fullname" style={{ margin: "0 0 10px 0" }}>
-                {readOnlyData.name} <span className="title-suffix">변호사</span>
-              </h1>
-
-              <div style={{ marginBottom: "15px", maxWidth: "400px" }}>
-                <label className="mgmt-label-small">
-                  사무소 / 법무법인 이름
-                </label>
+            {/* 한 줄 소개 편집 */}
+            <div
+              className="ld-intro-quote"
+              style={{ flexDirection: "column", alignItems: "flex-start" }}
+            >
+              <label className="mgmt-label-small">핵심 한 줄 소개</label>
+              <div style={{ display: "flex", width: "100%", gap: "10px" }}>
+                <span className="quote-mark">“</span>
                 <input
                   type="text"
-                  name="officeName"
-                  value={formData.officeName}
+                  name="intro"
+                  value={formData.intro}
                   onChange={handleChange}
                   className="mgmt-edit-input"
-                  placeholder="예: OO법무법인"
-                  style={{ padding: "10px 14px" }}
+                  placeholder="의뢰인에게 보여질 신뢰감 있는 한 줄 소개를 적어주세요."
+                  style={{
+                    fontStyle: "italic",
+                    border: "none",
+                    background: "transparent",
+                    padding: "0",
+                    fontSize: "16px",
+                  }}
                 />
-              </div>
-
-              <div className="rating-summary">
-                <span className="star-icon">★</span>
-                <span className="rating-score">
-                  {readOnlyData.avgRating
-                    ? readOnlyData.avgRating.toFixed(1)
-                    : "0.0"}
-                </span>
-                <span className="review-count">
-                  ({readOnlyData.reviewCnt || 0}개의 후기)
-                </span>
               </div>
             </div>
           </div>
+        </header>
 
-          {/* 핵심 한 줄 소개 */}
-          <div
-            className="intro-text-box"
-            style={{
-              marginTop: "30px",
-              paddingTop: "25px",
-              borderTop: "1px solid #f1f5f9",
-            }}
-          >
-            <label
-              className="mgmt-label-small"
-              style={{ textAlign: "left", marginBottom: "8px" }}
-            >
-              핵심 한 줄 소개
-            </label>
-            <input
-              type="text"
-              name="intro"
-              value={formData.intro}
-              onChange={handleChange}
-              className="mgmt-edit-input"
-              placeholder="의뢰인의 마음을 사로잡을 핵심 소개글을 적어주세요."
-              style={{
-                fontStyle: "italic",
-                textAlign: "center",
-                fontSize: "16px",
-                padding: "12px",
-              }}
-            />
-          </div>
-        </section>
-
-        {/* 2. 상세 정보 영역 (그리드) */}
-        <div className="detail-content-grid">
-          {/* 왼쪽: 경력 */}
-          <div className="content-left">
-            <section className="info-section">
-              <h3 className="section-title">주요 경력 작성</h3>
+        {/* ── 2. 그리드 레이아웃 (경력 & 사무소 설정) ── */}
+        <div className="ld-grid">
+          {/* 왼쪽: 경력 작성 */}
+          <div className="ld-main-content">
+            <section className="ld-card">
+              <div className="ld-card-eyebrow">CAREER</div>
+              <h2 className="ld-card-title">주요 경력 편집</h2>
               <textarea
                 name="career"
                 value={formData.career}
                 onChange={handleChange}
                 className="mgmt-edit-textarea"
-                placeholder="주요 경력 사항을 줄바꿈하여 자세히 작성해주세요."
-                rows={10}
-                style={{ width: "100%", height: "250px" }}
+                placeholder="• 주요 경력을 줄바꿈하여 작성해주세요."
+                rows={15}
+                style={{ lineHeight: "1.8", border: "none", padding: "0" }}
               />
             </section>
           </div>
 
-          {/* 오른쪽: 연락처 및 정보 테이블 */}
-          <div className="content-right">
-            <section className="contact-card">
-              <h3 className="section-title">사무소 정보 설정</h3>
-              <div className="contact-info-list">
-                <div className="contact-item">
-                  <label>자격번호</label>
-                  <span>{readOnlyData.licenseNo}</span>
-                </div>
-                <div className="contact-item">
-                  <label>이메일</label>
-                  <span>{readOnlyData.email}</span>
-                </div>
-                <div className="contact-item">
-                  <label>연락처</label>
-                  <span>{readOnlyData.phone}</span>
-                </div>
+          {/* 오른쪽: 사무소 정보 및 저장 버튼 */}
+          <aside className="ld-sticky-sidebar">
+            <section className="ld-card">
+              <div className="ld-card-eyebrow">CONTACT & FEE</div>
+              <h2 className="ld-card-title">상담 및 위치 설정</h2>
 
-                <div style={{ marginTop: "15px", marginBottom: "15px" }}>
-                  <label className="mgmt-label-small">사무소 주소</label>
-                  <input
-                    type="text"
-                    name="officeAddr"
-                    value={formData.officeAddr}
-                    onChange={handleChange}
-                    className="mgmt-edit-input"
-                    placeholder="사무실 상세 주소를 입력해주세요"
-                  />
+              <dl className="ld-contact-list">
+                <div className="ld-contact-item">
+                  <dt>자격번호 (수정불가)</dt>
+                  <dd>{readOnlyData.licenseNo}</dd>
                 </div>
-
-                <div className="fee-divider"></div>
-
-                <div
-                  className="contact-item fee-item"
-                  style={{ alignItems: "center" }}
-                >
-                  <label>
-                    기본 상담료
-                    <br />
-                    <span
-                      style={{
-                        fontSize: "12px",
-                        color: "#94a3b8",
-                        fontWeight: "normal",
-                      }}
-                    >
-                      (30분 기준)
-                    </span>
-                  </label>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
+                <div className="ld-contact-item">
+                  <dt>사무소 주소</dt>
+                  <dd>
                     <input
-                      type="number"
-                      name="consultFee"
-                      value={formData.consultFee}
+                      type="text"
+                      name="officeAddr"
+                      value={formData.officeAddr}
                       onChange={handleChange}
                       className="mgmt-edit-input"
-                      style={{
-                        width: "120px",
-                        textAlign: "right",
-                        color: "#2563eb",
-                        fontWeight: "700",
-                        fontSize: "18px",
-                      }}
-                      min="0"
-                      step="10000"
+                      placeholder="상세 주소를 입력하세요"
                     />
-                    <span style={{ fontWeight: "700", color: "#1e293b" }}>
-                      원
-                    </span>
-                  </div>
+                  </dd>
+                </div>
+              </dl>
+
+              <div className="ld-fee-box">
+                <span className="ld-fee-label">30분 기준 상담료</span>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "5px" }}
+                >
+                  <input
+                    type="number"
+                    name="consultFee"
+                    value={formData.consultFee}
+                    onChange={handleChange}
+                    className="mgmt-edit-input"
+                    style={{
+                      fontSize: "20px",
+                      fontWeight: "700",
+                      textAlign: "right",
+                      width: "150px",
+                    }}
+                  />
+                  <span className="ld-fee-value">원</span>
                 </div>
               </div>
 
-              <div className="sticky-actions">
-                {/* 💡 저장 버튼을 우측 하단 액션 영역에 배치하여 동선 최적화 */}
-                <button
-                  type="submit"
-                  className="btn-reserve"
-                  style={{ width: "100%" }}
-                >
-                  프로필 및 상담 설정 저장하기
+              <div className="ld-actions">
+                <button type="submit" className="ld-btn-reserve">
+                  설정 내용 저장하기
                 </button>
               </div>
             </section>
-          </div>
+          </aside>
         </div>
       </form>
     </div>

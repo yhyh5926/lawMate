@@ -33,6 +33,7 @@ const LawyerListPage = () => {
     "부동산",
   ];
 
+  // 초기 데이터 로드 (유지)
   useEffect(() => {
     const fetchInitialData = async () => {
       setLoading(true);
@@ -127,12 +128,20 @@ const LawyerListPage = () => {
   };
 
   return (
-    <div className="lawyer-list-page">
-      <header className="lawyer-list-hero">
-        <div className="lawyer-list-hero-inner">
-          <h1 className="lawyer-list-title">전문 변호사 찾기</h1>
-          <div className="lawyer-search-container">
-            <div className="lawyer-search-input-wrapper">
+    <div className="lawyer-root">
+      {/* ── HERO SECTION ── */}
+      <header className="lawyer-hero">
+        <div className="lawyer-hero-inner">
+          <div className="lawyer-hero-eyebrow">
+            <span className="lawyer-hero-line" />
+            <span className="lawyer-hero-eyebrow-text">
+              Professional Legal Partners
+            </span>
+          </div>
+          <h1 className="lawyer-hero-title">전문 변호사 찾기</h1>
+
+          <div className="lawyer-search-bar">
+            <div className="lawyer-search-input-wrap">
               <input
                 type="text"
                 className="lawyer-search-input"
@@ -142,7 +151,7 @@ const LawyerListPage = () => {
                 onKeyDown={handleKeyDown}
               />
               {inputValue && (
-                <button className="search-clear-btn" onClick={handleClearInput}>
+                <button className="lawyer-clear-btn" onClick={handleClearInput}>
                   ✕
                 </button>
               )}
@@ -154,71 +163,97 @@ const LawyerListPage = () => {
         </div>
       </header>
 
-      <div className="filter-controls-container">
-        <nav className="lawyer-filter-nav">
-          {specialties.map((spec) => (
-            <button
-              key={spec}
-              className={`filter-chip ${selectedSpecialties.includes(spec) ? "active" : ""}`}
-              onClick={() => handleCategoryClick(spec)}
-            >
-              {spec}
-            </button>
-          ))}
-        </nav>
-        <button className="filter-reset-btn" onClick={handleResetAll}>
-          <span className="reset-icon">↺</span> 필터 초기화
-        </button>
+      {/* ── FILTER SECTION ── */}
+      <div className="lawyer-filter-bar">
+        <div className="lawyer-filter-inner">
+          <nav className="lawyer-chips-wrap">
+            {specialties.map((spec) => (
+              <button
+                key={spec}
+                className={`lawyer-chip ${selectedSpecialties.includes(spec) ? "active" : ""}`}
+                onClick={() => handleCategoryClick(spec)}
+              >
+                {spec}
+              </button>
+            ))}
+          </nav>
+          <button className="lawyer-reset-btn" onClick={handleResetAll}>
+            <span className="reset-icon">↺</span> 초기화
+          </button>
+        </div>
       </div>
 
-      <main className="lawyer-list-grid">
+      {/* ── MAIN GRID ── */}
+      <main className="lawyer-content">
         {displayLawyers.length > 0 ? (
-          displayLawyers.map((lawyer, index) => (
-            <article
-              key={lawyer.lawyerId}
-              ref={displayLawyers.length === index + 1 ? lastElementRef : null}
-              className="lawyer-card"
-              onClick={() => navigate(`/lawyer/detail/${lawyer.lawyerId}`)}
-            >
-              <div className="lawyer-card-img-wrapper">
-                <img
-                  src={getImageUrl(lawyer)}
-                  alt={lawyer.name}
-                  className="lawyer-card-img"
-                />
-              </div>
-              <div className="lawyer-card-info">
-                <div className="lawyer-card-header">
-                  <h3 className="lawyer-name">{lawyer.name} 변호사</h3>
-                  <div className="lawyer-rating-box">
-                    <span className="star-icon">★</span>
-                    <span className="rating-avg">
-                      {lawyer.avgRating ? lawyer.avgRating.toFixed(1) : "0.0"}
-                    </span>
-                    <span className="review-count">
-                      ({lawyer.reviewCnt || 0})
-                    </span>
+          <div className="lawyer-grid">
+            {displayLawyers.map((lawyer, index) => (
+              <article
+                key={lawyer.lawyerId}
+                ref={
+                  displayLawyers.length === index + 1 ? lastElementRef : null
+                }
+                className="lawyer-card"
+                onClick={() => navigate(`/lawyer/detail/${lawyer.lawyerId}`)}
+              >
+                <div className="lawyer-card-image">
+                  <img src={getImageUrl(lawyer)} alt={lawyer.name} />
+                  <div className="lawyer-card-badge">
+                    {lawyer.officeName?.split(" ")[0]}
                   </div>
                 </div>
-                <div className="lawyer-office">{lawyer.officeName}</div>
-                <div className="lawyer-specialties-tags">
-                  {lawyer.specialty?.split(",").map((s) => (
-                    <span key={s} className="spec-tag">
-                      #{s.trim()}
-                    </span>
-                  ))}
+
+                <div className="lawyer-card-body">
+                  <div className="lawyer-card-header">
+                    <h3 className="lawyer-card-name">{lawyer.name} 변호사</h3>
+                    <div className="lawyer-card-rating">
+                      <span className="star-icon">★</span>
+                      <span className="rating-val">
+                        {lawyer.avgRating ? lawyer.avgRating.toFixed(1) : "0.0"}
+                      </span>
+                      <span className="review-count">
+                        ({lawyer.reviewCnt || 0})
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="lawyer-card-office">{lawyer.officeName}</p>
+
+                  <div className="lawyer-card-tags">
+                    {lawyer.specialty?.split(",").map((s) => (
+                      <span key={s} className="lawyer-tag">
+                        #{s.trim()}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))
+                <div className="lawyer-card-footer">
+                  <span>상세보기</span>
+                  <span className="footer-arrow">→</span>
+                </div>
+              </article>
+            ))}
+          </div>
         ) : (
-          <div className="no-results">
-            <p>조건에 맞는 변호사가 없습니다.</p>
-            <button onClick={handleResetAll}>필터 초기화</button>
+          <div className="lawyer-empty">
+            <div className="lawyer-empty-icon">⚖️</div>
+            <p className="lawyer-empty-title">검색 결과가 없습니다</p>
+            <p className="lawyer-empty-desc">
+              조건을 변경하거나 필터를 초기화해 보세요.
+            </p>
+            <button className="lawyer-empty-btn" onClick={handleResetAll}>
+              필터 초기화
+            </button>
+          </div>
+        )}
+
+        {loading && (
+          <div className="lawyer-loader">
+            <div className="lawyer-spinner"></div>
+            <p>데이터를 불러오는 중...</p>
           </div>
         )}
       </main>
-      {loading && <div className="scroll-loader">데이터 로딩 중...</div>}
     </div>
   );
 };

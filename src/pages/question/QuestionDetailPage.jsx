@@ -22,7 +22,7 @@ const QuestionDetailPage = () => {
   const { user, isAuthenticated } = useAuthStore();
 
   const isLawyer = isAuthenticated && user?.role === "LAWYER";
-  const isOwner =
+  const isQuestionOwner =
     isAuthenticated && String(user?.memberId) === String(detail?.memberId);
   const isAlreadyAdopted = detail?.status === "ADOPTED";
   const hasAnswers = detail?.answers?.length > 0;
@@ -69,7 +69,7 @@ const QuestionDetailPage = () => {
         navigate("/question/list");
       }
     } catch (error) {
-      alert("삭제 실패");
+      alert("삭제 실패", error);
     }
   };
 
@@ -168,7 +168,7 @@ const QuestionDetailPage = () => {
             )}
 
             <div className="question-footer-actions">
-              {isOwner && !isAlreadyAdopted && (
+              {isQuestionOwner && !isAlreadyAdopted && (
                 <div className="owner-control-group">
                   <button
                     className="action-btn edit"
@@ -201,7 +201,8 @@ const QuestionDetailPage = () => {
 
       <QuestionAnswerList
         questionId={questionId}
-        isOwner={isOwner}
+        user={user}
+        isQuestionOwner={isQuestionOwner}
         isAlreadyAdopted={isAlreadyAdopted}
         onAdoptSuccess={fetchDetail}
       />

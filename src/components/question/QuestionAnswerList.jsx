@@ -3,27 +3,27 @@ import { useNavigate } from "react-router-dom";
 import QuestionAnswerEditForm from "./QuestionAnswerEditForm.jsx";
 import { formatDate } from "../../utils/formatDate.js";
 import { baseURL } from "../../constants/baseURL.js";
-import { questionApi } from "../../api/questionApi.js"; // 💡 답변 조회를 위한 API 호출 추가
+import { answerApi } from "../../api/answerApi.js";
 import "../../styles/question/QuestionAnswerList.css";
+import { getOrCreateChatRoom } from "../../api/chatApi.js";
 
 const QuestionAnswerList = ({
-  questionId, // 💡 부모로부터 ID만 받음
-  isOwner,
+  questionId,
+  user,
+  isQuestionOwner,
   isAlreadyAdopted,
-  onAdoptSuccess, // 💡 채택 성공 시 부모(상세페이지)의 상태를 '채택완료'로 바꾸기 위한 콜백
+  onAdoptSuccess,
 }) => {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editingAnswerId, setEditingAnswerId] = useState(null);
 
-  // 1. 답변 목록 가져오기
   const fetchAnswers = useCallback(async () => {
     if (!questionId) return;
     try {
       setLoading(true);
-      const res = await questionApi.getAnswersByQuestionId(questionId);
-      // 서버 응답 구조에 따라 res.data 혹은 res.data.data로 조정하세요.
+      const res = await answerApi.getAnswersByQuestionId(questionId);
       setAnswers(res.data.data || []);
     } catch (error) {
       console.error("답변 목록 조회 실패:", error);
@@ -36,7 +36,6 @@ const QuestionAnswerList = ({
     fetchAnswers();
   }, [fetchAnswers]);
 
-  // 2. 답변 채택 핸들러 (컴포넌트 내부로 이동)
   const handleAdoptAction = async (answerId, lawyerId) => {
     if (
       !window.confirm(
@@ -45,18 +44,37 @@ const QuestionAnswerList = ({
     )
       return;
     try {
-      const res = await questionApi.adoptAnswer({
+      const res = await answerApi.adoptAnswer({
         questionId,
         answerId,
         lawyerId,
       });
       if (res.data.success) {
         alert("채택되었습니다!");
-        fetchAnswers(); // 리스트 새로고침
-        onAdoptSuccess(); // 부모 페이지의 '채택대기' 배지를 '채택완료'로 갱신
+        fetchAnswers();
+        onAdoptSuccess();
       }
     } catch (error) {
-      alert("채택 처리 중 오류가 발생했습니다.");
+      alert("채택 처리 중 오류가 발생했습니다.", error);
+    }
+  };
+
+  const handleDeleteAction = async (answerId, isAdopted) => {
+    if (isAdopted === "Y") {
+      alert("채택된 답변은 삭제할 수 없습니다.");
+      return;
+    }
+    if (!window.confirm("정말 이 답변을 삭제하시겠습니까?")) return;
+    try {
+      const res = await answerApi.deleteAnswer(answerId);
+      if (res.data.success) {
+        alert("답변이 삭제되었습니다.");
+        fetchAnswers();
+      }
+    } catch (error) {
+      const errMsg =
+        error.response?.data?.message || "삭제 처리 중 오류가 발생했습니다.";
+      alert(errMsg);
     }
   };
 
@@ -68,30 +86,31 @@ const QuestionAnswerList = ({
   return (
     <div className="answers-wrapper">
       <h3 className="section-title">
-        변호사 답변 <span className="count-badge">{answers.length}</span>
+        전문가 답변 <span className="count-badge">{answers.length}</span>
       </h3>
 
       {answers.map((ans) => {
-        // 채택률 계산
         const adoptRate =
           ans.answerCnt > 0
             ? ((ans.adoptCnt / ans.answerCnt) * 100).toFixed(1)
             : 0;
+        const isAuthor = user && Number(user.memberId) === Number(ans.memberId);
 
         return (
           <div
             key={ans.answerId}
-            className={`answer-item ${ans.isAdopted === "Y" ? "selected-answer" : ""}`}
+            className={`answer-card ${ans.isAdopted === "Y" ? "adopted-card" : ""}`}
           >
-            {/* 채택 라벨 */}
             {ans.isAdopted === "Y" && (
-              <div className="adopted-label">🏆 의뢰인 채택 답변</div>
+              <div className="adopted-ribbon">🏆 채택된 답변</div>
             )}
 
             <div className="answer-header">
+              {/* 변호사 프로필 섹션: 클릭 직관성 강화 */}
               <div
-                className="lawyer-profile clickable"
+                className="lawyer-profile-box"
                 onClick={() => navigate(`/lawyer/detail/${ans.lawyerId}`)}
+                title={`${ans.lawyerName} 변호사 프로필 보기`}
               >
                 <div className="lawyer-avatar">
                   {ans.lawyerProfile ? (
@@ -101,31 +120,27 @@ const QuestionAnswerList = ({
                       className="lawyer-img"
                     />
                   ) : (
-                    <div className="default-avatar-text">
-                      {ans.isAdopted === "Y" ? "✅" : "👨‍⚖️"}
-                    </div>
+                    <div className="default-avatar">👨‍⚖️</div>
                   )}
+                  <div className="view-profile-overlay">프로필 보기</div>
                 </div>
 
-                <div className="lawyer-meta">
-                  <div className="lawyer-info-main">
+                <div className="lawyer-info">
+                  <div className="name-row">
                     <span className="lawyer-name">{ans.lawyerName} 변호사</span>
                     {ans.officeName && (
                       <span className="office-name">{ans.officeName}</span>
                     )}
                   </div>
-
-                  <div className="lawyer-info-sub">
-                    <span className="stats-badge adopt-count">
+                  <div className="stats-row">
+                    <span className="badge-gold">
                       채택 {ans.adoptCnt || 0}건
                     </span>
-                    <span
-                      className={`stats-badge adopt-rate ${adoptRate >= 80 ? "high-rate" : ""}`}
-                    >
-                      채택률 {adoptRate}%
-                    </span>
+                    <span className="badge-navy">채택률 {adoptRate}%</span>
                     {ans.specialty && (
-                      <span className="specialty-badge">#{ans.specialty}</span>
+                      <span className="specialty-text">
+                        #{ans.specialty.split(",")[0]}
+                      </span>
                     )}
                     <span className="ans-date">
                       {formatDate(ans.createdAt)}
@@ -133,57 +148,85 @@ const QuestionAnswerList = ({
                   </div>
                 </div>
               </div>
+
+              {isAuthor && ans.isAdopted !== "Y" && (
+                <div className="mgmt-actions">
+                  <button
+                    className="btn-text"
+                    onClick={() => setEditingAnswerId(ans.answerId)}
+                  >
+                    수정
+                  </button>
+                  <button
+                    className="btn-text delete"
+                    onClick={() =>
+                      handleDeleteAction(ans.answerId, ans.isAdopted)
+                    }
+                  >
+                    삭제
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* 답변 본문 및 수정 폼 */}
-            {editingAnswerId === ans.answerId ? (
-              <QuestionAnswerEditForm
-                answerId={ans.answerId}
-                initialContent={ans.content}
-                onSaveSuccess={() => {
-                  setEditingAnswerId(null);
-                  fetchAnswers(); // 수정 후 리스트만 갱신
-                }}
-                onCancel={() => setEditingAnswerId(null)}
-              />
-            ) : (
-              <div className="answer-body">
-                <div className="content-text">{ans.content}</div>
-
-                {/* ✅ 채택 시 노출되는 채팅/상담 버튼 */}
-                {ans.isAdopted === "Y" && (
-                  <div className="adopted-special-actions">
-                    <p className="action-guide-text">
-                      변호사님과 바로 상담을 시작해보세요!
-                    </p>
-                    <div className="action-button-group">
-                      <button
-                        className="btn-chat-primary"
-                        onClick={() =>
-                          navigate(`/chat/room?lawyerId=${ans.lawyerId}`)
-                        }
-                      >
-                        💬 1:1 실시간 채팅
-                      </button>
-                      <button
-                        className="btn-consult-secondary"
-                        onClick={() =>
-                          navigate(`/consult/apply/${ans.lawyerId}`)
-                        }
-                      >
-                        📅 상담 예약하기
-                      </button>
+            <div className="answer-content-area">
+              {editingAnswerId === ans.answerId ? (
+                <QuestionAnswerEditForm
+                  answerId={ans.answerId}
+                  initialContent={ans.content}
+                  onSaveSuccess={() => {
+                    setEditingAnswerId(null);
+                    fetchAnswers();
+                  }}
+                  onCancel={() => setEditingAnswerId(null)}
+                />
+              ) : (
+                <>
+                  <div className="content-text">{ans.content}</div>
+                  {ans.isAdopted === "Y" && (
+                    <div className="action-guide-box">
+                      <p className="guide-msg">
+                        변호사님과 직접 상담을 해보세요!
+                      </p>
+                      <div className="action-buttons">
+                        <button
+                          className="btn-navy"
+                          onClick={async () => {
+                            try {
+                              const res = await getOrCreateChatRoom(
+                                ans.memberId,
+                              );
+                              navigate(
+                                `/chat/room?roomNo=${res.data?.data?.roomNo}`,
+                              );
+                            } catch (error) {
+                              alert("연결 실패", error);
+                            }
+                          }}
+                        >
+                          💬 실시간 채팅 상담
+                        </button>
+                        <button
+                          className="btn-gold"
+                          onClick={() =>
+                            navigate(
+                              `/consult/reserve?lawyerId=${ans.lawyerId}`,
+                            )
+                          }
+                        >
+                          📅 방문/전화 예약
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
+                  )}
+                </>
+              )}
+            </div>
 
-            {/* 의뢰인용 채택 버튼 */}
-            {isOwner && !isAlreadyAdopted && ans.isAdopted !== "Y" && (
-              <div className="adopt-action-area">
+            {isQuestionOwner && !isAlreadyAdopted && ans.isAdopted !== "Y" && (
+              <div className="adopt-footer">
                 <button
-                  className="btn-adopt"
+                  className="btn-adopt-outline"
                   onClick={() => handleAdoptAction(ans.answerId, ans.lawyerId)}
                 >
                   이 답변 채택하기

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { questionApi } from "../../api/questionApi.js";
+import { answerApi } from "../../api/answerApi.js";
 import "../../styles/question/QuestionAnswerEditForm.css";
 
 const QuestionAnswerEditForm = ({
@@ -22,7 +22,7 @@ const QuestionAnswerEditForm = ({
     setIsSubmitting(true);
     try {
       // API 호출 (PathVariable 기반)
-      await questionApi.updateAnswer({
+      await answerApi.updateAnswer({
         answerId: answerId,
         content: content,
       });

@@ -1,278 +1,363 @@
-/* --- 전체 페이지 레이아웃 --- */
-.lawyer-detail-page {
-  background-color: #f8fafc;
-  min-height: 100vh;
-  padding: 40px 20px;
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap");
+
+:root {
+  --ld-navy: #0d1b2a;
+  --ld-gold: #c9a84c;
+  --ld-gold-light: #e8c97a;
+  --ld-cream: #faf7f2;
+  --ld-border: #e2ddd5;
+  --ld-text-main: #1a1a2e;
+  --ld-text-muted: #7a7f8e;
 }
 
-.lawyer-detail-container {
-  max-width: 1100px;
+.ld-root {
+  min-height: 100vh;
+  background: var(--ld-cream);
+  padding-bottom: 80px;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+.ld-container {
+  max-width: 1000px;
   margin: 0 auto;
+  padding: 36px 24px 0;
+}
+
+/* ── Status Screens ── */
+.ld-status-screen {
+  height: 60vh;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
 }
 
-/* --- 1. 상단 프로필 카드 섹션 --- */
-.detail-header-card {
-  background: #ffffff;
-  border-radius: 24px;
-  padding: 40px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+.ld-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e2ddd5;
+  border-top-color: var(--ld-navy);
+  border-radius: 50%;
+  animation: ld-spin 0.8s linear infinite;
 }
 
-.header-flex {
+@keyframes ld-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Header Card ── */
+.ld-header-card {
+  background: var(--ld-navy);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(13, 27, 42, 0.15);
+  margin-bottom: 24px;
+}
+
+.ld-header-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 80% 20%,
+    rgba(201, 168, 76, 0.12) 0%,
+    transparent 50%
+  );
+}
+
+.ld-header-content {
+  position: relative;
+  z-index: 1;
+  padding: 44px 50px;
+}
+
+.ld-profile-flex {
   display: flex;
-  gap: 35px;
+  gap: 36px;
   align-items: center;
 }
 
-.detail-img-wrapper {
-  width: 140px;
-  height: 140px;
+.ld-img-wrapper {
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
   overflow: hidden;
-  border: 4px solid #f1f5f9;
-  background-color: #fff;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  background: #fff;
 }
 
-.detail-img-wrapper img {
+.ld-img-wrapper img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.detail-img-wrapper .default-avatar {
-  padding: 25px;
-  opacity: 0.6;
+.ld-main-meta {
+  flex: 1;
 }
 
-.detail-main-info {
+.ld-badge-row {
   display: flex;
-  flex-direction: column;
   gap: 8px;
+  margin-bottom: 12px;
 }
 
-.specialty-badge {
-  display: inline-block;
-  width: fit-content;
-  background: #eff6ff;
-  color: #2563eb;
+.ld-badge {
   padding: 4px 12px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 700;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
 }
 
-.lawyer-fullname {
+.ld-badge--gold {
+  background: rgba(201, 168, 76, 0.2);
+  color: var(--ld-gold-light);
+  border: 1px solid var(--ld-gold);
+}
+.ld-badge--outline {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  opacity: 0.8;
+}
+
+.ld-name {
+  font-family: "Noto Serif KR", serif;
   font-size: 32px;
-  font-weight: 800;
-  color: #1e293b;
-  margin: 0;
+  color: #fff;
+  margin-bottom: 6px;
 }
 
-.title-suffix {
+.ld-name-suffix {
   font-size: 20px;
-  font-weight: 500;
-  color: #64748b;
-  margin-left: 4px;
+  font-weight: 400;
+  opacity: 0.9;
 }
 
-.office-text {
-  font-size: 18px;
-  color: #475569;
-  margin: 0;
+.ld-office {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  margin-bottom: 12px;
 }
 
-.rating-summary {
+.ld-rating-row {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-top: 5px;
 }
 
-.star-icon {
-  color: #fbbf24;
+.ld-score {
   font-size: 18px;
-}
-.rating-score {
   font-weight: 700;
-  font-size: 18px;
-  color: #1e293b;
+  color: var(--ld-gold-light);
 }
-.review-count {
-  color: #94a3b8;
-  font-size: 15px;
+.ld-rev-count {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
 }
 
-.intro-text-box {
+.ld-intro-quote {
   margin-top: 30px;
-  padding: 20px 30px;
-  background: #f8fafc;
-  border-radius: 16px;
-  font-size: 18px;
-  color: #334155;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px 24px;
+  border-radius: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+.quote-mark {
+  color: var(--ld-gold);
+  font-size: 24px;
+  font-family: serif;
+}
+.ld-intro-quote p {
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.6;
   font-style: italic;
-  line-height: 1.6;
-  border-left: 4px solid #e2e8f0;
 }
 
-/* --- 2. 하단 그리드 레이아웃 (7:3 비율) --- */
-.detail-content-grid {
+/* ── Grid Layout ── */
+.ld-grid {
   display: grid;
-  grid-template-columns: 1.5fr 1fr; /* 6:4 or 7:3 비율 */
-  gap: 30px;
-  align-items: start;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
 }
 
-/* 왼쪽 영역 스타일 */
-.info-section {
-  background: #ffffff;
-  border-radius: 24px;
+.ld-card {
+  background: #fff;
+  border: 1px solid var(--ld-border);
+  border-radius: 16px;
   padding: 30px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
-.section-title {
-  font-size: 20px;
+.ld-card-eyebrow {
+  font-size: 10px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--ld-gold);
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+}
+
+.ld-card-title {
+  font-family: "Noto Serif KR", serif;
+  font-size: 19px;
+  color: var(--ld-navy);
   margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #f1f5f9;
 }
 
-.career-list-box {
+.ld-career-item {
   display: flex;
-  flex-direction: column;
   gap: 12px;
+  margin-bottom: 14px;
 }
-
-.career-line {
-  font-size: 16px;
-  line-height: 1.6;
-  color: #475569;
-  position: relative;
-  padding-left: 15px;
-}
-
-.career-line::before {
-  content: "•";
-  position: absolute;
-  left: 0;
-  color: #cbd5e1;
-}
-
-/* 오른쪽 영역 (사무소 정보 카드) */
-.contact-card {
-  background: #ffffff;
-  border-radius: 24px;
-  padding: 30px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-  position: sticky;
-  top: 20px; /* 스크롤 시 상단에 고정 */
-}
-
-.contact-info-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.contact-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  font-size: 15px;
-}
-
-.contact-item label {
-  color: #94a3b8;
-  width: 100px;
+.ld-career-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--ld-gold);
+  border-radius: 50%;
+  margin-top: 8px;
   flex-shrink: 0;
 }
-
-.contact-item span {
-  color: #1e293b;
-  font-weight: 500;
-  text-align: right;
+.ld-career-item p {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #444;
 }
 
-.address-text {
-  line-height: 1.4;
+/* ── Sidebar (Right) ── */
+.ld-sticky-sidebar {
+  position: sticky;
+  top: 24px;
 }
 
-.fee-divider {
-  height: 1px;
-  background: #f1f5f9;
-  margin: 10px 0;
-}
-
-.fee-item {
-  align-items: center;
-}
-
-.price-tag {
-  font-size: 20px;
-  font-weight: 800;
-  color: #2563eb;
-}
-
-/* 액션 버튼 */
-.sticky-actions {
+.ld-contact-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 30px;
+  gap: 16px;
+}
+.ld-contact-item dt {
+  font-size: 12px;
+  color: var(--ld-text-muted);
+  margin-bottom: 4px;
+}
+.ld-contact-item dd {
+  font-size: 14.5px;
+  color: var(--ld-navy);
+  font-weight: 500;
+}
+.ld-address {
+  line-height: 1.5;
 }
 
-.btn-chat,
-.btn-reserve {
-  width: 100%;
-  padding: 16px;
-  border-radius: 12px;
-  font-size: 16px;
+.ld-fee-box {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px dashed var(--ld-border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ld-fee-label {
+  font-size: 12px;
+  color: var(--ld-text-muted);
+}
+.ld-fee-value {
+  font-size: 20px;
   font-weight: 700;
+  color: var(--ld-navy);
+}
+
+.ld-actions {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ld-btn-chat,
+.ld-btn-reserve {
+  width: 100%;
+  height: 50px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14.5px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
+}
+
+.ld-btn-chat {
+  background: #fff;
+  border: 1.5px solid var(--ld-navy);
+  color: var(--ld-navy);
+}
+.ld-btn-chat:hover {
+  background: #f0f2f5;
+}
+
+.ld-btn-reserve {
+  background: var(--ld-navy);
   border: none;
+  color: #fff;
 }
-
-.btn-chat {
-  background: #f1f5f9;
-  color: #1e293b;
-}
-
-.btn-chat:hover {
-  background: #e2e8f0;
-}
-
-.btn-reserve {
-  background: #2563eb;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-}
-
-.btn-reserve:hover {
-  background: #1d4ed8;
+.ld-btn-reserve:hover {
+  background: #1a2e45;
   transform: translateY(-2px);
 }
 
-/* 상태 메시지 (로딩 등) */
-.detail-status-msg {
-  text-align: center;
-  padding: 100px;
-  font-size: 18px;
-  color: #94a3b8;
+/* ── 💡 New: Bottom Back Action (Center Alignment) ── */
+.ld-bottom-action {
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 1px solid var(--ld-border);
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
-/* 반응형 처리 */
-@media (max-width: 992px) {
-  .detail-content-grid {
+.ld-list-back-center {
+  background: #fff;
+  color: var(--ld-navy);
+  border: 1px solid var(--ld-navy);
+  padding: 14px 48px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.ld-list-back-center:hover {
+  background: var(--ld-navy);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .ld-grid {
     grid-template-columns: 1fr;
   }
-  .contact-card {
-    position: static;
+  .ld-header-content {
+    padding: 30px;
+  }
+  .ld-profile-flex {
+    flex-direction: column;
+    text-align: center;
+  }
+  .ld-img-wrapper {
+    width: 120px;
+    height: 120px;
+  }
+  .ld-badge-row {
+    justify-content: center;
+  }
+  .ld-bottom-action {
+    margin-top: 40px;
   }
 }

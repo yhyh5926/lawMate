@@ -1,126 +1,168 @@
-/* src/styles/mypage/LawyerMgmtTab.css */
-/* * LawyerDetailPage.css 가 임포트되어 기본 골격을 형성합니다.
- * 본 CSS는 마이페이지 편집 환경(Input, Button 등)에 특화된 스타일만 추가로 덮어씁니다.
- */
+/* ── LawyerMgmtTab 전용 관리자 스타일 ── */
 
+.lawyer-mgmt-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* 상단 안내 문구 */
 .mgmt-info-notice {
-  background-color: #eff6ff;
-  color: #2563eb;
+  background: #fff;
+  border: 1px solid var(--ld-border);
   padding: 16px 20px;
   border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
+  color: var(--ld-navy);
+  font-size: 14.5px;
   margin-bottom: 30px;
-  border: 1px solid #bfdbfe;
+  line-height: 1.6;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
 }
 
-.mgmt-label-small {
-  font-size: 13px;
-  font-weight: 700;
-  color: #64748b;
-  margin-bottom: 6px;
-  display: block;
-}
-
-/* 💡 프로필 이미지 편집 영역 오버레이 (LawyerDetailPage 구조 확장) */
+/* ── 사진 변경 오버레이 ── */
 .mgmt-img-box-edit {
   position: relative;
   cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.mgmt-img-box-edit:hover {
+  transform: scale(1.02);
+}
+
+.mgmt-img-overlay-edit {
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 27, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  border-radius: 50%;
 }
 
 .mgmt-img-box-edit:hover .mgmt-img-overlay-edit {
   opacity: 1;
 }
 
-.mgmt-img-overlay-edit {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+.mgmt-img-overlay-edit span {
   color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-size: 15px;
-  font-weight: 700;
-  opacity: 0;
-  transition: opacity 0.2s;
-  border-radius: 20px; /* 상세페이지 이미지 반경과 일치 */
+  font-size: 13px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 6px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
 }
 
-/* 💡 전문 분야 다중 선택 버튼 그룹 */
+/* ── 입력 요소 공통 스타일 ── */
+.mgmt-label-small {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ld-gold-light);
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+/* 다크 배경(헤더)용 입력창 */
+.ld-header-card .mgmt-edit-input {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 8px;
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.ld-header-card .mgmt-edit-input:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--ld-gold);
+  outline: none;
+}
+
+/* 화이트 배경용 입력창/텍스트에어리어 */
+.mgmt-edit-input,
+.mgmt-edit-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--ld-border);
+  border-radius: 10px;
+  font-size: 14.5px;
+  color: var(--ld-navy);
+  transition: all 0.2s;
+  background-color: #fcfaf7;
+}
+
+.mgmt-edit-input:focus,
+.mgmt-edit-textarea:focus {
+  border-color: var(--ld-navy);
+  background-color: #fff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(13, 27, 42, 0.05);
+}
+
+/* ── 전문 분야 토글 버튼 ── */
 .mgmt-spec-group {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: 5px;
 }
 
 .mgmt-spec-btn {
   padding: 6px 14px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px; /* 상세페이지 뱃지 스타일과 유사하게 */
-  background-color: white;
-  color: #64748b;
-  font-size: 13px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.2s;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .mgmt-spec-btn:hover {
-  border-color: #2563eb;
-  color: #2563eb;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
 }
 
 .mgmt-spec-btn.active {
-  background-color: #eff6ff;
-  color: #2563eb;
-  border-color: #bfdbfe;
-  font-weight: 700;
+  background: var(--ld-gold);
+  border-color: var(--ld-gold);
+  color: var(--ld-navy);
+  box-shadow: 0 4px 10px rgba(201, 168, 76, 0.3);
 }
 
-/* 💡 입력 필드 스타일 */
-.mgmt-edit-input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 15px;
-  font-family: inherit;
-  color: #1e293b;
-  background-color: #f8fafc;
-  transition: all 0.2s;
-  box-sizing: border-box;
+/* ── 상담료 입력칸 특화 ── */
+.fee-item .mgmt-edit-input {
+  border: 2px solid var(--ld-border);
 }
 
-.mgmt-edit-input:focus {
-  border-color: #3b82f6;
-  background-color: #fff;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+.fee-item .mgmt-edit-input:focus {
+  border-color: var(--ld-gold);
 }
 
-.mgmt-edit-textarea {
-  width: 100%;
-  padding: 16px;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 15px;
-  line-height: 1.6;
-  font-family: inherit;
-  color: #1e293b;
-  background-color: #f8fafc;
-  resize: vertical;
-  transition: all 0.2s;
-  box-sizing: border-box;
+/* ── 하단 액션 ── */
+.sticky-actions {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px dashed var(--ld-border);
 }
 
-.mgmt-edit-textarea:focus {
-  border-color: #3b82f6;
-  background-color: #fff;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+/* 반응형 조정 */
+@media (max-width: 900px) {
+  .mgmt-info-notice {
+    text-align: center;
+    font-size: 13px;
+  }
+
+  .ld-header-card .mgmt-edit-input {
+    text-align: center;
+  }
+
+  .mgmt-spec-group {
+    justify-content: center;
+  }
 }
