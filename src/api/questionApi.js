@@ -15,14 +15,13 @@ export const questionApi = {
     }),
 
   /**
-   * 2. 특정 질문 상세 내용 및 변호사 답변 조회
+   * 2. 특정 질문 상세 내용 조회 (질문 본문 중심)
    */
   getQuestionDetail: (questionId) =>
     axiosInstance.get("/question/detail", { params: { questionId } }),
 
   /**
    * 3. 새로운 법률 질문 작성 (파일 포함 가능)
-   * @param {FormData} formData - FormData 객체 (title, content, caseType, files 등 포함)
    */
   writeQuestion: (formData) =>
     axiosInstance.post("/question/write", formData, {
@@ -32,11 +31,9 @@ export const questionApi = {
     }),
 
   /**
-   * 3-1. 법률 질문 수정 (파일 수정 포함 가능)
-   * @param {FormData} formData - FormData 객체 (questionId 필수 포함)
+   * 3-1. 법률 질문 수정
    */
   updateQuestion: (formData) => {
-    // FormData에서 questionId를 꺼내서 URL에 넣어야 함 (전달 방식에 따라 다름)
     const questionId = formData.get("questionId");
     return axiosInstance.put(`/question/update/${questionId}`, formData, {
       headers: {
@@ -44,9 +41,9 @@ export const questionApi = {
       },
     });
   },
+
   /**
-   * 3-2. 법률 질문 삭제 (PathVariable 방식 적용)
-   * @param {number|string} questionId
+   * 3-2. 법률 질문 삭제
    */
   deleteQuestion: (questionId) =>
     axiosInstance.delete(`/question/delete/${questionId}`),
@@ -72,4 +69,11 @@ export const questionApi = {
    */
   deleteAnswer: (answerId) =>
     axiosInstance.delete(`/question/answer/delete/${answerId}`),
+
+  /**
+   * 💡 8. 특정 질문에 대한 변호사 답변 목록 조회 (추가됨)
+   * QuestionAnswerList 컴포넌트에서 직접 호출하는 용도
+   */
+  getAnswersByQuestionId: (questionId) =>
+    axiosInstance.get(`/question/answer/list`, { params: { questionId } }),
 };

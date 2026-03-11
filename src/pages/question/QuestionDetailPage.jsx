@@ -15,7 +15,6 @@ const QuestionDetailPage = () => {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [editingAnswerId, setEditingAnswerId] = useState(null);
 
   // 💡 선택된 메인 이미지의 인덱스 상태 (기본값: 0)
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
@@ -71,24 +70,6 @@ const QuestionDetailPage = () => {
       }
     } catch (error) {
       alert("삭제 실패");
-    }
-  };
-
-  const handleAdopt = async (answerId, lawyerId) => {
-    if (!window.confirm("이 답변을 채택하시겠습니까?")) return;
-    try {
-      const res = await questionApi.adoptAnswer({
-        questionId: detail.questionId,
-        lawyerId,
-        memberId: user.memberId,
-        answerId,
-      });
-      if (res.data.success) {
-        alert("채택되었습니다!");
-        fetchDetail();
-      }
-    } catch (error) {
-      alert("채택 오류 발생");
     }
   };
 
@@ -225,13 +206,10 @@ const QuestionDetailPage = () => {
       </h3>
 
       <QuestionAnswerList
-        answers={detail.answers}
+        questionId={questionId}
         isOwner={isOwner}
         isAlreadyAdopted={isAlreadyAdopted}
-        editingAnswerId={editingAnswerId}
-        setEditingAnswerId={setEditingAnswerId}
-        handleAdopt={handleAdopt}
-        fetchDetail={fetchDetail}
+        onAdoptSuccess={fetchDetail}
       />
 
       <div className="footer-nav">

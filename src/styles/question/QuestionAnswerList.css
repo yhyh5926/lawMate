@@ -1,72 +1,63 @@
-/* --- 답변 리스트 컨테이너 --- */
+/* 답변 아이템 전체 컨테이너 */
 .answers-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  margin-top: 20px;
+  gap: 20px;
+  margin-top: 30px;
 }
 
-/* --- 개별 답변 카드 --- */
 .answer-item {
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 30px;
-  border: 1px solid #f1f5f9;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-  transition: transform 0.2s ease;
   position: relative;
-}
-
-/* 채택된 답변 강조 */
-.answer-item.selected-answer {
-  border: 2px solid #10b981;
-  background: #f0fdf4;
-}
-
-/* 채택 라벨 */
-.adopted-label {
-  display: inline-block;
-  background: #10b981;
-  color: #fff;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 800;
-  margin-bottom: 20px;
-}
-
-/* --- 변호사 프로필 헤더 영역 --- */
-.answer-header {
-  margin-bottom: 25px;
-}
-
-.lawyer-profile.clickable {
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 18px;
-  padding: 10px;
-  margin-left: -10px;
-  border-radius: 16px;
-  transition: background 0.2s;
-}
-
-.lawyer-profile.clickable:hover {
-  background: #f1f5ff;
-}
-
-/* 🖼️ 변호사 프로필 이미지 */
-.lawyer-avatar {
-  width: 60px;
-  height: 60px;
   background: #fff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 25px;
+  transition: all 0.3s ease;
+}
+
+/* 채택된 답변 강조 스타일 */
+.answer-item.selected-answer {
+  border: 2px solid #ffc107;
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.1);
+}
+
+.adopted-label {
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background: #ffc107;
+  color: #000;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  z-index: 1;
+}
+
+/* 헤더 영역 (변호사 정보) */
+.answer-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #f9f9f9;
+  padding-bottom: 15px;
+}
+
+.lawyer-profile {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.lawyer-avatar {
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   overflow: hidden;
+  background: #f0f0f0;
   display: flex;
-  justify-content: center;
   align-items: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  justify-content: center;
 }
 
 .lawyer-img {
@@ -75,102 +66,131 @@
   object-fit: cover;
 }
 
-.default-avatar-text {
-  font-size: 28px;
-}
-
-/* 변호사 상세 텍스트 정보 */
-.lawyer-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-/* 이름 + 사무소 레이아웃 */
 .lawyer-info-main {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  margin-bottom: 4px;
 }
 
 .lawyer-name {
-  font-weight: 800;
-  font-size: 19px;
-  color: #1e293b;
+  font-weight: bold;
+  font-size: 1.1rem;
 }
 
 .office-name {
-  font-size: 14px;
-  color: #64748b;
-  background: #e2e8f0;
-  padding: 2px 10px;
-  border-radius: 6px;
-  font-weight: 500;
+  font-size: 0.85rem;
+  color: #777;
 }
 
-/* 전문분야 + 날짜 레이아웃 */
+/* 통계 배지 스타일 */
 .lawyer-info-sub {
   display: flex;
+  gap: 8px;
   align-items: center;
-  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.stats-badge {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #f0f0f0;
+  color: #666;
+}
+
+.adopt-count {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.adopt-rate.high-rate {
+  background: #fff9c4;
+  color: #fbc02d;
+  font-weight: bold;
+  border: 1px solid #fbc02d;
 }
 
 .specialty-badge {
-  font-size: 14px;
-  color: #2563eb;
-  font-weight: 700;
+  color: #2e7d32;
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
-.ans-date {
-  font-size: 13px;
-  color: #94a3b8;
-}
-
-/* --- 답변 본문 내용 --- */
+/* 본문 영역 */
 .answer-body {
-  font-size: 17px;
-  line-height: 1.8;
-  color: #334155;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
   white-space: pre-wrap;
-  word-break: break-all;
-  margin: 20px 0;
-  padding: 0 5px;
 }
 
-/* --- 채택 버튼 영역 --- */
-.adopt-action-area {
+/* 채택 후 액션 영역 */
+.adopted-special-actions {
+  margin-top: 25px;
+  padding: 20px;
+  background-color: #fffdf0;
+  border: 1px dashed #ffc107;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.action-guide-text {
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #856404;
+  margin-bottom: 15px;
+}
+
+.action-button-group {
   display: flex;
+  gap: 12px;
   justify-content: center;
-  border-top: 1px dashed #e2e8f0;
-  margin-top: 30px;
-  padding-top: 25px;
+}
+
+.btn-chat-primary {
+  background-color: #fee500;
+  color: #3c1e1e;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn-consult-secondary {
+  background-color: #303133;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 채택하기 버튼 */
+.adopt-action-area {
+  margin-top: 20px;
+  text-align: right;
 }
 
 .btn-adopt {
-  background: #10b981;
-  color: #fff;
-  border: none;
-  padding: 14px 45px;
-  border-radius: 14px;
-  font-weight: 700;
-  font-size: 16px;
+  background: #fff;
+  color: #ffc107;
+  border: 2px solid #ffc107;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+  transition: 0.2s;
 }
 
 .btn-adopt:hover {
-  background: #059669;
-  transform: translateY(-2px);
+  background: #ffc107;
+  color: #fff;
 }
 
-/* --- 데이터 없음 --- */
-.empty-answer {
-  text-align: center;
-  padding: 100px 20px;
-  color: #94a3b8;
-  background: #f8fafc;
-  border-radius: 20px;
-  font-size: 16px;
-  border: 2px dashed #e2e8f0;
+.clickable {
+  cursor: pointer;
 }
