@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { writePoll } from "../../api/communityApi";
+import { useAuthStore } from "../../store/authStore";
 import "../../styles/community/PollWrite.css";
 
 const PollWrite = () => {
   const navigate = useNavigate();
-  const memberId = Number(localStorage.getItem("memberId"));
   const today = new Date().toISOString().split("T")[0];
+
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const memberId = user?.memberId;
 
   const [form, setForm] = useState({
     title: "",
@@ -64,7 +68,7 @@ const PollWrite = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!memberId) {
+    if (!isAuthenticated || !memberId) {
       alert("로그인이 필요합니다.");
       return;
     }

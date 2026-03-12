@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import CommentList from "../../components/community/CommentList";
+import { useAuthStore } from "../../store/authStore";
 import {
   getPollDetail,
   getPollOptions,
@@ -16,7 +17,6 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const PollDetail = () => {
-  const memberId = Number(localStorage.getItem("memberId"));
   const { pollId } = useParams();
   const navigate = useNavigate();
 
@@ -25,6 +25,10 @@ const PollDetail = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [totalVotes, setTotalVotes] = useState(0);
   const [alreadyVoted, setAlreadyVoted] = useState(false);
+
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const memberId = user?.memberId;
 
   useEffect(() => {
     getPollDetail(pollId).then(data => {
@@ -47,7 +51,7 @@ const PollDetail = () => {
   }, [pollId, memberId]);
 
   const handleVote = async () => {
-    if (!memberId) {
+    if (!isAuthenticated || !memberId) {
       alert("로그인이 필요합니다.");
       return;
     }
@@ -104,7 +108,7 @@ const PollDetail = () => {
 
   if (!poll) return <div className="poll-loading">불러오는 중...</div>;
 
-  const isWriter = memberId === poll.memberId;
+  const isWriter = isAuthenticated && memberId === poll.memberId;
 
   const labels = options.map(o => o.optionText);
   const values = options.map(o => o.voteCnt);

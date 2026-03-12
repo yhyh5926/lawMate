@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPost, getPostWithoutView, deletePost, togglePostLike, getPostLikeStatus } from '../../api/communityApi';
 import CommentList from '../../components/community/CommentList';
+import { useAuthStore } from "../../store/authStore";
 import '../../styles/community/QnaDetail.css';
 
 const QnaDetail = () => {
@@ -11,24 +12,26 @@ const QnaDetail = () => {
   const [qnaDetail, setQnaDetail] = useState(null);
   const [liked, setLiked] = useState(false);
 
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const memberId = user?.memberId;
+
   useEffect(() => {
     getPost(postId).then(data => {
       console.log(data);
       setQnaDetail(data);
     });
     // 좋아요 상태
-    const memberId = Number(localStorage.getItem("memberId"));
     if (memberId) {
       getPostLikeStatus(postId, memberId).then(count => {
         setLiked(count > 0);
       });
     }
-  }, [postId]);
+  }, [postId, memberId]);
 
   if (!qnaDetail) return <div className="detail-loading">불러오는 중...</div>;
 
-  const loginMemberId = Number(localStorage.getItem("memberId"));
-  const isWriter = loginMemberId === qnaDetail.memberId;
+  const isWriter = memberId === qnaDetail.memberId;
 
   const handleEdit = () => {
     navigate(`/community/edit/${postId}`);
@@ -50,18 +53,18 @@ const QnaDetail = () => {
   };
 
   const handleLike = async () => {
-  if (!loginMemberId) {
+  if (!isAuthenticated || !memberId) {
     alert("로그인이 필요합니다.");
     return;
   }
 
   try {
-    await togglePostLike(postId, loginMemberId);
+    await togglePostLike(postId, memberId);
 
     const data = await getPostWithoutView(postId);
     setQnaDetail(data);
 
-    const count = await getPostLikeStatus(postId, loginMemberId);
+    const count = await getPostLikeStatus(postId, memberId);
     setLiked(count > 0);
   } catch (error) {
     console.error("좋아요 처리 실패:", error);
