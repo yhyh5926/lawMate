@@ -32,29 +32,6 @@ export default function MainPage() {
     window.location.href = "/member/login";
   };
 
-  const quickLinks = [
-    {
-      label: "✍️ 법률질문 작성",
-      desc: "궁금한 내용을 바로 등록",
-      onClick: goToLogin,
-    },
-    {
-      label: "👨‍⚖️ 변호사 찾기",
-      desc: "전문 변호사 바로 찾기",
-      onClick: () => navigate("/lawyer/list"),
-    },
-    {
-      label: "📚 판례 검색",
-      desc: "판례 검색 페이지로 이동",
-      onClick: () => navigate("/precedent/search"),
-    },
-    {
-      label: "⚖️ 모의 판결 보기",
-      desc: "모의 판결 게시판 바로가기",
-      onClick: () => navigate("/community/pollList"),
-    },
-  ];
-
   useEffect(() => {
     let alive = true;
 
@@ -128,6 +105,16 @@ export default function MainPage() {
 
   const recentPosts = useMemo(
     () => (data?.recentPosts ?? []).slice(0, 5),
+    [data],
+  );
+
+  const recentPrecedents = useMemo(
+    () => (data?.recentPrecedents ?? []).slice(0, 5),
+    [data],
+  );
+
+  const recentLawyers = useMemo(
+    () => (data?.recentLawyers ?? []).slice(0, 5),
     [data],
   );
 
@@ -214,6 +201,24 @@ export default function MainPage() {
     navigate(`/question/detail/${qid}`);
   };
 
+  const goPrecedentDetail = (p) => {
+    const precedentId = p?.precedentId ?? p?.id;
+    if (!precedentId) {
+      navigate("/precedent/search");
+      return;
+    }
+    navigate(`/precedent/detail/${precedentId}`);
+  };
+
+  const goLawyerDetail = (lawyer) => {
+    const lawyerId = lawyer?.lawyerId ?? lawyer?.id;
+    if (!lawyerId) {
+      navigate("/lawyer/list");
+      return;
+    }
+    navigate(`/lawyer/detail/${lawyerId}`);
+  };
+
   const tooltipLabel = (label) => {
     if (!label) return "";
     return `일자: ${label}`;
@@ -243,13 +248,11 @@ export default function MainPage() {
           .lm-heroAside { width: 100% !important; }
           .lm-statRow { grid-template-columns: 1fr !important; }
           .lm-grid3 { grid-template-columns: 1fr !important; }
-          .lm-quickGrid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+          .lm-grid2 { grid-template-columns: 1fr !important; }
         }
 
         @media (max-width: 720px) {
           .lm-kpiGrid { grid-template-columns: 1fr !important; }
-          .lm-quickGrid { grid-template-columns: 1fr !important; }
-          .lm-bottomCta { flex-direction: column; align-items: stretch !important; }
           .lm-sectionHead { flex-direction: column; align-items: flex-start !important; gap: 6px; }
         }
 
@@ -264,23 +267,13 @@ export default function MainPage() {
             transform: translateY(-2px);
           }
 
-          .lm-quickBtn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 24px rgba(30, 77, 140, 0.14);
-          }
-
           .lm-primaryBtn:hover {
             filter: brightness(0.98);
           }
 
           .lm-secondaryBtn:hover,
-          .lm-moreBtn:hover,
-          .lm-bottomGhostBtn:hover {
+          .lm-moreBtn:hover {
             background: #eef4ff;
-          }
-
-          .lm-bottomPrimaryBtn:hover {
-            filter: brightness(0.98);
           }
         }
 
@@ -346,21 +339,6 @@ export default function MainPage() {
                   전주 대비 {trendText(weeklyChangePct)}
                 </div>
               </div>
-            </div>
-
-            <div className="lm-quickGrid" style={styles.quickGrid}>
-              {quickLinks.map((item) => (
-                <button
-                  key={item.label}
-                  className="lm-quickBtn"
-                  type="button"
-                  onClick={item.onClick}
-                  style={styles.quickLinkBtn}
-                >
-                  <div style={styles.quickLinkTitle}>{item.label}</div>
-                  <div style={styles.quickLinkDesc}>{item.desc}</div>
-                </button>
-              ))}
             </div>
           </div>
 
@@ -561,9 +539,7 @@ export default function MainPage() {
                     <div style={styles.listTitle}>{p.title}</div>
                   </div>
                   <div style={styles.listMeta}>
-                    {p.createdAt
-                      ? new Date(p.createdAt).toLocaleDateString()
-                      : ""}
+                    {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : ""}
                   </div>
                 </button>
               )}
@@ -657,30 +633,79 @@ export default function MainPage() {
         </section>
 
         <section style={{ ...styles.section, marginBottom: 26 }}>
-          <div className="lm-bottomCta" style={styles.bottomCta}>
-            <div>
-              <div style={styles.bottomTitle}>지금 법률 질문하기</div>
-              <div style={styles.bottomDesc}>
-                질문 등록은 로그인 후 이용할 수 있습니다. 궁금한 점을 빠르게 남겨보세요.
-              </div>
-            </div>
+          <div className="lm-grid2" style={styles.grid2}>
+            <ActivityListCard
+              title="📚 최근 판례"
+              onMore={() => navigate("/precedent/search")}
+              loading={loading}
+              emptyText="최근 판례가 없습니다."
+              items={recentPrecedents}
+              renderItem={(p, idx, len) => (
+                <button
+                  key={p.precedentId ?? p.id ?? idx}
+                  type="button"
+                  className="lm-listItem"
+                  style={{
+                    ...styles.listItem,
+                    borderBottom: idx === len - 1 ? "none" : styles.borderLine,
+                  }}
+                  onClick={() => goPrecedentDetail(p)}
+                >
+                  <div style={styles.listMain}>
+                    <div style={styles.listTitle}>
+                      {p.title ?? p.caseName ?? "판례 제목 없음"}
+                    </div>
+                    <div style={styles.subMeta}>
+                      {p.caseNumber ?? p.courtName ?? p.keyword ?? ""}
+                    </div>
+                  </div>
+                  <div style={styles.listMeta}>
+                    {p.createdAt
+                      ? formatShortDateTime(p.createdAt)
+                      : p.judgmentDate
+                        ? String(p.judgmentDate)
+                        : ""}
+                  </div>
+                </button>
+              )}
+            />
 
-            <div style={styles.bottomBtnGroup}>
-              <button
-                className="lm-bottomGhostBtn"
-                style={styles.bottomGhostBtn}
-                onClick={() => navigate("/question/list")}
-              >
-                질문 목록 보기
-              </button>
-              <button
-                className="lm-bottomPrimaryBtn"
-                style={styles.bottomPrimaryBtn}
-                onClick={goToLogin}
-              >
-                질문 등록
-              </button>
-            </div>
+            <ActivityListCard
+              title="👨‍⚖️ 최근 등록한 변호사"
+              onMore={() => navigate("/lawyer/list")}
+              loading={loading}
+              emptyText="등록된 변호사가 없습니다."
+              items={recentLawyers}
+              renderItem={(lawyer, idx, len) => (
+                <button
+                  key={lawyer.lawyerId ?? lawyer.id ?? idx}
+                  type="button"
+                  className="lm-listItem"
+                  style={{
+                    ...styles.listItem,
+                    borderBottom: idx === len - 1 ? "none" : styles.borderLine,
+                  }}
+                  onClick={() => goLawyerDetail(lawyer)}
+                >
+                  <div style={styles.listMain}>
+                    <div style={styles.questionTitleRow}>
+                      <span style={styles.pill}>
+                        {lawyer.specialty ?? lawyer.field ?? "전문"}
+                      </span>
+                      <span style={styles.ellipsisTitle}>
+                        {lawyer.name ?? "이름 없음"}
+                      </span>
+                    </div>
+                    <div style={styles.subMeta}>
+                      {lawyer.officeName ?? lawyer.location ?? lawyer.email ?? ""}
+                    </div>
+                  </div>
+                  <div style={styles.listMeta}>
+                    {lawyer.createdAt ? formatShortDateTime(lawyer.createdAt) : ""}
+                  </div>
+                </button>
+              )}
+            />
           </div>
         </section>
       </div>
@@ -927,36 +952,6 @@ const styles = {
     fontWeight: 800,
   },
 
-  quickGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-    gap: 12,
-    marginTop: 18,
-  },
-
-  quickLinkBtn: {
-    textAlign: "left",
-    border: "1px solid rgba(255,255,255,0.12)",
-    background: "rgba(255,255,255,0.08)",
-    color: "#fff",
-    borderRadius: 18,
-    padding: "14px 14px",
-    cursor: "pointer",
-    transition: "all 0.18s ease",
-  },
-
-  quickLinkTitle: {
-    fontSize: 14,
-    fontWeight: 900,
-  },
-
-  quickLinkDesc: {
-    marginTop: 4,
-    fontSize: 12,
-    color: "rgba(255,255,255,0.78)",
-    lineHeight: 1.5,
-  },
-
   ctaCard: {
     borderRadius: 22,
     padding: 18,
@@ -1063,6 +1058,12 @@ const styles = {
   grid3: {
     display: "grid",
     gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+    gap: 16,
+  },
+
+  grid2: {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
     gap: 16,
   },
 
@@ -1349,57 +1350,6 @@ const styles = {
     fontSize: 14,
   },
 
-  bottomCta: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 16,
-    background: "#ffffff",
-    borderRadius: 24,
-    border: "1px solid #e7edf5",
-    boxShadow: "0 12px 26px rgba(15, 23, 42, 0.05)",
-    padding: 18,
-  },
-
-  bottomTitle: {
-    fontSize: 22,
-    fontWeight: 900,
-    color: "#0f172a",
-  },
-
-  bottomDesc: {
-    marginTop: 6,
-    fontSize: 13,
-    color: "#64748b",
-    lineHeight: 1.65,
-  },
-
-  bottomBtnGroup: {
-    display: "flex",
-    gap: 10,
-    flexWrap: "wrap",
-  },
-
-  bottomGhostBtn: {
-    padding: "11px 15px",
-    borderRadius: 12,
-    border: "1px solid #dbe5f3",
-    background: "#fff",
-    color: "#1e4d8c",
-    fontWeight: 900,
-    cursor: "pointer",
-  },
-
-  bottomPrimaryBtn: {
-    padding: "11px 18px",
-    borderRadius: 12,
-    border: "none",
-    background: "#1e4d8c",
-    color: "#fff",
-    fontWeight: 900,
-    cursor: "pointer",
-  },
-
   error: {
     marginTop: 12,
     padding: "12px 14px",
@@ -1420,34 +1370,6 @@ const styles = {
 
   trendNeutral: {
     color: "#e2e8f0",
-  },
-
-  skeletonCard: {
-    background: "#fff",
-    borderRadius: 22,
-    border: "1px solid #e7edf5",
-    padding: 18,
-    boxShadow: "0 12px 26px rgba(15, 23, 42, 0.05)",
-  },
-
-  skeletonTitle: {
-    height: 20,
-    width: "70%",
-    borderRadius: 8,
-  },
-
-  skeletonMeta: {
-    marginTop: 14,
-    height: 14,
-    width: "40%",
-    borderRadius: 8,
-  },
-
-  skeletonMetaShort: {
-    marginTop: 10,
-    height: 14,
-    width: "28%",
-    borderRadius: 8,
   },
 
   listSkeletonWrap: {
