@@ -37,10 +37,10 @@ const Footer = () => {
             <div className="ft-link-col">
               <h4 className="ft-link-title">커뮤니티</h4>
               <Link to="/community/qnalist" onClick={scrollToTop}>
-                자유게시판
+                자유 게시판
               </Link>
               <Link to="/community/pollList" onClick={scrollToTop}>
-                모의 판결
+                의견 조사 게시판
               </Link>
             </div>
             <div className="ft-link-col">

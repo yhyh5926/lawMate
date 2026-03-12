@@ -47,8 +47,8 @@ export default function MainPage() {
       onClick: () => navigate("/precedent/search"),
     },
     {
-      label: "⚖️ 모의 판결 보기",
-      desc: "모의 판결 게시판 바로가기",
+      label: "⚖️ 의견 조사 판결 보기",
+      desc: "의견 조사 판결 게시판 바로가기",
       onClick: () => navigate("/community/pollList"),
     },
   ];
@@ -314,7 +314,7 @@ export default function MainPage() {
             </div>
             <h1 style={styles.heroTitle}>법률 상담을 더 쉽고 빠르게</h1>
             <p style={styles.heroSubtitle}>
-              상담 통계, 최근 법률질문, 커뮤니티와 모의 판결 게시판까지 한 번에
+              상담 통계, 최근 법률질문, 커뮤니티와 의견 조사 판결 게시판까지 한 번에
               확인하고 필요한 기능으로 빠르게 이동하세요.
             </p>
 
@@ -394,7 +394,7 @@ export default function MainPage() {
               </div>
               <div style={styles.trustItem}>
                 <span style={styles.trustDot} />
-                <span>최신 커뮤니티와 모의 판결 게시판 제공</span>
+                <span>최신 커뮤니티와 의견 조사 판결 게시판 제공</span>
               </div>
               <div style={styles.trustItem}>
                 <span style={styles.trustDot} />
@@ -541,7 +541,7 @@ export default function MainPage() {
             <div>
               <h2 style={styles.sectionTitle}>최근 게시물</h2>
               <div style={styles.sectionDesc}>
-                최근 게시글, 법률질문, 모의 판결 게시판 최신 항목
+                최근 게시글, 법률질문, 의견 조사 판결 게시판 최신 항목
               </div>
             </div>
             <span style={styles.sectionHint}>각 최신 5건</span>
@@ -615,10 +615,10 @@ export default function MainPage() {
             />
 
             <ActivityListCard
-              title="⚖️ 모의 판결 게시판"
+              title="⚖️ 의견 조사 판결 게시판"
               onMore={() => navigate("/community/pollList")}
               loading={loading}
-              emptyText="모의 판결 게시판 글이 없습니다."
+              emptyText="의견 조사 판결 게시판 글이 없습니다."
               items={recentCommunity}
               renderItem={(p, idx, len) => (
                 <button
@@ -648,7 +648,7 @@ export default function MainPage() {
                       </span>
                     </div>
                     <div style={styles.subMeta}>
-                      {getPollMetaText(p) || "모의 판결 게시판"}
+                      {getPollMetaText(p) || "의견 조사 판결 게시판"}
                     </div>
                   </div>
                   <div style={styles.listMeta}>
@@ -776,7 +776,7 @@ function getPollStatusText(poll) {
     }
   }
 
-  return "모의 판결";
+  return "의견 조사 판결";
 }
 
 function getPollMetaText(poll) {

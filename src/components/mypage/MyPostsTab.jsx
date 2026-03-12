@@ -70,7 +70,7 @@ const MyPostsTab = () => {
           className={`mypost-subtab-btn ${subTab === "mockTrial" ? "active" : ""}`}
           onClick={() => setSubTab("mockTrial")}
         >
-          모의 판결 게시판
+          의견 조사 판결 게시판
         </button>
       </div>
 

@@ -49,7 +49,7 @@ const AdminCommunityPage = () => {
         detailUrl: `/question/detail/${q.questionId}`
       }));
 
-      // 3. 모의 판결 데이터 (추후 Poll API 연결 시 여기에 추가)
+      // 3. 의견 조사 판결 데이터 (추후 Poll API 연결 시 여기에 추가)
       const normalizedPolls = []; 
 
       // 모든 데이터를 합치고 최신 날짜순으로 정렬
@@ -127,7 +127,7 @@ const AdminCommunityPage = () => {
           <button className={`cm-tab-btn ${activeTab === 'ALL' ? 'active' : ''}`} onClick={() => setActiveTab('ALL')}>전체 글 보기</button>
           <button className={`cm-tab-btn ${activeTab === 'POST' ? 'active' : ''}`} onClick={() => setActiveTab('POST')}>일반 커뮤니티</button>
           <button className={`cm-tab-btn ${activeTab === 'QUESTION' ? 'active' : ''}`} onClick={() => setActiveTab('QUESTION')}>법률 상담 Q&A</button>
-          <button className={`cm-tab-btn ${activeTab === 'POLL' ? 'active' : ''}`} onClick={() => setActiveTab('POLL')}>모의 판결 게시판</button>
+          <button className={`cm-tab-btn ${activeTab === 'POLL' ? 'active' : ''}`} onClick={() => setActiveTab('POLL')}>의견 조사 판결 게시판</button>
         </div>
 
         {loading ? (
