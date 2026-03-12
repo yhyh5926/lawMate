@@ -4,12 +4,12 @@ import { useAuthStore } from "../../store/authStore.js";
 import MyInfoTab from "../../components/mypage/MyInfoTab.jsx";
 import EditInfoTab from "../../components/mypage/EditInfoTab.jsx";
 import MyPostsTab from "../../components/mypage/MyPostsTab.jsx";
-import LawyerMgmtTab from "../../components/mypage/LawyerMgmtTab.jsx"; 
+import LawyerMgmtTab from "../../components/mypage/LawyerMgmtTab.jsx";
 import ClientConsultTab from "../../components/mypage/ClientConsultTab.jsx";
-import CaseMgmtTab from "../../components/mypage/CaseMgmtTab.jsx"; 
+import CaseMgmtTab from "../../components/mypage/CaseMgmtTab.jsx";
 import ConsultListPage from "../mypage/ConsultListPage.jsx";
 // 💡 [추가] 아까 새로 만든 변호사용 접수 관리(사건 목록) 컴포넌트 임포트
-import LawyerReceptionTab from "../../components/mypage/LawyerReceptionTab.jsx"; 
+import LawyerReceptionTab from "../../components/mypage/LawyerReceptionTab.jsx";
 import "../../styles/mypage/MyPage.css";
 
 const MyPage = () => {
@@ -18,7 +18,9 @@ const MyPage = () => {
 
   if (!user) {
     return (
-      <div style={{ textAlign: "center", marginTop: "100px", fontSize: "18px" }}>
+      <div
+        style={{ textAlign: "center", marginTop: "100px", fontSize: "18px" }}
+      >
         로그인 정보가 없습니다.
       </div>
     );
@@ -38,7 +40,7 @@ const MyPage = () => {
   if (user.role === "LAWYER" || user.memberType === "LAWYER") {
     tabs.push({ id: "lawyerMgmt", label: "변호사 관리" });
     // 💡 [수정] 받은 상담 관리 -> 접수 관리로 이름 변경 및 id 변경
-    tabs.push({ id: "receptionMgmt", label: "접수 관리" }); 
+    tabs.push({ id: "receptionMgmt", label: "접수 관리" });
   }
 
   return (
@@ -68,7 +70,7 @@ const MyPage = () => {
           {activeTab === "clientConsult" && <ClientConsultTab />}
           {activeTab === "lawyerMgmt" && <LawyerMgmtTab />}
           {activeTab === "consult" && <ConsultListPage />}
-          
+
           {/* 💡 [핵심 수정] 접수 관리 버튼을 눌렀을 때 화면이 나오도록 연결 한 줄 추가! */}
           {activeTab === "receptionMgmt" && <LawyerReceptionTab />}
         </section>
