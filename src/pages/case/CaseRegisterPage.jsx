@@ -1,12 +1,11 @@
-// src/pages/case/CaseRegisterPage.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { caseApi } from "../../api/caseApi";
 import { useAuthStore } from "../../store/authStore";
-// 필요에 따라 CSS 파일을 연결하세요
-// import "../../styles/case/CaseRegisterPage.css";
+import "../../styles/case/CaseRegisterPage.css";
+import { categories } from "../../constants/categories";
 
-const CASE_TYPES = ["민사", "형사", "가사", "이혼", "노동", "행정", "기업", "부동산"];
+const CASE_TYPES = categories.slice(1, categories.length - 1);
 
 const CaseRegisterPage = () => {
   const navigate = useNavigate();
@@ -18,16 +17,18 @@ const CaseRegisterPage = () => {
     clientName: "",
     clientPhone: "",
     content: "",
-    files: "", // 파일명 또는 링크를 쉼표로 구분하여 입력
+    files: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 변호사 계정이 아닌 경우 접근 차단
+  // 권한 체크
   if (!user || user.role !== "LAWYER") {
     return (
-      <div style={{ textAlign: "center", padding: "50px", fontSize: "18px" }}>
-        변호사 전용 메뉴입니다. 접근 권한이 없습니다.
+      <div className="access-denied">
+        <div className="denied-icon">⚠️</div>
+        <p>변호사 전용 메뉴입니다. 접근 권한이 없습니다.</p>
+        <button onClick={() => navigate("/")}>홈으로 이동</button>
       </div>
     );
   }
@@ -47,20 +48,16 @@ const CaseRegisterPage = () => {
 
     try {
       setIsSubmitting(true);
-      
-      // DB 저장을 위한 데이터 구성 (변호사 ID 포함)
       const payload = {
         ...formData,
         lawyerId: user.memberId,
         lawyerName: user.name,
-        status: 0, // 0: '접수' 상태로 초기화
+        status: 0,
       };
 
-      // 💡 실제 API 호출: 정식 사건 등록
       await caseApi.registerCase(payload);
-      
       alert("정식 사건으로 성공적으로 등록되었습니다.");
-      navigate("/mypage"); // 등록 후 마이페이지(접수 관리 탭)로 이동
+      navigate("/mypage");
     } catch (error) {
       console.error("사건 등록 실패:", error);
       alert("사건 등록 중 서버 오류가 발생했습니다.");
@@ -70,94 +67,106 @@ const CaseRegisterPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: "800px", margin: "40px auto", padding: "20px" }}>
-      <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px", borderBottom: "2px solid #333", paddingBottom: "10px" }}>
-        정식 사건 등록 (사건 전환)
-      </h2>
-      <p style={{ color: "#666", marginBottom: "30px" }}>
-        💡 채택된 답변이나 상담을 기반으로 정식 사건(TB_CASE) 데이터를 생성합니다.
-      </p>
+    <div className="case-reg-container">
+      <header className="case-reg-header">
+        <h2 className="case-reg-title">정식 사건 등록</h2>
+        <p className="case-reg-desc">
+          <span>💡</span> 상담 내용을 기반으로 정식 사건 데이터를 생성하고
+          관리합니다.
+        </p>
+      </header>
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-        <div>
-          <label style={{ display: "block", fontWeight: "bold", marginBottom: "5px" }}>사건 제목 *</label>
+      <form onSubmit={handleSubmit} className="case-reg-form">
+        <div className="form-group">
+          <label>
+            사건 제목 <span className="required">*</span>
+          </label>
           <input
             type="text"
             name="title"
             value={formData.title}
             onChange={handleChange}
-            placeholder="사건의 핵심 내용을 알 수 있는 제목을 입력하세요."
-            style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "4px" }}
+            placeholder="사건의 핵심 내용을 입력하세요"
+            className="form-input"
           />
         </div>
 
-        <div style={{ display: "flex", gap: "20px" }}>
-          <div style={{ flex: 1 }}>
-            <label style={{ display: "block", fontWeight: "bold", marginBottom: "5px" }}>사건 유형 *</label>
+        <div className="form-row">
+          <div className="form-group flex-1">
+            <label>
+              사건 유형 <span className="required">*</span>
+            </label>
             <select
               name="caseType"
               value={formData.caseType}
               onChange={handleChange}
-              style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "4px" }}
+              className="form-select"
             >
               {CASE_TYPES.map((type) => (
-                <option key={type} value={type}>{type}</option>
+                <option key={type} value={type}>
+                  {type}
+                </option>
               ))}
             </select>
           </div>
-          <div style={{ flex: 1 }}>
-            <label style={{ display: "block", fontWeight: "bold", marginBottom: "5px" }}>의뢰인 성함 *</label>
+          <div className="form-group flex-1">
+            <label>
+              의뢰인 성함 <span className="required">*</span>
+            </label>
             <input
               type="text"
               name="clientName"
               value={formData.clientName}
               onChange={handleChange}
               placeholder="예: 홍길동"
-              style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "4px" }}
+              className="form-input"
             />
           </div>
         </div>
 
-        <div>
-          <label style={{ display: "block", fontWeight: "bold", marginBottom: "5px" }}>사건 상세 내용 *</label>
+        <div className="form-group">
+          <label>
+            사건 상세 내용 <span className="required">*</span>
+          </label>
           <textarea
             name="content"
             value={formData.content}
             onChange={handleChange}
-            placeholder="사건의 상세 내용을 기재해주세요."
-            rows="8"
-            style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "4px", resize: "vertical" }}
+            placeholder="사건의 경위 및 상세 내용을 기재해주세요."
+            rows="10"
+            className="form-textarea"
           />
         </div>
 
-        <div>
-          <label style={{ display: "block", fontWeight: "bold", marginBottom: "5px" }}>관련 첨부파일 (선택)</label>
-          <input
-            type="text"
-            name="files"
-            value={formData.files}
-            onChange={handleChange}
-            placeholder="첨부할 파일명이나 링크를 쉼표(,)로 구분하여 입력하세요."
-            style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "4px" }}
-          />
+        <div className="form-group">
+          <label>관련 첨부파일 (선택)</label>
+          <div className="file-input-wrapper">
+            <input
+              type="text"
+              name="files"
+              value={formData.files}
+              onChange={handleChange}
+              placeholder="파일명 또는 링크를 쉼표(,)로 구분하여 입력"
+              className="form-input"
+            />
+            <p className="input-helper">
+              증거 자료나 참고 서류가 있다면 관련 정보를 입력하세요.
+            </p>
+          </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "10px" }}>
+        <footer className="form-footer">
           <button
             type="button"
+            className="btn-cancel"
             onClick={() => navigate(-1)}
-            style={{ padding: "12px 24px", backgroundColor: "#f1f5f9", border: "1px solid #cbd5e1", borderRadius: "4px", cursor: "pointer" }}
           >
             취소
           </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            style={{ padding: "12px 24px", backgroundColor: "#2563eb", color: "#fff", border: "none", borderRadius: "4px", fontWeight: "bold", cursor: isSubmitting ? "not-allowed" : "pointer" }}
-          >
-            {isSubmitting ? "등록 중..." : "사건 등록하기"}
+          <button type="submit" className="btn-submit" disabled={isSubmitting}>
+            {isSubmitting ? "등록 중..." : "정식 사건 등록하기"}
           </button>
-        </div>
+        </footer>
       </form>
     </div>
   );

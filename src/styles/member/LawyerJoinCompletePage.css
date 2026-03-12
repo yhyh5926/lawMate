@@ -1,0 +1,83 @@
+/* LawyerJoinCompletePage.css */
+
+.lawyer-complete-container {
+  max-width: 500px;
+  margin: 80px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.lawyer-complete-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 50px 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  margin-top: 40px;
+}
+
+.lawyer-complete-icon {
+  font-size: 64px;
+  display: block;
+  margin-bottom: 24px;
+  animation: fadeInDown 0.6s ease-out;
+}
+
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.lawyer-complete-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #16a34a; /* 승인 대기를 상징하는 신뢰의 초록색 */
+  margin-bottom: 20px;
+}
+
+.lawyer-complete-desc {
+  font-size: 15px;
+  color: #64748b;
+  line-height: 1.8;
+  margin-bottom: 35px;
+}
+
+.lawyer-complete-desc strong {
+  color: #1e293b;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.lawyer-notice-box {
+  background-color: #f8fafc;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+/* 버튼 스타일 */
+.btn-main-go {
+  width: 100%;
+  padding: 18px;
+  background-color: #1a1a2e;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-main-go:hover {
+  background-color: #2a2a40;
+}

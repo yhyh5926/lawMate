@@ -671,7 +671,7 @@ export default function MainPage() {
             />
 
             <ActivityListCard
-              title="👨‍⚖️ 최근 등록한 변호사"
+              title="👨‍⚖️ 등록한 변호사"
               onMore={() => navigate("/lawyer/list")}
               loading={loading}
               emptyText="등록된 변호사가 없습니다."

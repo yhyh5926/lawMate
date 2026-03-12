@@ -35,7 +35,7 @@ const Home = () => {
             onClick={() => navigate("/community/pollList")}
           >
             <div className="card-icon-wrap">📊</div>
-            <h2 className="card-title">모의 판결 게시판</h2>
+            <h2 className="card-title">의견 조사 게시판</h2>
             <p className="card-desc">
               사건을 읽고 A 또는 B 중<br />
               여러분의 판결을 내려보세요.

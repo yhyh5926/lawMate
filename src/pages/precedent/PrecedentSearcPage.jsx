@@ -1,14 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import precedentApi from "../../api/precedentApi";
-// LegalTooltip 임포트 제거 (상세 페이지에서만 사용)
 import "../../styles/precedent/PrecedentSearchPage.css";
+
+const categories = [
+  "전체",
+  "금융보험",
+  "보험민사",
+  "가사",
+  "세무",
+  "부동산임대차",
+  "부동산매매",
+  "교통형사",
+  "교통민사",
+  "형사재산",
+  "형사강력",
+  "가사상속",
+  "근로산재",
+];
+
+const PAGE_GROUP_SIZE = 5;
 
 const PrecedentSearchPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-
-  // URL 파라미터 추출
+  const listRef = useRef(null);
   const page = parseInt(searchParams.get("page") || "1", 10);
   const searchQuery = searchParams.get("query") || "";
   const caseType = searchParams.get("caseType") || "";
@@ -18,26 +34,13 @@ const PrecedentSearchPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [tempQuery, setTempQuery] = useState(searchQuery);
 
-  const categories = [
-    "전체",
-    "금융보험",
-    "보험민사",
-    "가사",
-    "세무",
-    "부동산임대차",
-    "부동산매매",
-    "교통형사",
-    "교통민사",
-    "형사재산",
-    "형사강력",
-    "가사상속",
-    "근로산재",
-  ];
-
-  const PAGE_GROUP_SIZE = 5;
   const currentGroup = Math.ceil(page / PAGE_GROUP_SIZE);
   const startPage = (currentGroup - 1) * PAGE_GROUP_SIZE + 1;
   const endPage = Math.min(startPage + PAGE_GROUP_SIZE - 1, totalPages);
+  const pageNumbers = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => startPage + i,
+  );
 
   useEffect(() => {
     const fetchList = async () => {
@@ -60,14 +63,9 @@ const PrecedentSearchPage = () => {
   }, [page, searchQuery, caseType]);
 
   const updateParams = (newParams) => {
-    const nextParams = {
-      query: searchQuery,
-      caseType: caseType,
-      page: page,
-      ...newParams,
-    };
-    Object.keys(nextParams).forEach((key) => {
-      if (!nextParams[key]) delete nextParams[key];
+    const nextParams = { query: searchQuery, caseType, page, ...newParams };
+    Object.keys(nextParams).forEach((k) => {
+      if (!nextParams[k]) delete nextParams[k];
     });
     setSearchParams(nextParams);
   };
@@ -76,140 +74,188 @@ const PrecedentSearchPage = () => {
     e.preventDefault();
     updateParams({ query: tempQuery, page: 1 });
   };
-
-  const handleCategoryChange = (e) => {
-    updateParams({ caseType: e.target.value, page: 1 });
-  };
-
+  const handleCategoryChange = (val) =>
+    updateParams({ caseType: val === "전체" ? "" : val, page: 1 });
   const handleReset = () => {
     setTempQuery("");
     setSearchParams({});
   };
+  const handlePageChange = (n) => {
+    updateParams({ page: n });
+    if (listRef.current) {
+      const yOffset = -100;
+      const y =
+        listRef.current.getBoundingClientRect().top +
+        window.pageYOffset +
+        yOffset;
 
-  const handlePageChange = (newPage) => {
-    updateParams({ page: newPage });
-    window.scrollTo(0, 0);
+      window.scrollTo({ top: y });
+    }
   };
 
-  const pageNumbers = [];
-  for (let i = startPage; i <= endPage; i++) {
-    pageNumbers.push(i);
-  }
-
   return (
-    <div className="ps-container">
-      <header className="ps-header">
-        <h1>판례 검색</h1>
-        <div className="ps-search-controls">
-          <form className="ps-search-bar" onSubmit={handleSearch}>
-            <select
-              className="ps-category-select"
-              value={caseType}
-              onChange={handleCategoryChange}
-            >
-              {categories.map((cat) => (
-                <option key={cat} value={cat === "전체" ? "" : cat}>
+    <div className="prec-root">
+      {/* ── HERO ── */}
+      <section className="prec-hero">
+        <div className="prec-hero-inner">
+          <div className="prec-hero-eyebrow">
+            <span className="prec-hero-eyebrow-line" />
+            <span className="prec-hero-eyebrow-text">
+              Legal Precedent Database
+            </span>
+          </div>
+          <h1 className="prec-hero-title">판례 검색</h1>
+          <p className="prec-hero-desc">
+            방대한 법률 판례 데이터베이스에서 사건번호·키워드로
+            <br />
+            원하는 판례를 빠르게 찾아보세요.
+          </p>
+        </div>
+      </section>
+
+      {/* ── FILTER BAR ── */}
+      <div className="prec-filter-bar">
+        <div className="prec-filter-inner">
+          {/* 카테고리 칩 */}
+          <div className="prec-chips-wrap">
+            {categories.map((cat) => {
+              const val = cat === "전체" ? "" : cat;
+              return (
+                <button
+                  key={cat}
+                  className={`prec-chip ${caseType === val ? "active" : ""}`}
+                  onClick={() => handleCategoryChange(cat)}
+                >
                   {cat}
-                </option>
-              ))}
-            </select>
+                </button>
+              );
+            })}
+          </div>
 
-            <div className="ps-input-group">
-              <div className="ps-input-wrapper">
-                <input
-                  type="text"
-                  placeholder="사건명, 사건번호, 키워드 검색..."
-                  value={tempQuery}
-                  onChange={(e) => setTempQuery(e.target.value)}
-                />
-                {tempQuery && (
-                  <button
-                    type="button"
-                    className="ps-clear-btn"
-                    onClick={() => setTempQuery("")}
-                  >
-                    &times;
-                  </button>
-                )}
-              </div>
-              <button type="submit" className="ps-search-btn">
-                검색
-              </button>
+          {/* 검색창 */}
+          <form className="prec-search-form" onSubmit={handleSearch}>
+            <div className="prec-search-input-wrap">
+              <input
+                type="text"
+                className="prec-search-input"
+                placeholder="사건명, 사건번호, 키워드 검색..."
+                value={tempQuery}
+                onChange={(e) => setTempQuery(e.target.value)}
+              />
+              {tempQuery && (
+                <button
+                  type="button"
+                  className="prec-clear-btn"
+                  onClick={() => setTempQuery("")}
+                >
+                  ✕
+                </button>
+              )}
             </div>
-
+            <button type="submit" className="prec-search-btn">
+              검색
+            </button>
             <button
               type="button"
-              className="ps-reset-btn"
+              className="prec-reset-btn"
               onClick={handleReset}
+              title="초기화"
             >
-              초기화
+              ↺
             </button>
           </form>
         </div>
-      </header>
+      </div>
 
-      {loading ? (
-        <div className="ps-loading-state">
-          <div className="spinner"></div>
-          <p>법률 데이터를 불러오는 중입니다...</p>
-        </div>
-      ) : (
-        <>
-          <div className="ps-list-grid">
-            {list.length > 0 ? (
-              list.map((item) => (
-                <div
+      {/* ── CONTENT ── */}
+      <div className="prec-content">
+        {loading ? (
+          <div className="prec-loading">
+            <div className="prec-spinner" />
+            법률 데이터를 불러오는 중...
+          </div>
+        ) : list.length === 0 ? (
+          <div className="prec-empty">
+            <div className="prec-empty-icon">⚖️</div>
+            <p className="prec-empty-title">검색 결과가 없습니다</p>
+            <p className="prec-empty-desc">
+              다른 검색어나 카테고리를 선택해 보세요
+            </p>
+            <button className="prec-empty-reset" onClick={handleReset}>
+              검색 초기화
+            </button>
+          </div>
+        ) : (
+          <>
+            <ul className="prec-list" ref={listRef}>
+              {list.map((item) => (
+                <li
                   key={item.precId}
-                  className="ps-card"
-                  onClick={() => navigate(`/precedent/detail/${item.precId}`)}
+                  className="prec-item"
+                  onClick={() =>
+                    navigate(
+                      `/precedent/detail/${item.precId}?page=${page}${searchQuery ? `&query=${searchQuery}` : ""}${caseType ? `&caseType=${caseType}` : ""}`,
+                    )
+                  }
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" &&
+                    navigate(
+                      `/precedent/detail/${item.precId}?page=${page}${searchQuery ? `&query=${searchQuery}` : ""}${caseType ? `&caseType=${caseType}` : ""}`,
+                    )
+                  }
                 >
-                  <div className="ps-card-top">
-                    <span className="ps-badge">{item.caseType}</span>
-                    <small className="ps-case-no">{item.caseNo}</small>
+                  <div className="prec-item-left">
+                    <div className="prec-item-top">
+                      <span className="prec-case-badge">{item.caseType}</span>
+                      <span className="prec-case-no">{item.caseNo}</span>
+                    </div>
+                    <h2 className="prec-item-title">{item.title}</h2>
+                    <p className="prec-item-summary">{item.oneLine}</p>
                   </div>
-                  <h3 className="ps-title">{item.title}</h3>
-                  {/* 툴팁 제거: 일반 텍스트 렌더링으로 가독성 확보 */}
-                  <div className="ps-one-line">{item.oneLine}</div>
-                  <div className="ps-footer-info">
-                    {item.court} | {item.judgeDate}
+                  <div className="prec-item-right">
+                    <span className="prec-court">{item.court}</span>
+                    <span className="prec-date">{item.judgeDate}</span>
+                    <span className="prec-arrow">→</span>
                   </div>
-                </div>
-              ))
-            ) : (
-              <div className="ps-no-data">
-                <p>검색 결과가 없습니다.</p>
-                <span>다른 검색어나 카테고리를 선택해 보세요.</span>
-              </div>
-            )}
-          </div>
+                </li>
+              ))}
+            </ul>
 
-          <div className="ps-pagination">
-            <button
-              className="ps-page-arrow"
-              disabled={page === 1}
-              onClick={() => handlePageChange(page - 1)}
-            >
-              &larr;
-            </button>
-            {pageNumbers.map((num) => (
+            {/* 페이지네이션 */}
+            <nav className="prec-pagination">
               <button
-                key={num}
-                className={`ps-page-num ${page === num ? "active" : ""}`}
-                onClick={() => handlePageChange(num)}
+                className="prec-page-arrow"
+                disabled={page === 1}
+                onClick={() => handlePageChange(page - 1)}
               >
-                {num}
+                &lt;
               </button>
-            ))}
-            <button
-              className="ps-page-arrow"
-              disabled={page === totalPages}
-              onClick={() => handlePageChange(page + 1)}
-            >
-              &rarr;
-            </button>
-          </div>
-        </>
-      )}
+
+              <div className="prec-page-numbers">
+                {pageNumbers.map((num) => (
+                  <button
+                    key={num}
+                    className={`prec-page-btn ${page === num ? "active" : ""}`}
+                    onClick={() => handlePageChange(num)}
+                  >
+                    {num}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                className="prec-page-arrow"
+                disabled={page === totalPages}
+                onClick={() => handlePageChange(page + 1)}
+              >
+                &gt;
+              </button>
+            </nav>
+          </>
+        )}
+      </div>
     </div>
   );
 };

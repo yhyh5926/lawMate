@@ -1,16 +1,21 @@
 import { useState, useEffect } from "react";
 import { getComments, writeComment } from "../../api/communityApi";
+import { useAuthStore } from "../../store/authStore";
 import "../../styles/community/CommentList.css";
 
-const CommentList = ({ postId }) => {
+const CommentList = ({ postId, boardType }) => {
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState(""); // 일반
   const [replyContent, setReplyContent] = useState({}); // 대댓글
   const [openReplyId, setOpenReplyId] = useState(null); // 답글
 
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const memberId = user?.memberId;
+
   const fetchComments = async () => {
     try {
-      const data = await getComments(postId);
+      const data = await getComments(postId, boardType);
       console.log("댓글", data);
       setComments(data);
     } catch (error) {
@@ -28,10 +33,8 @@ const CommentList = ({ postId }) => {
     return comments.filter((c) => c.parentId === commentId);
   };
 
-  const memberId = Number(localStorage.getItem("memberId"));
-
   const handleWriteComment = async () => {
-    if (!memberId) {
+    if (!isAuthenticated || !memberId) {
       alert("로그인이 필요합니다.");
       return;
     }
@@ -46,7 +49,8 @@ const CommentList = ({ postId }) => {
         postId: Number(postId),
         memberId,
         parentId: null,
-        content
+        content,
+        boardType
       });
 
       setContent("");
@@ -73,7 +77,8 @@ const CommentList = ({ postId }) => {
         postId: Number(postId),
         memberId,
         parentId,
-        content: replyContent[parentId]
+        content: replyContent[parentId],
+        boardType
       });
 
       setReplyContent({

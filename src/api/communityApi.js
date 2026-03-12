@@ -1,10 +1,9 @@
 import axiosInstance from './axiosInstance';
 
-export const getPostList = async (sortType = "latest") => {
+export const getPostList = async (sortType = "latest", page = 1) => {
   const response = await axiosInstance.get("/posts", {
-    params: { sortType }
+    params: { sortType, page }
   });
-
   return response.data;
 };
 
@@ -52,14 +51,11 @@ export const getPostLikeStatus = async (postId, memberId) => {
 };
 
 // 댓글
-export const getComments = async (postId) => {
-  const response = await axiosInstance.get(`/comment/list/${postId}`);
+export const getComments = async (postId, boardType) => {
+  const response = await axiosInstance.get(`/comment/list/${postId}`, {
+    params: { boardType }
+  });
   return response.data; // 받은 객체에서 json만 꺼내온 것
-};
-
-export const getCommentList = async (postId) => {
-  const response = await axiosInstance.get(`/comments/${postId}`);
-  return response.data;
 };
 
 export const writeComment = async (payload) => {
@@ -73,9 +69,11 @@ export const deleteComment = async (commentId) => {
 };
 
 // 투표게시물
-export const getPollList = async () => {
-  const response = await axiosInstance.get("/polls");
-  return response.data; // 받은 객체에서 json만 꺼내온 것
+export const getPollList = async (sortType = "latest", page = 1) => {
+  const response = await axiosInstance.get("/polls", {
+    params: { sortType, page }
+  });
+  return response.data;
 };
 
 export const getPollDetail = async (pollId) => {
@@ -85,6 +83,11 @@ export const getPollDetail = async (pollId) => {
 
 export const getPollOptions = async (pollId) => {
   const response = await axiosInstance.get(`/poll/${pollId}/options`);
+  return response.data;
+};
+
+export const writePoll = async (payload) => {
+  const response = await axiosInstance.post("/polls/write", payload);
   return response.data;
 };
 
@@ -98,3 +101,12 @@ export const checkVoted = async (pollId, memberId) => {
   return res.data;
 };
 
+export const deletePoll = async (pollId) => {
+  const response = await axiosInstance.delete(`/polls/${pollId}`);
+  return response.data;
+};
+
+export const updatePoll = async (payload) => {
+  const response = await axiosInstance.post("/polls/edit", payload);
+  return response.data;
+};

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { questionApi } from "../../api/questionApi.js";
-import "../../styles/question/QuestionListPage.css";
 import { categories } from "../../constants/categories.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faImages } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../../utils/formatDate.js";
+import "../../styles/question/QuestionListPage.css";
 
 const QuestionListPage = () => {
   const navigate = useNavigate();
@@ -34,7 +34,6 @@ const QuestionListPage = () => {
         page: currentPage,
         size: 10,
       });
-
       setQuestions(response.data.data || []);
       setTotalPages(response.data.totalPages || 1);
     } catch (error) {
@@ -80,173 +79,218 @@ const QuestionListPage = () => {
     setSearchParams({});
   };
 
-  const renderPagination = () => {
-    const pages = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pages.push(
-        <button
-          key={i}
-          className={`ql-page-btn ${currentPage === i ? "active" : ""}`}
-          onClick={() => updateParams({ page: i })}
-        >
-          {i}
-        </button>,
-      );
-    }
-    return pages;
-  };
+  const renderPagination = () =>
+    Array.from({ length: totalPages }, (_, i) => i + 1).map((i) => (
+      <button
+        key={i}
+        className={`qlp-page-btn${currentPage === i ? " active" : ""}`}
+        onClick={() => updateParams({ page: i })}
+      >
+        {i}
+      </button>
+    ));
 
   return (
-    <div className="ql-container">
-      <header className="ql-header">
-        <h2 className="ql-title">⚖️ 법률 Q&A 게시판</h2>
-        <button
-          className="ql-write-btn"
-          onClick={() => navigate("/question/write")}
-        >
-          질문하기
-        </button>
-      </header>
-
-      <section className="ql-search-section">
-        <select
-          className="ql-category-select"
-          value={caseTypeFilter || "전체"}
-          onChange={handleCategoryChange}
-        >
-          {categories.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
-
-        <form className="ql-search-form" onSubmit={handleSearch}>
-          <div className="ql-search-input-wrapper">
-            <input
-              type="text"
-              className="ql-search-input"
-              placeholder="궁금한 법률 내용을 검색해보세요..."
-              value={tempQuery}
-              onChange={(e) => setTempQuery(e.target.value)}
-            />
-            {tempQuery && (
-              <button
-                type="button"
-                className="search-clear-btn"
-                onClick={handleClearInput}
-              >
-                ✕
-              </button>
-            )}
+    <div className="qlp-root">
+      {/* ── HERO ── */}
+      <section className="qlp-hero">
+        <div className="qlp-hero-inner">
+          <div className="qlp-hero-eyebrow">
+            <div className="qlp-hero-eyebrow-line" />
+            <span className="qlp-hero-eyebrow-text">
+              Verified Legal Counsel
+            </span>
           </div>
-          <button type="submit" className="ql-search-btn">
-            검색
-          </button>
-          <button
-            type="button"
-            className="ql-reset-btn"
-            onClick={handleResetAll}
-            title="검색 초기화"
-          >
-            ↺
-          </button>
-        </form>
+          <h1 className="qlp-hero-title">
+            변호사가 직접 답변하는
+            <br />
+            <span>법률 Q&A</span>
+          </h1>
+          <p className="qlp-hero-desc">
+            이곳의 모든 답변은{" "}
+            <strong style={{ color: "rgba(255,255,255,0.9)", fontWeight: 600 }}>
+              검증된 변호사
+            </strong>
+            만이 작성할 수 있습니다.
+            <br />
+            복잡한 법률 문제, 막막한 분쟁 상황 — 전문가의 시각으로 명확한 방향을
+            찾아보세요.
+          </p>
+          <div className="qlp-badges">
+            <span className="qlp-badge">
+              <span className="qlp-badge-dot" />
+              변호사 인증 답변
+            </span>
+            <span className="qlp-badge">
+              <span className="qlp-badge-dot" />
+              민사 · 형사 · 가사 · 부동산
+            </span>
+            <span className="qlp-badge">
+              <span className="qlp-badge-dot" />
+              채택 시 우수 답변 상단 노출
+            </span>
+          </div>
+        </div>
       </section>
 
-      {loading ? (
-        <div className="ql-loading">데이터를 불러오는 중입니다...</div>
-      ) : (
-        <>
-          <div className="ql-table-wrapper">
-            <table className="ql-table">
-              <thead>
-                <tr>
-                  <th className="w-type">유형</th>
-                  <th className="w-title">질문 제목</th>
-                  <th className="w-author">작성자</th>
-                  <th className="w-date">작성일</th>
-                  <th className="w-status">상태</th>
-                </tr>
-              </thead>
-              <tbody>
-                {questions.length > 0 ? (
-                  questions.map((q) => (
-                    <tr key={q.questionId} className="ql-row">
-                      <td className="ql-type-cell">
-                        <span className="ql-type-badge">{q.caseType}</span>
-                      </td>
-                      <td className="ql-subject">
-                        <Link
-                          to={`/question/detail/${q.questionId}`}
-                          className="ql-link"
-                        >
-                          <span className="title-text">{q.title}</span>
-                          <div className="ql-icons">
-                            {q.fileCount > 0 && (
-                              <span
-                                className="ql-file-icon-wrapper"
-                                title={`첨부파일 ${q.fileCount}개`}
-                              >
-                                <FontAwesomeIcon
-                                  icon={q.fileCount >= 2 ? faImages : faImage}
-                                />
-                                <span className="file-count-num">
-                                  {q.fileCount}
+      {/* ── FILTER BAR ── */}
+      <div className="qlp-filter-bar">
+        <div className="qlp-filter-inner">
+          <select
+            className="qlp-category-select"
+            value={caseTypeFilter || "전체"}
+            onChange={handleCategoryChange}
+          >
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+          <form className="qlp-search-form" onSubmit={handleSearch}>
+            <div className="qlp-search-input-wrap">
+              <input
+                type="text"
+                className="qlp-search-input"
+                placeholder="궁금한 법률 내용을 검색하세요..."
+                value={tempQuery}
+                onChange={(e) => setTempQuery(e.target.value)}
+              />
+              {tempQuery && (
+                <button
+                  type="button"
+                  className="qlp-search-clear"
+                  onClick={handleClearInput}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+            <button type="submit" className="qlp-search-btn">
+              검색
+            </button>
+            <button
+              type="button"
+              className="qlp-reset-btn"
+              onClick={handleResetAll}
+              title="초기화"
+            >
+              ↺
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {/* ── MAIN CONTENT ── */}
+      <div className="qlp-content">
+        {loading ? (
+          <div className="qlp-loading">
+            <div className="qlp-spinner" />
+            데이터를 불러오는 중입니다...
+          </div>
+        ) : (
+          <>
+            <div className="qlp-table-wrap">
+              <table className="qlp-table">
+                <thead>
+                  <tr>
+                    <th className="col-type">유형</th>
+                    <th className="col-title">질문 제목</th>
+                    <th className="col-author">작성자</th>
+                    <th className="col-date">작성일</th>
+                    <th className="col-status">상태</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {questions.length > 0 ? (
+                    questions.map((q) => (
+                      <tr key={q.questionId}>
+                        <td>
+                          <span className="qlp-type-badge">{q.caseType}</span>
+                        </td>
+                        <td>
+                          <Link
+                            to={`/question/detail/${q.questionId}`}
+                            className="qlp-title-link"
+                          >
+                            <span className="qlp-title-text">{q.title}</span>
+                            <div className="qlp-title-meta">
+                              {q.fileCount > 0 && (
+                                <span
+                                  className="qlp-file-icon"
+                                  title={`첨부파일 ${q.fileCount}개`}
+                                >
+                                  <FontAwesomeIcon
+                                    icon={q.fileCount >= 2 ? faImages : faImage}
+                                  />
+                                  <span>{q.fileCount}</span>
                                 </span>
-                              </span>
-                            )}
-                            {q.answerCount > 0 && (
-                              <span className="ql-count">
-                                [{q.answerCount}]
-                              </span>
-                            )}
+                              )}
+                              {q.answerCount > 0 && (
+                                <span className="qlp-answer-count">
+                                  [{q.answerCount}]
+                                </span>
+                              )}
+                            </div>
+                          </Link>
+                        </td>
+                        <td className="qlp-author">{q.memberName}</td>
+                        <td className="qlp-date">{formatDate(q.createdAt)}</td>
+                        <td>
+                          <span
+                            className={`qlp-status-badge ${q.status === "ADOPTED" ? "adopted" : "waiting"}`}
+                          >
+                            <span className="qlp-status-dot" />
+                            {q.status === "ADOPTED" ? "채택완료" : "채택대기"}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5">
+                        <div className="qlp-empty">
+                          <div className="qlp-empty-icon">⚖️</div>
+                          <div className="qlp-empty-text">
+                            검색 결과가 없습니다.
                           </div>
-                        </Link>
-                      </td>
-                      <td className="ql-author">{q.memberName}</td>
-                      <td className="ql-date">{formatDate(q.createdAt)}</td>
-                      <td>
-                        <span
-                          className={`ql-status ${q.status === "ADOPTED" ? "is-adopted" : "is-waiting"}`}
-                        >
-                          {q.status === "ADOPTED" ? "● 채택완료" : "○ 채택대기"}
-                        </span>
+                        </div>
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="5" className="ql-no-data">
-                      검색 결과가 없습니다.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                  )}
+                </tbody>
+              </table>
+            </div>
 
-          {questions.length > 0 && (
-            <div className="ql-pagination">
+            {/* ── FOOTer (Pagination + Write Button) ── */}
+            <div className="qlp-footer-wrapper">
+              <div className="qlp-pagination">
+                <button
+                  className="qlp-page-arrow"
+                  disabled={currentPage === 1}
+                  onClick={() => updateParams({ page: currentPage - 1 })}
+                >
+                  &lt;
+                </button>
+                {renderPagination()}
+                <button
+                  className="qlp-page-arrow"
+                  disabled={currentPage === totalPages}
+                  onClick={() => updateParams({ page: currentPage + 1 })}
+                >
+                  &gt;
+                </button>
+              </div>
               <button
-                className="ql-page-arrow"
-                disabled={currentPage === 1}
-                onClick={() => updateParams({ page: currentPage - 1 })}
+                className="qlp-write-btn"
+                onClick={() => navigate("/question/write")}
               >
-                &lt;
-              </button>
-              {renderPagination()}
-              <button
-                className="ql-page-arrow"
-                disabled={currentPage === totalPages}
-                onClick={() => updateParams({ page: currentPage + 1 })}
-              >
-                &gt;
+                + 질문하기
               </button>
             </div>
-          )}
-        </>
-      )}
+          </>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,99 +1,129 @@
-/* src/styles/member/JoinFormPage.css */
-.join-container { 
-  max-width: 500px; 
-  margin: 50px auto; 
-  padding: 30px; 
-  border: 1px solid #ddd; 
-  border-radius: 8px; 
-  background-color: #fff; 
-}
-.join-title { 
-  text-align: center; 
-  margin-bottom: 30px; 
-  font-size: 24px; 
-  color: #333; 
-}
-.join-form-group { 
-  margin-bottom: 20px; 
-}
-.join-label { 
-  font-size: 14px; 
-  color: #555; 
-  margin-bottom: 5px; 
-  display: block; 
-  font-weight: bold; 
-}
-.join-input { 
-  width: 100%; 
-  padding: 12px; 
-  border: 1px solid #ddd; 
-  border-radius: 4px; 
-  font-size: 14px; 
-  box-sizing: border-box; 
-}
-.join-input:focus { 
-  border-color: #007BFF; 
-  outline: none; 
-}
-.join-select { 
-  padding: 12px; 
-  border: 1px solid #ddd; 
-  border-radius: 4px; 
-  font-size: 14px; 
-  outline: none; 
-}
-.join-btn-primary { 
-  width: 100%; 
-  padding: 14px; 
-  background-color: #007BFF; 
-  color: #fff; 
-  border: none; 
-  border-radius: 4px; 
-  font-weight: bold; 
-  font-size: 16px; 
-  cursor: pointer; 
-  margin-top: 10px; 
-}
-.join-btn-primary:hover { 
-  background-color: #0056b3; 
-}
-.join-btn-secondary { 
-  padding: 12px; 
-  background-color: #6c757d; 
-  color: #fff; 
-  border: none; 
-  border-radius: 4px; 
-  font-size: 14px; 
-  cursor: pointer; 
-  white-space: nowrap; 
-}
-.join-btn-secondary:hover { 
-  background-color: #5a6268; 
-}
-.join-flex-row { 
-  display: flex; 
-  gap: 10px; 
-  align-items: center; 
-}
-.join-error-text { 
-  color: red; 
-  font-size: 12px; 
-  margin-top: 5px; 
-}
-.join-success-text { 
-  color: green; 
-  font-size: 12px; 
-  margin-top: 5px; 
+/* JoinFormPage.css */
+
+.join-container {
+  max-width: 520px;
+  margin: 60px auto;
+  padding: 0 20px;
 }
 
-/* 💡 추가된 검증 에러 하이라이트 클래스 */
+.join-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-top: 40px;
+  margin-bottom: 30px;
+}
+
+.join-form-group {
+  margin-bottom: 20px;
+}
+
+/* 라벨 스타일 및 에러 시 빨간색 하이라이트 */
+.join-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 8px;
+  transition: color 0.2s;
+}
+
 .join-label.error {
-  color: #dc3545;
+  color: #ef4444; /* 필수 입력 누락 시 빨간색 */
 }
+
+/* 입력창 기본 및 에러 스타일 */
+.join-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 15px;
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.join-input:focus {
+  border-color: #1a6dff;
+}
+
 .join-input.input-error {
-  border-color: #dc3545;
-  background-color: #fff8f8;
+  border-color: #ef4444;
+  background-color: #fef2f2;
 }
+
+/* 가로 배열 (아이디 중복확인, 휴대전화 등) */
+.join-flex-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.join-flex-row span {
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.join-select {
+  padding: 12px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  background-color: #fff;
+  font-size: 15px;
+  outline: none;
+}
+
+/* 버튼 스타일 */
+.join-btn-secondary {
+  white-space: nowrap;
+  padding: 12px 18px;
+  background-color: #f1f5f9;
+  color: #475569;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.join-btn-secondary:hover {
+  background-color: #e2e8f0;
+}
+
 .join-btn-secondary.btn-error {
-  background-color: #dc3545;
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.join-btn-primary {
+  width: 100%;
+  padding: 16px;
+  background-color: #1a1a2e;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.2s;
+}
+
+.join-btn-primary:hover {
+  background-color: #2a2a40;
+}
+
+/* 안내 메시지 */
+.join-error-text {
+  font-size: 13px;
+  color: #ef4444;
+  margin-top: 6px;
+}
+
+.join-success-text {
+  font-size: 13px;
+  color: #10b981;
+  margin-top: 6px;
 }

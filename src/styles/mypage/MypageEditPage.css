@@ -1,0 +1,136 @@
+/* MypageEditPage.css */
+
+.edit-page-container {
+  max-width: 500px;
+  margin: 60px auto;
+  padding: 40px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  font-family: "Pretendard", sans-serif;
+}
+
+.edit-page-title {
+  text-align: center;
+  margin-bottom: 35px;
+  font-size: 26px;
+  font-weight: 800;
+  color: #1a1a2e;
+}
+
+/* 상단 고정 정보 섹션 */
+.info-readonly-box {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.info-readonly-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.info-readonly-item:last-child {
+  margin-bottom: 0;
+}
+
+.info-readonly-item strong {
+  color: #1e293b;
+}
+
+/* 폼 요소 */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.edit-input {
+  width: 100%;
+  padding: 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.2s;
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: #1a6dff;
+  box-shadow: 0 0 0 3px rgba(26, 109, 255, 0.1);
+}
+
+/* 전화번호 & 이메일 특수 UI */
+.flex-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.flex-row span {
+  color: #94a3b8;
+  font-weight: bold;
+}
+
+.edit-select {
+  padding: 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #fff;
+  flex: 1;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* 버튼 영역 */
+.edit-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn-cancel {
+  flex: 1;
+  padding: 16px;
+  background-color: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  color: #64748b;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #f1f5f9;
+}
+
+.btn-submit {
+  flex: 2;
+  padding: 16px;
+  background-color: #1a6dff;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-submit:hover {
+  background-color: #0052e0;
+  box-shadow: 0 4px 12px rgba(26, 109, 255, 0.2);
+}

@@ -7,7 +7,7 @@ import ChatRoomPage from "./ChatRoomPage";
 import ConsultReservePage from "../consult/ConsultReservePage";
 import ConsultListPage from "../mypage/ConsultListPage";
 import PaymentPage from "../consult/PaymentPage";
-import SettlementPage from "../mypage/SettlementPage";
+import MypageEditPage from "../mypage/MypageEditPage";
 
 const ChatConsultRoutes = [
   <Route key="chat-l" path="/chat/list" element={<ChatListPage />} />,
@@ -27,7 +27,7 @@ const ChatConsultRoutes = [
   <Route
     key="my-set-l"
     path="/mypage/settlement/list"
-    element={<SettlementPage />}
+    element={<MypageEditPage />}
   />,
 ];
 

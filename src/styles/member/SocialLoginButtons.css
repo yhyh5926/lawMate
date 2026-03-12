@@ -1,0 +1,96 @@
+/* SocialLoginButtons.css */
+
+.social-login-container {
+  margin-top: 32px;
+  width: 100%;
+}
+
+/* 구분선 디자인 */
+.social-divider {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.social-divider::before,
+.social-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: #e2e8f0;
+}
+
+.social-divider span {
+  padding: 0 16px;
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* 버튼 공통 스타일 */
+.social-button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  position: relative;
+  transition:
+    opacity 0.2s,
+    transform 0.1s;
+}
+
+.social-btn:active {
+  transform: scale(0.98);
+}
+
+.social-btn:hover {
+  opacity: 0.9;
+}
+
+/* 소셜 아이콘 더미 (추후 svg 이미지로 교체 권장) */
+.social-icon {
+  position: absolute;
+  left: 20px;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+/* 구글: 가이드라인에 따라 테두리 필요 */
+.social-btn.google {
+  background-color: #ffffff;
+  color: #1a1a2e;
+  border: 1px solid #e2e8f0;
+}
+.google-icon {
+  color: #4285f4;
+}
+
+/* 카카오: 공식 브랜드 컬러 #FEE500 */
+.social-btn.kakao {
+  background-color: #fee500;
+  color: #3c1e1e;
+}
+.kakao-icon {
+  color: #3c1e1e;
+}
+
+/* 네이버: 공식 브랜드 컬러 #03C75A */
+.social-btn.naver {
+  background-color: #03c75a;
+  color: #ffffff;
+}
+.naver-icon {
+  color: #ffffff;
+}

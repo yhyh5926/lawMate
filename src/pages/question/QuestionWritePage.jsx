@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { questionApi } from "../../api/questionApi.js";
 import precedentApi from "../../api/precedentApi";
-import { useAuth } from "../../hooks/useAuth.js";
 import { categories } from "../../constants/categories.js";
 import "../../styles/question/QuestionWritePage.css";
+import { useAuthStore } from "../../store/authStore.js";
 
 const QuestionWritePage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const fileInputRef = useRef(null);
 
   const caseGuides = {

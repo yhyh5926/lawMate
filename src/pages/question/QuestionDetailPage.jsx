@@ -8,6 +8,7 @@ import "../../styles/question/QuestionDetailPage.css";
 import { formatDate } from "../../utils/formatDate.js";
 import { baseURL } from "../../constants/baseURL.js";
 import QuestionAnswerList from "../../components/question/QuestionAnswerList.jsx";
+import { scrollToTop } from "../../utils/windowUtils.js";
 
 const QuestionDetailPage = () => {
   const { questionId } = useParams();
@@ -15,7 +16,6 @@ const QuestionDetailPage = () => {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [editingAnswerId, setEditingAnswerId] = useState(null);
 
   // 💡 선택된 메인 이미지의 인덱스 상태 (기본값: 0)
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
@@ -23,17 +23,13 @@ const QuestionDetailPage = () => {
   const { user, isAuthenticated } = useAuthStore();
 
   const isLawyer = isAuthenticated && user?.role === "LAWYER";
-  const isOwner =
+  const isQuestionOwner =
     isAuthenticated && String(user?.memberId) === String(detail?.memberId);
   const isAlreadyAdopted = detail?.status === "ADOPTED";
   const hasAnswers = detail?.answers?.length > 0;
   const hasAlreadyAnswered = detail?.answers?.some(
     (ans) => ans.lawyerId === user?.lawyerId,
   );
-
-  useEffect(() => {
-    fetchDetail();
-  }, [questionId]);
 
   const fetchDetail = async () => {
     try {
@@ -46,6 +42,11 @@ const QuestionDetailPage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchDetail();
+    scrollToTop();
+  }, [questionId]);
 
   // 💡 이미지 파일과 일반 파일 분류
   const imageExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
@@ -70,25 +71,7 @@ const QuestionDetailPage = () => {
         navigate("/question/list");
       }
     } catch (error) {
-      alert("삭제 실패");
-    }
-  };
-
-  const handleAdopt = async (answerId, lawyerId) => {
-    if (!window.confirm("이 답변을 채택하시겠습니까?")) return;
-    try {
-      const res = await questionApi.adoptAnswer({
-        questionId: detail.questionId,
-        lawyerId,
-        memberId: user.memberId,
-        answerId,
-      });
-      if (res.data.success) {
-        alert("채택되었습니다!");
-        fetchDetail();
-      }
-    } catch (error) {
-      alert("채택 오류 발생");
+      alert("삭제 실패", error);
     }
   };
 
@@ -187,7 +170,7 @@ const QuestionDetailPage = () => {
             )}
 
             <div className="question-footer-actions">
-              {isOwner && !isAlreadyAdopted && (
+              {isQuestionOwner && !isAlreadyAdopted && (
                 <div className="owner-control-group">
                   <button
                     className="action-btn edit"
@@ -218,20 +201,12 @@ const QuestionDetailPage = () => {
         </section>
       )}
 
-      {/* 3. 답변 리스트 영역 */}
-      <h3 className="section-title">
-        변호사 답변{" "}
-        <span className="count-badge">{detail.answers?.length || 0}</span>
-      </h3>
-
       <QuestionAnswerList
-        answers={detail.answers}
-        isOwner={isOwner}
+        questionId={questionId}
+        user={user}
+        isQuestionOwner={isQuestionOwner}
         isAlreadyAdopted={isAlreadyAdopted}
-        editingAnswerId={editingAnswerId}
-        setEditingAnswerId={setEditingAnswerId}
-        handleAdopt={handleAdopt}
-        fetchDetail={fetchDetail}
+        onAdoptSuccess={fetchDetail}
       />
 
       <div className="footer-nav">

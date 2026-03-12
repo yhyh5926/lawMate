@@ -11,12 +11,8 @@ const QnaEdit = () => {
     postId: "",
     caseType: "",
     title: "",
-    content: ""
+    content: "",
   });
-
-  useEffect(() => {
-    fetchPostDetail();
-  }, [postId]);
 
   const fetchPostDetail = async () => {
     try {
@@ -25,13 +21,16 @@ const QnaEdit = () => {
         postId: data.postId,
         caseType: data.caseType || "",
         title: data.title || "",
-        content: data.content || ""
+        content: data.content || "",
       });
     } catch (error) {
       console.error("게시글 불러오기 실패:", error);
       alert("게시글 정보를 불러오지 못했습니다.");
     }
   };
+  useEffect(() => {
+    fetchPostDetail();
+  }, [postId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,16 +40,25 @@ const QnaEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.caseType) { alert("분류를 선택해주세요."); return; }
-    if (!form.title.trim()) { alert("제목을 입력해주세요."); return; }
-    if (!form.content.trim()) { alert("내용을 입력해주세요."); return; }
+    if (!form.caseType) {
+      alert("분류를 선택해주세요.");
+      return;
+    }
+    if (!form.title.trim()) {
+      alert("제목을 입력해주세요.");
+      return;
+    }
+    if (!form.content.trim()) {
+      alert("내용을 입력해주세요.");
+      return;
+    }
 
     try {
       await updatePost({
         postId: form.postId,
         caseType: form.caseType,
         title: form.title,
-        content: form.content
+        content: form.content,
       });
       alert("게시글이 수정되었습니다.");
       navigate(`/community/detail/${postId}`);
@@ -65,12 +73,10 @@ const QnaEdit = () => {
   return (
     <div className="write-wrapper">
       <div className="write-container">
-
         <h2 className="write-page-title">게시글 수정</h2>
 
         <div className="write-card">
           <form className="write-form" onSubmit={handleSubmit}>
-
             {/* 분류 */}
             <div className="write-field">
               <label className="write-label">
@@ -118,7 +124,9 @@ const QnaEdit = () => {
                 rows="10"
                 onChange={handleChange}
               />
-              <span className={`write-counter ${contentLength > 1800 ? "warn" : ""}`}>
+              <span
+                className={`write-counter ${contentLength > 1800 ? "warn" : ""}`}
+              >
                 {contentLength} / 2000
               </span>
             </div>
@@ -138,10 +146,8 @@ const QnaEdit = () => {
                 수정완료
               </button>
             </div>
-
           </form>
         </div>
-
       </div>
     </div>
   );

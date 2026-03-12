@@ -9,11 +9,17 @@ const QnaList = () => {
   const [sortType, setSortType] = useState('latest');
   const navigate = useNavigate();
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+
   const fetchPosts = async () => {
     try {
-      const data = await getPostList(sortType);
+      const data = await getPostList(sortType, currentPage);
       console.log(data);
-      setPosts(data);
+      setPosts(data.posts);
+      setTotalCount(data.totalCount);
+      setPageSize(data.pageSize);
     } catch (error) {
       console.error("게시글 목록 조회 실패:", error);
     }
@@ -32,7 +38,7 @@ const QnaList = () => {
   useEffect(() => {
     fetchPosts();
     fetchTopLikedPosts();
-  }, [sortType]);
+  }, [sortType, currentPage]);
 
   const topLikedList = topLikedPosts.map((post, idx) => (
     <li key={post.postId} className="top-liked-item">
@@ -46,7 +52,9 @@ const QnaList = () => {
 
   let postTr = posts.map((post, idx) => (
     <tr key={post.postId} style={{ animationDelay: `${idx * 0.04}s` }}>
-      <td className="td-no col-no">{post.postId}</td>
+      <td className="td-no col-no">
+        {totalCount - ((currentPage - 1) * pageSize) - idx}
+      </td>
       <td>{post.caseType}</td>
       <td className="col-title">
         <Link className="post-link" to={`/community/detail/${post.postId}`}>
@@ -65,6 +73,21 @@ const QnaList = () => {
     </tr>
   ));
 
+  const totalPage = Math.ceil(totalCount / pageSize);
+
+  const pageButtons = [];
+  for (let i = 1; i <= totalPage; i++) {
+    pageButtons.push(
+      <button
+        key={i}
+        className={currentPage === i ? "page-btn active" : "page-btn"}
+        onClick={() => setCurrentPage(i)}
+      >
+        {i}
+      </button>
+    );
+  }
+
   return (
     <div className="qna-wrapper">
       <div className="qna-container">
@@ -75,7 +98,10 @@ const QnaList = () => {
             <select
               className="sort-selector"
               value={sortType}
-              onChange={(e) => setSortType(e.target.value)}
+              onChange={(e) => {
+                setSortType(e.target.value);
+                setCurrentPage(1);
+              }}
             >
               <option value="latest">최신순</option>
               <option value="views">조회수순</option>
@@ -128,6 +154,25 @@ const QnaList = () => {
           </div>
         )}
       </div>
+      <div className="paging-box">
+      <button
+        className="page-btn"
+        onClick={() => setCurrentPage(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        이전
+      </button>
+
+      {pageButtons}
+
+      <button
+        className="page-btn"
+        onClick={() => setCurrentPage(currentPage + 1)}
+        disabled={currentPage === totalPage || totalPage === 0}
+      >
+        다음
+      </button>
+    </div>
     </div>
   );
 };

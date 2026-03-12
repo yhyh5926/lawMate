@@ -1,0 +1,80 @@
+/* CaseStepBar.css */
+
+.step-bar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* 라벨 위치 고려 */
+  margin: 40px 0;
+  padding: 0 10px;
+  position: relative;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+  width: 80px; /* 라벨 넓이 확보 */
+}
+
+/* 단계 원형 노드 */
+.step-node {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 2px solid #e8ecf0;
+  color: #b0bccb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+/* 단계 라벨 */
+.step-label {
+  font-size: 13px;
+  color: #888;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+/* 상태별 스타일링 */
+.step-item.completed .step-node {
+  background-color: #1a6dff;
+  border-color: #1a6dff;
+  color: #ffffff;
+}
+
+.step-item.active .step-node {
+  background-color: #ffffff;
+  border-color: #1a6dff;
+  color: #1a6dff;
+  box-shadow: 0 0 0 4px rgba(26, 109, 255, 0.1);
+}
+
+.step-item.active .step-label {
+  color: #1a1a2e; /* Deep Navy */
+  font-weight: 700;
+}
+
+.step-item.completed .step-label {
+  color: #555;
+}
+
+/* 연결선 */
+.step-line {
+  flex: 1;
+  height: 2px;
+  background-color: #e8ecf0;
+  margin: 14px -10px 0; /* 노드 중앙 정렬을 위해 마진 조정 */
+  z-index: 1;
+}
+
+.step-line.filled {
+  background-color: #1a6dff;
+}

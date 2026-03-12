@@ -1,309 +1,408 @@
-/* --- 기본 컨테이너 --- */
-.ql-container {
-  max-width: 1100px;
-  margin: 50px auto;
-  padding: 0 20px;
-  font-family:
-    "Pretendard",
-    -apple-system,
-    sans-serif;
+/* QuestionListPage.css */
+
+/* ── Root & Variables ── (기존 유지) */
+:root {
+  --q-primary: #1a375a; /* LawMate 남색 */
+  --q-secondary: #7fb3d5; /* LawMate 하늘색 */
+  --q-accent: #f6ad55; /* 평점/별 포인트 */
+  --q-bg-body: #f4f7fa;
+  --q-bg-white: #ffffff;
+  --q-text-main: #2d3748;
+  --q-text-sub: #4a5568;
+  --q-border: #e2e8f0;
 }
 
-/* --- 헤더 영역 --- */
-.ql-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
+.qlp-root {
+  background-color: var(--q-bg-body);
+  min-height: 100vh;
+  font-family: "Pretendard", sans-serif;
+  color: var(--q-text-main);
 }
 
-.ql-title {
-  font-size: 26px;
-  font-weight: 800;
-  color: #1e293b;
-  margin: 0;
-}
-
-.ql-write-btn {
-  background-color: #2563eb;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-}
-
-.ql-write-btn:hover {
-  background-color: #1d4ed8;
-  transform: translateY(-2px);
-}
-
-/* --- 검색 및 필터 영역 --- */
-.ql-search-section {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 25px;
-  background: #f8fafc;
-  padding: 20px;
-  border-radius: 16px;
-  border: 1px solid #f1f5f9;
-}
-
-.ql-category-select {
-  padding: 10px 15px;
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
-  background-color: white;
-  font-weight: 600;
-  color: #475569;
-  cursor: pointer;
-  outline: none;
-  min-width: 120px;
-}
-
-.ql-search-form {
-  flex: 1;
-  display: flex;
-  gap: 8px;
-}
-
-.ql-search-input-wrapper {
+/* ── HERO SECTION ── */
+.qlp-hero {
+  background: linear-gradient(135deg, var(--q-primary) 0%, #2c5282 100%);
+  padding: 80px 20px;
+  text-align: center;
+  color: var(--q-bg-white);
   position: relative;
-  flex: 1;
+  overflow: hidden;
 }
 
-.ql-search-input {
-  width: 100%;
-  padding: 12px 40px 12px 16px;
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
+.qlp-hero-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.qlp-hero-eyebrow-line {
+  width: 40px;
+  height: 2px;
+  background-color: var(--q-secondary);
+}
+
+.qlp-hero-eyebrow-text {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--q-secondary);
+}
+
+.qlp-hero-title {
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 25px;
+}
+
+.qlp-hero-title span {
+  color: var(--q-secondary);
+}
+
+.qlp-hero-desc {
+  font-size: 18px;
+  line-height: 1.6;
+  opacity: 0.9;
+  max-width: 700px;
+  margin: 0 auto 40px;
+}
+
+.qlp-badges {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.qlp-badge {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(127, 179, 213, 0.3);
+}
+
+.qlp-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--q-secondary);
+  display: inline-block;
+  margin-right: 8px;
+}
+
+/* 히어로 버튼 제거됨 - 하단 버튼으로 대체 */
+
+/* ── FILTER BAR ── */
+.qlp-filter-bar {
+  background-color: var(--q-bg-white);
+  border-bottom: 1px solid var(--q-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.qlp-filter-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 15px 40px;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.qlp-category-select {
+  height: 42px;
+  padding: 0 12px;
+  border: 2px solid var(--q-border);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--q-text-main);
   outline: none;
-  font-size: 15px;
-  box-sizing: border-box;
 }
 
-.ql-search-input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+.qlp-category-select:focus {
+  border-color: var(--q-secondary);
 }
 
-.search-clear-btn {
+.qlp-search-form {
+  flex: 1;
+  display: flex;
+  gap: 10px;
+}
+
+.qlp-search-input-wrap {
+  flex: 1;
+  position: relative;
+}
+
+.qlp-search-input {
+  width: 100%;
+  height: 42px;
+  padding: 0 40px 0 14px;
+  border: 2px solid var(--q-border);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.qlp-search-input:focus {
+  border-color: var(--q-secondary);
+}
+
+.qlp-search-clear {
   position: absolute;
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #94a3b8;
+  color: var(--q-text-sub);
   cursor: pointer;
 }
 
-.ql-search-btn {
+.qlp-search-btn {
+  background-color: var(--q-primary);
+  color: var(--q-bg-white);
   padding: 0 24px;
-  background-color: #1e293b;
-  color: white;
-  border-radius: 10px;
+  border-radius: 8px;
   border: none;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
 }
 
-.ql-reset-btn {
-  padding: 0 15px;
-  background-color: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
+.qlp-reset-btn {
+  width: 42px;
+  height: 42px;
+  background-color: var(--q-bg-body);
+  border: 2px solid var(--q-border);
+  border-radius: 8px;
+  color: var(--q-text-sub);
   cursor: pointer;
-  color: #64748b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-/* --- 테이블 디자인 --- */
-.ql-table-wrapper {
-  background: white;
-  border-radius: 16px;
+/* ── MAIN CONTENT ── */
+.qlp-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 40px 100px;
+}
+
+.qlp-table-wrap {
+  background-color: var(--q-bg-white);
+  border-radius: 12px;
+  border: 1px solid var(--q-border);
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 15px rgba(26, 55, 90, 0.05);
 }
 
-.ql-table {
+.qlp-table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* 제목 길이에 따른 레이아웃 붕괴 방지 */
 }
 
-.ql-table th {
-  background-color: #f8fafc;
+.qlp-table thead {
+  background-color: var(--q-primary);
+}
+
+.qlp-table th {
+  color: var(--q-bg-white);
   padding: 16px;
-  font-size: 14px;
-  font-weight: 700;
-  color: #64748b;
-  border-bottom: 2px solid #f1f5f9;
+  font-size: 13px;
+  text-align: left;
+  font-weight: 600;
 }
 
-/* 컬럼 너비 비율 고정 */
-.w-type {
-  width: 110px;
-}
-.w-title {
-  width: auto;
-}
-.w-author {
-  width: 120px;
-}
-.w-date {
-  width: 140px;
-}
-.w-status {
-  width: 110px;
-}
-
-.ql-row {
-  transition: background-color 0.2s;
-  border-bottom: 1px solid #f8fafc;
-}
-
-.ql-row:hover {
-  background-color: #f9fbff;
-}
-
-.ql-table td {
-  padding: 16px 10px;
-  text-align: center;
-  vertical-align: middle;
+.qlp-table td {
+  padding: 18px 16px;
+  border-bottom: 1px solid var(--q-border);
   font-size: 15px;
 }
 
-/* --- 제목 영역 (말줄임 핵심) --- */
-.ql-subject {
-  text-align: left !important;
-  padding-left: 20px !important;
-  overflow: hidden;
+.qlp-table tbody tr:hover {
+  background-color: #f8fbff;
 }
 
-.ql-link {
-  text-decoration: none;
-  color: #1e293b;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  max-width: 100%;
-}
-
-.title-text {
-  display: inline-block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis; /* 말줄임표 처리 */
-  flex: 0 1 auto;
-  min-width: 0; /* flex 환경에서 ellipsis가 작동하기 위한 필수 조건 */
-}
-
-.ql-icons {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0; /* 아이콘은 제목이 길어져도 사라지지 않음 */
-}
-
-.ql-file-icon-wrapper {
-  color: #94a3b8;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-}
-
-.ql-count {
-  color: #ef4444; /* 답변 수 강조 컬러 */
-  font-size: 14px;
-  font-weight: 700;
-}
-
-/* --- 배지 및 상태 --- */
-.ql-type-badge {
-  background-color: #f1f5f9;
-  color: #475569;
-  padding: 5px 10px;
-  border-radius: 8px;
+.qlp-type-badge {
+  background-color: #ebf4ff;
+  color: var(--q-primary);
+  padding: 4px 10px;
+  border-radius: 4px;
   font-size: 12px;
   font-weight: 700;
 }
 
-.ql-date {
-  color: #94a3b8;
+.qlp-title-link {
+  text-decoration: none;
+  color: var(--q-text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qlp-title-link:hover .qlp-title-text {
+  color: var(--q-secondary);
+  text-decoration: underline;
+}
+
+.qlp-title-text {
+  font-weight: 500;
+}
+
+.qlp-title-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--q-text-sub);
   font-size: 13px;
 }
 
-.ql-status {
-  font-size: 13px;
+.qlp-answer-count {
+  color: var(--q-secondary);
   font-weight: 700;
 }
 
-.is-waiting {
-  color: #94a3b8;
-}
-.is-adopted {
-  color: #059669;
+.qlp-author,
+.qlp-date {
+  color: var(--q-text-sub);
+  font-size: 14px;
 }
 
-/* --- 페이지네이션 --- */
-.ql-pagination {
-  display: flex;
-  justify-content: center;
+.qlp-status-badge {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 40px;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
 }
 
-.ql-page-btn,
-.ql-page-arrow {
+.qlp-status-badge.adopted {
+  background-color: #e6fffa;
+  color: #1a7a4a;
+}
+
+.qlp-status-badge.waiting {
+  background-color: #fffaf0;
+  color: #b07a10;
+}
+
+.qlp-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.adopted .qlp-status-dot {
+  background-color: #1a7a4a;
+}
+
+.waiting .qlp-status-dot {
+  background-color: #b07a10;
+}
+
+/* ── FOOTER (Pagination & Write Button) ── */
+.qlp-footer-wrapper {
+  display: flex;
+  justify-content: center; /* 중앙 정렬 */
+  align-items: center;
+  position: relative; /* 버튼의 우측 배치를 위한 기준 */
+  margin-top: 50px;
+  min-height: 50px;
+}
+
+.qlp-pagination {
+  display: flex;
+  gap: 8px;
+}
+
+.qlp-page-btn,
+.qlp-page-arrow {
   width: 38px;
   height: 38px;
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
-  background-color: white;
-  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--q-border);
+  background-color: var(--q-bg-white);
+  color: var(--q-primary);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  font-size: 14px;
 }
 
-.ql-page-btn.active {
-  background-color: #2563eb;
-  color: white;
-  border-color: #2563eb;
+.qlp-page-btn.active {
+  background-color: var(--q-primary);
+  color: var(--q-bg-white);
+  border-color: var(--q-primary);
 }
 
-.ql-page-btn:hover:not(.active),
-.ql-page-arrow:hover:not(:disabled) {
-  background-color: #f1f5f9;
+.qlp-page-btn:hover:not(.active),
+.qlp-page-arrow:hover:not(:disabled) {
+  background-color: #f8fbff;
+  border-color: var(--q-secondary);
+  color: var(--q-secondary);
 }
 
-.ql-page-arrow:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
+.qlp-page-arrow:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
-/* --- 반응형 대응 --- */
+/* 질문하기 버튼 - 리스트 하단 우측 배치 */
+.qlp-write-btn {
+  position: absolute;
+  right: 0;
+  background-color: var(--q-secondary);
+  color: var(--q-bg-white);
+  border: none;
+  padding: 0 24px;
+  height: 42px; /* 검색 버튼들과 높이 통일 */
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(127, 179, 213, 0.3);
+  transition: all 0.2s;
+}
+
+.qlp-write-btn:hover {
+  background-color: #5d97bd;
+  transform: translateY(-2px);
+}
+
+.qlp-write-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .w-date,
-  .w-author {
+  .col-author,
+  .col-date {
     display: none;
-  } /* 모바일에서 불필요한 정보 숨김 */
-  .w-type {
-    width: 90px;
   }
-  .ql-search-section {
+  .qlp-filter-inner {
     flex-direction: column;
+    align-items: stretch;
   }
-  .ql-title {
-    font-size: 20px;
+  .qlp-hero-title {
+    font-size: 32px;
+  }
+
+  /* 모바일에서는 버튼을 하단에 가득 차게 */
+  .qlp-footer-wrapper {
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 20px;
+  }
+  .qlp-write-btn {
+    position: static;
+    width: 100%;
+    height: 48px;
   }
 }

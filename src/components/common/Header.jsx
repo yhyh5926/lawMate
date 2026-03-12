@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import "../../styles/common/Header.css";
+import { scrollToTop } from "../../utils/windowUtils";
 
 const Header = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuthStore();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isCommunityHover, setIsCommunityHover] = useState(false); // 커뮤니티 드롭다운 상태
+  const [isCommunityHover, setIsCommunityHover] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -24,71 +25,82 @@ const Header = () => {
 
   return (
     <header
-      className={`header-container ${isScrolled ? "header-scrolled" : "header-top"}`}
+      className={`header-container ${isScrolled ? "header-scrolled" : ""}`}
     >
       <div className="inner-container">
-        <div className="logo-wrapper">
-          <Link to="/main" className="logo-link">
-            <img
-              src="/lawMateLogo.png"
-              alt="LawMate Logo"
-              className="logo-image"
-            />
+        {/* LEFT: 로고 영역 */}
+        <div className="header-left">
+          <Link to="/main" className="logo-link" onClick={scrollToTop}>
+            <img src="/lawMateLogo.png" alt="LawMate" className="logo-image" />
           </Link>
         </div>
 
-        <nav className="nav-menu">
-          <NavLink to="/main">메인</NavLink>
-          <NavLink to="/precedent/search">판례검색</NavLink>
-          <NavLink to="/lawyer/list">변호사찾기</NavLink>
-          <NavLink to="/question/list">법률질문</NavLink>
-
-          <div
-            className="dropdown-wrapper"
-            onMouseEnter={() => setIsCommunityHover(true)}
-            onMouseLeave={() => setIsCommunityHover(false)}
-          >
-            <NavLink to="/community/home">커뮤니티</NavLink>
-            {isCommunityHover && (
-              <div className="dropdown-menu">
-                <Link to="/community/qnalist" className="dropdown-item">
-                  자유게시판
-                </Link>
-                <Link to="/community/pollList" className="dropdown-item">
-                  모의 판결 게시판
-                </Link>
-              </div>
+        {/* CENTER: 메인 네비게이션 */}
+        <nav className="header-center">
+          <ul className="nav-list">
+            <li className="nav-item">
+              <NavLink to="/main">메인</NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink to="/precedent/search">판례검색</NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink to="/lawyer/list">변호사찾기</NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink to="/question/list">법률질문</NavLink>
+            </li>
+            <li
+              className="nav-item dropdown-wrapper"
+              onMouseEnter={() => setIsCommunityHover(true)}
+              onMouseLeave={() => setIsCommunityHover(false)}
+            >
+              <NavLink to="/community/home">커뮤니티</NavLink>
+              {isCommunityHover && (
+                <ul className="dropdown-menu">
+                  <li>
+                    <Link to="/community/qnalist">자유게시판</Link>
+                  </li>
+                  <li>
+                    <Link to="/community/pollList">의견 조사</Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+            {isAuthenticated && (
+              <li className="nav-item">
+                <NavLink to="/chat/list">채팅상담</NavLink>
+              </li>
             )}
-          </div>
-
-          {isAuthenticated && <NavLink to="/chat/list">채팅상담</NavLink>}
+          </ul>
         </nav>
 
-        <div className="auth-container">
+        {/* RIGHT: 사용자 인증 영역 */}
+        <div className="header-right">
           {isAuthenticated ? (
-            <div className="user-profile">
-              <div className="user-info">
+            <div className="user-profile-group">
+              <div className="user-text-info">
                 <span className="user-name">
                   <strong>{user?.name || user?.loginId}</strong>님
                 </span>
                 {user?.role === "ADMIN" && (
-                  <span className="admin-badge">관리자</span>
+                  <span className="admin-badge">ADMIN</span>
                 )}
               </div>
-              <div className="action-group">
-                <Link to="/mypage/main" className="icon-btn" title="마이페이지">
+              <div className="user-actions">
+                <Link to="/mypage/main" className="my-btn" title="마이페이지">
                   MY
                 </Link>
                 {user?.loginId === "admin" && (
                   <Link
                     to="/admin/stats"
-                    className="icon-btn admin-icon-btn"
-                    title="관리자 대시보드"
+                    className="admin-setup-btn"
+                    title="관리자"
                   >
-                    <span style={{ fontSize: "18px" }}>⚙️</span>
+                    ⚙️
                   </Link>
                 )}
-                <button onClick={handleLogout} className="logout-btn">
+                <button onClick={handleLogout} className="logout-button">
                   로그아웃
                 </button>
               </div>
@@ -98,7 +110,7 @@ const Header = () => {
               <Link to="/member/join/type" className="join-link">
                 회원가입
               </Link>
-              <Link to="/member/login" className="login-btn">
+              <Link to="/member/login" className="login-button">
                 로그인
               </Link>
             </div>
@@ -109,13 +121,11 @@ const Header = () => {
   );
 };
 
-const NavLink = ({ to, children }) => {
-  return (
-    <Link to={to} className="nav-link">
-      {children}
-      <div className="nav-underline" />
-    </Link>
-  );
-};
+const NavLink = ({ to, children }) => (
+  <Link to={to} className="nav-link" onClick={scrollToTop}>
+    {children}
+    <div className="nav-underline" />
+  </Link>
+);
 
 export default Header;

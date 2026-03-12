@@ -1,0 +1,211 @@
+/* EditInfoTab.css */
+
+.edit-wrapper {
+  padding: 10px;
+  max-width: 650px; /* 폼이 너무 넓어지지 않게 조절 */
+}
+
+.content-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 30px;
+}
+
+/* 1. 본인 인증 컨테이너 (인증 전) */
+.verify-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.verify-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.verify-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 12px;
+}
+
+.verify-desc {
+  font-size: 15px;
+  color: #64748b;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+.verify-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.verify-input {
+  padding: 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 15px;
+  transition: border-color 0.2s;
+}
+
+.verify-input:focus {
+  outline: none;
+  border-color: #1a6dff;
+}
+
+.verify-btn {
+  padding: 14px;
+  background: #1a1a2e;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.verify-btn:hover {
+  background: #000000;
+}
+
+.verify-google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 320px;
+  padding: 14px;
+  background: white;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.verify-google-btn:hover {
+  background: #f8fafc;
+}
+
+/* 2. 정보 수정 폼 (인증 후) */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.form-input {
+  padding: 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #1e293b;
+  transition: all 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #1a6dff;
+  box-shadow: 0 0 0 3px rgba(26, 109, 255, 0.1);
+}
+
+.form-input:disabled {
+  background-color: #f1f5f9;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 전문 분야 버튼 커스텀 (인라인 스타일 보완) */
+.spec-tag-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* 기존 파일 보기 버튼 */
+.view-file-btn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.view-file-btn:hover {
+  background: #e2e8f0;
+}
+
+/* 수정 완료 버튼 */
+.submit-edit-btn {
+  margin-top: 20px;
+  padding: 16px;
+  background: #1a6dff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submit-edit-btn:hover {
+  background: #0056e0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(26, 109, 255, 0.2);
+}
+
+/* 3. 회원 탈퇴 섹션 */
+.withdraw-section {
+  margin-top: 50px;
+  padding-top: 30px;
+  border-top: 1px solid #f1f5f9;
+  text-align: right;
+}
+
+.withdraw-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  text-decoration: underline;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.withdraw-btn:hover {
+  color: #ef4444;
+}

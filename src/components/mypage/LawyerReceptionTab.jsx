@@ -1,10 +1,12 @@
-// src/components/mypage/LawyerReceptionTab.jsx
+// vs코드
+// 파일 위치: src/components/mypage/LawyerReceptionTab.jsx
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { caseApi } from "../../api/caseApi";
 import { useAuthStore } from "../../store/authStore";
 import { getLawyerConsults, confirmConsult, rejectConsult } from "../../api/consultApi";
-import "../../styles/mypage/LawyerReceptionTab.css";
+import "../../styles/mypage/LawyerReceptionTab.css"; // 💡 분리된 CSS 임포트
 
 const CONSULT_STATUS_META = {
   PENDING:   { label: "대기중",   color: "#FF9500", bg: "#FFF3E0" },
@@ -12,6 +14,8 @@ const CONSULT_STATUS_META = {
   DONE:      { label: "완료",    color: "#34C759", bg: "#E8F8ED" },
   CANCELLED: { label: "취소/거절", color: "#FF3B30", bg: "#FFE8E8" },
 };
+
+const STEP_MAPPING = { RECEIVED: 0, ASSIGNED: 1, IN_PROGRESS: 2, OPINION_READY: 3, CLOSED: 4 };
 
 const LawyerReceptionTab = () => {
   const { user } = useAuthStore();
@@ -29,7 +33,16 @@ const LawyerReceptionTab = () => {
       try {
         const response = await caseApi.getMyCaseList(user.memberId);
         const data = response.data?.data || response.data || [];
-        setCases(Array.isArray(data) ? data : []);
+        
+        const mappedCases = Array.isArray(data) ? data.map(c => ({
+            id: c.caseId,
+            title: c.title,
+            type: c.caseType,
+            date: c.createdAt?.split(" ")[0] || c.createdAt?.split("T")[0] || c.createdAt,
+            status: STEP_MAPPING[c.step] !== undefined ? STEP_MAPPING[c.step] : 0,
+        })) : [];
+        
+        setCases(mappedCases);
       } catch (error) {
         console.error("접수된 사건 목록을 불러오는데 실패했습니다.", error);
         setCases([]);
@@ -81,7 +94,6 @@ const LawyerReceptionTab = () => {
   const getStatusBadgeClass = (status) => {
     const statusMap = {
       0: "step-receive", 1: "step-assign", 2: "step-progress", 3: "step-opinion", 4: "step-end",
-      "접수": "step-receive", "배정": "step-assign", "진행 중": "step-progress", "의견 완료": "step-opinion", "종료": "step-end"
     };
     return statusMap[status] || "step-default";
   };
@@ -99,13 +111,11 @@ const LawyerReceptionTab = () => {
     <div className="reception-mgmt-wrapper">
 
       {/* ── 상담 예약 섹션 ── */}
-      <div style={{ marginBottom: "40px" }}>
-        <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#1A1A2E", marginBottom: "16px" }}>
-          상담 예약 접수
-        </h3>
+      <div className="lr-section">
+        <h3 className="lr-title">상담 예약 접수</h3>
 
         {/* 상담 탭 */}
-        <div style={{ display: "flex", gap: "4px", marginBottom: "16px", background: "#F0F2F5", borderRadius: "10px", padding: "4px" }}>
+        <div className="lr-tab-container">
           {[
             { value: "PENDING", label: "대기" },
             { value: "CONFIRMED", label: "확정" },
@@ -116,19 +126,11 @@ const LawyerReceptionTab = () => {
             <button
               key={tab.value}
               onClick={() => setConsultTab(tab.value)}
-              style={{
-                flex: 1, padding: "8px", border: "none", borderRadius: "8px",
-                background: consultTab === tab.value ? "#fff" : "transparent",
-                color: consultTab === tab.value ? "#1A6DFF" : "#888",
-                fontWeight: consultTab === tab.value ? "700" : "500",
-                fontSize: "13px", cursor: "pointer",
-                boxShadow: consultTab === tab.value ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
-                transition: "all 0.15s",
-              }}
+              className={`lr-tab-btn ${consultTab === tab.value ? "active" : ""}`}
             >
               {tab.label}
               {tab.value === "PENDING" && consults.filter(c => c.status === "PENDING").length > 0 && (
-                <span style={{ marginLeft: "4px", background: "#FF3B30", color: "#fff", borderRadius: "10px", fontSize: "10px", padding: "1px 5px" }}>
+                <span className="lr-tab-badge">
                   {consults.filter(c => c.status === "PENDING").length}
                 </span>
               )}
@@ -137,47 +139,34 @@ const LawyerReceptionTab = () => {
         </div>
 
         {consultLoading ? (
-          <div style={{ textAlign: "center", padding: "40px", color: "#aaa" }}>불러오는 중...</div>
+          <div className="lr-loading">불러오는 중...</div>
         ) : filteredConsults.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "40px", background: "#F7F9FB", borderRadius: "16px", color: "#aaa" }}>
-            접수된 상담이 없습니다
-          </div>
+          <div className="lr-empty">접수된 상담이 없습니다</div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          <div className="lr-list">
             {filteredConsults.map((c) => {
               const meta = CONSULT_STATUS_META[c.status] || CONSULT_STATUS_META.PENDING;
               return (
-                <div key={c.consultId} style={{ background: "#fff", border: "1px solid #E8ECF0", borderRadius: "14px", padding: "18px 20px", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
+                <div key={c.consultId} className="lr-card">
+                  <div className="lr-card-header">
                     <div>
-                      <div style={{ fontWeight: "700", fontSize: "16px", color: "#1A1A2E" }}>
-                        {c.memberName} 의뢰인
-                      </div>
-                      <div style={{ fontSize: "13px", color: "#888", marginTop: "2px" }}>
-                        {c.consultDate} · {c.durationMin}분
-                      </div>
+                      <div className="lr-client-name">{c.memberName} 의뢰인</div>
+                      <div className="lr-client-meta">{c.consultDate} · {c.durationMin}분</div>
                     </div>
-                    <span style={{ padding: "4px 10px", borderRadius: "20px", background: meta.bg, color: meta.color, fontSize: "12px", fontWeight: "700" }}>
+                    <span 
+                      className="lr-status-badge" 
+                      style={{ background: meta.bg, color: meta.color }}
+                    >
                       {meta.label}
                     </span>
                   </div>
 
-                  {c.note && (
-                    <p style={{ margin: "0 0 12px", fontSize: "13px", color: "#555", background: "#F7F9FB", padding: "8px 12px", borderRadius: "8px" }}>
-                      📝 {c.note}
-                    </p>
-                  )}
+                  {c.note && <p className="lr-note">📝 {c.note}</p>}
 
                   {c.status === "PENDING" && (
-                    <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
-                      <button onClick={() => handleConfirm(c.consultId)}
-                        style={{ padding: "8px 16px", background: "#1A6DFF", color: "#fff", border: "none", borderRadius: "8px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}>
-                        승인
-                      </button>
-                      <button onClick={() => handleReject(c.consultId)}
-                        style={{ padding: "8px 16px", background: "#fff", color: "#FF3B30", border: "1px solid #FF3B30", borderRadius: "8px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}>
-                        거절
-                      </button>
+                    <div className="lr-actions">
+                      <button className="lr-btn-confirm" onClick={() => handleConfirm(c.consultId)}>승인</button>
+                      <button className="lr-btn-reject" onClick={() => handleReject(c.consultId)}>거절</button>
                     </div>
                   )}
                 </div>
@@ -196,9 +185,7 @@ const LawyerReceptionTab = () => {
         {loading ? (
           <div className="reception-message">데이터를 불러오는 중입니다...</div>
         ) : cases.length === 0 ? (
-          <div className="reception-message empty">
-            현재 접수/담당 중인 사건 내역이 없습니다.
-          </div>
+          <div className="reception-message empty">현재 접수/담당 중인 사건 내역이 없습니다.</div>
         ) : (
           <table className="reception-table">
             <thead>
@@ -212,18 +199,17 @@ const LawyerReceptionTab = () => {
             </thead>
             <tbody>
               {cases.map((item) => (
-                <tr key={item.caseId || item.id}>
+                <tr key={item.id}>
                   <td className="td-title">{item.title || "제목 없음"}</td>
-                  <td className="td-type">{item.caseType || item.type || "일반"}</td>
+                  <td className="td-type">{item.type || "일반"}</td>
                   <td className="td-status">
                     <span className={`status-badge ${getStatusBadgeClass(item.status)}`}>
                       {getStatusText(item.status)}
                     </span>
                   </td>
-                  <td className="td-date">{item.createdAt || item.date || "-"}</td>
+                  <td className="td-date">{item.date || "-"}</td>
                   <td className="td-action">
-                    <button className="btn-detail-view"
-                      onClick={() => navigate(`/mypage/case/detail/${item.caseId || item.id}`)}>
+                    <button className="btn-detail-view" onClick={() => navigate(`/mypage/case/detail/${item.id}`)}>
                       상세 보기
                     </button>
                   </td>

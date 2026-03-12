@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { questionApi } from "../../api/questionApi.js";
+import { answerApi } from "../../api/answerApi.js";
 import { useAuthStore } from "../../store/authStore.js";
 import "../../styles/question/QuestionAnswerForm.css";
 
@@ -23,7 +23,7 @@ const QuestionAnswerForm = ({ questionId, onAnswerSuccess }) => {
 
     setIsSubmitting(true);
     try {
-      await questionApi.writeAnswer({
+      await answerApi.writeAnswer({
         questionId: questionId,
         lawyerId: user.lawyerId,
         content: content,

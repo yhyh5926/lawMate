@@ -1,0 +1,123 @@
+/* StatsLineChart.css */
+
+.stats-chart-container {
+  border: 1px solid #e8ecf0;
+  border-radius: 16px;
+  padding: 24px;
+  background-color: #ffffff;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.stats-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.stats-chart-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #1a1a2e; /* LawMate Deep Navy */
+}
+
+.stats-chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #1a6dff; /* LawMate Blue */
+  border-radius: 50%;
+}
+
+.stats-chart-area {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 220px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f1f5f9;
+  position: relative;
+}
+
+.stats-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.stats-bar-value {
+  font-size: 11px;
+  font-weight: 700;
+  color: #1a6dff;
+  margin-bottom: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.stats-bar-wrapper:hover .stats-bar-value {
+  opacity: 1;
+}
+
+/* 막대가 채워질 통로 */
+.stats-bar-track {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 4px;
+}
+
+.stats-bar-fill {
+  width: 12px;
+  background: linear-gradient(to top, #1a6dff, #60a5fa);
+  border-radius: 6px 6px 0 0;
+  position: relative;
+  transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stats-bar-wrapper:hover .stats-bar-fill {
+  filter: brightness(1.1);
+  width: 14px;
+}
+
+/* 막대 상단 포인트 디테일 */
+.stats-bar-top-point {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  background: #ffffff;
+  border: 2px solid #1a6dff;
+  border-radius: 50%;
+}
+
+.stats-bar-label {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 12px;
+  font-weight: 500;
+}
+
+.stats-no-data {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cbd5e1;
+  font-size: 14px;
+}

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Header from "./components/common/Header";
 import Footer from "./components/common/Footer";
 
+import "./App.css";
 // ✅ 추가된 부분: AuthContext에서 AuthProvider 임포트
 import { AuthProvider } from "./context/AuthContext";
 

@@ -1,0 +1,102 @@
+/* MyInfoTab.css */
+
+.myinfo-wrapper {
+  padding: 10px;
+  background-color: #ffffff;
+}
+
+/* 섹션 제목 */
+.content-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+/* 정보 리스트 */
+.myinfo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.myinfo-item {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  transition: background-color 0.2s;
+}
+
+.myinfo-item:hover {
+  background-color: #f1f5f9;
+}
+
+/* 항목 레이블 (좌측) */
+.myinfo-label {
+  width: 160px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+/* 항목 값 (우측) */
+.myinfo-value {
+  flex-grow: 1;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 첨부파일 보기 버튼 */
+.view-file-btn {
+  margin-left: 15px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a6dff;
+  background-color: #ffffff;
+  border: 1px solid #1a6dff;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-file-btn:hover {
+  background-color: #1a6dff;
+  color: #ffffff;
+}
+
+/* 반응형 처리 */
+@media (max-width: 768px) {
+  .myinfo-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .myinfo-label {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .myinfo-value {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .view-file-btn {
+    margin-left: 0;
+  }
+}

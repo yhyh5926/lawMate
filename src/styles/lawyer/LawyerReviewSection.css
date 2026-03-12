@@ -1,22 +1,39 @@
+/* LawyerReviewSection.css */
+
+:root {
+  --lm-navy: #1a375a;
+  --lm-blue: #7fb3d5;
+  --lm-sky: #e1effa;
+  --lm-accent: #f6ad55; /* 별점 포인트 */
+  --lm-text-main: #2d3748;
+  --lm-text-sub: #718096;
+  --lm-white: #ffffff;
+  --lm-border: #edf2f7;
+}
+
 .lawyer-review-section {
-  padding: 20px 0;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
 }
 
 .section-title {
-  font-size: 1.4rem;
+  font-size: 20px;
   font-weight: 700;
-  margin-bottom: 20px;
-  color: #333;
+  color: var(--lm-navy);
+  margin-bottom: 24px;
+  border-left: 4px solid var(--lm-blue);
+  padding-left: 12px;
 }
 
-/* 📝 작성 유도 박스 스타일 */
+/* ── 리뷰 작성 박스 (Pending) ── */
 .pending-review-box {
-  background-color: #fffaf0;
-  border: 1px solid #ffeeba;
+  background-color: var(--lm-white);
+  border: 2px solid var(--lm-blue);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 40px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 12px rgba(127, 179, 213, 0.15);
 }
 
 .pending-header {
@@ -24,138 +41,175 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
-  color: #856404;
+  color: var(--lm-navy);
 }
 
 .info-icon {
-  font-size: 1.2rem;
+  font-size: 20px;
 }
 
-/* ⭐ 별점 선택 디자인 (1->5 우측 상승) */
 .rating-select {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .star-btn {
   background: none;
   border: none;
-  font-size: 2rem;
-  color: #e9ecef;
+  font-size: 28px;
+  color: #e2e8f0;
   cursor: pointer;
-  padding: 0;
   transition:
     transform 0.1s,
     color 0.2s;
 }
 
 .star-btn.active {
-  color: #ffc107;
+  color: var(--lm-accent);
 }
+
 .star-btn:hover {
-  transform: scale(1.15);
+  transform: scale(1.1);
 }
 
 .rating-label {
   margin-left: 10px;
   font-weight: 700;
-  color: #444;
+  color: var(--lm-text-main);
 }
 
-/* 입력창 및 버튼 */
 .review-write-form textarea {
   width: 100%;
   height: 120px;
   padding: 15px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--lm-border);
   border-radius: 8px;
   resize: none;
-  font-size: 1rem;
-  margin-bottom: 15px;
+  font-family: inherit;
+  font-size: 15px;
+  margin-bottom: 12px;
+  outline: none;
 }
 
-.form-footer {
-  display: flex;
-  justify-content: flex-end;
+.review-write-form textarea:focus {
+  border-color: var(--lm-blue);
 }
 
 .review-submit-btn {
-  background-color: #1a2a40;
-  color: white;
-  border: none;
+  background-color: var(--lm-navy);
+  color: var(--lm-white);
   padding: 12px 24px;
+  border: none;
   border-radius: 6px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 .review-submit-btn:hover {
-  background-color: #2c3e50;
+  background-color: #2c5282;
 }
 
-/* 💬 리뷰 리스트 아이템 스타일 */
+/* ── 리뷰 리스트 ── */
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .review-item {
-  padding: 25px 0;
-  border-bottom: 1px solid #eee;
+  background-color: var(--lm-white);
+  border: 1px solid var(--lm-border);
+  border-radius: 10px;
+  padding: 20px;
+  transition: transform 0.2s;
+}
+
+/* 본인 리뷰 하이라이트 */
+.my-review-highlight {
+  border-color: var(--lm-blue);
+  background-color: #f8fbff;
 }
 
 .review-item-header {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 12px;
 }
 
 .review-stars {
-  color: #ffc107;
-  font-size: 1.1rem;
-  letter-spacing: 2px;
+  color: var(--lm-accent);
+  font-size: 16px;
+  letter-spacing: -1px;
 }
+
 .empty-stars {
-  color: #e9ecef;
-}
-.review-date {
-  color: #999;
-  font-size: 0.9rem;
+  color: #e2e8f0;
 }
 
-.review-content {
-  line-height: 1.6;
-  color: #444;
-  margin-bottom: 15px;
-  white-space: pre-wrap;
+.my-review-badge {
+  background-color: var(--lm-blue);
+  color: var(--lm-white);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 10px;
+  vertical-align: middle;
 }
 
-.review-author {
-  font-size: 0.9rem;
-  color: #777;
-  font-weight: 500;
-}
-
-.no-reviews {
-  text-align: center;
-  padding: 50px 0;
-  color: #bbb;
-}
 .review-info-right {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
+.review-date {
+  font-size: 13px;
+  color: var(--lm-text-sub);
+}
+
 .delete-text-btn {
   background: none;
   border: none;
-  color: #ff4d4f;
-  font-size: 0.85rem;
+  color: #e53e3e;
+  font-size: 13px;
   cursor: pointer;
-  padding: 0;
   text-decoration: underline;
-  opacity: 0.7;
-  transition: opacity 0.2s;
 }
 
-.delete-text-btn:hover {
-  opacity: 1;
+.review-content {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--lm-text-main);
+  margin-bottom: 15px;
+  white-space: pre-wrap;
+}
+
+.review-footer {
+  font-size: 13px;
+  color: var(--lm-text-sub);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.review-author {
+  font-weight: 600;
+}
+
+.no-reviews {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--lm-text-sub);
+  background-color: #fcfcfc;
+  border-radius: 12px;
+  border: 1px dashed var(--lm-border);
+}
+
+.review-loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--lm-navy);
 }
