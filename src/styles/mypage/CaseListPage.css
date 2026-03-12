@@ -1,0 +1,125 @@
+/* CaseListPage.css */
+
+.case-list-container {
+  max-width: 850px;
+  margin: 50px auto;
+  padding: 0 20px;
+  font-family: "Pretendard", sans-serif;
+}
+
+.case-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 35px;
+  border-bottom: 2px solid #1a1a2e;
+  padding-bottom: 15px;
+}
+
+.case-list-header h2 {
+  font-size: 26px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.case-count {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.case-count b {
+  color: #1a6dff;
+}
+
+/* 로딩 및 빈 상태 */
+.case-list-loading,
+.case-list-empty {
+  text-align: center;
+  padding: 80px 0;
+  background-color: #f8fafc;
+  border-radius: 16px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* 리스트 그리드 */
+.case-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* CaseCard에 적용될 공통 스타일 제안 (CaseCard 내부 클래스로 활용) */
+.case-card-wrapper {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 20px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.case-card-wrapper:hover {
+  border-color: #1a6dff;
+  box-shadow: 0 4px 12px rgba(26, 109, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.case-info-main {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.case-type-tag {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a6dff;
+  background: rgba(26, 109, 255, 0.1);
+  padding: 3px 8px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.case-title-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.case-date {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+/* 우측 상태 영역 */
+.case-status-area {
+  text-align: right;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.status-badge.RECEIVED {
+  background: #f1f5f9;
+  color: #64748b;
+}
+.status-badge.IN_PROGRESS {
+  background: #eef2ff;
+  color: #1a6dff;
+}
+.status-badge.CLOSED {
+  background: #f8fafc;
+  color: #cbd5e1;
+}

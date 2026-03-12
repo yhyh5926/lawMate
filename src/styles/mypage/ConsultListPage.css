@@ -1,132 +1,138 @@
-/* src/styles/mypage/ConsultListPage.css */
+/* ConsultListPage.css */
 
 .consult-list-container {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 28px 16px;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: "Pretendard", sans-serif;
 }
 
 .consult-list-title {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 800;
   color: #1a1a2e;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  text-align: left;
 }
 
-/* 탭 스타일 */
+/* 상단 탭 필터 */
 .consult-tabs-container {
   display: flex;
-  gap: 4px;
-  margin-bottom: 24px;
-  background: #f0f2f5;
-  border-radius: 10px;
-  padding: 4px;
+  gap: 10px;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 1px;
 }
 
 .consult-tab-btn {
-  flex: 1;
-  padding: 8px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: #888;
-  font-weight: 500;
-  font-size: 13px;
+  background: none;
+  font-size: 15px;
+  font-weight: 600;
+  color: #94a3b8;
   cursor: pointer;
-  transition: all 0.15s;
+  position: relative;
+  transition: all 0.2s;
 }
 
 .consult-tab-btn.active {
-  background: #fff;
   color: #1a6dff;
-  font-weight: 700;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
-/* 로딩 & 데이터 없음 스타일 */
-.consult-empty-state {
-  text-align: center;
-  padding: 60px;
-  background: #f7f9fb;
-  border-radius: 16px;
-  color: #aaa;
+.consult-tab-btn.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #1a6dff;
 }
 
-/* 리스트 및 카드 스타일 */
+/* 카드 스타일 */
 .consult-list-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .consult-card {
   background: #fff;
-  border: 1px solid #e8ecf0;
-  border-radius: 14px;
-  padding: 18px 20px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.consult-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .consult-card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
 }
 
 .consult-lawyer-name {
+  font-size: 18px;
   font-weight: 700;
-  font-size: 16px;
-  color: #1a1a2e;
+  color: #1e293b;
+  margin-bottom: 4px;
 }
 
 .consult-datetime {
-  font-size: 13px;
-  color: #888;
-  margin-top: 2px;
+  font-size: 14px;
+  color: #64748b;
 }
 
-/* 상태 배지 스타일 */
+.consult-memo {
+  background: #f8fafc;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #475569;
+  margin-bottom: 20px;
+  line-height: 1.5;
+  border-left: 3px solid #cbd5e1;
+}
+
+/* 상태 뱃지 */
 .consult-status-badge {
-  padding: 4px 10px;
-  border-radius: 20px;
+  padding: 5px 12px;
+  border-radius: 6px;
   font-size: 12px;
   font-weight: 700;
 }
 
 .badge-pending {
-  background: #fff3e0;
-  color: #ff9500;
-}
+  background: #fff7ed;
+  color: #f97316;
+} /* 주황: 대기 */
 .badge-confirmed {
-  background: #e8f0ff;
-  color: #1a6dff;
-}
+  background: #f0fdf4;
+  color: #16a34a;
+} /* 초록: 확정 */
 .badge-done {
-  background: #e8f8ed;
-  color: #34c759;
-}
+  background: #eff6ff;
+  color: #1a6dff;
+} /* 파랑: 완료 */
 .badge-cancelled {
-  background: #ffe8e8;
-  color: #ff3b30;
-}
+  background: #fef2f2;
+  color: #ef4444;
+} /* 빨강: 취소 */
 
-/* 상담 메모 스타일 */
-.consult-memo {
-  margin: 0 0 12px;
-  font-size: 13px;
-  color: #555;
-  background: #f7f9fb;
-  padding: 8px 12px;
-  border-radius: 8px;
-}
-
-/* 하단 액션 버튼 공통 스타일 */
+/* 액션 버튼 영역 */
 .consult-card-actions {
   display: flex;
-  gap: 8px;
   justify-content: flex-end;
-  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .consult-action-btn {
@@ -135,62 +141,62 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  border: none;
+  border: 1px solid transparent;
   transition: all 0.2s;
 }
 
-.consult-action-btn:hover {
-  opacity: 0.85;
-}
-
-/* 1. 결제하기 */
+/* 버튼별 테마 */
 .btn-pay {
   background: #1a6dff;
   color: #fff;
 }
-
-/* 2. 후기 작성 (작성 전) */
-.btn-review {
-  background: #34c759;
-  color: #fff;
+.btn-pay:hover {
+  background: #0052e0;
 }
 
-/* 3. 내 후기 보기 (작성 후) - 추가됨 */
+.btn-review {
+  background: #1a1a2e;
+  color: #fff;
+}
 .btn-view-review {
   background: #fff;
-  color: #555;
-  border: 1px solid #d1d9e0;
+  border-color: #1a1a2e;
+  color: #1a1a2e;
 }
 
-.btn-view-review:hover {
-  background: #f7f9fb;
-  border-color: #c0c8d0;
-  opacity: 1; /* 투명도 대신 배경색 변화로 호버 피드백 */
-}
-
-/* 4. 예약 취소 */
 .btn-cancel {
   background: #fff;
-  color: #ff3b30;
-  border: 1px solid #ff3b30;
+  border-color: #e2e8f0;
+  color: #64748b;
+}
+.btn-cancel:hover {
+  background: #f1f5f9;
 }
 
-/* 5. 복구 */
 .btn-restore {
-  background: #e8f0ff;
-  color: #1a6dff;
+  background: #fff;
+  border-color: #16a34a;
+  color: #16a34a;
+}
+.btn-restore:hover {
+  background: #f0fdf4;
 }
 
-/* 6. 즉시 삭제 */
 .btn-delete {
-  background: #ff3b30;
-  color: #fff;
+  background: #fff;
+  border-color: #ef4444;
+  color: #ef4444;
+}
+.btn-delete:hover {
+  background: #fef2f2;
 }
 
-/* 자동 삭제 D-day 안내 (취소 상태 전용) */
-.delete-dday {
-  font-size: 11px;
-  color: #ff3b30;
-  margin-right: auto; /* 버튼들을 오른쪽으로 밀고 자신은 왼쪽에 위치 */
-  font-weight: 500;
+/* 공통 빈 상태 */
+.consult-empty-state {
+  text-align: center;
+  padding: 100px 0;
+  color: #94a3b8;
+  background: #f8fafc;
+  border-radius: 16px;
+  font-weight: 600;
 }
