@@ -1,226 +1,176 @@
-/* ConsultMgmtTab.css */
-
+/* src/styles/mypage/ConsultMgmtTab.css */
 .consult-mgmt-wrapper {
   padding: 10px;
+  font-family: "Pretendard", sans-serif;
 }
-
 .content-title {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   color: #1a1a2e;
   margin-bottom: 12px;
 }
-
 .consult-info-notice {
-  background: #f0f7ff;
-  border-left: 4px solid #1a6dff;
+  background-color: #f0f7ff;
+  color: #0056b3;
   padding: 14px 18px;
-  border-radius: 4px;
+  border-radius: 10px;
   font-size: 14px;
-  color: #1e4d8c;
-  margin-bottom: 24px;
-  line-height: 1.5;
+  margin-bottom: 25px;
+  border: 1px solid #d0e3ff;
 }
 
-/* 리스트 레이아웃 */
 .consult-list {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 20px;
 }
-
 .consult-card {
-  background: white;
+  background: #fff;
   border: 1px solid #e2e8f0;
   border-radius: 16px;
-  overflow: hidden;
-  transition: all 0.2s ease;
+  padding: 24px;
+  transition: box-shadow 0.2s;
 }
 
-.consult-card:hover {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  border-color: #cbd5e1;
-}
-
-/* 카드 헤더 */
 .consult-header {
-  padding: 20px;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
 }
-
-.consult-client-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
 .client-name {
-  font-size: 18px;
-  font-weight: 800;
-  color: #1a1a2e;
+  font-size: 17px;
+  font-weight: 700;
+  color: #1e293b;
 }
-
 .client-phone {
   font-size: 14px;
-  color: #64748b;
-  font-weight: 500;
+  color: #94a3b8;
+  margin-left: 8px;
 }
-
 .consult-datetime {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
   color: #1a6dff;
-  background: white;
-  padding: 8px 14px;
-  border-radius: 30px;
-  border: 1px solid #d1e4ff;
-}
-
-/* 카드 바디 (문의 내용) */
-.consult-body {
-  padding: 24px;
+  background: #eff6ff;
+  padding: 6px 12px;
+  border-radius: 20px;
 }
 
 .consult-issue {
   font-size: 15px;
-  line-height: 1.7;
-  color: #334155;
-  margin: 0;
-  white-space: pre-wrap; /* 줄바꿈 유지 */
-}
-
-/* 카드 푸터 (액션 영역) */
-.consult-footer {
-  padding: 0 24px 24px;
+  color: #475569;
+  line-height: 1.6;
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: 12px;
+  font-style: italic;
 }
 
 .consult-actions {
   display: flex;
-  gap: 12px;
+  justify-content: flex-end;
+  gap: 10px;
 }
-
-.consult-actions button {
-  flex: 1;
-  padding: 14px;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-}
-
-.btn-reject {
-  background: #f1f5f9;
-  color: #64748b;
-}
-
-.btn-reject:hover {
-  background: #e2e8f0;
-  color: #475569;
-}
-
 .btn-accept {
+  padding: 10px 24px;
   background: #1a6dff;
-  color: white;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-reject {
+  padding: 10px 24px;
+  background: #fff;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
-.btn-accept:hover {
-  background: #0056e0;
-  transform: translateY(-2px);
-}
-
-/* 거절 폼 스타일 */
+/* 거절 폼 및 버튼 그룹 개선 */
 .reject-form-box {
   background: #fff5f5;
-  padding: 20px;
+  border: 1px solid #fecdd3;
+  padding: 18px;
   border-radius: 12px;
-  border: 1px solid #fee2e2;
+  margin-top: 10px;
 }
-
 .reject-label {
   display: block;
   font-size: 13px;
   font-weight: 700;
-  color: #b91c1c;
+  color: #e11d48;
   margin-bottom: 10px;
 }
-
 .reject-textarea {
   width: 100%;
-  min-height: 100px;
+  height: 80px;
   padding: 12px;
-  border: 1px solid #fca5a5;
+  border: 1px solid #fda4af;
   border-radius: 8px;
   font-size: 14px;
-  resize: vertical;
+  resize: none;
   margin-bottom: 12px;
-  box-sizing: border-box;
 }
 
 .reject-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 8px;
 }
-
-.btn-cancel {
-  padding: 8px 16px;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
+.reject-actions button {
+  flex: 1;
+  max-width: 120px;
+  padding: 10px;
+  font-size: 14px;
   font-weight: 600;
-  color: #64748b;
-  cursor: pointer;
-}
-
-.btn-submit-reject {
-  padding: 8px 16px;
-  background: #ef4444;
-  color: white;
-  border: none;
   border-radius: 6px;
-  font-weight: 700;
   cursor: pointer;
 }
+.btn-cancel {
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+}
+.btn-submit-reject {
+  background: #e11d48;
+  color: #fff;
+  border: none;
+}
 
-/* 상태 배지 */
 .status-badge {
-  padding: 14px;
-  border-radius: 10px;
   text-align: center;
+  padding: 15px;
+  border-radius: 10px;
   font-weight: 700;
   font-size: 14px;
 }
-
 .badge-accepted {
   background: #f0fdf4;
   color: #16a34a;
-  border: 1px solid #dcfce7;
+  border: 1px solid #bbf7d0;
 }
-
 .badge-rejected {
   background: #fef2f2;
-  color: #dc2626;
-  border: 1px solid #fee2e2;
+  color: #ef4444;
+  border: 1px solid #fecdd3;
   text-align: left;
 }
-
 .reject-reason-text {
   display: block;
   margin-top: 6px;
   font-weight: 500;
-  font-size: 13px;
   color: #991b1b;
+  font-size: 13px;
 }
-
 .empty-tab-content {
-  padding: 80px 0;
   text-align: center;
+  padding: 60px 0;
   color: #94a3b8;
-  font-size: 16px;
 }

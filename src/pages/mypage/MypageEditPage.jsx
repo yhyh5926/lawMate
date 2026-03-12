@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore.js";
 import { memberApi } from "../../api/memberApi.js";
-import "../../styles/mypage/MypageEditPage.css"; // CSS 임포트
+import "../../styles/mypage/MypageEditPage.css"; 
 
 const MypageEditPage = () => {
   const navigate = useNavigate();

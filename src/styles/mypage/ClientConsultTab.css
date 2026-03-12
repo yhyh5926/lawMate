@@ -1,228 +1,242 @@
-/* ClientConsultTab.css */
-
-.client-consult-wrapper {
-  padding: 10px;
+/* 1. 기본 레이아웃 및 폰트 */
+.consult-list-container {
+  max-width: 760px;
+  margin: 50px auto;
+  padding: 0 20px;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    sans-serif;
+  color: #2d3748;
 }
 
-.content-title {
-  font-size: 22px;
+.consult-list-title {
+  font-size: 26px;
   font-weight: 800;
-  color: #1a1a2e;
-  margin-bottom: 24px;
+  color: #1a202c;
+  margin-bottom: 28px;
+  letter-spacing: -0.5px;
 }
 
-/* 서브 탭 스타일 (사건 관리 탭과 통일) */
-.consult-subtabs {
+/* 2. 상단 상태 필터 탭 */
+.consult-tabs-container {
   display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
-  border-bottom: 2px solid #f1f5f9;
+  gap: 10px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 12px;
 }
 
-.subtab-btn {
-  padding: 12px 20px;
-  background: none;
-  border: none;
-  font-weight: 700;
-  color: #94a3b8;
+.consult-tab-btn {
+  padding: 8px 20px;
+  border-radius: 30px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
   cursor: pointer;
-  position: relative;
-  transition: color 0.2s;
+  font-size: 14px;
+  font-weight: 600;
+  color: #718096;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.subtab-btn.active {
-  color: #1a6dff;
+.consult-tab-btn:hover {
+  background: #f7fafc;
+  border-color: #cbd5e1;
 }
 
-.subtab-btn.active::after {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: #1a6dff;
+.consult-tab-btn.active {
+  background: #1a1a2e; /* 다크 네이비 테마 */
+  color: #fff;
+  border-color: #1a1a2e;
+  box-shadow: 0 4px 12px rgba(26, 26, 46, 0.2);
 }
 
-/* 상담 카드 리스트 */
-.client-consult-list {
+/* 3. 상담 예약 카드 스타일 */
+.consult-list-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
-.client-consult-card {
-  background: #ffffff;
+.consult-card {
+  background: #fff;
   border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  overflow: hidden;
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
   transition:
     transform 0.2s,
     box-shadow 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
-.client-consult-card:hover {
+.consult-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.05);
 }
 
-/* 카드 헤더 */
-.card-header {
-  padding: 20px;
-  background: #fbfcfe;
-  border-bottom: 1px solid #f1f5f9;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* 4. 카드 상단 (배지 영역) */
+.consult-card-top {
+  margin-bottom: 16px;
 }
 
-.lawyer-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.lawyer-name {
-  font-size: 17px;
+.consult-status-badge {
+  font-size: 11px;
   font-weight: 800;
-  color: #1a1a2e;
-}
-
-.lawyer-spec {
-  font-size: 13px;
-  color: #1a6dff;
-  font-weight: 600;
-}
-
-/* 상태 배지 */
-.status-badge {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .badge-pending {
-  background: #fff7ed;
-  color: #ea580c;
+  background: #fff8e1;
+  color: #b7791f;
 }
-.badge-accepted {
-  background: #f0fdf4;
-  color: #16a34a;
+.badge-confirmed {
+  background: #ebf8ff;
+  color: #3182ce;
 }
-.badge-rejected {
-  background: #fef2f2;
-  color: #dc2626;
+.badge-done {
+  background: #f0fff4;
+  color: #38a169;
 }
-.badge-completed {
-  background: #f1f5f9;
-  color: #475569;
-}
-
-/* 카드 바디 */
-.card-body {
-  padding: 20px;
+.badge-cancelled {
+  background: #fff5f5;
+  color: #e53e3e;
 }
 
-.consult-time-box {
+/* 5. 카드 중단 (정보 영역) */
+.consult-card-body {
+  flex: 1;
+}
+
+.consult-lawyer-name {
+  font-size: 19px;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 6px;
+}
+
+.consult-datetime {
+  font-size: 15px;
+  color: #4a5568;
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-  font-size: 15px;
-  color: #1e293b;
-  font-weight: 500;
+  gap: 6px;
 }
 
-.consult-time-box .icon {
-  font-size: 16px;
-}
-
-.consult-issue-box {
+.consult-memo {
+  font-size: 14px;
   background: #f8fafc;
   padding: 16px;
   border-radius: 12px;
-}
-
-.issue-label,
-.reason-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  color: #94a3b8;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-}
-
-.issue-text {
-  font-size: 14px;
+  margin: 18px 0;
+  color: #4a5568;
   line-height: 1.6;
-  color: #334155;
-  margin: 0;
+  border-left: 4px solid #cbd5e1;
 }
 
-/* 거절/취소 사유 섹션 */
-.reject-reason-box {
-  margin-top: 16px;
-  padding: 14px;
-  border-left: 4px solid #fca5a5;
-  background: #fff5f5;
-}
-
-.reason-text {
-  font-size: 13px;
-  color: #b91c1c;
-  margin: 0;
-}
-
-/* 카드 푸터 (액션 버튼) */
-.card-footer {
-  padding: 0 20px 20px;
+/* 6. 카드 하단 (푸터 및 우측 정렬 버튼 그룹) */
+.consult-card-footer {
+  margin-top: 10px;
+  padding-top: 20px;
+  border-top: 1px solid #edf2f7;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
 }
 
-.action-btn {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
+.delete-dday-text {
+  font-size: 12px;
+  color: #e53e3e;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 버튼 뭉치를 우측으로 밀어버리는 핵심 스타일 */
+.consult-btns-group {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+}
+
+/* 버튼 공통 스타일 디자인 */
+.consult-btns-group button {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border-radius: 10px;
   font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
-  border: none;
+  white-space: nowrap;
+  width: auto;
   transition: all 0.2s;
 }
 
-.btn-chat {
-  background: #1a6dff;
-  color: white;
+/* 버튼별 색상 테마 */
+.btn-pay {
+  background: #1a1a2e !important;
+  color: #fff !important;
 }
 
-.btn-chat:hover {
-  background: #0056e0;
+.btn-pay:hover {
+  background: #2d2d4d !important;
 }
 
 .btn-review {
-  background: #1a1a2e;
-  color: white;
+  background: #1a6dff !important;
+  color: #fff !important;
+}
+
+.btn-review:hover {
+  background: #0056e0 !important;
 }
 
 .btn-cancel {
-  background: #ffffff;
-  color: #94a3b8;
-  border: 1px solid #e2e8f0;
+  background: #fff !important;
+  color: #718096 !important;
+  border: 1px solid #e2e8f0 !important;
 }
 
 .btn-cancel:hover {
-  background: #fef2f2;
-  color: #dc2626;
-  border-color: #fca5a5;
+  background: #f7fafc !important;
+  color: #e53e3e !important;
+  border-color: #feb2b2 !important;
 }
 
-/* 로딩 및 빈 상태 */
-.empty-tab-content {
-  padding: 60px 0;
+.btn-restore {
+  background: #f0fff4 !important;
+  color: #38a169 !important;
+  border: 1px solid #c6f6d5 !important;
+}
+
+.btn-restore:hover {
+  background: #c6f6d5 !important;
+}
+
+.btn-delete {
+  background: #fff !important;
+  color: #e53e3e !important;
+  border: 1px solid #fed7d7 !important;
+}
+
+.btn-delete:hover {
+  background: #fff5f5 !important;
+}
+
+/* 7. 데이터 없음 안내 */
+.consult-empty-state {
   text-align: center;
-  color: #94a3b8;
-  font-size: 15px;
+  padding: 100px 0;
+  background: #f9fafb;
+  border-radius: 20px;
+  border: 2px dashed #e2e8f0;
+  color: #a0aec0;
+  font-weight: 600;
 }
