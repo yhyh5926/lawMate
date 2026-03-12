@@ -1,6 +1,6 @@
 /* QuestionListPage.css */
 
-/* ── Root & Variables ── */
+/* ── Root & Variables ── (기존 유지) */
 :root {
   --q-primary: #1a375a; /* LawMate 남색 */
   --q-secondary: #7fb3d5; /* LawMate 하늘색 */
@@ -93,24 +93,7 @@
   margin-right: 8px;
 }
 
-.qlp-hero-write-btn {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background-color: var(--q-secondary);
-  color: var(--q-bg-white);
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(26, 55, 90, 0.2);
-  transition: background 0.2s;
-}
-
-.qlp-hero-write-btn:hover {
-  background-color: #5d97bd;
-}
+/* 히어로 버튼 제거됨 - 하단 버튼으로 대체 */
 
 /* ── FILTER BAR ── */
 .qlp-filter-bar {
@@ -321,24 +304,36 @@
   background-color: #b07a10;
 }
 
-/* ── PAGINATION ── */
-.qlp-pagination {
+/* ── FOOTER (Pagination & Write Button) ── */
+.qlp-footer-wrapper {
   display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 40px;
+  justify-content: center; /* 중앙 정렬 */
+  align-items: center;
+  position: relative; /* 버튼의 우측 배치를 위한 기준 */
+  margin-top: 50px;
+  min-height: 50px;
 }
 
-.qlp-page-btn {
+.qlp-pagination {
+  display: flex;
+  gap: 8px;
+}
+
+.qlp-page-btn,
+.qlp-page-arrow {
   width: 38px;
   height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 8px;
   border: 1px solid var(--q-border);
   background-color: var(--q-bg-white);
   color: var(--q-primary);
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  font-size: 14px;
 }
 
 .qlp-page-btn.active {
@@ -347,10 +342,42 @@
   border-color: var(--q-primary);
 }
 
-.qlp-page-btn:hover:not(.active) {
+.qlp-page-btn:hover:not(.active),
+.qlp-page-arrow:hover:not(:disabled) {
   background-color: #f8fbff;
   border-color: var(--q-secondary);
   color: var(--q-secondary);
+}
+
+.qlp-page-arrow:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* 질문하기 버튼 - 리스트 하단 우측 배치 */
+.qlp-write-btn {
+  position: absolute;
+  right: 0;
+  background-color: var(--q-secondary);
+  color: var(--q-bg-white);
+  border: none;
+  padding: 0 24px;
+  height: 42px; /* 검색 버튼들과 높이 통일 */
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(127, 179, 213, 0.3);
+  transition: all 0.2s;
+}
+
+.qlp-write-btn:hover {
+  background-color: #5d97bd;
+  transform: translateY(-2px);
+}
+
+.qlp-write-btn:active {
+  transform: translateY(0);
 }
 
 /* Responsive */
@@ -365,5 +392,17 @@
   }
   .qlp-hero-title {
     font-size: 32px;
+  }
+
+  /* 모바일에서는 버튼을 하단에 가득 차게 */
+  .qlp-footer-wrapper {
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 20px;
+  }
+  .qlp-write-btn {
+    position: static;
+    width: 100%;
+    height: 48px;
   }
 }

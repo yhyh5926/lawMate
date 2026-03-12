@@ -8,6 +8,7 @@ import "../../styles/question/QuestionDetailPage.css";
 import { formatDate } from "../../utils/formatDate.js";
 import { baseURL } from "../../constants/baseURL.js";
 import QuestionAnswerList from "../../components/question/QuestionAnswerList.jsx";
+import { scrollToTop } from "../../utils/windowUtils.js";
 
 const QuestionDetailPage = () => {
   const { questionId } = useParams();
@@ -30,10 +31,6 @@ const QuestionDetailPage = () => {
     (ans) => ans.lawyerId === user?.lawyerId,
   );
 
-  useEffect(() => {
-    fetchDetail();
-  }, [questionId]);
-
   const fetchDetail = async () => {
     try {
       setLoading(true);
@@ -45,6 +42,11 @@ const QuestionDetailPage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchDetail();
+    scrollToTop();
+  }, [questionId]);
 
   // 💡 이미지 파일과 일반 파일 분류
   const imageExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
