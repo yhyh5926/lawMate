@@ -1,7 +1,6 @@
 // src/pages/main/MainPage.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Modal from "../../components/common/Modal";
 import { mainApi } from "../../api/mainApi";
 import { questionApi } from "../../api/questionApi";
 import { getPollList } from "../../api/communityApi";
@@ -709,26 +708,6 @@ export default function MainPage() {
           </div>
         </section>
       </div>
-
-      <Modal
-        isOpen={!!noticeDetail}
-        title={noticeDetail?.title || "공지사항"}
-        onClose={() => setNoticeDetail(null)}
-      >
-        {noticeDetail && (
-          <>
-            <div style={{ fontSize: 12, color: "#64748b" }}>
-              {noticeDetail.createdAt
-                ? new Date(noticeDetail.createdAt).toLocaleString()
-                : ""}
-            </div>
-            <hr style={{ margin: "12px 0" }} />
-            <div style={{ whiteSpace: "pre-wrap", lineHeight: 1.75 }}>
-              {noticeDetail.content}
-            </div>
-          </>
-        )}
-      </Modal>
     </div>
   );
 }
