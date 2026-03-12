@@ -39,11 +39,12 @@ export default function MainPage() {
         setLoading(true);
         setErr("");
 
-        const [mainResult, questionResult, pollResult] = await Promise.allSettled([
-          mainApi.getMainData(),
-          questionApi.getQuestionList({}),
-          getPollList(),
-        ]);
+        const [mainResult, questionResult, pollResult] =
+          await Promise.allSettled([
+            mainApi.getMainData(),
+            questionApi.getQuestionList({}),
+            getPollList(),
+          ]);
 
         if (!alive) return;
 
@@ -59,11 +60,16 @@ export default function MainPage() {
           const qRes = questionResult.value;
           const qList = Array.isArray(qRes?.data?.data) ? qRes.data.data : [];
           const qSorted = [...qList].sort((a, b) =>
-            String(b?.createdAt ?? "").localeCompare(String(a?.createdAt ?? "")),
+            String(b?.createdAt ?? "").localeCompare(
+              String(a?.createdAt ?? ""),
+            ),
           );
           setRecentQuestions(qSorted.slice(0, 5));
         } else {
-          console.error("questionApi.getQuestionList failed:", questionResult.reason);
+          console.error(
+            "questionApi.getQuestionList failed:",
+            questionResult.reason,
+          );
           setRecentQuestions([]);
         }
 
@@ -311,11 +317,13 @@ export default function MainPage() {
               <span style={styles.heroPath}></span>
             </div>
 
-            <div style={styles.welcomeText}>환영합니다. 필요한 법률 서비스를 빠르게 시작해보세요.</div>
+            <div style={styles.welcomeText}>
+              환영합니다. 필요한 법률 서비스를 빠르게 시작해보세요.
+            </div>
             <h1 style={styles.heroTitle}>법률 상담을 더 쉽고 빠르게</h1>
             <p style={styles.heroSubtitle}>
-              상담 통계, 최근 법률질문, 커뮤니티와 모의 판결 게시판까지
-              한 번에 확인하고 필요한 기능으로 빠르게 이동하세요.
+              상담 통계, 최근 법률질문, 커뮤니티와 모의 판결 게시판까지 한 번에
+              확인하고 필요한 기능으로 빠르게 이동하세요.
             </p>
 
             <div className="lm-kpiGrid" style={styles.heroStatGrid}>
@@ -323,7 +331,10 @@ export default function MainPage() {
                 <div style={styles.heroStatLabel}>📅 오늘 상담 접수</div>
                 <div style={styles.heroStatValue}>{todayCount}</div>
                 <div
-                  style={{ ...styles.heroTrendText, ...trendStyle(todayChangePct) }}
+                  style={{
+                    ...styles.heroTrendText,
+                    ...trendStyle(todayChangePct),
+                  }}
                 >
                   전일 대비 {trendText(todayChangePct)}
                 </div>
@@ -333,7 +344,10 @@ export default function MainPage() {
                 <div style={styles.heroStatLabel}>📈 이번 주 상담 건수</div>
                 <div style={styles.heroStatValue}>{weeklyCount}</div>
                 <div
-                  style={{ ...styles.heroTrendText, ...trendStyle(weeklyChangePct) }}
+                  style={{
+                    ...styles.heroTrendText,
+                    ...trendStyle(weeklyChangePct),
+                  }}
                 >
                   전주 대비 {trendText(weeklyChangePct)}
                 </div>
@@ -345,8 +359,8 @@ export default function MainPage() {
             <div style={styles.ctaCard}>
               <div style={styles.ctaTitle}>지금 바로 질문하세요</div>
               <div style={styles.ctaDesc}>
-                질문 등록은 로그인 후 이용할 수 있습니다. 질문 목록을 먼저 둘러본 뒤
-                필요한 내용을 바로 남길 수 있습니다.
+                질문 등록은 로그인 후 이용할 수 있습니다. 질문 목록을 먼저
+                둘러본 뒤 필요한 내용을 바로 남길 수 있습니다.
               </div>
 
               <button
@@ -405,7 +419,12 @@ export default function MainPage() {
                 <div style={styles.metricBody}>
                   <div style={styles.metricLabel}>오늘 상담 접수</div>
                   <div style={styles.metricValue}>{todayCount}건</div>
-                  <div style={{ ...styles.metricTrend, ...trendStyle(todayChangePct) }}>
+                  <div
+                    style={{
+                      ...styles.metricTrend,
+                      ...trendStyle(todayChangePct),
+                    }}
+                  >
                     전일 대비 {trendText(todayChangePct)}
                   </div>
                 </div>
@@ -417,7 +436,10 @@ export default function MainPage() {
                   <div style={styles.metricLabel}>이번 주 상담 건수</div>
                   <div style={styles.metricValue}>{weeklyCount}건</div>
                   <div
-                    style={{ ...styles.metricTrend, ...trendStyle(weeklyChangePct) }}
+                    style={{
+                      ...styles.metricTrend,
+                      ...trendStyle(weeklyChangePct),
+                    }}
                   >
                     전주 대비 {trendText(weeklyChangePct)}
                   </div>
@@ -498,7 +520,9 @@ export default function MainPage() {
                     </LineChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div style={styles.chartEmpty}>아직 표시할 통계 데이터가 없습니다.</div>
+                  <div style={styles.chartEmpty}>
+                    아직 표시할 통계 데이터가 없습니다.
+                  </div>
                 )}
               </div>
             </div>
@@ -538,7 +562,9 @@ export default function MainPage() {
                     <div style={styles.listTitle}>{p.title}</div>
                   </div>
                   <div style={styles.listMeta}>
-                    {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : ""}
+                    {p.createdAt
+                      ? new Date(p.createdAt).toLocaleDateString()
+                      : ""}
                   </div>
                 </button>
               )}
@@ -696,11 +722,16 @@ export default function MainPage() {
                       </span>
                     </div>
                     <div style={styles.subMeta}>
-                      {lawyer.officeName ?? lawyer.location ?? lawyer.email ?? ""}
+                      {lawyer.officeName ??
+                        lawyer.location ??
+                        lawyer.email ??
+                        ""}
                     </div>
                   </div>
                   <div style={styles.listMeta}>
-                    {lawyer.createdAt ? formatShortDateTime(lawyer.createdAt) : ""}
+                    {lawyer.createdAt
+                      ? formatShortDateTime(lawyer.createdAt)
+                      : ""}
                   </div>
                 </button>
               )}
@@ -768,10 +799,18 @@ function getPollStatusText(poll) {
     poll?.status ?? poll?.pollStatus ?? poll?.state ?? "",
   ).toUpperCase();
 
-  if (status.includes("END") || status.includes("CLOSE") || status.includes("DONE")) {
+  if (
+    status.includes("END") ||
+    status.includes("CLOSE") ||
+    status.includes("DONE")
+  ) {
     return "마감";
   }
-  if (status.includes("PROGRESS") || status.includes("OPEN") || status.includes("ONGOING")) {
+  if (
+    status.includes("PROGRESS") ||
+    status.includes("OPEN") ||
+    status.includes("ONGOING")
+  ) {
     return "진행중";
   }
 

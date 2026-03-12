@@ -14,7 +14,7 @@ const QnaWrite = () => {
   const [form, setForm] = useState({
     caseType: "",
     title: "",
-    content: ""
+    content: "",
   });
 
   const handleChange = (e) => {
@@ -29,11 +29,25 @@ const QnaWrite = () => {
       alert("로그인이 필요합니다.");
       return;
     }
-    if (!form.caseType) { alert("분류를 선택해주세요."); return; }
-    if (!form.title.trim()) { alert("제목을 입력해주세요."); return; }
-    if (!form.content.trim()) { alert("내용을 입력해주세요."); return; }
+    if (!form.caseType) {
+      alert("분류를 선택해주세요.");
+      return;
+    }
+    if (!form.title.trim()) {
+      alert("제목을 입력해주세요.");
+      return;
+    }
+    if (!form.content.trim()) {
+      alert("내용을 입력해주세요.");
+      return;
+    }
 
-    const payload = { memberId, caseType: form.caseType, title: form.title, content: form.content };
+    const payload = {
+      memberId,
+      caseType: form.caseType,
+      title: form.title,
+      content: form.content,
+    };
 
     try {
       await writePost(payload);
@@ -50,12 +64,10 @@ const QnaWrite = () => {
   return (
     <div className="write-wrapper">
       <div className="write-container">
-
         <h2 className="write-page-title">게시글 작성</h2>
 
         <div className="write-card">
           <form className="write-form" onSubmit={handleSubmit}>
-
             {/* 분류 */}
             <div className="write-field">
               <label className="write-label">
@@ -68,10 +80,9 @@ const QnaWrite = () => {
                 onChange={handleChange}
               >
                 <option value="">선택하세요</option>
-                <option value="민사">민사</option>
-                <option value="형사">형사</option>
-                <option value="행정">행정</option>
                 <option value="자유">자유</option>
+                <option value="질문">질문</option>
+                {user.loginId === "admin" && <option value="공지">공지</option>}
               </select>
             </div>
 
@@ -103,7 +114,9 @@ const QnaWrite = () => {
                 rows="10"
                 onChange={handleChange}
               />
-              <span className={`write-counter ${contentLength > 1800 ? "warn" : ""}`}>
+              <span
+                className={`write-counter ${contentLength > 1800 ? "warn" : ""}`}
+              >
                 {contentLength} / 2000
               </span>
             </div>
@@ -123,10 +136,8 @@ const QnaWrite = () => {
                 등록하기
               </button>
             </div>
-
           </form>
         </div>
-
       </div>
     </div>
   );
