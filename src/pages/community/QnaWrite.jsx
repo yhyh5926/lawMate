@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { writePost } from "../../api/communityApi";
+import { useAuthStore } from "../../store/authStore";
 import "../../styles/community/QnaWrite.css";
 
 const QnaWrite = () => {
   const navigate = useNavigate();
+
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const memberId = user?.memberId;
 
   const [form, setForm] = useState({
     caseType: "",
@@ -20,9 +25,10 @@ const QnaWrite = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const memberId = Number(localStorage.getItem("memberId"));
-
-    if (!memberId) { alert("로그인 정보가 없습니다."); return; }
+    if (!isAuthenticated || !memberId) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
     if (!form.caseType) { alert("분류를 선택해주세요."); return; }
     if (!form.title.trim()) { alert("제목을 입력해주세요."); return; }
     if (!form.content.trim()) { alert("내용을 입력해주세요."); return; }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getComments, writeComment } from "../../api/communityApi";
+import { useAuthStore } from "../../store/authStore";
 import "../../styles/community/CommentList.css";
 
 const CommentList = ({ postId, boardType }) => {
@@ -7,6 +8,10 @@ const CommentList = ({ postId, boardType }) => {
   const [content, setContent] = useState(""); // 일반
   const [replyContent, setReplyContent] = useState({}); // 대댓글
   const [openReplyId, setOpenReplyId] = useState(null); // 답글
+
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const memberId = user?.memberId;
 
   const fetchComments = async () => {
     try {
@@ -28,10 +33,8 @@ const CommentList = ({ postId, boardType }) => {
     return comments.filter((c) => c.parentId === commentId);
   };
 
-  const memberId = Number(localStorage.getItem("memberId"));
-
   const handleWriteComment = async () => {
-    if (!memberId) {
+    if (!isAuthenticated || !memberId) {
       alert("로그인이 필요합니다.");
       return;
     }
