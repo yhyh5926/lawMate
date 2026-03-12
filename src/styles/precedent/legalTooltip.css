@@ -1,83 +1,72 @@
-/* LegalTooltip.css */
-
+/* 컨테이너 */
 .lt-wrap {
-  position: relative;
-  line-height: inherit;
+  line-height: 1.6;
 }
 
-/* 1. 텍스트 내 강조된 키워드 스타일 */
+/* 강조된 키워드 스타일 */
 .lt-keyword {
-  background: linear-gradient(
-    to top,
-    rgba(127, 179, 213, 0.3) 40%,
-    transparent 40%
-  ); /* 로고 하늘색 하이라이트 */
-  color: #1a375a; /* 로고 남색 글자 */
-  font-weight: 700;
+  background: transparent; /* 배경색 제거 (겹침 방지) */
+  border-bottom: 2px solid #3498db; /* 점선 대신 실선으로 가시성 확보 */
+  color: inherit; /* 부모 요소의 글자색을 그대로 유지 */
+  font-weight: 700; /* 글자를 두껍게 하여 강조 */
   cursor: help;
-  padding: 0 2px;
-  border-radius: 2px;
-  text-decoration: none;
+  padding: 0 1px;
   transition: all 0.2s ease;
+  text-decoration: none;
 }
 
 .lt-keyword:hover {
-  background: linear-gradient(
-    to top,
-    rgba(127, 179, 213, 0.6) 50%,
-    transparent 50%
-  );
-  color: #000;
+  background-color: rgba(52, 152, 219, 0.15); /* 호버 시에만 살짝 배경색 노출 */
+  color: #3498db !important; /* 호버 시 포인트 컬러 적용 */
 }
 
-/* 2. 툴팁 박스 스타일 */
+/* 툴팁 본체 (기존 유지하되 가독성 보정) */
 .lt-tooltip {
-  position: fixed; /* 브라우저 뷰포트 기준으로 배치 */
-  z-index: 2000;
+  position: fixed;
+  z-index: 10000; /* 최상단 유지 */
   width: 280px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(26, 55, 90, 0.2); /* 남색 계열 그림자 */
-  border: 1px solid #e1e8f0;
-  padding: 16px;
-  pointer-events: none; /* 툴팁 위로 마우스가 가도 꺼지지 않게 방지 */
-  animation: lt-fade-in 0.2s ease-out;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border: 1px solid #d1d5db;
+  overflow: hidden;
+  pointer-events: none;
+  animation: fadeIn 0.15s ease-out;
 }
 
-/* 3. 툴팁 헤더 (용어 제목) */
 .lt-tooltip-header {
+  background-color: #f3f4f6;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e5e7eb;
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 10px;
-  padding-bottom: 8px;
-  border-bottom: 1.5px solid #f0f4f8;
 }
 
 .lt-tooltip-icon {
-  font-size: 16px;
+  color: #1f2937;
+  font-size: 0.85rem;
 }
 
 .lt-tooltip-term {
-  font-size: 15px;
+  color: #1f2937;
+  font-size: 0.95rem;
   font-weight: 800;
-  color: #1a375a; /* 로고 남색 */
 }
 
-/* 4. 툴팁 설명 (정의) */
 .lt-tooltip-desc {
-  font-size: 13.5px;
-  line-height: 1.6;
-  color: #4a5568;
-  word-break: keep-all;
+  padding: 12px;
   margin: 0;
+  color: #374151;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  word-break: keep-all;
 }
 
-/* 5. 애니메이션 */
-@keyframes lt-fade-in {
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(5px);
+    transform: translateY(3px);
   }
   to {
     opacity: 1;

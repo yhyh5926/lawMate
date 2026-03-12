@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import { legalDictionary } from "./legalDictionary";
 import "../../styles/precedent/LegalTooltip.css";
 
+// Font Awesome 관련 임포트
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faScaleBalanced } from "@fortawesome/free-solid-svg-icons";
+
 const LegalTooltip = ({ text }) => {
   const [hoveredWord, setHoveredWord] = useState(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -9,7 +13,8 @@ const LegalTooltip = ({ text }) => {
   if (!text) return null;
 
   const keywords = Object.keys(legalDictionary);
-  const regex = new RegExp(`(${keywords.join("|")})`, "g");
+  const sortedKeywords = [...keywords].sort((a, b) => b.length - a.length);
+  const regex = new RegExp(`(${sortedKeywords.join("|")})`, "g");
   const parts = text.split(regex);
 
   return (
@@ -36,10 +41,14 @@ const LegalTooltip = ({ text }) => {
         <aside
           className="lt-tooltip"
           role="tooltip"
-          style={{ top: mousePos.y + 14, left: mousePos.x + 14 }}
+          style={{ top: mousePos.y + 15, left: mousePos.x + 15 }}
         >
           <header className="lt-tooltip-header">
-            <span className="lt-tooltip-icon">⚖️</span>
+            {/* FontAwesomeIcon 컴포넌트로 교체 */}
+            <FontAwesomeIcon
+              icon={faScaleBalanced}
+              className="lt-tooltip-icon"
+            />
             <strong className="lt-tooltip-term">{hoveredWord}</strong>
           </header>
           <p className="lt-tooltip-desc">{legalDictionary[hoveredWord]}</p>

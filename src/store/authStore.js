@@ -19,14 +19,14 @@ export const useAuthStore = create(
           user: {
             memberId: memberData.memberId,
             loginId: memberData.loginId,
-            role: memberData.memberType, 
+            role: memberData.memberType,
             name: memberData.name,
             email: memberData.email,
             phone: memberData.phone,
             status: memberData.status,
-            
+
             // 💡 [추가] 구글 계정 구분을 위해 provider 저장
-            provider: memberData.provider || "LOCAL", 
+            provider: memberData.provider || "LOCAL",
 
             // 💡 [추가] 마이페이지 출력을 위해 주소 정보 추가
             address: memberData.address || "",
@@ -34,7 +34,7 @@ export const useAuthStore = create(
 
             // 💡 [추가] 변호사 전용 데이터 (자격증 번호 포함)
             lawyerId: memberData.lawyerId || null,
-            licenseNo: memberData.licenseNo || "", 
+            licenseNo: memberData.licenseNo || "",
             specialty: memberData.specialty || null,
             officeName: memberData.officeName || null,
             officeAddr: memberData.officeAddr || "",
@@ -49,6 +49,12 @@ export const useAuthStore = create(
         removeToken();
         set({ user: null, token: null, isAuthenticated: false });
         localStorage.removeItem("auth-storage");
+      },
+
+      updateUser: (updatedFields) => {
+        set((state) => ({
+          user: state.user ? { ...state.user, ...updatedFields } : null,
+        }));
       },
 
       setHasHydrated: (state) => {

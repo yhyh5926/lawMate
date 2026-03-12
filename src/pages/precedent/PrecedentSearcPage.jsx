@@ -4,19 +4,27 @@ import precedentApi from "../../api/precedentApi";
 import "../../styles/precedent/PrecedentSearchPage.css";
 
 const categories = [
-  "전체",
   "금융보험",
   "보험민사",
   "가사",
   "세무",
   "부동산임대차",
+  "부동산임대차/상속",
+  "부동산매매/형사",
   "부동산매매",
   "교통형사",
+  "교통형사/마약",
   "교통민사",
   "형사재산",
   "형사강력",
   "가사상속",
   "근로산재",
+  "가족법",
+  "산업재해",
+  "보험금",
+  "조세/세금",
+  "영업비밀 침해",
+  "스토킹범죄",
 ];
 
 const PAGE_GROUP_SIZE = 5;

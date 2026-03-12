@@ -1,6 +1,6 @@
 /**
  * 파일 위치: src/components/mypage/EditInfoTab.jsx
- * 수정사항: 
+ * 수정사항:
  * 1. memberApi 임포트 추가
  * 2. handleEditSubmit에 폼 데이터를 백엔드로 전송하는 API 연동 로직 추가
  */
@@ -13,7 +13,16 @@ const GOOGLE_CLIENT_ID =
   "244554224995-kcgsjp47k8flns89ldv9stpfga219kut.apps.googleusercontent.com";
 
 // 💡 전문 분야 카테고리 배열 ("전체" 제외)
-const SPECIALTIES = ["민사", "형사", "가사", "이혼", "노동", "행정", "기업", "부동산"];
+const SPECIALTIES = [
+  "민사",
+  "형사",
+  "가사",
+  "이혼",
+  "노동",
+  "행정",
+  "기업",
+  "부동산",
+];
 
 const EditInfoContent = ({ onVerifyReset }) => {
   const { user } = useAuthStore();
@@ -55,7 +64,7 @@ const EditInfoContent = ({ onVerifyReset }) => {
           "https://www.googleapis.com/oauth2/v3/userinfo",
           {
             headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-          }
+          },
         ).then((res) => res.json());
 
         if (userInfo.email === user.email) {
@@ -109,13 +118,13 @@ const EditInfoContent = ({ onVerifyReset }) => {
   // 💡 전문 분야 다중 선택 토글 핸들러 추가
   const handleSpecialtyToggle = (spec) => {
     let currentList = editData.specialty ? editData.specialty.split(",") : [];
-    
+
     if (currentList.includes(spec)) {
       currentList = currentList.filter((item) => item !== spec); // 이미 선택되어 있으면 제거
     } else {
       currentList.push(spec); // 선택되어 있지 않으면 추가
     }
-    
+
     setEditData({ ...editData, specialty: currentList.join(",") });
   };
 
@@ -128,14 +137,15 @@ const EditInfoContent = ({ onVerifyReset }) => {
   // 💡 API 호출 로직으로 교체
   const handleEditSubmit = async (e) => {
     e.preventDefault();
+
     if (editData.password && editData.password !== editData.passwordConfirm) {
       return alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
     }
-    
+
     try {
       // 1. 전화번호 3칸을 하나의 문자열로 합침
       const fullPhone = `${editData.phone1}${editData.phone2}${editData.phone3}`;
-      
+
       // 2. 백엔드로 보낼 데이터 조립
       const submitData = {
         loginId: user.loginId, // 업데이트할 회원의 ID 필수 포함
@@ -149,14 +159,12 @@ const EditInfoContent = ({ onVerifyReset }) => {
         specialty: editData.specialty,
         officeName: editData.officeAddress, // 기획에 따라 필드명 매핑 확인 필요
       };
-
       // 3. memberApi.js 에 있는 함수 호출
       await memberApi.editProfile(submitData);
-      
+
       alert("정보 수정 요청이 완료되었습니다.");
-      
+
       // 필요 시 여기서 전역 user 정보를 갱신하거나 창을 새로고침 할 수 있습니다.
-      
     } catch (error) {
       console.error("정보 수정 실패:", error);
       alert("정보 수정 중 문제가 발생했습니다. 다시 시도해주세요.");
@@ -370,10 +378,21 @@ const EditInfoContent = ({ onVerifyReset }) => {
 
               {/* 💡 전문 분야 다중 선택 버튼 UI 적용 */}
               <div className="form-group">
-                <label className="form-label">주요 전문 분야 (다중 선택 가능)</label>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "8px" }}>
+                <label className="form-label">
+                  주요 전문 분야 (다중 선택 가능)
+                </label>
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "8px",
+                    marginTop: "8px",
+                  }}
+                >
                   {SPECIALTIES.map((spec) => {
-                    const isSelected = editData.specialty ? editData.specialty.split(",").includes(spec) : false;
+                    const isSelected = editData.specialty
+                      ? editData.specialty.split(",").includes(spec)
+                      : false;
                     return (
                       <button
                         type="button"
@@ -382,7 +401,9 @@ const EditInfoContent = ({ onVerifyReset }) => {
                         style={{
                           padding: "8px 16px",
                           borderRadius: "20px",
-                          border: isSelected ? "1px solid #007BFF" : "1px solid #ddd",
+                          border: isSelected
+                            ? "1px solid #007BFF"
+                            : "1px solid #ddd",
                           backgroundColor: isSelected ? "#007BFF" : "#fff",
                           color: isSelected ? "#fff" : "#555",
                           cursor: "pointer",

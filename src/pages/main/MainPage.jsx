@@ -20,6 +20,7 @@ export default function MainPage() {
   const navigate = useNavigate();
 
   const [data, setData] = useState(null);
+  const [noticeDetail, setNoticeDetail] = useState(null);
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -30,29 +31,6 @@ export default function MainPage() {
     window.location.href = "/member/login";
   };
 
-  const quickLinks = [
-    {
-      label: "✍️ 법률질문 작성",
-      desc: "궁금한 내용을 바로 등록",
-      onClick: goToLogin,
-    },
-    {
-      label: "👨‍⚖️ 변호사 찾기",
-      desc: "전문 변호사 바로 찾기",
-      onClick: () => navigate("/lawyer/list"),
-    },
-    {
-      label: "📚 판례 검색",
-      desc: "판례 검색 페이지로 이동",
-      onClick: () => navigate("/precedent/search"),
-    },
-    {
-      label: "⚖️ 의견 조사 판결 보기",
-      desc: "의견 조사 판결 게시판 바로가기",
-      onClick: () => navigate("/community/pollList"),
-    },
-  ];
-
   useEffect(() => {
     let alive = true;
 
@@ -61,12 +39,11 @@ export default function MainPage() {
         setLoading(true);
         setErr("");
 
-        const [mainResult, questionResult, pollResult] =
-          await Promise.allSettled([
-            mainApi.getMainData(),
-            questionApi.getQuestionList({}),
-            getPollList(),
-          ]);
+        const [mainResult, questionResult, pollResult] = await Promise.allSettled([
+          mainApi.getMainData(),
+          questionApi.getQuestionList({}),
+          getPollList(),
+        ]);
 
         if (!alive) return;
 
@@ -82,16 +59,11 @@ export default function MainPage() {
           const qRes = questionResult.value;
           const qList = Array.isArray(qRes?.data?.data) ? qRes.data.data : [];
           const qSorted = [...qList].sort((a, b) =>
-            String(b?.createdAt ?? "").localeCompare(
-              String(a?.createdAt ?? ""),
-            ),
+            String(b?.createdAt ?? "").localeCompare(String(a?.createdAt ?? "")),
           );
           setRecentQuestions(qSorted.slice(0, 5));
         } else {
-          console.error(
-            "questionApi.getQuestionList failed:",
-            questionResult.reason,
-          );
+          console.error("questionApi.getQuestionList failed:", questionResult.reason);
           setRecentQuestions([]);
         }
 
@@ -125,8 +97,23 @@ export default function MainPage() {
     };
   }, []);
 
+  const topNotices = useMemo(
+    () => (data?.topNotices ?? []).slice(0, 3),
+    [data],
+  );
+
   const recentPosts = useMemo(
     () => (data?.recentPosts ?? []).slice(0, 5),
+    [data],
+  );
+
+  const recentPrecedents = useMemo(
+    () => (data?.recentPrecedents ?? []).slice(0, 5),
+    [data],
+  );
+
+  const recentLawyers = useMemo(
+    () => (data?.recentLawyers ?? []).slice(0, 5),
     [data],
   );
 
@@ -186,6 +173,15 @@ export default function MainPage() {
     return pct > 0 ? styles.trendUp : styles.trendDown;
   };
 
+  const openNotice = async (id) => {
+    try {
+      const detail = await mainApi.getNoticeDetail(id);
+      setNoticeDetail(detail);
+    } catch {
+      window.alert("공지 상세를 불러오지 못했습니다.");
+    }
+  };
+
   const goCommunityDetail = (item) => {
     const pollId = item?.pollId;
     if (pollId) {
@@ -202,6 +198,24 @@ export default function MainPage() {
     const qid = q?.questionId ?? q?.id;
     if (!qid) return;
     navigate(`/question/detail/${qid}`);
+  };
+
+  const goPrecedentDetail = (p) => {
+    const precedentId = p?.precedentId ?? p?.id;
+    if (!precedentId) {
+      navigate("/precedent/search");
+      return;
+    }
+    navigate(`/precedent/detail/${precedentId}`);
+  };
+
+  const goLawyerDetail = (lawyer) => {
+    const lawyerId = lawyer?.lawyerId ?? lawyer?.id;
+    if (!lawyerId) {
+      navigate("/lawyer/list");
+      return;
+    }
+    navigate(`/lawyer/detail/${lawyerId}`);
   };
 
   const tooltipLabel = (label) => {
@@ -233,13 +247,11 @@ export default function MainPage() {
           .lm-heroAside { width: 100% !important; }
           .lm-statRow { grid-template-columns: 1fr !important; }
           .lm-grid3 { grid-template-columns: 1fr !important; }
-          .lm-quickGrid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+          .lm-grid2 { grid-template-columns: 1fr !important; }
         }
 
         @media (max-width: 720px) {
           .lm-kpiGrid { grid-template-columns: 1fr !important; }
-          .lm-quickGrid { grid-template-columns: 1fr !important; }
-          .lm-bottomCta { flex-direction: column; align-items: stretch !important; }
           .lm-sectionHead { flex-direction: column; align-items: flex-start !important; gap: 6px; }
         }
 
@@ -254,23 +266,13 @@ export default function MainPage() {
             transform: translateY(-2px);
           }
 
-          .lm-quickBtn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 24px rgba(30, 77, 140, 0.14);
-          }
-
           .lm-primaryBtn:hover {
             filter: brightness(0.98);
           }
 
           .lm-secondaryBtn:hover,
-          .lm-moreBtn:hover,
-          .lm-bottomGhostBtn:hover {
+          .lm-moreBtn:hover {
             background: #eef4ff;
-          }
-
-          .lm-bottomPrimaryBtn:hover {
-            filter: brightness(0.98);
           }
         }
 
@@ -309,13 +311,11 @@ export default function MainPage() {
               <span style={styles.heroPath}></span>
             </div>
 
-            <div style={styles.welcomeText}>
-              환영합니다. 필요한 법률 서비스를 빠르게 시작해보세요.
-            </div>
+            <div style={styles.welcomeText}>환영합니다. 필요한 법률 서비스를 빠르게 시작해보세요.</div>
             <h1 style={styles.heroTitle}>법률 상담을 더 쉽고 빠르게</h1>
             <p style={styles.heroSubtitle}>
-              상담 통계, 최근 법률질문, 커뮤니티와 의견 조사 판결 게시판까지 한 번에
-              확인하고 필요한 기능으로 빠르게 이동하세요.
+              상담 통계, 최근 법률질문, 커뮤니티와 모의 판결 게시판까지
+              한 번에 확인하고 필요한 기능으로 빠르게 이동하세요.
             </p>
 
             <div className="lm-kpiGrid" style={styles.heroStatGrid}>
@@ -323,10 +323,7 @@ export default function MainPage() {
                 <div style={styles.heroStatLabel}>📅 오늘 상담 접수</div>
                 <div style={styles.heroStatValue}>{todayCount}</div>
                 <div
-                  style={{
-                    ...styles.heroTrendText,
-                    ...trendStyle(todayChangePct),
-                  }}
+                  style={{ ...styles.heroTrendText, ...trendStyle(todayChangePct) }}
                 >
                   전일 대비 {trendText(todayChangePct)}
                 </div>
@@ -336,29 +333,11 @@ export default function MainPage() {
                 <div style={styles.heroStatLabel}>📈 이번 주 상담 건수</div>
                 <div style={styles.heroStatValue}>{weeklyCount}</div>
                 <div
-                  style={{
-                    ...styles.heroTrendText,
-                    ...trendStyle(weeklyChangePct),
-                  }}
+                  style={{ ...styles.heroTrendText, ...trendStyle(weeklyChangePct) }}
                 >
                   전주 대비 {trendText(weeklyChangePct)}
                 </div>
               </div>
-            </div>
-
-            <div className="lm-quickGrid" style={styles.quickGrid}>
-              {quickLinks.map((item) => (
-                <button
-                  key={item.label}
-                  className="lm-quickBtn"
-                  type="button"
-                  onClick={item.onClick}
-                  style={styles.quickLinkBtn}
-                >
-                  <div style={styles.quickLinkTitle}>{item.label}</div>
-                  <div style={styles.quickLinkDesc}>{item.desc}</div>
-                </button>
-              ))}
             </div>
           </div>
 
@@ -366,8 +345,8 @@ export default function MainPage() {
             <div style={styles.ctaCard}>
               <div style={styles.ctaTitle}>지금 바로 질문하세요</div>
               <div style={styles.ctaDesc}>
-                질문 등록은 로그인 후 이용할 수 있습니다. 질문 목록을 먼저
-                둘러본 뒤 필요한 내용을 바로 남길 수 있습니다.
+                질문 등록은 로그인 후 이용할 수 있습니다. 질문 목록을 먼저 둘러본 뒤
+                필요한 내용을 바로 남길 수 있습니다.
               </div>
 
               <button
@@ -394,7 +373,7 @@ export default function MainPage() {
               </div>
               <div style={styles.trustItem}>
                 <span style={styles.trustDot} />
-                <span>최신 커뮤니티와 의견 조사 판결 게시판 제공</span>
+                <span>최신 커뮤니티와 모의 판결 게시판 제공</span>
               </div>
               <div style={styles.trustItem}>
                 <span style={styles.trustDot} />
@@ -426,12 +405,7 @@ export default function MainPage() {
                 <div style={styles.metricBody}>
                   <div style={styles.metricLabel}>오늘 상담 접수</div>
                   <div style={styles.metricValue}>{todayCount}건</div>
-                  <div
-                    style={{
-                      ...styles.metricTrend,
-                      ...trendStyle(todayChangePct),
-                    }}
-                  >
+                  <div style={{ ...styles.metricTrend, ...trendStyle(todayChangePct) }}>
                     전일 대비 {trendText(todayChangePct)}
                   </div>
                 </div>
@@ -443,10 +417,7 @@ export default function MainPage() {
                   <div style={styles.metricLabel}>이번 주 상담 건수</div>
                   <div style={styles.metricValue}>{weeklyCount}건</div>
                   <div
-                    style={{
-                      ...styles.metricTrend,
-                      ...trendStyle(weeklyChangePct),
-                    }}
+                    style={{ ...styles.metricTrend, ...trendStyle(weeklyChangePct) }}
                   >
                     전주 대비 {trendText(weeklyChangePct)}
                   </div>
@@ -527,9 +498,7 @@ export default function MainPage() {
                     </LineChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div style={styles.chartEmpty}>
-                    아직 표시할 통계 데이터가 없습니다.
-                  </div>
+                  <div style={styles.chartEmpty}>아직 표시할 통계 데이터가 없습니다.</div>
                 )}
               </div>
             </div>
@@ -541,7 +510,7 @@ export default function MainPage() {
             <div>
               <h2 style={styles.sectionTitle}>최근 게시물</h2>
               <div style={styles.sectionDesc}>
-                최근 게시글, 법률질문, 의견 조사 판결 게시판 최신 항목
+                최근 게시글, 법률질문, 모의 판결 게시판 최신 항목
               </div>
             </div>
             <span style={styles.sectionHint}>각 최신 5건</span>
@@ -569,9 +538,7 @@ export default function MainPage() {
                     <div style={styles.listTitle}>{p.title}</div>
                   </div>
                   <div style={styles.listMeta}>
-                    {p.createdAt
-                      ? new Date(p.createdAt).toLocaleDateString()
-                      : ""}
+                    {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : ""}
                   </div>
                 </button>
               )}
@@ -615,10 +582,10 @@ export default function MainPage() {
             />
 
             <ActivityListCard
-              title="⚖️ 의견 조사 판결 게시판"
+              title="⚖️ 모의 판결 게시판"
               onMore={() => navigate("/community/pollList")}
               loading={loading}
-              emptyText="의견 조사 판결 게시판 글이 없습니다."
+              emptyText="모의 판결 게시판 글이 없습니다."
               items={recentCommunity}
               renderItem={(p, idx, len) => (
                 <button
@@ -648,7 +615,7 @@ export default function MainPage() {
                       </span>
                     </div>
                     <div style={styles.subMeta}>
-                      {getPollMetaText(p) || "의견 조사 판결 게시판"}
+                      {getPollMetaText(p) || "모의 판결 게시판"}
                     </div>
                   </div>
                   <div style={styles.listMeta}>
@@ -665,31 +632,79 @@ export default function MainPage() {
         </section>
 
         <section style={{ ...styles.section, marginBottom: 26 }}>
-          <div className="lm-bottomCta" style={styles.bottomCta}>
-            <div>
-              <div style={styles.bottomTitle}>지금 법률 질문하기</div>
-              <div style={styles.bottomDesc}>
-                질문 등록은 로그인 후 이용할 수 있습니다. 궁금한 점을 빠르게
-                남겨보세요.
-              </div>
-            </div>
+          <div className="lm-grid2" style={styles.grid2}>
+            <ActivityListCard
+              title="📚 최근 판례"
+              onMore={() => navigate("/precedent/search")}
+              loading={loading}
+              emptyText="최근 판례가 없습니다."
+              items={recentPrecedents}
+              renderItem={(p, idx, len) => (
+                <button
+                  key={p.precedentId ?? p.id ?? idx}
+                  type="button"
+                  className="lm-listItem"
+                  style={{
+                    ...styles.listItem,
+                    borderBottom: idx === len - 1 ? "none" : styles.borderLine,
+                  }}
+                  onClick={() => goPrecedentDetail(p)}
+                >
+                  <div style={styles.listMain}>
+                    <div style={styles.listTitle}>
+                      {p.title ?? p.caseName ?? "판례 제목 없음"}
+                    </div>
+                    <div style={styles.subMeta}>
+                      {p.caseNumber ?? p.courtName ?? p.keyword ?? ""}
+                    </div>
+                  </div>
+                  <div style={styles.listMeta}>
+                    {p.createdAt
+                      ? formatShortDateTime(p.createdAt)
+                      : p.judgmentDate
+                        ? String(p.judgmentDate)
+                        : ""}
+                  </div>
+                </button>
+              )}
+            />
 
-            <div style={styles.bottomBtnGroup}>
-              <button
-                className="lm-bottomGhostBtn"
-                style={styles.bottomGhostBtn}
-                onClick={() => navigate("/question/list")}
-              >
-                질문 목록 보기
-              </button>
-              <button
-                className="lm-bottomPrimaryBtn"
-                style={styles.bottomPrimaryBtn}
-                onClick={goToLogin}
-              >
-                질문 등록
-              </button>
-            </div>
+            <ActivityListCard
+              title="👨‍⚖️ 등록한 변호사"
+              onMore={() => navigate("/lawyer/list")}
+              loading={loading}
+              emptyText="등록된 변호사가 없습니다."
+              items={recentLawyers}
+              renderItem={(lawyer, idx, len) => (
+                <button
+                  key={lawyer.lawyerId ?? lawyer.id ?? idx}
+                  type="button"
+                  className="lm-listItem"
+                  style={{
+                    ...styles.listItem,
+                    borderBottom: idx === len - 1 ? "none" : styles.borderLine,
+                  }}
+                  onClick={() => goLawyerDetail(lawyer)}
+                >
+                  <div style={styles.listMain}>
+                    <div style={styles.questionTitleRow}>
+                      <span style={styles.pill}>
+                        {lawyer.specialty ?? lawyer.field ?? "전문"}
+                      </span>
+                      <span style={styles.ellipsisTitle}>
+                        {lawyer.name ?? "이름 없음"}
+                      </span>
+                    </div>
+                    <div style={styles.subMeta}>
+                      {lawyer.officeName ?? lawyer.location ?? lawyer.email ?? ""}
+                    </div>
+                  </div>
+                  <div style={styles.listMeta}>
+                    {lawyer.createdAt ? formatShortDateTime(lawyer.createdAt) : ""}
+                  </div>
+                </button>
+              )}
+            />
           </div>
         </section>
       </div>
@@ -753,18 +768,10 @@ function getPollStatusText(poll) {
     poll?.status ?? poll?.pollStatus ?? poll?.state ?? "",
   ).toUpperCase();
 
-  if (
-    status.includes("END") ||
-    status.includes("CLOSE") ||
-    status.includes("DONE")
-  ) {
+  if (status.includes("END") || status.includes("CLOSE") || status.includes("DONE")) {
     return "마감";
   }
-  if (
-    status.includes("PROGRESS") ||
-    status.includes("OPEN") ||
-    status.includes("ONGOING")
-  ) {
+  if (status.includes("PROGRESS") || status.includes("OPEN") || status.includes("ONGOING")) {
     return "진행중";
   }
 
@@ -776,7 +783,7 @@ function getPollStatusText(poll) {
     }
   }
 
-  return "의견 조사 판결";
+  return "모의 판결";
 }
 
 function getPollMetaText(poll) {
@@ -924,36 +931,6 @@ const styles = {
     fontWeight: 800,
   },
 
-  quickGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-    gap: 12,
-    marginTop: 18,
-  },
-
-  quickLinkBtn: {
-    textAlign: "left",
-    border: "1px solid rgba(255,255,255,0.12)",
-    background: "rgba(255,255,255,0.08)",
-    color: "#fff",
-    borderRadius: 18,
-    padding: "14px 14px",
-    cursor: "pointer",
-    transition: "all 0.18s ease",
-  },
-
-  quickLinkTitle: {
-    fontSize: 14,
-    fontWeight: 900,
-  },
-
-  quickLinkDesc: {
-    marginTop: 4,
-    fontSize: 12,
-    color: "rgba(255,255,255,0.78)",
-    lineHeight: 1.5,
-  },
-
   ctaCard: {
     borderRadius: 22,
     padding: 18,
@@ -1060,6 +1037,12 @@ const styles = {
   grid3: {
     display: "grid",
     gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+    gap: 16,
+  },
+
+  grid2: {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
     gap: 16,
   },
 
@@ -1346,57 +1329,6 @@ const styles = {
     fontSize: 14,
   },
 
-  bottomCta: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 16,
-    background: "#ffffff",
-    borderRadius: 24,
-    border: "1px solid #e7edf5",
-    boxShadow: "0 12px 26px rgba(15, 23, 42, 0.05)",
-    padding: 18,
-  },
-
-  bottomTitle: {
-    fontSize: 22,
-    fontWeight: 900,
-    color: "#0f172a",
-  },
-
-  bottomDesc: {
-    marginTop: 6,
-    fontSize: 13,
-    color: "#64748b",
-    lineHeight: 1.65,
-  },
-
-  bottomBtnGroup: {
-    display: "flex",
-    gap: 10,
-    flexWrap: "wrap",
-  },
-
-  bottomGhostBtn: {
-    padding: "11px 15px",
-    borderRadius: 12,
-    border: "1px solid #dbe5f3",
-    background: "#fff",
-    color: "#1e4d8c",
-    fontWeight: 900,
-    cursor: "pointer",
-  },
-
-  bottomPrimaryBtn: {
-    padding: "11px 18px",
-    borderRadius: 12,
-    border: "none",
-    background: "#1e4d8c",
-    color: "#fff",
-    fontWeight: 900,
-    cursor: "pointer",
-  },
-
   error: {
     marginTop: 12,
     padding: "12px 14px",
@@ -1417,34 +1349,6 @@ const styles = {
 
   trendNeutral: {
     color: "#e2e8f0",
-  },
-
-  skeletonCard: {
-    background: "#fff",
-    borderRadius: 22,
-    border: "1px solid #e7edf5",
-    padding: 18,
-    boxShadow: "0 12px 26px rgba(15, 23, 42, 0.05)",
-  },
-
-  skeletonTitle: {
-    height: 20,
-    width: "70%",
-    borderRadius: 8,
-  },
-
-  skeletonMeta: {
-    marginTop: 14,
-    height: 14,
-    width: "40%",
-    borderRadius: 8,
-  },
-
-  skeletonMetaShort: {
-    marginTop: 10,
-    height: 14,
-    width: "28%",
-    borderRadius: 8,
   },
 
   listSkeletonWrap: {
