@@ -15,10 +15,10 @@ export const memberApi = {
   // 일반 로그인
   login: (data) => axiosInstance.post("/member/login", data),
 
-  // 구글 로그인 전용 (기존 로그인 페이지에서 사용, JSON 방식)
+  // 💡 [수정] 구글 로그인 전용 (기존 로그인 페이지에서 사용, JSON 방식)
   socialLogin: (data) => axiosInstance.post("/member/social-login", data),
 
-  // 구글 상세 회원가입 전용 (추가 정보 입력 및 파일 업로드용, Multipart 방식)
+  // 💡 [신규] 구글 상세 회원가입 전용 (추가 정보 입력 및 파일 업로드용, Multipart 방식)
   socialJoin: (data) =>
     axiosInstance.post("/member/join/social", data, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -29,14 +29,14 @@ export const memberApi = {
 
   editProfile: (data) => axiosInstance.put("/mypage/edit", data),
 
-  // 탈퇴 시 memberId를 경로로 받도록 수정 (중복 /api 제거)
+  // 💡 [수정] 탈퇴 시 memberId를 경로로 받도록 수정 (중복 /api 제거)
   withdraw: (memberId) => axiosInstance.put(`/member/${memberId}/withdraw`),
 
-  // 일반 회원의 상담 예약 내역 조회 및 취소 API (중복 /api 제거)
+  // 💡 [수정] 일반 회원의 상담 예약 내역 조회 및 취소 API (중복 /api 제거)
   getMyReservations: (memberId) => axiosInstance.get(`/reservations/member/${memberId}`),
   cancelReservation: (id) => axiosInstance.put(`/reservations/${id}/cancel`),
 
-  // 내가 쓴 글 목록 조회 API (중복 /api 제거로 404 에러 해결)
+  // 💡 [수정] 내가 쓴 글 목록 조회 API (중복 /api 제거)
   getMyPosts: (memberId, type) => 
     axiosInstance.get("/member/posts", { params: { memberId, type } }),
 };
