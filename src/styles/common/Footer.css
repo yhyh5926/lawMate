@@ -1,148 +1,177 @@
-/* 전체 컨테이너의 상하 패딩을 줄임 (80px -> 50px) */
+/* Footer.css */
+
 .ft-container {
-  background-color: #0d1b2a;
-  color: #fff;
-  padding: 50px 0 40px;
-  font-family: "Noto Sans KR", sans-serif;
+  background-color: #1a375a; /* 로고의 메인 남색 */
+  color: #ffffff;
+  padding: 60px 0 40px;
+  font-family: "Pretendard", sans-serif;
 }
 
 .ft-inner {
   max-width: 1200px;
+  width: 90%;
   margin: 0 auto;
-  padding: 0 24px;
 }
 
-/* 상단 영역 간격 축소 (60px -> 40px) */
+/* ── TOP 섹션: 브랜드 및 메뉴 ── */
 .ft-top {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
   gap: 40px;
-  margin-bottom: 30px; /* 마진 축소 */
+  margin-bottom: 40px;
 }
 
 .ft-brand {
-  max-width: 280px;
+  flex: 1;
+  min-width: 280px;
 }
 
 .ft-logo-wrap {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 12px; /* 간격 축소 */
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
 .ft-logo {
-  height: 28px; /* 로고 크기 살짝 축소 */
+  height: 40px;
+  /* 로고가 어두운 배경에서 잘 안 보일 경우 밝게 처리 */
   filter: brightness(0) invert(1);
 }
 
 .ft-logo-text {
-  font-family: "Noto Serif KR", serif;
-  font-weight: 700;
-  font-size: 20px;
-  letter-spacing: 0.05em;
-  color: #c9a84c;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #7fb3d5; /* 로고의 하늘색 포인트 */
 }
 
 .ft-brand-desc {
-  font-size: 13px; /* 폰트 살짝 축소 */
+  font-size: 15px;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.6);
+  color: #d1d9e6; /* 가독성을 위해 살짝 밝은 회청색 */
 }
 
-/* 네비게이션 간격 조절 */
+.ft-brand-desc strong {
+  color: #ffffff;
+}
+
+/* 네비게이션 메뉴 */
 .ft-nav {
   display: flex;
-  gap: 60px; /* 컬럼 간 간격 축소 */
+  gap: 60px;
 }
 
 .ft-link-col {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* 링크 사이 간격 축소 */
+  gap: 12px;
 }
 
 .ft-link-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #e8c97a;
-  margin-bottom: 4px; /* 타이틀 아래 마진 축소 */
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #ffffff;
 }
 
 .ft-link-col a {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.5);
   text-decoration: none;
-  transition: color 0.2s;
+  font-size: 14px;
+  color: #abbccf;
+  transition: all 0.2s ease;
 }
 
 .ft-link-col a:hover {
-  color: #fff;
+  color: #7fb3d5; /* 호버 시 하늘색 */
+  transform: translateX(3px);
 }
 
-/* 구분선 마진 축소 */
+/* 구분선 */
 .ft-divider {
-  border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  margin-bottom: 25px;
+  border: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin-bottom: 30px;
 }
 
-/* 하단 영역 정렬 및 간격 */
+/* ── BOTTOM 섹션: 정보 및 면책공고 ── */
 .ft-bottom {
   display: flex;
-  justify-content: space-between; /* 가로로 배치하여 높이 절약 */
-  align-items: flex-start;
-  gap: 40px;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 30px;
 }
 
 .ft-company-info {
   flex: 1;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.4);
-  line-height: 1.5;
 }
 
 .ft-company-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 6px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #d1d9e6;
 }
 
 .ft-sep {
   width: 1px;
-  height: 10px;
-  background: rgba(255, 255, 255, 0.15);
+  height: 12px;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .ft-address {
-  margin-bottom: 8px;
+  font-size: 13px;
+  color: #abbccf;
+  margin-bottom: 15px;
 }
 
-/* 면책공고 박스 슬림화 */
+.ft-copyright {
+  font-size: 13px;
+  color: #7fb3d5; /* 카피라이트에 포인트 컬러 적용 */
+  font-weight: 500;
+}
+
+/* 면책공고 박스 */
 .ft-disclaimer {
   flex: 1;
-  max-width: 450px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 6px;
-  padding: 12px 16px; /* 패딩 축소 */
+  max-width: 500px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 15px 20px;
+  border-radius: 8px;
+  border-left: 3px solid #7fb3d5; /* 하늘색으로 좌측 강조 */
 }
 
 .ft-disclaimer p {
-  font-size: 11.5px;
+  font-size: 12px;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.35);
+  color: #abbccf;
   margin: 0;
 }
 
-/* 반응형: 화면이 좁을 때만 수직으로 */
-@media (max-width: 850px) {
+.ft-disclaimer strong {
+  color: #ffffff;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* 반응형 대응 */
+@media (max-width: 768px) {
+  .ft-top {
+    flex-direction: column;
+  }
+  .ft-nav {
+    gap: 30px;
+    width: 100%;
+    justify-content: space-between;
+  }
   .ft-bottom {
     flex-direction: column;
-    gap: 20px;
-  }
-  .ft-disclaimer {
-    max-width: 100%;
+    align-items: flex-start;
   }
 }

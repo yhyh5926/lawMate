@@ -1,384 +1,253 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap");
-
+/* ── Root & Variables ── */
 :root {
-  --navy: #0d1b2a;
-  --navy-mid: #1a2e45;
-  --gold: #c9a84c;
-  --gold-light: #e8c97a;
-  --gold-pale: #f5e9c8;
-  --cream: #faf7f2;
-  --border: #e2ddd5;
-  --text-main: #1a1a2e;
-  --text-muted: #7a7f8e;
-  --adopted-bg: #eef8f2;
-  --adopted-border: #6fcf97;
-  --adopted-text: #1a7a4a;
-  --red: #d94f4f;
+  --q-primary: #1a375a; /* LawMate 남색 */
+  --q-secondary: #7fb3d5; /* LawMate 하늘색 */
+  --q-accent: #38b2ac; /* 채택완료/성공 포인트 */
+  --q-bg: #f7fafc;
+  --q-white: #ffffff;
+  --q-text-main: #2d3748;
+  --q-text-sub: #718096;
+  --q-border: #e2e8f0;
 }
 
-/* ── 전체 레이아웃 ── */
 .question-detail-container {
-  font-family: "Noto Sans KR", sans-serif;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 48px 24px 80px;
-  color: var(--text-main);
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: "Pretendard", sans-serif;
 }
 
-/* ── 로딩 / 에러 ── */
-.loading-spinner-container,
-.error-msg {
-  text-align: center;
-  padding: 100px 0;
-  font-size: 15px;
-  color: var(--text-muted);
-}
-
-/* ── 질문 카드 ── */
+/* ── 1. QUESTION CARD ── */
 .question-card {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 36px 40px;
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
-  margin-bottom: 24px;
+  background: var(--q-white);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 4px 20px rgba(26, 55, 90, 0.08);
+  border: 1px solid var(--q-border);
+  margin-bottom: 30px;
 }
 
-/* 상단 뱃지 */
 .question-header-top {
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .case-type-badge {
-  display: inline-block;
-  background: var(--gold-pale);
-  color: #7a5a10;
-  font-size: 11.5px;
-  font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 20px;
-  border: 1px solid rgba(201, 168, 76, 0.3);
-  letter-spacing: 0.03em;
-}
-
-/* 제목 */
-.question-title {
-  font-family: "Noto Serif KR", serif;
-  font-size: 24px;
+  background-color: #ebf8ff;
+  color: var(--q-secondary);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 700;
-  color: var(--navy);
-  line-height: 1.45;
-  margin-bottom: 16px;
-  word-break: keep-all;
+  border: 1px solid rgba(127, 179, 213, 0.3);
 }
 
-/* 메타 + 상태 */
+.question-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--q-primary);
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
 .status-row {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  align-items: center;
   padding-bottom: 20px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 24px;
-  flex-wrap: wrap;
+  border-bottom: 1.5px solid var(--q-bg);
+  margin-bottom: 30px;
 }
 
 .question-meta {
-  font-size: 13px;
-  color: var(--text-muted);
+  font-size: 14px;
+  color: var(--q-text-sub);
 }
 
 .question-meta strong {
-  color: var(--text-main);
-  font-weight: 600;
+  color: var(--q-text-main);
 }
 
 .status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 20px;
-  white-space: nowrap;
-}
-
-.status-badge.is-adopted {
-  background: var(--adopted-bg);
-  color: var(--adopted-text);
-}
-
-.status-badge.is-adopted::before {
-  content: "●";
-  font-size: 8px;
+  padding: 6px 16px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .status-badge.is-waiting {
-  background: #fff8ec;
-  color: #b07a10;
+  background-color: #fffaf0;
+  color: #dd6b20;
+  border: 1px solid #feebc8;
 }
 
-.status-badge.is-waiting::before {
-  content: "○";
-  font-size: 8px;
+.status-badge.is-adopted {
+  background-color: #e6fffa;
+  color: var(--q-accent);
+  border: 1px solid #b2f5ea;
 }
 
-/* ── 이미지 갤러리 ── */
+/* ── 🖼️ IMAGE GALLERY ── */
 .image-gallery-container {
-  margin-bottom: 24px;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid var(--border);
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .main-image-view {
   width: 100%;
-  background: #f3f4f6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 260px;
-  max-height: 480px;
+  height: 500px; /* 고정 높이 혹은 비율 */
+  background-color: #f0f4f8;
+  border-radius: 12px;
   overflow: hidden;
+  border: 1px solid var(--q-border);
 }
 
 .gallery-main-img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  max-height: 480px;
-  display: block;
+  object-fit: contain; /* 이미지 전체가 보이도록 */
 }
 
 .thumbnail-list {
   display: flex;
-  gap: 0;
-  background: #eae8e4;
-  padding: 10px;
-  gap: 8px;
+  gap: 10px;
   overflow-x: auto;
+  padding-bottom: 10px;
 }
 
 .thumb-item {
-  flex-shrink: 0;
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
   border-radius: 8px;
   overflow: hidden;
   border: 2px solid transparent;
-  cursor: pointer;
   padding: 0;
+  cursor: pointer;
   background: none;
-  transition:
-    border-color 0.18s,
-    transform 0.18s;
+  transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .thumb-item.active {
-  border-color: var(--gold);
-  transform: scale(1.04);
-}
-
-.thumb-item:hover:not(.active) {
-  border-color: rgba(201, 168, 76, 0.45);
+  border-color: var(--q-secondary);
+  box-shadow: 0 0 8px rgba(127, 179, 213, 0.4);
 }
 
 .thumb-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
 }
 
-/* ── 질문 본문 ── */
+/* ── CONTENT & FILES ── */
 .question-content-text {
-  font-size: 15px;
-  line-height: 1.9;
-  color: #2d3142;
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--q-text-main);
   white-space: pre-wrap;
-  word-break: break-word;
-  padding: 20px 22px;
-  background: var(--cream);
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 }
 
-/* ── 첨부파일 ── */
 .detail-file-section {
-  margin-bottom: 20px;
+  background-color: var(--q-bg);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
 }
 
 .file-label {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text-muted);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--q-primary);
+  margin-bottom: 12px;
 }
 
 .file-list-box {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .download-link {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-size: 13.5px;
-  color: var(--navy-mid);
+  gap: 8px;
+  font-size: 14px;
+  color: var(--q-text-sub);
   text-decoration: none;
-  padding: 9px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: #fafafa;
-  transition: all 0.18s;
-  width: fit-content;
+  transition: color 0.2s;
 }
 
 .download-link:hover {
-  border-color: var(--navy-mid);
-  background: #f0f4f8;
-  color: var(--navy);
+  color: var(--q-secondary);
 }
 
-.download-link .icon {
-  font-size: 15px;
-  flex-shrink: 0;
-}
-
-/* ── 하단 액션 버튼 ── */
+/* ── 2. ACTIONS ── */
 .question-footer-actions {
-  margin-top: 20px;
-  padding-top: 18px;
-  border-top: 1px solid var(--border);
   display: flex;
   justify-content: flex-end;
+  border-top: 1px solid var(--q-border);
+  padding-top: 25px;
 }
 
 .owner-control-group {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .action-btn {
-  height: 36px;
-  padding: 0 18px;
+  padding: 10px 20px;
   border-radius: 8px;
-  font-family: "Noto Sans KR", sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  letter-spacing: 0.02em;
+  border: 1px solid var(--q-border);
+  background: white;
   transition: all 0.2s;
-  border: none;
-}
-
-.action-btn.edit {
-  background: var(--navy);
-  color: #fff;
 }
 
 .action-btn.edit:hover {
-  background: var(--navy-mid);
-  box-shadow: 0 3px 12px rgba(13, 27, 42, 0.2);
-}
-
-.action-btn.delete {
-  background: #fff;
-  color: var(--red);
-  border: 1.5px solid #f0c0c0;
+  background-color: var(--q-bg);
+  border-color: var(--q-secondary);
+  color: var(--q-secondary);
 }
 
 .action-btn.delete:hover {
-  background: #fff5f5;
-  border-color: var(--red);
+  background-color: #fff5f5;
+  border-color: #feb2b2;
+  color: #c53030;
 }
 
-/* ── 답변 작성 섹션 (변호사용) ── */
+/* ── 3. ANSWER SECTION ── */
 .answer-form-section {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 28px 36px;
-  margin-bottom: 24px;
-  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.04);
-  position: relative;
-  overflow: hidden;
+  margin-top: 40px;
+  padding: 30px;
+  background-color: #f0f7ff;
+  border-radius: 20px;
+  border: 1.5px dashed var(--q-secondary);
 }
 
-.answer-form-section::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: linear-gradient(180deg, var(--gold) 0%, #b8913d 100%);
-  border-radius: 4px 0 0 4px;
-}
-
-/* ── 목록으로 버튼 ── */
 .footer-nav {
-  margin-top: 36px;
-  display: flex;
-  justify-content: center;
+  text-align: center;
+  margin-top: 50px;
 }
 
 .btn-back-list {
-  height: 42px;
-  padding: 0 28px;
-  background: #fff;
-  color: var(--navy);
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  font-family: "Noto Sans KR", sans-serif;
-  font-size: 13.5px;
-  font-weight: 500;
+  background: none;
+  border: none;
+  color: var(--q-text-sub);
+  font-weight: 600;
+  text-decoration: underline;
   cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.02em;
+}
+
+/* ── LOADER ── */
+.loading-spinner-container {
+  height: 100vh;
   display: flex;
   align-items: center;
-  gap: 6px;
-}
-
-.btn-back-list::before {
-  content: "←";
-  font-size: 15px;
-}
-
-.btn-back-list:hover {
-  border-color: var(--navy);
-  background: var(--navy);
-  color: #fff;
-}
-
-/* ── 반응형 ── */
-@media (max-width: 640px) {
-  .question-detail-container {
-    padding: 28px 14px 60px;
-  }
-
-  .question-card {
-    padding: 22px 18px;
-  }
-
-  .question-title {
-    font-size: 20px;
-  }
-
-  .answer-form-section {
-    padding: 20px 18px;
-  }
-
-  .status-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+  justify-content: center;
+  font-weight: 600;
+  color: var(--q-primary);
 }

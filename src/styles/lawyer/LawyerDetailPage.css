@@ -1,92 +1,69 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap");
-
+/* ── Root & Variables ── */
 :root {
-  --ld-navy: #0d1b2a;
-  --ld-gold: #c9a84c;
-  --ld-gold-light: #e8c97a;
-  --ld-cream: #faf7f2;
-  --ld-border: #e2ddd5;
-  --ld-text-main: #1a1a2e;
-  --ld-text-muted: #7a7f8e;
+  --ld-primary: #1a375a; /* 로고 남색 */
+  --ld-secondary: #7fb3d5; /* 로고 하늘색 */
+  --ld-accent: #f6ad55; /* 별점 및 강조 */
+  --ld-bg: #f4f7fa;
+  --ld-white: #ffffff;
+  --ld-text-main: #2d3748;
+  --ld-text-sub: #4a5568;
+  --ld-border: #e2e8f0;
 }
 
 .ld-root {
+  background-color: var(--ld-bg);
   min-height: 100vh;
-  background: var(--ld-cream);
   padding-bottom: 80px;
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: "Pretendard", sans-serif;
 }
 
 .ld-container {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 36px 24px 0;
+  padding: 40px 20px;
 }
 
-/* ── Status Screens ── */
-.ld-status-screen {
-  height: 60vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-}
-
-.ld-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #e2ddd5;
-  border-top-color: var(--ld-navy);
-  border-radius: 50%;
-  animation: ld-spin 0.8s linear infinite;
-}
-
-@keyframes ld-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ── Header Card ── */
+/* ── 1. HEADER PROFILE CARD ── */
 .ld-header-card {
-  background: var(--ld-navy);
-  border-radius: 20px;
   position: relative;
+  background-color: var(--ld-primary);
+  border-radius: 24px;
+  padding: 50px;
+  color: var(--ld-white);
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(13, 27, 42, 0.15);
-  margin-bottom: 24px;
+  margin-bottom: 30px;
+  box-shadow: 0 15px 35px rgba(26, 55, 90, 0.2);
 }
 
 .ld-header-glow {
   position: absolute;
-  inset: 0;
+  top: -50%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
   background: radial-gradient(
-    circle at 80% 20%,
-    rgba(201, 168, 76, 0.12) 0%,
-    transparent 50%
+    circle,
+    rgba(127, 179, 213, 0.2) 0%,
+    transparent 70%
   );
-}
-
-.ld-header-content {
-  position: relative;
-  z-index: 1;
-  padding: 44px 50px;
+  pointer-events: none;
 }
 
 .ld-profile-flex {
   display: flex;
-  gap: 36px;
+  gap: 40px;
   align-items: center;
+  margin-bottom: 30px;
 }
 
 .ld-img-wrapper {
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
+  width: 180px;
+  height: 220px;
+  border-radius: 16px;
   overflow: hidden;
+  background-color: var(--ld-white);
   border: 4px solid rgba(255, 255, 255, 0.1);
-  background: #fff;
+  flex-shrink: 0;
 }
 
 .ld-img-wrapper img {
@@ -95,269 +72,288 @@
   object-fit: cover;
 }
 
-.ld-main-meta {
-  flex: 1;
+.ld-img-wrapper img.is-default {
+  padding: 20px;
+  object-fit: contain;
 }
 
 .ld-badge-row {
   display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
 .ld-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 11.5px;
-  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .ld-badge--gold {
-  background: rgba(201, 168, 76, 0.2);
-  color: var(--ld-gold-light);
-  border: 1px solid var(--ld-gold);
+  background-color: var(--ld-secondary);
+  color: var(--ld-white);
 }
+
 .ld-badge--outline {
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #fff;
-  opacity: 0.8;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .ld-name {
-  font-family: "Noto Serif KR", serif;
-  font-size: 32px;
-  color: #fff;
-  margin-bottom: 6px;
+  font-size: 38px;
+  font-weight: 800;
+  margin-bottom: 10px;
 }
 
 .ld-name-suffix {
   font-size: 20px;
-  font-weight: 400;
-  opacity: 0.9;
+  font-weight: 500;
+  opacity: 0.8;
 }
 
 .ld-office {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 16px;
-  margin-bottom: 12px;
+  font-size: 18px;
+  color: var(--ld-secondary);
+  font-weight: 600;
+  margin-bottom: 20px;
 }
 
 .ld-rating-row {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .ld-score {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--ld-gold-light);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ld-accent);
 }
+
 .ld-rev-count {
-  color: rgba(255, 255, 255, 0.5);
   font-size: 14px;
+  opacity: 0.7;
 }
 
 .ld-intro-quote {
-  margin-top: 30px;
+  position: relative;
+  padding: 20px 40px;
   background: rgba(255, 255, 255, 0.05);
-  padding: 20px 24px;
   border-radius: 12px;
-  display: flex;
-  gap: 10px;
+  text-align: center;
 }
 
 .quote-mark {
-  color: var(--ld-gold);
-  font-size: 24px;
+  font-size: 40px;
+  color: var(--ld-secondary);
   font-family: serif;
+  opacity: 0.5;
+  line-height: 0;
+  vertical-align: middle;
 }
+
 .ld-intro-quote p {
-  color: rgba(255, 255, 255, 0.85);
-  line-height: 1.6;
+  display: inline-block;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 10px;
   font-style: italic;
 }
 
-/* ── Grid Layout ── */
+/* ── 2. CONTENT GRID ── */
 .ld-grid {
   display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 24px;
+  grid-template-columns: 1fr 380px;
+  gap: 30px;
 }
 
 .ld-card {
-  background: #fff;
+  background: var(--ld-white);
+  border-radius: 20px;
+  padding: 35px;
   border: 1px solid var(--ld-border);
-  border-radius: 16px;
-  padding: 30px;
-  margin-bottom: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  margin-bottom: 25px;
 }
 
 .ld-card-eyebrow {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--ld-gold);
-  letter-spacing: 0.15em;
-  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ld-secondary);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
 }
 
 .ld-card-title {
-  font-family: "Noto Serif KR", serif;
-  font-size: 19px;
-  color: var(--ld-navy);
-  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ld-primary);
+  margin-bottom: 25px;
 }
 
+/* 경력 사항 스타일 */
 .ld-career-item {
   display: flex;
-  gap: 12px;
-  margin-bottom: 14px;
+  gap: 15px;
+  margin-bottom: 18px;
 }
+
 .ld-career-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--ld-gold);
+  width: 8px;
+  height: 8px;
+  background-color: var(--ld-secondary);
   border-radius: 50%;
   margin-top: 8px;
   flex-shrink: 0;
 }
+
 .ld-career-item p {
-  font-size: 14.5px;
-  line-height: 1.7;
-  color: #444;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ld-text-main);
 }
 
-/* ── Sidebar (Right) ── */
+/* ── SIDEBAR ── */
 .ld-sticky-sidebar {
   position: sticky;
-  top: 24px;
+  top: 40px;
+}
+
+.ld-contact-card {
+  background-color: var(--ld-white);
+  border-top: 6px solid var(--ld-secondary);
 }
 
 .ld-contact-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
+  margin-bottom: 30px;
 }
+
 .ld-contact-item dt {
-  font-size: 12px;
-  color: var(--ld-text-muted);
+  font-size: 13px;
+  color: var(--ld-text-sub);
   margin-bottom: 4px;
+  font-weight: 600;
 }
+
 .ld-contact-item dd {
-  font-size: 14.5px;
-  color: var(--ld-navy);
-  font-weight: 500;
-}
-.ld-address {
-  line-height: 1.5;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ld-primary);
 }
 
 .ld-fee-box {
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px dashed var(--ld-border);
+  background-color: var(--ld-bg);
+  padding: 20px;
+  border-radius: 12px;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
 }
+
 .ld-fee-label {
-  font-size: 12px;
-  color: var(--ld-text-muted);
-}
-.ld-fee-value {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--ld-navy);
+  font-size: 14px;
+  color: var(--ld-text-sub);
 }
 
+.ld-fee-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ld-primary);
+}
+
+/* 액션 버튼 */
 .ld-actions {
-  margin-top: 30px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
-.ld-btn-chat,
-.ld-btn-reserve {
-  width: 100%;
-  height: 50px;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 14.5px;
+.ld-btn-chat {
+  background-color: var(--ld-white);
+  color: var(--ld-primary);
+  border: 1px solid var(--ld-primary);
+  padding: 16px;
+  border-radius: 12px;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.ld-btn-chat {
-  background: #fff;
-  border: 1.5px solid var(--ld-navy);
-  color: var(--ld-navy);
-}
 .ld-btn-chat:hover {
-  background: #f0f2f5;
+  background-color: #f0f4f8;
 }
 
 .ld-btn-reserve {
-  background: var(--ld-navy);
+  background-color: var(--ld-primary);
+  color: var(--ld-white);
   border: none;
-  color: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(26, 55, 90, 0.2);
 }
+
 .ld-btn-reserve:hover {
-  background: #1a2e45;
+  background-color: #2c5282;
   transform: translateY(-2px);
 }
 
-/* ── 💡 New: Bottom Back Action (Center Alignment) ── */
-.ld-bottom-action {
-  margin-top: 60px;
-  padding-top: 40px;
-  border-top: 1px solid var(--ld-border);
+/* ── STATUS SCREENS ── */
+.ld-status-screen {
+  height: 60vh;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  width: 100%;
+  gap: 20px;
+}
+
+.ld-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--ld-border);
+  border-top-color: var(--ld-secondary);
+  border-radius: 50%;
+  animation: ld-spin 1s infinite linear;
+}
+
+@keyframes ld-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ld-bottom-action {
+  text-align: center;
+  margin-top: 40px;
 }
 
 .ld-list-back-center {
-  background: #fff;
-  color: var(--ld-navy);
-  border: 1px solid var(--ld-navy);
-  padding: 14px 48px;
-  font-size: 15px;
+  background: none;
+  border: none;
+  color: var(--ld-text-sub);
   font-weight: 600;
-  border-radius: 6px;
+  text-decoration: underline;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.ld-list-back-center:hover {
-  background: var(--ld-navy);
-  color: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* ── Responsive ── */
-@media (max-width: 900px) {
+/* Responsive */
+@media (max-width: 992px) {
   .ld-grid {
     grid-template-columns: 1fr;
-  }
-  .ld-header-content {
-    padding: 30px;
   }
   .ld-profile-flex {
     flex-direction: column;
     text-align: center;
   }
-  .ld-img-wrapper {
-    width: 120px;
-    height: 120px;
-  }
-  .ld-badge-row {
-    justify-content: center;
-  }
-  .ld-bottom-action {
-    margin-top: 40px;
+  .ld-sticky-sidebar {
+    position: static;
   }
 }

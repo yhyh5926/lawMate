@@ -1,41 +1,27 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap");
+/* ── Root & Variables ── */
+:root {
+  --law-primary: #1a375a; /* 로고 남색 */
+  --law-secondary: #7fb3d5; /* 로고 하늘색 */
+  --law-bg-light: #f8fbff;
+  --law-white: #ffffff;
+  --law-text-main: #2d3748;
+  --law-text-muted: #718096;
+  --law-border: #e2e8f0;
+  --law-accent: #f6ad55; /* 별점용 골드 포인트 */
+}
 
 .lawyer-root {
+  background-color: var(--law-bg-light);
   min-height: 100vh;
-  background: #faf7f2; /* --cream */
-  font-family: "Noto Sans KR", sans-serif;
-  color: #1a1a2e;
+  font-family: "Pretendard", sans-serif;
 }
 
-/* ── Hero Section ── */
+/* ── HERO SECTION ── */
 .lawyer-hero {
-  background-color: #0d1b2a; /* --navy */
-  padding: 80px 24px;
+  background: linear-gradient(135deg, var(--law-primary) 0%, #2c5282 100%);
+  padding: 80px 20px 120px;
   text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.lawyer-hero::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(
-    circle at 70% 20%,
-    rgba(201, 168, 76, 0.1) 0%,
-    transparent 60%
-  );
-  pointer-events: none;
-}
-
-.lawyer-hero-inner {
-  max-width: 800px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
+  color: var(--law-white);
 }
 
 .lawyer-hero-eyebrow {
@@ -47,173 +33,179 @@
 }
 
 .lawyer-hero-line {
-  width: 24px;
-  height: 1px;
-  background: #c9a84c;
+  width: 40px;
+  height: 2px;
+  background-color: var(--law-secondary);
 }
 
 .lawyer-hero-eyebrow-text {
-  color: #c9a84c; /* --gold */
-  font-size: 12px;
+  font-size: 14px;
+  letter-spacing: 2px;
   font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  color: var(--law-secondary);
 }
 
 .lawyer-hero-title {
-  font-family: "Noto Serif KR", serif;
   font-size: 42px;
-  color: #fff;
+  font-weight: 800;
   margin-bottom: 40px;
 }
 
-/* ── Search Bar ── */
+/* Hero 내 검색바 */
 .lawyer-search-bar {
+  max-width: 700px;
+  margin: 0 auto;
   display: flex;
-  background: #fff;
-  padding: 6px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
 }
 
 .lawyer-search-input-wrap {
   flex: 1;
   position: relative;
-  display: flex;
-  align-items: center;
 }
 
 .lawyer-search-input {
   width: 100%;
+  padding: 15px 45px 15px 20px;
   border: none;
-  padding: 14px 20px;
-  font-size: 15px;
+  border-radius: 10px;
+  font-size: 16px;
   outline: none;
 }
 
 .lawyer-clear-btn {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
   background: none;
   border: none;
-  color: #ccc;
+  color: var(--law-text-muted);
   cursor: pointer;
-  padding: 10px;
-  font-size: 14px;
 }
 
 .lawyer-search-btn {
-  background: #c9a84c;
-  color: #fff;
+  padding: 0 35px;
+  background-color: var(--law-secondary);
+  color: var(--law-white);
   border: none;
-  padding: 0 32px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.lawyer-search-btn:hover {
-  background: #b39440;
-}
-
-/* ── Filter Bar ── */
-.lawyer-filter-bar {
-  background: #fff;
-  border-bottom: 1px solid #e2ddd5;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.lawyer-filter-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-
-.lawyer-chips-wrap {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-}
-
-.lawyer-chip {
-  white-space: nowrap;
-  padding: 8px 18px;
-  border-radius: 20px;
-  border: 1px solid #e2ddd5;
-  background: #fff;
-  font-size: 13.5px;
-  color: #7a7f8e;
+  border-radius: 10px;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.lawyer-chip.active {
-  background: #0d1b2a;
-  color: #e8c97a;
-  border-color: #0d1b2a;
+.lawyer-search-btn:hover {
+  background-color: #5d97bd;
+  transform: translateY(-2px);
+}
+
+/* ── FILTER BAR ── */
+.lawyer-filter-bar {
+  margin-top: -50px;
+  margin-bottom: 40px;
+}
+
+.lawyer-filter-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: var(--law-white);
+  padding: 25px 35px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(26, 55, 90, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lawyer-chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lawyer-chip {
+  padding: 10px 18px;
+  border-radius: 30px;
+  border: 1px solid var(--law-border);
+  background: var(--law-white);
+  color: var(--law-text-muted);
+  font-size: 14px;
   font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lawyer-chip:hover {
+  border-color: var(--law-secondary);
+  color: var(--law-secondary);
+}
+
+.lawyer-chip.active {
+  background-color: var(--law-primary);
+  color: var(--law-white);
+  border-color: var(--law-primary);
 }
 
 .lawyer-reset-btn {
-  background: none;
-  border: none;
-  color: #7a7f8e;
-  font-size: 13px;
-  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--law-text-muted);
+  font-weight: 600;
+  cursor: pointer;
 }
 
-/* ── Grid ── */
+/* ── LAWYER GRID ── */
 .lawyer-content {
   max-width: 1200px;
-  margin: 40px auto;
-  padding: 0 24px;
+  margin: 0 auto;
+  padding: 0 20px 100px;
 }
 
 .lawyer-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 28px;
+  gap: 30px;
 }
 
-/* ── Lawyer Card ── */
+/* ── CARD STYLE ── */
 .lawyer-card {
-  background: #fff;
-  border: 1px solid #e2ddd5;
-  border-radius: 16px;
+  background: var(--law-white);
+  border-radius: 20px;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--law-border);
+  transition: all 0.3s ease;
   cursor: pointer;
   display: flex;
   flex-direction: column;
 }
 
 .lawyer-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(13, 27, 42, 0.08);
-  border-color: #c9a84c;
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(26, 55, 90, 0.12);
+  border-color: var(--law-secondary);
 }
 
 .lawyer-card-image {
-  height: 220px;
-  background: #f8f9fa;
   position: relative;
+  height: 300px;
   overflow: hidden;
+  background-color: #f0f4f8;
 }
 
 .lawyer-card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s;
+  object-position: top;
+  transition: transform 0.5s ease;
 }
 
 .lawyer-card:hover .lawyer-card-image img {
@@ -222,19 +214,19 @@
 
 .lawyer-card-badge {
   position: absolute;
-  top: 12px;
-  left: 12px;
-  background: rgba(13, 27, 42, 0.85);
-  color: #e8c97a;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
+  top: 15px;
+  left: 15px;
+  background: rgba(26, 55, 90, 0.85);
+  color: var(--law-white);
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
   backdrop-filter: blur(4px);
 }
 
 .lawyer-card-body {
-  padding: 20px;
+  padding: 24px;
   flex: 1;
 }
 
@@ -246,35 +238,38 @@
 }
 
 .lawyer-card-name {
-  font-family: "Noto Serif KR", serif;
-  font-size: 18px;
-  color: #0d1b2a;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--law-primary);
 }
 
 .lawyer-card-rating {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
 }
 
 .star-icon {
-  color: #c9a84c;
+  color: var(--law-accent);
   font-size: 14px;
 }
+
 .rating-val {
   font-weight: 700;
+  color: var(--law-text-main);
   font-size: 14px;
-  color: #1a1a2e;
 }
+
 .review-count {
+  color: var(--law-text-muted);
   font-size: 12px;
-  color: #7a7f8e;
 }
 
 .lawyer-card-office {
-  font-size: 13.5px;
-  color: #7a7f8e;
-  margin-bottom: 16px;
+  font-size: 14px;
+  color: var(--law-secondary);
+  font-weight: 600;
+  margin-bottom: 15px;
 }
 
 .lawyer-card-tags {
@@ -284,94 +279,97 @@
 }
 
 .lawyer-tag {
+  background-color: var(--law-bg-light);
+  color: var(--law-primary);
   font-size: 12px;
-  background: #faf7f2;
-  color: #c9a84c;
-  padding: 2px 8px;
-  border-radius: 4px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
 }
 
 .lawyer-card-footer {
-  padding: 14px 20px;
-  border-top: 1px solid #f0ede9;
+  padding: 15px 24px;
+  border-top: 1px solid var(--law-border);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
-  font-weight: 600;
-  color: #0d1b2a;
-  background: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--law-text-muted);
+  transition: color 0.2s;
+}
+
+.lawyer-card:hover .lawyer-card-footer {
+  color: var(--law-secondary);
 }
 
 .footer-arrow {
-  color: #c9a84c;
   transition: transform 0.2s;
 }
 
 .lawyer-card:hover .footer-arrow {
-  transform: translateX(4px);
+  transform: translateX(5px);
 }
 
-/* ── Loader & Empty ── */
+/* ── STATE & LOADER ── */
 .lawyer-loader {
   text-align: center;
-  padding: 40px;
-  color: #7a7f8e;
+  padding: 50px 0;
+  color: var(--law-primary);
 }
 
 .lawyer-spinner {
-  width: 30px;
-  height: 30px;
-  border: 3px solid #e2ddd5;
-  border-top-color: #c9a84c;
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(127, 179, 213, 0.2);
+  border-top: 4px solid var(--law-secondary);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: 0 auto 10px;
+  margin: 0 auto 15px;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  to {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
     transform: rotate(360deg);
   }
 }
 
 .lawyer-empty {
   text-align: center;
-  padding: 100px 24px;
+  padding: 100px 0;
 }
 
 .lawyer-empty-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
+  font-size: 60px;
+  margin-bottom: 20px;
 }
+
 .lawyer-empty-title {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
-  color: #0d1b2a;
+  color: var(--law-primary);
 }
-.lawyer-empty-desc {
-  color: #7a7f8e;
-  margin: 8px 0 24px;
-}
+
 .lawyer-empty-btn {
-  background: #0d1b2a;
-  color: #fff;
+  margin-top: 25px;
+  padding: 12px 30px;
+  background-color: var(--law-primary);
+  color: white;
   border: none;
-  padding: 10px 24px;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
 }
 
-/* ── Responsive ── */
+/* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-  .lawyer-hero-title {
-    font-size: 32px;
-  }
   .lawyer-filter-inner {
     flex-direction: column;
-    align-items: flex-start;
+    gap: 20px;
   }
-  .lawyer-reset-btn {
-    align-self: flex-end;
+  .lawyer-hero-title {
+    font-size: 32px;
   }
 }
