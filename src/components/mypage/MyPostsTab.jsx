@@ -1,12 +1,13 @@
 // src/components/mypage/MyPostsTab.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; 
+import axios from "axios";
 import { useAuthStore } from "../../store/authStore.js";
+import "../../styles/mypage/MyPostsTab.css"; // 💡 분리된 CSS 임포트
 
 const MyPostsTab = () => {
   const navigate = useNavigate();
-  const { user } = useAuthStore(); 
+  const { user } = useAuthStore();
 
   const [subTab, setSubTab] = useState("question");
   const [posts, setPosts] = useState([]); // 초기값은 빈 배열
@@ -22,9 +23,9 @@ const MyPostsTab = () => {
     setLoading(true);
     try {
       const response = await axios.get(`/api/mypage/posts/${user.memberId}`, {
-        params: { type: type }
+        params: { type: type },
       });
-      
+
       // 💡 [중요] 응답 데이터가 배열인지 확인 후 세팅 (TypeError 방어)
       if (Array.isArray(response.data)) {
         setPosts(response.data);
@@ -33,7 +34,7 @@ const MyPostsTab = () => {
       }
     } catch (error) {
       console.error("내 글 목록을 불러오는데 실패했습니다.", error);
-      setPosts([]); 
+      setPosts([]);
     } finally {
       setLoading(false);
     }
@@ -76,7 +77,7 @@ const MyPostsTab = () => {
       <div className="mypost-content">
         {loading ? (
           <div className="empty-tab-content">데이터를 불러오는 중입니다...</div>
-        ) : (!Array.isArray(posts) || posts.length === 0) ? (
+        ) : !Array.isArray(posts) || posts.length === 0 ? (
           <div className="empty-tab-content">작성하신 내역이 없습니다.</div>
         ) : (
           <ul className="mypost-list">

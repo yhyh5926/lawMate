@@ -1,307 +1,271 @@
-/* vs코드 */
-/* 파일 위치: src/styles/mypage/CaseMgmtTab.css */
+/* CaseMgmtTab.css */
 
 .case-mgmt-wrapper {
-  padding: 20px;
+  padding: 10px;
 }
 
-.content-title {
-  font-size: 20px;
-  font-weight: 800;
-  margin-bottom: 20px;
-}
-
-.case-subtabs {
+.case-mgmt-header {
   display: flex;
-  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 24px;
 }
 
-.case-subtab-btn {
-  padding: 10px 20px;
-  border: 1px solid #e2e8f0;
-  background: #fff;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  color: #64748b;
-  transition: all 0.2s;
-}
-
-.case-subtab-btn.active {
-  background: #1e4d8c;
-  color: #fff;
-  border-color: #1e4d8c;
-}
-
-.empty-tab-content {
-  padding: 60px 0;
-  text-align: center;
-  color: #94a3b8;
-  font-size: 15px;
-  background: #f8fafc;
-  border-radius: 12px;
-}
-
-.case-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.case-card {
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
-
-.case-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  padding-bottom: 16px;
-}
-
-.case-header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.case-type-badge {
-  background: #e0e7ff;
-  color: #3730a3;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.case-title {
-  font-size: 18px;
-  font-weight: 700;
+.content-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1a1a2e;
   margin: 0;
 }
 
-.case-header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.case-date {
-  font-size: 13px;
-  color: #64748b;
-}
-
-.expand-icon {
-  font-size: 12px;
-  color: #94a3b8;
-}
-
-/* 스텝바 UI */
-.case-progress-container {
-  position: relative;
-  margin: 20px 0 10px 0;
-  padding: 0 20px;
-}
-
-.progress-line-background {
-  position: absolute;
-  top: 15px;
-  left: 20px;
-  right: 20px;
-  height: 4px;
-  background: #e2e8f0;
-  z-index: 1;
-}
-
-.progress-line-active {
-  position: absolute;
-  top: 15px;
-  left: 20px;
-  height: 4px;
-  background: #1e4d8c;
-  z-index: 2;
-  transition: width 0.3s ease;
-}
-
-.progress-steps {
-  display: flex;
-  justify-content: space-between;
-  position: relative;
-  z-index: 3;
-}
-
-.step-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.step-circle {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 14px;
-  background: #fff;
-  border: 3px solid #e2e8f0;
-  color: #94a3b8;
-  transition: all 0.3s;
-}
-
-.step-item.completed .step-circle {
-  border-color: #1e4d8c;
-  background: #1e4d8c;
-  color: #fff;
-}
-
-.step-label {
-  font-size: 12px;
-  color: #64748b;
-  font-weight: 600;
-}
-
-.step-item.completed .step-label {
-  color: #1e4d8c;
-}
-
-/* 상세 내역 영역 */
-.case-detail-box {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px dashed #e2e8f0;
-}
-
-.detail-section {
-  margin-bottom: 20px;
-}
-
-.detail-label {
-  display: block;
-  font-size: 13px;
-  color: #64748b;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.detail-text {
-  font-size: 14px;
-  line-height: 1.6;
-  color: #334155;
-  background: #f8fafc;
-  padding: 16px;
-  border-radius: 8px;
-  white-space: pre-wrap;
-}
-
-.opinion-section .detail-text {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  color: #166534;
-}
-
-/* 변호사 컨트롤 바 */
-.lawyer-control-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f8fafc;
-  padding: 16px;
-  border-radius: 12px;
-  margin-top: 24px;
-}
-
-.left-controls {
-  display: flex;
-  gap: 10px;
-}
-
-.btn-prev-step, .btn-edit, .btn-advance-step {
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
+.btn-reg-toggle {
+  padding: 10px 20px;
+  background: #1a6dff;
+  color: white;
   border: none;
-  font-size: 13px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.btn-prev-step { background: #e2e8f0; color: #475569; }
-.btn-prev-step:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-edit { background: #fff; border: 1px solid #cbd5e1; color: #334155; }
-.btn-advance-step { background: #1e4d8c; color: #fff; }
+.btn-reg-toggle.open {
+  background: #64748b;
+}
 
-/* 폼 모드 */
-.case-edit-textarea, .case-edit-input {
-  width: 100%;
+/* 신규 등록 폼 */
+.manual-reg-form {
+  background: #f8fafc;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 24px;
+}
+
+.manual-reg-form h4 {
+  margin: 0 0 16px 0;
+  color: #1e293b;
+}
+
+.reg-form-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.reg-input,
+.reg-textarea {
   padding: 12px;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
-  font-family: inherit;
   font-size: 14px;
 }
 
-.case-edit-textarea { height: 120px; resize: vertical; }
-
-.lawyer-action-bar {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.btn-cancel { padding: 10px 20px; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; }
-.btn-save { padding: 10px 20px; background: #10b981; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-
-/* 후기 영역 */
-.review-section-wrapper {
-  margin-top: 30px;
-  border-top: 2px solid #f1f5f9;
-  padding-top: 20px;
-}
-
-.btn-write-review {
+.reg-input.full {
   width: 100%;
-  padding: 16px;
-  background: #fff;
-  border: 2px dashed #cbd5e1;
-  color: #1e4d8c;
-  font-weight: bold;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+.reg-textarea {
+  width: 100%;
+  min-height: 100px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+
+/* 서브 탭 */
+.case-subtabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.case-subtab-btn {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  font-weight: 700;
+  color: #94a3b8;
+  cursor: pointer;
+  position: relative;
+}
+
+.case-subtab-btn.active {
+  color: #1a6dff;
+}
+
+.case-subtab-btn.active::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #1a6dff;
+}
+
+/* 사건 카드 */
+.case-card {
+  background: white;
+  border: 1px solid #e8ecf0;
   border-radius: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: shadow 0.3s;
+}
+
+.case-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.case-header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   cursor: pointer;
 }
 
-.client-review-box {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  padding: 20px;
-  border-radius: 12px;
+.case-type-tag {
+  background: #f1f5f9;
+  color: #64748b;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: inline-block;
 }
 
-.review-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
-.review-stars { color: #f59e0b; font-size: 18px; letter-spacing: 2px; }
-.review-date { color: #94a3b8; font-size: 12px; }
-.review-content { font-size: 14px; line-height: 1.6; margin-bottom: 12px; }
-.review-author { font-size: 12px; font-weight: bold; color: #64748b; }
-
-.client-review-form {
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  padding: 20px;
-  border-radius: 12px;
+.case-title-text {
+  margin: 0;
+  font-size: 17px;
+  color: #1a1a2e;
 }
 
-.review-form-title { margin: 0 0 16px 0; font-size: 16px; font-weight: bold; }
-.review-rating-select { margin-bottom: 16px; font-size: 14px; font-weight: bold; }
-.star-select { font-size: 24px; color: #e2e8f0; cursor: pointer; margin-right: 4px; transition: color 0.2s; }
-.star-select.active { color: #f59e0b; }
-.review-textarea { width: 100%; height: 100px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; resize: vertical; margin-bottom: 16px; }
-.review-action-bar { display: flex; justify-content: flex-end; gap: 10px; }
+/* 프로그레스 바 */
+.case-progress-bar {
+  padding: 0 40px 24px;
+  position: relative;
+}
+
+.progress-track {
+  height: 4px;
+  background: #f1f5f9;
+  border-radius: 2px;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #1a6dff;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.progress-nodes {
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  top: -12px;
+  left: 40px;
+  right: 40px;
+}
+
+.node-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.node-dot {
+  width: 24px;
+  height: 24px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 800;
+  color: #b0bccb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.node-item.active .node-dot {
+  background: #1a6dff;
+  border-color: #1a6dff;
+  color: white;
+}
+
+.node-label {
+  font-size: 11px;
+  margin-top: 8px;
+  color: #94a3b8;
+}
+.node-item.active .node-label {
+  color: #1a1a2e;
+  font-weight: 700;
+}
+
+/* 상세 내용 */
+.case-detail-content {
+  padding: 24px;
+  border-top: 1px solid #f1f5f9;
+  background: #fbfcfe;
+}
+
+.info-row {
+  margin-bottom: 16px;
+}
+.info-row label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.content-box {
+  background: white;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.content-box.opinion {
+  border-left: 4px solid #1a6dff;
+  color: #1e293b;
+}
+
+/* 관리 버튼 */
+.mgmt-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.mgmt-controls button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-step-prev {
+  background: #f1f5f9;
+  color: #64748b;
+}
+.btn-edit-info {
+  background: #1a1a2e;
+  color: white;
+}
+.btn-step-next {
+  background: #1a6dff;
+  color: white;
+}

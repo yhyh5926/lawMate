@@ -1,0 +1,194 @@
+/* ChatListPage.css */
+
+.chat-list-container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.chat-list-header {
+  margin-bottom: 24px;
+}
+
+.chat-list-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1a1a2e; /* 로고 네이비 */
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.chat-list-subtitle {
+  color: #888;
+  font-size: 14px;
+  margin: 4px 0 0;
+}
+
+/* 로딩 및 빈 화면 */
+.chat-list-loading {
+  text-align: center;
+  padding: 60px;
+  color: #aaa;
+}
+
+.chat-list-empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: #aaa;
+  background: #f7f9fb;
+  border-radius: 16px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.empty-text {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: #1a1a2e;
+}
+
+.empty-subtext {
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+/* 채팅방 리스트 */
+.chat-rooms-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chat-room-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  background: #fff;
+  position: relative;
+}
+
+.chat-room-item:hover {
+  background: #f0f4ff; /* 호버 시 LawMate 연한 블루 배경 */
+}
+
+/* 아바타 스타일 */
+.room-avatar {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    #1a6dff,
+    #4a90d9
+  ); /* 로고 블루 그라데이션 */
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(26, 109, 255, 0.2);
+}
+
+.unread-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #ff3b30;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid #fff;
+}
+
+/* 정보 영역 */
+.room-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.room-info-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.room-name {
+  font-weight: 600;
+  font-size: 15px;
+  color: #1a1a2e;
+}
+
+.room-name.unread {
+  font-weight: 800;
+}
+
+.lawyer-badge {
+  margin-left: 6px;
+  font-size: 11px;
+  background: #e8f0ff;
+  color: #1a6dff;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.room-time {
+  font-size: 12px;
+  color: #aaa;
+  flex-shrink: 0;
+}
+
+.room-last-msg {
+  margin: 0;
+  font-size: 13px;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.room-last-msg.unread {
+  color: #1a1a2e;
+  font-weight: 500;
+}
+
+/* 삭제 버튼 (호버 시 등장) */
+.room-delete-btn {
+  opacity: 0;
+  transition: opacity 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ff3b30;
+  font-size: 18px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.chat-room-item:hover .room-delete-btn {
+  opacity: 1;
+}
+
+.room-delete-btn:hover {
+  background: rgba(255, 59, 48, 0.1);
+}

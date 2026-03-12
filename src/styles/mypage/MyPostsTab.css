@@ -1,0 +1,147 @@
+/* MyPostsTab.css */
+
+.mypost-wrapper {
+  padding: 10px;
+}
+
+/* 서브 탭 스타일 */
+.mypost-subtabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 15px;
+}
+
+.mypost-subtab-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.mypost-subtab-btn:hover {
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+
+.mypost-subtab-btn.active {
+  background-color: #1a1a2e;
+  color: #ffffff;
+}
+
+/* 게시글 리스트 */
+.mypost-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mypost-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mypost-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: #1a6dff;
+}
+
+/* 메인 영역 (배지 + 제목) */
+.mypost-item-main {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+}
+
+.mypost-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 500px;
+}
+
+/* 상태 배지 */
+.mypost-badge {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.badge-success {
+  background-color: #e8f8ed;
+  color: #34c759;
+}
+
+.badge-pending {
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+/* 메타 정보 (날짜 + 댓글) */
+.mypost-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 13px;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.mypost-comments {
+  font-weight: 600;
+  color: #1a6dff;
+}
+
+/* 데이터 없음/로딩 중 */
+.empty-tab-content {
+  padding: 80px 0;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 15px;
+}
+
+/* 반응형 모바일 */
+@media (max-width: 768px) {
+  .mypost-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .mypost-item-main {
+    width: 100%;
+  }
+
+  .mypost-title {
+    max-width: 100%;
+  }
+
+  .mypost-item-meta {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

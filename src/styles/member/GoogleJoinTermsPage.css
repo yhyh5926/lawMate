@@ -1,0 +1,131 @@
+/* GoogleJoinTermsPage.css */
+
+.terms-container {
+  max-width: 640px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+.terms-header {
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 30px;
+}
+
+.terms-header h2 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1a1a2e;
+}
+
+.terms-header .member-type {
+  color: #1a6dff;
+  font-weight: 800;
+}
+
+/* 약관 텍스트 박스 */
+.terms-content-box {
+  height: 240px;
+  overflow-y: auto;
+  border: 1.5px solid #e2e8f0;
+  padding: 20px;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #475569;
+}
+
+.terms-content-box h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-top: 20px;
+}
+
+.terms-content-box h3:first-child {
+  margin-top: 0;
+}
+
+/* 스크롤바 커스텀 */
+.terms-content-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.terms-content-box::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 10px;
+}
+
+/* 체크박스 영역 */
+.terms-agree-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  margin-bottom: 40px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.terms-agree-section:hover {
+  background-color: #f0f7ff;
+}
+
+.terms-agree-section input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #1a6dff;
+  cursor: pointer;
+}
+
+.terms-agree-section label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  cursor: pointer;
+}
+
+/* 하단 버튼 */
+.terms-btn-group {
+  display: flex;
+  gap: 12px;
+}
+
+.terms-btn-group button {
+  flex: 1;
+  padding: 18px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-prev {
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+.btn-prev:hover {
+  background-color: #e2e8f0;
+}
+
+.btn-next {
+  background-color: #1a1a2e;
+  color: #ffffff;
+}
+
+.btn-next:hover {
+  background-color: #2a2a40;
+}
+
+.btn-next:disabled {
+  background-color: #cbd5e1;
+  cursor: not-allowed;
+}

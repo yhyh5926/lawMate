@@ -1,10 +1,10 @@
-// src/pages/consult/ConsultReservePage.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { createConsult } from "../../api/consultApi";
 import lawyerApi from "../../api/lawyerApi";
 import { DEFAULT_IMAGE } from "../lawyer/LawyerListPage";
 import { baseURL } from "../../constants/baseURL";
+import "../../styles/consult/ConsultReservePage.css"; // 💡 분리된 CSS 임포트
 
 const ConsultReservePage = () => {
   const [searchParams] = useSearchParams();
@@ -15,8 +15,8 @@ const ConsultReservePage = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [availableTimes, setAvailableTimes] = useState([]);
   const [selectedTime, setSelectedTime] = useState("");
-  const [duration, setDuration] = useState(30); // 💡 TB_CONSULT 기본값 30 반영
-  const [note, setNote] = useState(""); // 💡 컬럼명 'NOTE'에 맞춰 변경
+  const [duration, setDuration] = useState(30);
+  const [note, setNote] = useState("");
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -35,6 +35,7 @@ const ConsultReservePage = () => {
 
   useEffect(() => {
     if (!selectedDate) return;
+    // 임시 시간 데이터 (실제로는 API에서 해당 날짜의 예약 가능 시간을 받아와야 함)
     const times = [
       "09:00",
       "10:00",
@@ -61,8 +62,6 @@ const ConsultReservePage = () => {
 
     try {
       setLoading(true);
-
-      // 파일 업로드 제거 (uploadFiles 없으므로)
       const consultDateTime = `${selectedDate}T${selectedTime}:00`;
 
       const consultData = {
@@ -74,7 +73,6 @@ const ConsultReservePage = () => {
       };
 
       const res = await createConsult(consultData);
-      console.log("예약 응답:", res.data);
       alert("상담 예약이 접수되었습니다.");
 
       const consultId = res.data?.consultId || res.data?.data?.consultId;
@@ -87,29 +85,25 @@ const ConsultReservePage = () => {
   };
 
   return (
-    <div style={{ maxWidth: "640px", margin: "0 auto", padding: "32px 16px" }}>
+    <div className="reserve-wrapper">
       {/* 변호사 정보 카드 */}
       {lawyer && (
-        <div style={lawyerCardStyle}>
+        <div className="reserve-lawyer-card">
           <img
             src={
               lawyer.savePath || lawyer.profileUrl
                 ? (lawyer.savePath || lawyer.profileUrl).startsWith("http")
                   ? lawyer.savePath || lawyer.profileUrl
-                  : `${baseURL + lawyer.savePath || lawyer.profileUrl}`
+                  : `${baseURL + (lawyer.savePath || lawyer.profileUrl)}`
                 : DEFAULT_IMAGE
             }
             alt={lawyer.name}
-            style={avatarStyle}
+            className="reserve-lawyer-avatar"
             onError={(e) => (e.target.src = DEFAULT_IMAGE)}
           />
-          <div>
-            <div
-              style={{ fontWeight: "700", fontSize: "15px", color: "#1A1A2E" }}
-            >
-              {lawyer.name} 변호사
-            </div>
-            <div style={{ fontSize: "13px", color: "#666" }}>
+          <div className="reserve-lawyer-info">
+            <div className="name">{lawyer.name} 변호사</div>
+            <div className="meta">
               {lawyer.specialty} 전문 · 30분당{" "}
               {lawyer.consultFee?.toLocaleString()}원
             </div>
@@ -117,50 +111,36 @@ const ConsultReservePage = () => {
         </div>
       )}
 
-      <h2
-        style={{
-          fontSize: "20px",
-          fontWeight: "800",
-          color: "#1A1A2E",
-          margin: "24px 0",
-        }}
-      >
-        상담 예약 신청
-      </h2>
+      <h2 className="reserve-main-title">상담 예약 신청</h2>
 
       {/* 날짜 선택 */}
-      <div style={fieldStyle}>
-        <label style={labelStyle}>상담 날짜 *</label>
+      <div className="reserve-field">
+        <label className="reserve-label">상담 날짜 *</label>
         <input
           type="date"
+          className="reserve-input"
           value={selectedDate}
           min={new Date().toISOString().split("T")[0]}
           onChange={(e) => setSelectedDate(e.target.value)}
-          style={inputStyle}
         />
       </div>
 
       {/* 시간 선택 */}
-      <div style={fieldStyle}>
-        <label style={labelStyle}>상담 시간 *</label>
+      <div className="reserve-field">
+        <label className="reserve-label">상담 시간 *</label>
         {availableTimes.length === 0 ? (
-          <p style={{ color: "#aaa", fontSize: "13px" }}>
+          <p className="reserve-empty-msg">
             {selectedDate
               ? "예약 가능한 시간이 없습니다."
               : "날짜를 먼저 선택해주세요."}
           </p>
         ) : (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+          <div className="reserve-time-grid">
             {availableTimes.map((t) => (
               <button
                 key={t}
+                className={`reserve-time-btn ${selectedTime === t ? "active" : ""}`}
                 onClick={() => setSelectedTime(t)}
-                style={{
-                  ...timeBtnBaseStyle,
-                  borderColor: selectedTime === t ? "#1A6DFF" : "#D0D8E4",
-                  background: selectedTime === t ? "#1A6DFF" : "#fff",
-                  color: selectedTime === t ? "#fff" : "#444",
-                }}
               >
                 {t}
               </button>
@@ -169,13 +149,13 @@ const ConsultReservePage = () => {
         )}
       </div>
 
-      {/* DURATION_MIN 선택 */}
-      <div style={fieldStyle}>
-        <label style={labelStyle}>상담 시간 (DURATION_MIN)</label>
+      {/* 상담 시간(분) 선택 */}
+      <div className="reserve-field">
+        <label className="reserve-label">상담 희망 시간</label>
         <select
+          className="reserve-select"
           value={duration}
           onChange={(e) => setDuration(Number(e.target.value))}
-          style={inputStyle}
         >
           <option value={30}>30분 (기본)</option>
           <option value={60}>60분</option>
@@ -183,111 +163,48 @@ const ConsultReservePage = () => {
         </select>
       </div>
 
-      {/* NOTE 작성 */}
-      <div style={fieldStyle}>
-        <label style={labelStyle}>의뢰인 요청 사항 (NOTE)</label>
+      {/* 요청 사항 작성 */}
+      <div className="reserve-field">
+        <label className="reserve-label">의뢰인 요청 사항 (참고 내용)</label>
         <textarea
+          className="reserve-textarea"
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          placeholder="상담 내용을 간략히 적어주세요."
+          placeholder="상담하실 내용을 간략히 적어주시면 더 정확한 상담이 가능합니다."
           rows={4}
-          style={{ ...inputStyle, resize: "none" }}
         />
       </div>
 
-      {/* 파일 첨부 (선택) */}
-      <div style={fieldStyle}>
-        <label style={labelStyle}>참고 서류 첨부</label>
+      {/* 파일 첨부 */}
+      <div className="reserve-field">
+        <label className="reserve-label">참고 서류 첨부 (선택)</label>
         <input
           type="file"
           multiple
           onChange={handleFileChange}
-          style={{ fontSize: "13px" }}
+          className="reserve-file-input"
         />
       </div>
 
-      {/* 금액 안내 */}
+      {/* 최종 금액 안내 */}
       {lawyer && (
-        <div style={priceInfoStyle}>
-          최종 상담 금액:{" "}
-          <strong style={{ color: "#E74C3C", fontSize: "18px" }}>
+        <div className="reserve-price-box">
+          <span className="label">최종 결제 예정 금액</span>
+          <span className="value">
             {((lawyer.consultFee || 0) * (duration / 30)).toLocaleString()}원
-          </strong>
+          </span>
         </div>
       )}
 
       <button
+        className="reserve-submit-btn"
         onClick={handleSubmit}
         disabled={loading}
-        style={{
-          ...submitBtnStyle,
-          background: loading ? "#aaa" : "#1A6DFF",
-        }}
       >
         {loading ? "예약 처리 중..." : "예약 신청 및 결제하기"}
       </button>
     </div>
   );
-};
-
-const lawyerCardStyle = {
-  background: "#F0F4FF",
-  borderRadius: "12px",
-  padding: "16px 20px",
-  display: "flex",
-  gap: "14px",
-  alignItems: "center",
-};
-const avatarStyle = {
-  width: "50px",
-  height: "50px",
-  borderRadius: "50%",
-  objectFit: "cover",
-  background: "#f8fafc",
-};
-const fieldStyle = { marginBottom: "20px" };
-const labelStyle = {
-  display: "block",
-  fontSize: "13px",
-  fontWeight: "700",
-  color: "#444",
-  marginBottom: "8px",
-};
-const inputStyle = {
-  width: "100%",
-  padding: "11px 14px",
-  border: "1.5px solid #D0D8E4",
-  borderRadius: "10px",
-  fontSize: "14px",
-  outline: "none",
-  boxSizing: "border-box",
-};
-const timeBtnBaseStyle = {
-  padding: "8px 16px",
-  borderRadius: "20px",
-  border: "1.5px solid",
-  cursor: "pointer",
-  fontSize: "13px",
-  fontWeight: "600",
-};
-const priceInfoStyle = {
-  background: "#FFFBE6",
-  border: "1px solid #FFD700",
-  borderRadius: "10px",
-  padding: "14px 18px",
-  marginBottom: "24px",
-  fontSize: "14px",
-  textAlign: "right",
-};
-const submitBtnStyle = {
-  width: "100%",
-  padding: "16px",
-  color: "#fff",
-  border: "none",
-  borderRadius: "12px",
-  fontSize: "16px",
-  fontWeight: "700",
-  cursor: "pointer",
 };
 
 export default ConsultReservePage;

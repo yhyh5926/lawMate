@@ -1,0 +1,117 @@
+/* LawyerJoinTermsPage.css */
+
+.lawyer-terms-container {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+.lawyer-terms-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-top: 40px;
+  margin-bottom: 30px;
+}
+
+/* 약관 텍스트 영역 */
+.lawyer-terms-box {
+  border: 1.5px solid #e2e8f0;
+  padding: 20px;
+  height: 220px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #475569;
+}
+
+.lawyer-terms-box strong {
+  color: #16a34a; /* 초록색 포인트 */
+  display: block;
+  margin-top: 15px;
+}
+
+.lawyer-terms-box strong:first-child {
+  margin-top: 0;
+}
+
+/* 체크박스 영역 */
+.lawyer-terms-agree {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 40px;
+  padding: 18px;
+  background-color: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lawyer-terms-agree:hover {
+  background-color: #f0fdf4; /* 연한 초록색 배경 */
+  border-color: #16a34a;
+}
+
+.lawyer-terms-agree input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #16a34a;
+  cursor: pointer;
+}
+
+.lawyer-terms-agree label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  cursor: pointer;
+}
+
+/* 버튼 그룹 */
+.lawyer-terms-btns {
+  display: flex;
+  gap: 10px;
+}
+
+.lawyer-terms-btns button {
+  flex: 1;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-lawyer-cancel {
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+.btn-lawyer-next {
+  background-color: #16a34a;
+  color: #fff;
+}
+
+.btn-lawyer-next:disabled {
+  background-color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+/* 자격 안내 박스 */
+.lawyer-qualification-info {
+  margin-top: 25px;
+  padding: 15px;
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #b45309;
+  text-align: center;
+}

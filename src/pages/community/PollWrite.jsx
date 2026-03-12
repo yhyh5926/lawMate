@@ -13,7 +13,7 @@ const PollWrite = () => {
     description: "",
     disclaimer: "",
     endDate: "",
-    options: ["", ""]
+    options: ["", ""],
   });
 
   const handleChange = (e) => {
@@ -21,7 +21,7 @@ const PollWrite = () => {
 
     setForm({
       ...form,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -31,7 +31,7 @@ const PollWrite = () => {
 
     setForm({
       ...form,
-      options: newOptions
+      options: newOptions,
     });
   };
 
@@ -43,7 +43,7 @@ const PollWrite = () => {
 
     setForm({
       ...form,
-      options: [...form.options, ""]
+      options: [...form.options, ""],
     });
   };
 
@@ -57,7 +57,7 @@ const PollWrite = () => {
 
     setForm({
       ...form,
-      options: newOptions
+      options: newOptions,
     });
   };
 
@@ -100,7 +100,7 @@ const PollWrite = () => {
         description: form.description,
         disclaimer: form.disclaimer.trim() || null,
         endDate: form.endDate,
-        options: trimmedOptions
+        options: trimmedOptions,
       };
 
       console.log("투표 등록 payload:", payload);
@@ -204,9 +204,7 @@ const PollWrite = () => {
             >
               취소
             </button>
-            <button 
-              type="submit" 
-              className="poll-submit-btn">
+            <button type="submit" className="poll-submit-btn">
               등록
             </button>
           </div>

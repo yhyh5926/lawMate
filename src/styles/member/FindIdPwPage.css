@@ -1,0 +1,100 @@
+/* FindIdPwPage.css */
+
+.find-container {
+  max-width: 440px;
+  margin: 80px auto;
+  padding: 0 20px;
+}
+
+.find-title {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 40px;
+}
+
+/* 탭 스타일 */
+.find-tabs {
+  display: flex;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.find-tab-btn {
+  flex: 1;
+  padding: 15px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.find-tab-btn.active {
+  color: #1a6dff;
+}
+
+.find-tab-btn.active::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #1a6dff;
+}
+
+/* 입력 폼 박스 */
+.find-form-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.find-desc {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.find-input {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 15px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.find-input:focus {
+  border-color: #1a6dff;
+}
+
+/* 인증 버튼 */
+.find-submit-btn {
+  width: 100%;
+  padding: 16px;
+  background-color: #1a1a2e;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+.find-submit-btn:hover {
+  background-color: #2a2a40;
+}

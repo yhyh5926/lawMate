@@ -1,0 +1,92 @@
+/* CaseCard.css */
+
+.case-card-container {
+  border: 1px solid #e8ecf0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  background-color: #ffffff;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.case-card-container:hover {
+  transform: translateY(-2px);
+  border-color: #1a6dff; /* LawMate Point Blue */
+  box-shadow: 0 8px 16px rgba(26, 109, 255, 0.08);
+}
+
+.case-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.case-type-badge {
+  background-color: #f0f4ff;
+  color: #1a6dff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+.case-date {
+  color: #aaa;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.case-title {
+  margin: 0 0 16px 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a1a2e; /* LawMate Deep Navy */
+  line-height: 1.4;
+  /* 제목이 너무 길 경우 두 줄까지만 표시 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.case-card-footer {
+  border-top: 1px solid #f0f2f5;
+  padding-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.case-status-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-label {
+  font-size: 13px;
+  color: #888;
+}
+
+.status-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a2e;
+  background: #f8f9fa;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.case-arrow {
+  color: #d0d8e4;
+  font-size: 18px;
+  transition: color 0.2s;
+}
+
+.case-card-container:hover .case-arrow {
+  color: #1a6dff;
+}

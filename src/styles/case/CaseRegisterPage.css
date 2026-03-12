@@ -1,125 +1,164 @@
-/* src/styles/case/CaseRegisterPage.css */
-.case-register-container {
+/* CaseRegisterPage.css */
+
+.case-reg-container {
   max-width: 800px;
-  margin: 50px auto;
+  margin: 60px auto;
   padding: 40px;
-  background-color: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(26, 26, 46, 0.05);
+  border: 1px solid #e8ecf0;
 }
 
-.register-access-denied {
-  text-align: center;
-  padding: 100px 20px;
-  font-size: 18px;
-  color: #dc2626;
-  font-weight: bold;
+.case-reg-header {
+  margin-bottom: 40px;
+  border-bottom: 2px solid #1a1a2e;
+  padding-bottom: 20px;
 }
 
-.register-header h2 {
-  font-size: 26px;
-  color: #0f172a;
-  margin-bottom: 10px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #1e293b;
+.case-reg-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin: 0 0 12px 0;
 }
 
-.register-header p {
+.case-reg-desc {
   color: #64748b;
-  font-size: 14px;
-  margin-bottom: 30px;
-}
-
-.register-form {
+  font-size: 15px;
+  margin: 0;
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.register-form-row {
-  display: flex;
-  gap: 20px;
-}
-
-.register-form-group {
-  display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 8px;
 }
 
-.register-form-group.half {
+/* Form Layout */
+.case-reg-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.flex-1 {
   flex: 1;
 }
 
-.register-form-group label {
-  font-weight: 600;
-  color: #334155;
-  font-size: 14px;
-}
-
-.register-form-group input,
-.register-form-group select,
-.register-form-group textarea {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
+.form-group label {
+  display: block;
+  font-weight: 700;
   font-size: 15px;
-  color: #1e293b;
-  box-sizing: border-box;
-  transition: border-color 0.2s;
+  color: #1a1a2e;
+  margin-bottom: 10px;
 }
 
-.register-form-group input:focus,
-.register-form-group select:focus,
-.register-form-group textarea:focus {
+.required {
+  color: #ff3b30;
+  margin-left: 2px;
+}
+
+/* Inputs */
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #1a1a2e;
+  transition: all 0.2s ease;
+  background-color: #f8fafc;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #1a6dff;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(26, 109, 255, 0.1);
 }
 
-.register-form-group textarea {
+.form-textarea {
+  line-height: 1.6;
   resize: vertical;
 }
 
-.register-btn-group {
+.input-helper {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-top: 8px;
+}
+
+/* Buttons */
+.form-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
   margin-top: 20px;
+  padding-top: 30px;
+  border-top: 1px solid #f1f5f9;
 }
 
 .btn-cancel {
-  padding: 12px 24px;
-  background-color: #f8fafc;
-  color: #475569;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
+  padding: 14px 28px;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 10px;
+  color: #64748b;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background 0.2s;
 }
 
 .btn-cancel:hover {
-  background-color: #e2e8f0;
+  background: #e2e8f0;
 }
 
 .btn-submit {
-  padding: 12px 32px;
-  background-color: #2563eb;
-  color: #fff;
+  padding: 14px 32px;
+  background: #1a6dff;
+  color: #ffffff;
   border: none;
-  border-radius: 6px;
-  font-weight: bold;
+  border-radius: 10px;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
 }
 
-.btn-submit:hover:not(:disabled) {
-  background-color: #1d4ed8;
+.btn-submit:hover {
+  background: #0056e0;
+  transform: translateY(-1px);
 }
 
 .btn-submit:disabled {
-  background-color: #94a3b8;
+  background: #cbd5e1;
   cursor: not-allowed;
+  transform: none;
+}
+
+/* Access Denied */
+.access-denied {
+  text-align: center;
+  padding: 100px 20px;
+}
+
+.denied-icon {
+  font-size: 50px;
+  margin-bottom: 20px;
+}
+
+.access-denied button {
+  margin-top: 20px;
+  padding: 10px 24px;
+  background: #1a1a2e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }

@@ -1,0 +1,103 @@
+/* JoinTypePage.css */
+
+.join-type-container {
+  max-width: 480px;
+  margin: 100px auto;
+  padding: 40px 30px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+  text-align: center;
+}
+
+.join-type-container h2 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 10px;
+}
+
+.join-type-subtitle {
+  font-size: 16px;
+  color: #64748b;
+  margin-bottom: 35px;
+}
+
+/* 1단계: 역할 선택 카드 */
+.role-card {
+  padding: 30px;
+  border: 2px solid #f1f5f9;
+  border-radius: 16px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: #f8fafc;
+}
+
+.role-card:hover {
+  border-color: #1a6dff;
+  background-color: #f0f7ff;
+  transform: translateY(-2px);
+}
+
+.role-card h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+/* 2단계: 가입 수단 버튼들 */
+.method-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.method-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: opacity 0.2s;
+}
+
+.method-btn:hover {
+  opacity: 0.9;
+}
+
+.btn-form {
+  background-color: #1a1a2e;
+  color: #fff;
+}
+.btn-google {
+  background-color: #fff;
+  border: 1.5px solid #e2e8f0 ! aspiration;
+  color: #1e293b;
+}
+.btn-kakao {
+  background-color: #fee500;
+  color: #3c1e1e;
+}
+.btn-naver {
+  background-color: #03c75a;
+  color: #fff;
+}
+
+.btn-back {
+  margin-top: 25px;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 14px;
+}

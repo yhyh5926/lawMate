@@ -1,0 +1,88 @@
+/* JoinStepIndicator.css */
+
+.join-step-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 50px;
+  padding: 20px 0;
+}
+
+.join-step-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 단계 원형 */
+.step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 2px solid #e2e8f0;
+  color: #94a3b8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+/* 단계 텍스트 */
+.step-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #94a3b8;
+  transition: all 0.3s ease;
+}
+
+/* 진행 중 상태 (Active) */
+.join-step-item.active .step-circle {
+  background-color: #ffffff;
+  border-color: #1a6dff; /* LawMate Point Blue */
+  color: #1a6dff;
+  box-shadow: 0 0 0 4px rgba(26, 109, 255, 0.1);
+}
+
+.join-step-item.active .step-text {
+  color: #1a1a2e; /* LawMate Deep Navy */
+  font-weight: 800;
+}
+
+/* 완료된 상태 (Passed) */
+.join-step-item.passed .step-circle {
+  background-color: #1a6dff;
+  border-color: #1a6dff;
+  color: #ffffff;
+}
+
+.join-step-item.passed .step-text {
+  color: #64748b;
+}
+
+/* 연결선 */
+.step-connector {
+  width: 60px;
+  height: 2px;
+  background-color: #e2e8f0;
+  margin: 0 20px;
+  border-radius: 2px;
+  transition: background-color 0.3s ease;
+}
+
+.step-connector.passed {
+  background-color: #1a6dff;
+}
+
+/* 반응형 모바일 대응 */
+@media (max-width: 480px) {
+  .step-connector {
+    width: 30px;
+    margin: 0 10px;
+  }
+  .step-text {
+    font-size: 13px;
+  }
+}
