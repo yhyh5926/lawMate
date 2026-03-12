@@ -1,7 +1,7 @@
 // src/components/mypage/MyPostsTab.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { memberApi } from "../../api/memberApi"; // 💡 axios 대신 정의된 memberApi 사용
 import { useAuthStore } from "../../store/authStore.js";
 import "../../styles/mypage/MyPostsTab.css"; // 💡 분리된 CSS 임포트
 
@@ -22,9 +22,8 @@ const MyPostsTab = () => {
   const fetchMyPosts = async (type) => {
     setLoading(true);
     try {
-      const response = await axios.get(`/api/mypage/posts/${user.memberId}`, {
-        params: { type: type },
-      });
+      // 💡 [수정] memberApi.getMyPosts를 호출하여 데이터 요청
+      const response = await memberApi.getMyPosts(user.memberId, type);
 
       // 💡 [중요] 응답 데이터가 배열인지 확인 후 세팅 (TypeError 방어)
       if (Array.isArray(response.data)) {
@@ -44,7 +43,8 @@ const MyPostsTab = () => {
     const routeMap = {
       question: "/question/detail/",
       community: "/community/detail/",
-      mockTrial: "/mocktrial/detail/",
+      // 💡 [수정] 어드민 페이지 및 타 팀원의 경로에 맞게 상세 페이지 링크를 /poll/detail/ 로 수정했습니다.
+      mockTrial: "/poll/detail/", 
     };
     navigate(`${routeMap[subTab]}${id}`);
   };
@@ -90,7 +90,8 @@ const MyPostsTab = () => {
                 <div className="mypost-item-main">
                   <span
                     className={`mypost-badge ${
-                      post.status === "답변완료" || post.status === "판결완료"
+                      // 💡 [수정] 모의판결 상태인 '투표종료'가 넘어올 때도 초록색 배지가 나오도록 추가
+                      post.status === "답변완료" || post.status === "판결완료" || post.status === "투표종료"
                         ? "badge-success"
                         : "badge-pending"
                     }`}

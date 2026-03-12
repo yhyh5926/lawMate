@@ -1,3 +1,4 @@
+// src/api/memberApi.js
 import axiosInstance from "./axiosInstance";
 
 export const memberApi = {
@@ -28,9 +29,14 @@ export const memberApi = {
   editProfile: (data) => axiosInstance.put("/api/mypage/edit", data),
   
   // 💡 [수정] 탈퇴 시 loginId를 백엔드로 보내도록 변경 (DELETE 대신 상태 업데이트를 위한 PUT 사용)
-  withdraw: (loginId) => axiosInstance.put(`/api/mypage/withdraw?loginId=${loginId}`),
+  // 컨트롤러의 @PathVariable("memberId") 구조에 맞춰 경로 수정
+  withdraw: (memberId) => axiosInstance.put(`/api/member/${memberId}/withdraw`),
 
   // 💡 [신규 추가] 일반 회원의 상담 예약 내역 조회 및 취소 API
   getMyReservations: (memberId) => axiosInstance.get(`/api/reservations/member/${memberId}`),
   cancelReservation: (id) => axiosInstance.put(`/api/reservations/${id}/cancel`),
+
+  // 💡 [신규 추가] 내가 쓴 글 목록 조회 API (type: 'question', 'community', 'mockTrial')
+  getMyPosts: (memberId, type) => 
+    axiosInstance.get("/api/member/posts", { params: { memberId, type } }),
 };
