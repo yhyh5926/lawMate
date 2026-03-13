@@ -188,10 +188,10 @@
   margin-left: 6px;
 }
 .edited-tag.mine {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.9);
 }
 .edited-tag.other {
-  color: #aaa;
+  color: #555;
 }
 
 /* --- 상태(읽음/시간) --- */

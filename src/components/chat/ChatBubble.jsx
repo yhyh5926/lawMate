@@ -224,7 +224,12 @@ const ChatBubble = ({
       <span className="content-text">
         {message.content}
         {isEdited && (
-          <span className={`edited-tag ${isMine ? "mine" : ""}`}>수정됨</span>
+          <span
+            className={`edited-tag ${isMine ? "mine" : ""}`}
+            style={{ opacity: 1, color: isMine ? "#cce0ff" : "#666", fontSize: "11px" }}
+          >
+            수정됨
+          </span>
         )}
       </span>
     );
