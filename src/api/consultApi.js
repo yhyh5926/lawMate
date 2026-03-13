@@ -38,5 +38,5 @@ export const getLawyerConsults = () =>
 export const confirmConsult = (consultId) =>
   axiosInstance.put(`/consult/${consultId}/confirm`);
 
-export const rejectConsult = (consultId) =>
-  axiosInstance.put(`/consult/${consultId}/reject`);
+export const rejectConsult = (consultId, rejectReason) =>
+  axiosInstance.put(`/consult/${consultId}/reject`, { rejectReason });
