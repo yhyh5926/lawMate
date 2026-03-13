@@ -1,6 +1,6 @@
 // 파일 위치: src/components/mypage/LawyerReceptionTab.jsx
 import React, { useState, useEffect } from "react";
-import { getLawyerConsults, confirmConsult, rejectConsult } from "../../api/consultApi";
+import { getLawyerConsults, confirmConsult, rejectConsult, deleteDoneConsult } from "../../api/consultApi";
 
 const STATUS_META = {
   PENDING:   { label: "대기중",    color: "#FF9500", bg: "#FFF3E0" },
@@ -35,6 +35,17 @@ const LawyerReceptionTab = () => {
       console.error(e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDoneDelete = async (consultId) => {
+    if (!window.confirm("완료된 상담을 삭제하시겠습니까? 복구할 수 없습니다.")) return;
+    try {
+      await deleteDoneConsult(consultId);
+      alert("삭제되었습니다.");
+      fetchConsults();
+    } catch (e) {
+      alert("삭제 실패");
     }
   };
 
@@ -151,6 +162,22 @@ const LawyerReceptionTab = () => {
                     </button>
                     <button onClick={() => handleRejectClick(c.consultId)} style={btnStyle("#fff", "#FF3B30", "1px solid #FF3B30")}>
                       거절
+                    </button>
+                  </div>
+                )}
+                {/* 완료 상태 삭제 버튼 */}
+                {c.status === "DONE" && (
+                  <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+                    <button onClick={() => handleDoneDelete(c.consultId)} style={btnStyle("#fff", "#FF3B30", "1px solid #FF3B30")}>
+                      삭제
+                    </button>
+                  </div>
+                )}
+                {/* 취소/거절 상태 삭제 버튼 */}
+                {c.status === "CANCELLED" && (
+                  <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+                    <button onClick={() => handleDoneDelete(c.consultId)} style={btnStyle("#fff", "#FF3B30", "1px solid #FF3B30")}>
+                      삭제
                     </button>
                   </div>
                 )}

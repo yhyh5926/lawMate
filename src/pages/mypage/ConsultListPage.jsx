@@ -1,7 +1,7 @@
 // 파일 위치: src/pages/mypage/ConsultListPage.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMyConsults, cancelConsult, restoreConsult, deleteConsult } from "../../api/consultApi";
+import { getMyConsults, cancelConsult, restoreConsult, deleteConsult, deleteDoneConsult } from "../../api/consultApi";
 
 const STATUS_TABS = [
   { value: "",          label: "전체" },
@@ -63,6 +63,17 @@ const ConsultListPage = () => {
       fetchConsults();
     } catch (e) {
       alert("복구 실패");
+    }
+  };
+
+  const handleDoneDelete = async (consultId) => {
+    if (!window.confirm("완료된 상담을 삭제하시겠습니까? 복구할 수 없습니다.")) return;
+    try {
+      await deleteDoneConsult(consultId);
+      alert("삭제되었습니다.");
+      fetchConsults();
+    } catch (e) {
+      alert("삭제 실패");
     }
   };
 
@@ -164,6 +175,15 @@ const ConsultListPage = () => {
                       style={btnStyle("#34C759", "#fff")}
                     >
                       후기 작성
+                    </button>
+                  )}
+                  {/* 삭제 (완료) */}
+                  {c.status === "DONE" && (
+                    <button
+                      onClick={() => handleDoneDelete(c.consultId)}
+                      style={btnStyle("#fff", "#FF3B30", "1px solid #FF3B30")}
+                    >
+                      삭제
                     </button>
                   )}
                   {/* 예약 취소 (대기/확정) */}
