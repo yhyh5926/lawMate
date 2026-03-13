@@ -1,84 +1,88 @@
-/* EditInfoTab.css */
+/* EditInfoTab.css — LawMate Design System */
 
 .edit-wrapper {
-  padding: 10px;
-  max-width: 650px; /* 폼이 너무 넓어지지 않게 조절 */
+  padding: 4px;
+  max-width: 640px;
 }
 
 .content-title {
   font-size: 22px;
   font-weight: 800;
   color: #1a1a2e;
-  margin-bottom: 30px;
+  margin-bottom: 28px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #1a1a2e;
+  letter-spacing: -0.3px;
 }
 
-/* 1. 본인 인증 컨테이너 (인증 전) */
+/* 본인 인증 컨테이너 */
 .verify-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
+  background: #fff;
+  border: 1px solid #e8ecf0;
+  border-radius: 16px;
   text-align: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .verify-icon {
-  font-size: 48px;
-  margin-bottom: 20px;
+  font-size: 44px;
+  margin-bottom: 16px;
 }
 
 .verify-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
   color: #1a1a2e;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .verify-desc {
-  font-size: 15px;
+  font-size: 14px;
   color: #64748b;
-  margin-bottom: 30px;
-  line-height: 1.5;
+  margin-bottom: 28px;
+  line-height: 1.6;
 }
 
 .verify-input-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
   max-width: 320px;
 }
 
 .verify-input {
-  padding: 14px;
+  padding: 13px 14px;
   border: 1.5px solid #e2e8f0;
   border-radius: 10px;
-  font-size: 15px;
+  font-size: 14px;
   transition: border-color 0.2s;
+  font-family: "Pretendard", sans-serif;
 }
 
 .verify-input:focus {
   outline: none;
   border-color: #1a6dff;
+  box-shadow: 0 0 0 3px rgba(26, 109, 255, 0.08);
 }
 
 .verify-btn {
-  padding: 14px;
+  padding: 13px;
   background: #1a1a2e;
-  color: white;
+  color: #fff;
   border: none;
   border-radius: 10px;
   font-weight: 700;
+  font-size: 14px;
   cursor: pointer;
   transition: background 0.2s;
 }
-
-.verify-btn:hover {
-  background: #000000;
-}
+.verify-btn:hover { background: #000; }
 
 .verify-google-btn {
   display: flex;
@@ -87,55 +91,54 @@
   gap: 10px;
   width: 100%;
   max-width: 320px;
-  padding: 14px;
-  background: white;
+  padding: 13px;
+  background: #fff;
   border: 1.5px solid #e2e8f0;
   border-radius: 10px;
   font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
   transition: background 0.2s;
 }
+.verify-google-btn:hover { background: #f7f9fb; }
 
-.verify-google-btn:hover {
-  background: #f8fafc;
-}
-
-/* 2. 정보 수정 폼 (인증 후) */
+/* 정보 수정 폼 */
 .edit-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 22px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
 }
 
 .form-label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: #475569;
 }
 
 .form-input {
-  padding: 14px;
+  padding: 13px 14px;
   border: 1.5px solid #e2e8f0;
   border-radius: 10px;
-  font-size: 15px;
-  color: #1e293b;
+  font-size: 14px;
+  color: #1a1a2e;
   transition: all 0.2s;
+  font-family: "Pretendard", sans-serif;
 }
 
 .form-input:focus {
   outline: none;
   border-color: #1a6dff;
-  box-shadow: 0 0 0 3px rgba(26, 109, 255, 0.1);
+  box-shadow: 0 0 0 3px rgba(26, 109, 255, 0.08);
 }
 
 .form-input:disabled {
-  background-color: #f1f5f9;
+  background: #f1f5f9;
   color: #94a3b8;
   cursor: not-allowed;
 }
@@ -146,7 +149,7 @@
   gap: 10px;
 }
 
-/* 전문 분야 버튼 커스텀 (인라인 스타일 보완) */
+/* 전문 분야 태그 */
 .spec-tag-group {
   display: flex;
   flex-wrap: wrap;
@@ -154,58 +157,53 @@
   margin-top: 4px;
 }
 
-/* 기존 파일 보기 버튼 */
+/* 파일 보기 버튼 */
 .view-file-btn {
   background: #f1f5f9;
   border: 1px solid #e2e8f0;
   color: #475569;
-  border-radius: 10px;
+  border-radius: 8px;
   font-weight: 600;
+  font-size: 13px;
+  padding: 8px 14px;
   cursor: pointer;
 }
-
-.view-file-btn:hover {
-  background: #e2e8f0;
-}
+.view-file-btn:hover { background: #e2e8f0; }
 
 /* 수정 완료 버튼 */
 .submit-edit-btn {
-  margin-top: 20px;
-  padding: 16px;
+  margin-top: 10px;
+  padding: 15px;
   background: #1a6dff;
-  color: white;
+  color: #fff;
   border: none;
-  border-radius: 12px;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 15px;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s;
 }
-
 .submit-edit-btn:hover {
   background: #0056e0;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(26, 109, 255, 0.2);
 }
 
-/* 3. 회원 탈퇴 섹션 */
+/* 회원 탈퇴 섹션 */
 .withdraw-section {
-  margin-top: 50px;
-  padding-top: 30px;
-  border-top: 1px solid #f1f5f9;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid #f0f2f5;
   text-align: right;
 }
 
 .withdraw-btn {
   background: none;
   border: none;
-  color: #94a3b8;
+  color: #aaa;
   text-decoration: underline;
   font-size: 13px;
   cursor: pointer;
   transition: color 0.2s;
 }
-
-.withdraw-btn:hover {
-  color: #ef4444;
-}
+.withdraw-btn:hover { color: #ff3b30; }

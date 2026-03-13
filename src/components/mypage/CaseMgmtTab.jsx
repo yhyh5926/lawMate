@@ -23,6 +23,19 @@ const STEP_MAPPING = {
   CLOSED: 4,
 };
 
+// 💡 이미지와 동일한 사건 카테고리 목록
+const CASE_CATEGORIES = [
+  "민사",
+  "형사",
+  "가사",
+  "행정",
+  "헌법",
+  "기업법무",
+  "세무",
+  "국제",
+  "기타"
+];
+
 const CaseMgmtTab = () => {
   const { user } = useAuthStore();
   const [subTab, setSubTab] = useState("active");
@@ -47,7 +60,7 @@ const CaseMgmtTab = () => {
     clientId: "",
     consultId: "", 
     title: "",
-    caseType: "",
+    caseType: [], // 💡 다중 선택을 위해 배열로 초기화
     description: "",
   });
 
@@ -124,8 +137,9 @@ const CaseMgmtTab = () => {
   }, [user]);
 
   const handleManualRegister = async () => {
-    if (!regForm.title || !regForm.clientId || !regForm.consultId) {
-      return alert("의뢰인 및 상담 사유를 선택하고 사건 제목을 필수적으로 입력해주세요.");
+    // 💡 다중 선택된 배열의 길이를 체크합니다.
+    if (!regForm.title || !regForm.clientId || !regForm.consultId || regForm.caseType.length === 0) {
+      return alert("모든 항목(의뢰인, 상담 사유, 사건 카테고리, 사건 제목)을 필수적으로 선택 및 입력해주세요.");
     }
     try {
       await caseApi.createCaseManual({
@@ -133,12 +147,12 @@ const CaseMgmtTab = () => {
         memberId: regForm.clientId,
         consultId: regForm.consultId,
         title: regForm.title,
-        caseType: regForm.caseType,
+        caseType: regForm.caseType.join(", "), // 💡 백엔드 전송 시 "민사, 형사" 형태의 문자열로 변환
         description: regForm.description,
       });
       alert("새로운 사건이 성공적으로 등록되었습니다.");
       setIsRegisterOpen(false);
-      setRegForm({ clientId: "", consultId: "", title: "", caseType: "", description: "" });
+      setRegForm({ clientId: "", consultId: "", title: "", caseType: [], description: "" });
       fetchCases();
       fetchClients(); 
     } catch (error) {
@@ -341,17 +355,47 @@ const CaseMgmtTab = () => {
             </select>
           </div>
 
-          <div className="form-grid-2">
-             <input
-              type="text"
-              className="form-control"
-              placeholder="사건 유형 (예: 민사, 이혼)"
-              value={regForm.caseType}
-              onChange={(e) =>
-                setRegForm({ ...regForm, caseType: e.target.value })
-              }
-            />
-             <input
+          {clientList.length === 0 && (
+            <p className="form-error-text">
+              * 현재 승인(확정)된 상담 내역이 없어 의뢰인을 선택할 수 없습니다.
+              접수 관리 탭에서 상담을 먼저 승인해주세요.
+            </p>
+          )}
+
+          {/* 💡 사건 카테고리 다중 선택 (버튼 형태) */}
+          <div className="form-category-wrapper">
+            <span className="detail-label">사건 카테고리 (다중 선택 가능)</span>
+            <div className="category-btn-group">
+              {CASE_CATEGORIES.map((category, idx) => {
+                const isActive = Array.isArray(regForm.caseType) && regForm.caseType.includes(category);
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    className={`category-btn ${isActive ? "active" : ""}`}
+                    onClick={() => {
+                      setRegForm((prev) => {
+                        const current = Array.isArray(prev.caseType) ? prev.caseType : [];
+                        if (current.includes(category)) {
+                          // 이미 선택된 항목이면 배열에서 제거
+                          return { ...prev, caseType: current.filter(c => c !== category) };
+                        } else {
+                          // 선택되지 않은 항목이면 배열에 추가
+                          return { ...prev, caseType: [...current, category] };
+                        }
+                      });
+                    }}
+                  >
+                    {category}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 💡 사건 제목을 카테고리 버튼 아래로 독립 배치 */}
+          <div className="title-input-wrapper">
+            <input
               type="text"
               className="form-control"
               placeholder="사건 제목 (예: 임대차 보증금 반환 소송)"
@@ -359,13 +403,6 @@ const CaseMgmtTab = () => {
               onChange={(e) => setRegForm({ ...regForm, title: e.target.value })}
             />
           </div>
-
-          {clientList.length === 0 && (
-            <p className="form-error-text">
-              * 현재 승인(확정)된 상담 내역이 없어 의뢰인을 선택할 수 없습니다.
-              접수 관리 탭에서 상담을 먼저 승인해주세요.
-            </p>
-          )}
 
           <textarea
             className="form-control form-textarea"

@@ -91,6 +91,32 @@
   color: #cbd5e1;
 }
 
+/* 💡 전문 분야 다중 선택 버튼 스타일 */
+.lawyer-join-specialty-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.lawyer-join-specialty-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+}
+
+.lawyer-join-specialty-btn.active {
+  background-color: #1a6dff;
+  border-color: #1a6dff;
+  color: #fff;
+  font-weight: bold;
+}
+
 /* 파일 업로드 스타일 */
 .social-join-file-input {
   width: 100%;
@@ -116,13 +142,9 @@
   transition: background-color 0.2s;
 }
 
-.social-join-btn-primary:hover {
-  background-color: #2a2a40;
-}
-
-/* 전문가 섹션 구분 (변호사 타입일 때만 활성화) */
+/* 전문가 섹션 구분 */
 .expert-info-divider {
-  margin-top: 40px;
+  margin-top: 30px;
   padding-top: 25px;
   border-top: 2px solid #f1f5f9;
 }

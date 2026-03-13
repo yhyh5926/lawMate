@@ -1,29 +1,28 @@
-/* LawyerMgmtTab.css */
+/* LawyerMgmtTab.css — LawMate Design System */
 
 .lawyer-mgmt-wrapper {
   max-width: 1100px;
   margin: 0 auto;
 }
 
-/* 상단 안내 문구 */
+/* 안내 문구 */
 .mgmt-info-notice {
-  background: #f8fafc;
-  border: 1px dashed #cbd5e1;
-  padding: 15px 20px;
-  border-radius: 12px;
-  font-size: 14px;
-  color: #64748b;
-  margin-bottom: 25px;
-}
-
-.mgmt-info-notice strong {
+  background: #e8f0ff;
+  border: 1px solid #c8d8ff;
+  padding: 13px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
   color: #1a6dff;
+  margin-bottom: 24px;
 }
 
-/* 라벨 스타일링 */
+.mgmt-info-notice strong { color: #1a1a2e; }
+
+/* 라벨 */
 .mgmt-label-small {
   display: block;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: #94a3b8;
   text-transform: uppercase;
@@ -31,43 +30,44 @@
   margin-bottom: 6px;
 }
 
-/* 1. 이미지 편집 섹션 */
+/* 다크 배경 위 라벨은 밝게 */
+.mgmt-dark-section .mgmt-label-small {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* 이미지 편집 */
 .mgmt-img-box-edit {
   position: relative;
   cursor: pointer;
-  border: 4px solid #fff;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  border: 3px solid #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }
 
 .mgmt-img-overlay-edit {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(26, 26, 46, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s;
   border-radius: inherit;
 }
 
-.mgmt-img-box-edit:hover .mgmt-img-overlay-edit {
-  opacity: 1;
-}
+.mgmt-img-box-edit:hover .mgmt-img-overlay-edit { opacity: 1; }
 
 .mgmt-img-overlay-edit span {
-  color: white;
-  font-size: 14px;
-  font-weight: 600;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 8px 16px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 7px 14px;
   border-radius: 20px;
 }
 
-/* 2. 전문 분야 토글 버튼 그룹 */
+/* 전문 분야 토글 버튼 */
 .mgmt-spec-group {
   display: flex;
   flex-wrap: wrap;
@@ -76,90 +76,105 @@
 
 .mgmt-spec-btn {
   padding: 6px 14px;
-  border-radius: 30px;
-  border: 1px solid #e2e8f0;
-  background: rgba(255, 255, 255, 0.1);
-  color: #64748b;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.75);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
 }
 
 .mgmt-spec-btn:hover {
-  background: #f1f5f9;
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #fff;
 }
 
 .mgmt-spec-btn.active {
   background: #1a6dff;
   border-color: #1a6dff;
-  color: white;
-  box-shadow: 0 4px 10px rgba(26, 109, 255, 0.3);
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(26, 109, 255, 0.35);
 }
 
-/* 3. 편집용 입력 필드 공통 스타일 */
+/* ✅ 편집 입력 필드 — 다크 배경 위 가시성 수정 */
 .mgmt-edit-input {
   width: 100%;
-  padding: 10px 0;
+  padding: 10px 4px;
   border: none;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.35);
   background: transparent;
   font-size: 15px;
-  color: #1e293b;
+  color: #ffffff;
   transition: border-color 0.2s;
   box-sizing: border-box;
+  font-family: "Pretendard", sans-serif;
+}
+
+.mgmt-edit-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .mgmt-edit-input:focus {
   outline: none;
-  border-bottom-color: #1a6dff;
+  border-bottom-color: #6aaeff;
 }
 
-/* 제목 등 굵은 텍스트용 입력창 */
+/* 이름 굵은 입력란 */
 .ld-name .mgmt-edit-input {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 800;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom-width: 2px;
+  color: #ffffff;
 }
 
-/* 4. 경력 편집 textarea */
+.ld-name .mgmt-edit-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* 경력 textarea — 라이트 배경 섹션용 */
 .mgmt-edit-textarea {
   width: 100%;
-  border: none;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
   resize: none;
-  font-family: inherit;
-  font-size: 15px;
-  color: #334155;
-  background: #fdfdfd;
-  padding: 10px;
-  border-radius: 8px;
+  font-family: "Pretendard", sans-serif;
+  font-size: 14px;
+  color: #1a1a2e;
+  background: #f7f9fb;
+  padding: 12px 14px;
   box-sizing: border-box;
+  transition: all 0.2s;
 }
 
 .mgmt-edit-textarea:focus {
   outline: none;
   background: #fff;
-  box-shadow: inset 0 0 0 1px #e2e8f0;
+  border-color: #1a6dff;
+  box-shadow: 0 0 0 3px rgba(26, 109, 255, 0.08);
 }
 
-/* 5. 저장 버튼 (상세페이지 예약 버튼 스타일 계승) */
+/* 저장 버튼 */
 .ld-btn-save {
   width: 100%;
-  padding: 18px;
-  background: linear-gradient(135deg, #1a6dff 0%, #0056e0 100%);
-  color: white;
+  padding: 16px;
+  background: #1a6dff;
+  color: #fff;
   border: none;
   border-radius: 12px;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 800;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s;
   margin-top: 10px;
 }
 
 .ld-btn-save:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(26, 109, 255, 0.3);
+  background: #0056e0;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(26, 109, 255, 0.25);
 }
 
 /* 숫자 입력 화살표 제거 */

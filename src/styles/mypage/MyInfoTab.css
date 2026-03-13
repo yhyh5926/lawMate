@@ -1,18 +1,18 @@
-/* MyInfoTab.css */
+/* MyInfoTab.css — LawMate Design System */
 
 .myinfo-wrapper {
-  padding: 10px;
-  background-color: #ffffff;
+  padding: 4px;
+  background: #fff;
 }
 
-/* 섹션 제목 */
 .content-title {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 800;
   color: #1a1a2e;
-  margin-bottom: 30px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #f1f5f9;
+  margin-bottom: 24px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #1a1a2e;
+  letter-spacing: -0.3px;
 }
 
 /* 정보 리스트 */
@@ -22,81 +22,78 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .myinfo-item {
   display: flex;
   align-items: center;
-  padding: 20px;
-  background-color: #f8fafc;
-  border-radius: 12px;
-  transition: background-color 0.2s;
+  padding: 16px 18px;
+  background: #f7f9fb;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  transition: all 0.15s;
 }
 
 .myinfo-item:hover {
-  background-color: #f1f5f9;
+  background: #f0f4ff;
+  border-color: #c8d8ff;
 }
 
-/* 항목 레이블 (좌측) */
 .myinfo-label {
-  width: 160px;
-  font-size: 14px;
+  width: 150px;
+  font-size: 13px;
   font-weight: 700;
   color: #64748b;
   flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
-/* 항목 값 (우측) */
 .myinfo-value {
-  flex-grow: 1;
-  font-size: 16px;
+  flex: 1;
+  font-size: 15px;
   font-weight: 600;
-  color: #1e293b;
+  color: #1a1a2e;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-/* 첨부파일 보기 버튼 */
+/* 파일 보기 버튼 */
 .view-file-btn {
-  margin-left: 15px;
+  margin-left: 14px;
   padding: 6px 12px;
   font-size: 12px;
   font-weight: 700;
   color: #1a6dff;
-  background-color: #ffffff;
+  background: #fff;
   border: 1px solid #1a6dff;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
+  white-space: nowrap;
 }
 
 .view-file-btn:hover {
-  background-color: #1a6dff;
-  color: #ffffff;
+  background: #1a6dff;
+  color: #fff;
 }
 
-/* 반응형 처리 */
 @media (max-width: 768px) {
   .myinfo-item {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 6px;
   }
 
-  .myinfo-label {
-    width: 100%;
-    font-size: 12px;
-  }
+  .myinfo-label { width: 100%; font-size: 11px; }
 
   .myinfo-value {
     width: 100%;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
   }
 
-  .view-file-btn {
-    margin-left: 0;
-  }
+  .view-file-btn { margin-left: 0; }
 }

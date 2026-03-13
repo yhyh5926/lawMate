@@ -91,28 +91,42 @@
   color: #ef4444;
 }
 
-/* 전문 분야 버튼 컨테이너 */
+/* 전문 분야 버튼 컨테이너 (사건 관리 탭과 동일한 둥근 버튼 형태로 변경) */
 .lawyer-join-specialty-container {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .lawyer-join-specialty-btn {
-  padding: 12px;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 10px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #cbd5e1;
   background: #fff;
-  font-weight: 600;
   color: #64748b;
   cursor: pointer;
-  transition: all 0.2s;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
 }
 
+.lawyer-join-specialty-btn:hover {
+  border-color: #94a3b8;
+  color: #475569;
+}
+
+/* 선택되었을 때의 스타일 */
 .lawyer-join-specialty-btn.active {
+  border: 1px solid #1a6dff;
   background-color: #1a6dff;
-  border-color: #1a6dff;
   color: #fff;
+  font-weight: bold;
+}
+
+/* 필수 항목 누락 에러 시 스타일 */
+.lawyer-join-specialty-btn.btn-error {
+  border-color: #ef4444;
+  color: #ef4444;
 }
 
 /* 파일 업로드 영역 */

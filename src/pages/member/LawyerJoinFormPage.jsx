@@ -10,7 +10,8 @@ import { memberApi } from "../../api/memberApi.js";
 import { validateId, validatePassword } from "../../utils/validationUtil.js";
 import "../../styles/member/LawyerJoinFormPage.css";
 
-const SPECIALTIES = ["민사", "형사", "가사", "이혼", "노동", "행정", "기업", "부동산"];
+// 💡 [수정] 전문 분야 목록을 사건 관리 탭 및 이미지와 동일하게 맞췄습니다.
+const SPECIALTIES = ["민사", "형사", "가사", "행정", "헌법", "기업법무", "세무", "국제", "기타"];
 
 const useLawyerJoinStore = create((set) => ({
   formData: {

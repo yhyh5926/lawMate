@@ -1,8 +1,4 @@
 // src/pages/member/SocialJoinFormPage.jsx
-/**
- * 파일 위치: src/pages/member/SocialJoinFormPage.jsx
- * 수정 사항: 중복 가입 체크 로직 추가 및 가입 전용 API(socialJoin) 호출로 401/500 에러를 해결했습니다.
- */
 
 import React, { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -13,6 +9,9 @@ import "../../styles/member/SocialJoinFormPage.css";
 
 const GOOGLE_CLIENT_ID =
   "244554224995-kcgsjp47k8flns89ldv9stpfga219kut.apps.googleusercontent.com";
+
+// 💡 [추가] 전문 분야 카테고리 목록
+const SPECIALTIES_LIST = ["민사", "형사", "가사", "행정", "헌법", "기업법무", "세무", "국제", "기타"];
 
 const SocialJoinContent = () => {
   const navigate = useNavigate();
@@ -30,7 +29,7 @@ const SocialJoinContent = () => {
     detailAddress: "",
     licenseNo: "",
     officeName: "",
-    specialty: "",
+    specialty: "", // 💡 선택된 카테고리들이 문자열로 저장됩니다.
     officeAddress: "",
     officeDetailAddress: "",
   });
@@ -51,7 +50,7 @@ const SocialJoinContent = () => {
 
         const generatedLoginId = userInfo.email.split("@")[0];
 
-        // 💡 [추가] 구글 연동 즉시 가입 여부 확인 (중복 가입 방지)
+        // 💡 [유지] 구글 연동 즉시 가입 여부 확인 (중복 가입 방지)
         const checkRes = await memberApi.checkId(generatedLoginId);
         if (!checkRes.data.available) {
           alert("이미 가입된 구글 계정입니다. 로그인 페이지로 이동합니다.");
@@ -79,6 +78,17 @@ const SocialJoinContent = () => {
     const val = e.target.value.replace(/[^0-9]/g, "");
     setFormData({ ...formData, [field]: val });
     if (val.length === 4 && nextRef) nextRef.current.focus();
+  };
+
+  // 💡 [추가] 전문 분야 선택 토글 로직
+  const handleSpecialtyToggle = (spec) => {
+    let currentList = formData.specialty ? formData.specialty.split(",") : [];
+    if (currentList.includes(spec)) {
+      currentList = currentList.filter((item) => item !== spec);
+    } else {
+      currentList.push(spec);
+    }
+    setFormData({ ...formData, specialty: currentList.join(",") });
   };
 
   const handleFileChange = (e) => {
@@ -122,7 +132,7 @@ const SocialJoinContent = () => {
     }
 
     try {
-      // 💡 [중요] 가입은 반드시 socialJoin API를 호출해야 에러가 나지 않습니다.
+      // 💡 [유지] 가입은 반드시 socialJoin API를 호출해야 에러가 나지 않습니다.
       const res = await memberApi.socialJoin(submitData);
       if (res.data.success) {
         navigate(
@@ -206,6 +216,7 @@ const SocialJoinContent = () => {
             <span>-</span>
             <input
               type="text"
+              name="phone2"
               value={formData.phone2}
               onChange={(e) => handlePhoneChange(e, phone3Ref, "phone2")}
               maxLength={4}
@@ -215,6 +226,7 @@ const SocialJoinContent = () => {
             <span>-</span>
             <input
               type="text"
+              name="phone3"
               ref={phone3Ref}
               value={formData.phone3}
               onChange={(e) => handlePhoneChange(e, null, "phone3")}
@@ -251,13 +263,9 @@ const SocialJoinContent = () => {
             </div>
           </>
         ) : (
-          <div
-            style={{
-              marginTop: "30px",
-              borderTop: "2px solid #333",
-              paddingTop: "20px",
-            }}
-          >
+          <div className="expert-info-divider">
+            <div className="expert-info-title">전문가 필수 정보</div>
+            
             <div className="social-join-group">
               <label className="social-join-label">변호사 자격번호</label>
               <input
@@ -269,7 +277,7 @@ const SocialJoinContent = () => {
               />
             </div>
             <div className="social-join-group">
-              <label className="social-join-label">사무소 위치</label>
+              <label className="social-join-label">소속 법무법인 / 사무소명</label>
               <input
                 type="text"
                 name="officeName"
@@ -278,16 +286,27 @@ const SocialJoinContent = () => {
                 className="social-join-input"
               />
             </div>
+
+            {/* 💡 [변경됨] 전문 분야를 버튼 선택형으로 수정 */}
             <div className="social-join-group">
-              <label className="social-join-label">전문 분야</label>
-              <input
-                type="text"
-                name="specialty"
-                value={formData.specialty}
-                onChange={handleChange}
-                className="social-join-input"
-              />
+              <label className="social-join-label">주요 전문 분야 (다중 선택 가능)</label>
+              <div className="lawyer-join-specialty-container">
+                {SPECIALTIES_LIST.map((spec) => {
+                  const isSelected = formData.specialty.split(",").includes(spec);
+                  return (
+                    <button
+                      type="button"
+                      key={spec}
+                      onClick={() => handleSpecialtyToggle(spec)}
+                      className={`lawyer-join-specialty-btn ${isSelected ? "active" : ""}`}
+                    >
+                      {spec}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
+
             <div className="social-join-group">
               <label className="social-join-label">사무소 기본 주소</label>
               <input
@@ -309,7 +328,7 @@ const SocialJoinContent = () => {
               />
             </div>
             <div className="social-join-group">
-              <label className="social-join-label">증빙서류</label>
+              <label className="social-join-label">자격증 증빙서류</label>
               <input
                 type="file"
                 multiple
