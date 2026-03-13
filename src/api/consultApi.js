@@ -40,3 +40,6 @@ export const confirmConsult = (consultId) =>
 
 export const rejectConsult = (consultId, rejectReason) =>
   axiosInstance.put(`/consult/${consultId}/reject`, { rejectReason });
+
+export const deleteDoneConsult = (consultId) =>
+  axiosInstance.delete(`/consult/${consultId}/done-delete`);
