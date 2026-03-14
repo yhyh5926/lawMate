@@ -145,3 +145,30 @@
   background: #0056e0;
   box-shadow: 0 4px 14px rgba(26, 109, 255, 0.2);
 }
+/* 전문 분야 다중 선택 버튼 컨테이너 */
+.specialty-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* 전문 분야 개별 버튼 스타일 */
+.specialty-toggle-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  color: #555;
+  cursor: pointer;
+  font-weight: normal;
+  transition: all 0.2s ease-in-out;
+}
+
+/* 전문 분야 버튼 활성화(선택됨) 상태 */
+.specialty-toggle-btn.active {
+  border: 1px solid #007BFF;
+  background-color: #007BFF;
+  color: #fff;
+  font-weight: bold;
+}

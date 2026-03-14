@@ -1,3 +1,4 @@
+// src/components/mypage/MyInfoTab.jsx
 import React from "react";
 import { useAuthStore } from "../../store/authStore.js";
 import "../../styles/mypage/MyInfoTab.css"; // 💡 분리된 CSS 임포트
@@ -5,13 +6,20 @@ import "../../styles/mypage/MyInfoTab.css"; // 💡 분리된 CSS 임포트
 const MyInfoTab = () => {
   const { user } = useAuthStore();
 
-  // 전화번호 포맷팅 함수
+  // 💡 [수정됨] 전화번호 포맷팅 함수 (어떤 형태든 숫자만 뽑아서 완벽하게 변환)
   const formatPhone = (phone) => {
     if (!phone) return "미등록";
-    if (phone.length === 11)
-      return phone.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
-    if (phone.length === 10)
-      return phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+    
+    // 1. 하이픈이나 특수문자가 섞여있어도 일단 '숫자'만 싹 추출합니다.
+    const cleanPhone = phone.replace(/[^0-9]/g, "");
+    
+    // 2. 추출된 순수 숫자의 길이에 맞춰 하이픈을 예쁘게 삽입합니다.
+    if (cleanPhone.length === 11)
+      return cleanPhone.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+    if (cleanPhone.length === 10)
+      return cleanPhone.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+      
+    // 예외적인 길이라면 원본 그대로 반환
     return phone;
   };
 

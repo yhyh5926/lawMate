@@ -4,12 +4,10 @@ import { useAuthStore } from "../../store/authStore.js";
 import { DEFAULT_IMAGE } from "../../pages/lawyer/LawyerListPage";
 import { baseURL } from "../../constants/baseURL.js";
 
-// 스타일 임포트
-import "../../styles/lawyer/LawyerDetailPage.css"; // 기본 상세페이지 스타일
-import "../../styles/mypage/LawyerMgmtTab.css"; // 관리탭 전용 스타일 (앞서 드린 CSS)
+import "../../styles/lawyer/LawyerDetailPage.css"; 
+import "../../styles/mypage/LawyerMgmtTab.css"; 
 import { categories } from "../../constants/categories.js";
 
-//전문분야
 const SPECIALTIES = categories.slice(1, categories.length - 1);
 
 const LawyerMgmtTab = () => {
@@ -33,6 +31,7 @@ const LawyerMgmtTab = () => {
   const [formData, setFormData] = useState({
     officeName: "",
     officeAddr: "",
+    officeDetailAddr: "", // 💡 [추가] 상세주소 상태 추가
     specialty: "",
     intro: "",
     career: "",
@@ -50,6 +49,7 @@ const LawyerMgmtTab = () => {
         setFormData({
           officeName: data.officeName || "",
           officeAddr: data.officeAddr || "",
+          officeDetailAddr: data.officeDetailAddr || "", // 💡 [추가] 데이터 바인딩
           specialty: data.specialty || "",
           intro: data.intro || "",
           career: data.career || "",
@@ -145,12 +145,10 @@ const LawyerMgmtTab = () => {
         className="ld-container"
         style={{ padding: "0" }}
       >
-        {/* ── 1. 헤더 섹션 (상세페이지 디자인 적용) ── */}
         <header className="ld-header-card">
           <div className="ld-header-glow" />
           <div className="ld-header-content">
             <div className="ld-profile-flex">
-              {/* 프로필 이미지 변경 영역 */}
               <div
                 className="ld-img-wrapper mgmt-img-box-edit"
                 onClick={() => fileInputRef.current.click()}
@@ -173,7 +171,6 @@ const LawyerMgmtTab = () => {
               </div>
 
               <div className="ld-main-meta">
-                {/* 전문 분야 선택 */}
                 <label className="mgmt-label-small">
                   전문 분야 설정 (클릭하여 토글)
                 </label>
@@ -221,7 +218,6 @@ const LawyerMgmtTab = () => {
               </div>
             </div>
 
-            {/* 한 줄 소개 편집 */}
             <div
               className="ld-intro-quote"
               style={{ flexDirection: "column", alignItems: "flex-start" }}
@@ -249,9 +245,7 @@ const LawyerMgmtTab = () => {
           </div>
         </header>
 
-        {/* ── 2. 그리드 레이아웃 (경력 & 사무소 설정) ── */}
         <div className="ld-grid">
-          {/* 왼쪽: 경력 작성 */}
           <div className="ld-main-content">
             <section className="ld-card">
               <div className="ld-card-eyebrow">CAREER</div>
@@ -268,7 +262,6 @@ const LawyerMgmtTab = () => {
             </section>
           </div>
 
-          {/* 오른쪽: 사무소 정보 및 저장 버튼 */}
           <aside className="ld-sticky-sidebar">
             <section className="ld-card">
               <div className="ld-card-eyebrow">CONTACT & FEE</div>
@@ -279,26 +272,62 @@ const LawyerMgmtTab = () => {
                   <dt>자격번호 (수정불가)</dt>
                   <dd>{readOnlyData.licenseNo}</dd>
                 </div>
-                <div className="ld-contact-item">
-                  <dt>사무소 주소</dt>
-                  <dd>
+                
+                <div className="ld-contact-item" style={{ display: "flex", flexDirection: "column", gap: "8px", alignItems: "flex-start" }}>
+                  <dt style={{ width: "100%", color: "#666" }}>사무소 기본 주소</dt>
+                  <dd style={{ width: "100%", margin: "0" }}>
                     <input
                       type="text"
                       name="officeAddr"
                       value={formData.officeAddr}
                       onChange={handleChange}
                       className="mgmt-edit-input"
-                      placeholder="상세 주소를 입력하세요"
+                      placeholder="기본 주소를 입력하세요"
+                      style={{ 
+                        width: "100%", 
+                        padding: "12px", 
+                        boxSizing: "border-box", 
+                        border: "1px solid #ddd", 
+                        borderRadius: "6px",
+                        fontSize: "15px",
+                        color: "#333",
+                        backgroundColor: "#fff"
+                      }}
+                    />
+                  </dd>
+                </div>
+
+                {/* 💡 [추가] 상세 주소 입력칸 UI */}
+                <div className="ld-contact-item" style={{ display: "flex", flexDirection: "column", gap: "8px", alignItems: "flex-start", marginTop: "10px" }}>
+                  <dt style={{ width: "100%", color: "#666" }}>사무소 상세 주소</dt>
+                  <dd style={{ width: "100%", margin: "0" }}>
+                    <input
+                      type="text"
+                      name="officeDetailAddr"
+                      value={formData.officeDetailAddr}
+                      onChange={handleChange}
+                      className="mgmt-edit-input"
+                      placeholder="상세 주소 (예: 101동 202호)"
+                      style={{ 
+                        width: "100%", 
+                        padding: "12px", 
+                        boxSizing: "border-box", 
+                        border: "1px solid #ddd", 
+                        borderRadius: "6px",
+                        fontSize: "15px",
+                        color: "#333",
+                        backgroundColor: "#fff"
+                      }}
                     />
                   </dd>
                 </div>
               </dl>
 
-              <div className="ld-fee-box">
-                <span className="ld-fee-label">30분 기준 상담료</span>
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "5px" }}
-                >
+              <div className="ld-fee-box" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "nowrap" }}>
+                <span className="ld-fee-label" style={{ whiteSpace: "nowrap", flexShrink: 0, color: "#555" }}>
+                  30분 기준 상담료
+                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
                   <input
                     type="number"
                     name="consultFee"
@@ -306,18 +335,25 @@ const LawyerMgmtTab = () => {
                     onChange={handleChange}
                     className="mgmt-edit-input"
                     style={{
-                      fontSize: "20px",
+                      fontSize: "18px",
                       fontWeight: "700",
                       textAlign: "right",
-                      width: "150px",
+                      width: "120px",
+                      padding: "8px",
+                      border: "1px solid #ccc",
+                      borderRadius: "6px",
+                      color: "#333",
+                      backgroundColor: "#fff"
                     }}
                   />
-                  <span className="ld-fee-value">원</span>
+                  <span className="ld-fee-value" style={{ color: "#333", fontWeight: "bold", whiteSpace: "nowrap" }}>
+                    원
+                  </span>
                 </div>
               </div>
 
-              <div className="ld-actions">
-                <button type="submit" className="ld-btn-reserve">
+              <div className="ld-actions" style={{ marginTop: "20px" }}>
+                <button type="submit" className="ld-btn-reserve" style={{ width: "100%" }}>
                   설정 내용 저장하기
                 </button>
               </div>

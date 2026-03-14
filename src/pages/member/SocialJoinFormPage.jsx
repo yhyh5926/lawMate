@@ -1,5 +1,6 @@
-// src/pages/member/SocialJoinFormPage.jsx
-
+/**
+ * 파일 위치: src/pages/member/SocialJoinFormPage.jsx
+ */
 import React, { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
@@ -10,8 +11,8 @@ import "../../styles/member/SocialJoinFormPage.css";
 const GOOGLE_CLIENT_ID =
   "244554224995-kcgsjp47k8flns89ldv9stpfga219kut.apps.googleusercontent.com";
 
-// 💡 [추가] 전문 분야 카테고리 목록
-const SPECIALTIES_LIST = ["민사", "형사", "가사", "행정", "헌법", "기업법무", "세무", "국제", "기타"];
+// 💡 [수정] 요청하신 8개 카테고리로 완벽 고정
+const SPECIALTIES_LIST = ["민사", "형사", "가사", "이혼", "노동", "행정", "기업", "부동산"];
 
 const SocialJoinContent = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const SocialJoinContent = () => {
     detailAddress: "",
     licenseNo: "",
     officeName: "",
-    specialty: "", // 💡 선택된 카테고리들이 문자열로 저장됩니다.
+    specialty: "",
     officeAddress: "",
     officeDetailAddress: "",
   });
@@ -45,12 +46,11 @@ const SocialJoinContent = () => {
           "https://www.googleapis.com/oauth2/v3/userinfo",
           {
             headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-          },
+          }
         ).then((res) => res.json());
 
         const generatedLoginId = userInfo.email.split("@")[0];
 
-        // 💡 [유지] 구글 연동 즉시 가입 여부 확인 (중복 가입 방지)
         const checkRes = await memberApi.checkId(generatedLoginId);
         if (!checkRes.data.available) {
           alert("이미 가입된 구글 계정입니다. 로그인 페이지로 이동합니다.");
@@ -80,7 +80,6 @@ const SocialJoinContent = () => {
     if (val.length === 4 && nextRef) nextRef.current.focus();
   };
 
-  // 💡 [추가] 전문 분야 선택 토글 로직
   const handleSpecialtyToggle = (spec) => {
     let currentList = formData.specialty ? formData.specialty.split(",") : [];
     if (currentList.includes(spec)) {
@@ -104,7 +103,7 @@ const SocialJoinContent = () => {
     const phone = `${formData.phone1}-${formData.phone2}-${formData.phone3}`;
     const submitData = new FormData();
     submitData.append("loginId", formData.loginId);
-    submitData.append("password", googleUser.googleId); // 💡 rawPassword null(500에러) 방지
+    submitData.append("password", googleUser.googleId);
     submitData.append("memberType", memberType);
     submitData.append("name", formData.name);
     submitData.append("phone", phone);
@@ -123,6 +122,12 @@ const SocialJoinContent = () => {
       ) {
         return alert("전문가 필수 정보를 모두 입력해주세요.");
       }
+      
+      // 💡 400 Bad Request 방지용 파일 첨부 검증
+      if (files.length === 0) {
+        return alert("자격증 증빙서류를 최소 1개 이상 업로드해주세요.");
+      }
+
       submitData.append("licenseNo", formData.licenseNo);
       submitData.append("officeName", formData.officeName);
       submitData.append("specialty", formData.specialty);
@@ -132,17 +137,17 @@ const SocialJoinContent = () => {
     }
 
     try {
-      // 💡 [유지] 가입은 반드시 socialJoin API를 호출해야 에러가 나지 않습니다.
       const res = await memberApi.socialJoin(submitData);
       if (res.data.success) {
         navigate(
           memberType === "PERSONAL"
             ? "/member/join/complete"
-            : "/member/lawyer/complete",
+            : "/member/lawyer/complete"
         );
       }
     } catch (error) {
-      alert("소셜 가입 중 오류가 발생했습니다.");
+      console.error(error);
+      alert("소셜 가입 중 오류가 발생했습니다. (파일 용량이 크면 실패할 수 있습니다)");
     }
   };
 
@@ -287,7 +292,6 @@ const SocialJoinContent = () => {
               />
             </div>
 
-            {/* 💡 [변경됨] 전문 분야를 버튼 선택형으로 수정 */}
             <div className="social-join-group">
               <label className="social-join-label">주요 전문 분야 (다중 선택 가능)</label>
               <div className="lawyer-join-specialty-container">

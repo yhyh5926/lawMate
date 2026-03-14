@@ -3,6 +3,8 @@
  * 수정사항:
  * 1. memberApi 임포트 추가
  * 2. handleEditSubmit에 폼 데이터를 백엔드로 전송하는 API 연동 로직 추가
+ * 3. 전화번호 초기화 시 하이픈(-)을 제거하고 숫자를 분리하도록 수정
+ * 4. 전문 분야 버튼의 인라인 CSS를 클래스로 분리
  */
 import React, { useState, useRef } from "react";
 import { useAuthStore } from "../../store/authStore.js";
@@ -83,17 +85,21 @@ const EditInfoContent = ({ onVerifyReset }) => {
 
   // 3. 인증 완료 시 폼 초기 세팅
   const initEditForm = () => {
+    // 💡 DB 번호(010-XXXX-XXXX)에서 하이픈을 모두 제거하여 숫자만 남김
     const rawPhone = user.phone || "";
+    const cleanPhone = rawPhone.replace(/-/g, ""); 
+    
     let p1 = "010",
       p2 = "",
       p3 = "";
-    if (rawPhone.length >= 10) {
-      p1 = rawPhone.substring(0, 3);
+      
+    if (cleanPhone.length >= 10) {
+      p1 = cleanPhone.substring(0, 3);
       p2 =
-        rawPhone.length === 11
-          ? rawPhone.substring(3, 7)
-          : rawPhone.substring(3, 6);
-      p3 = rawPhone.substring(rawPhone.length - 4);
+        cleanPhone.length === 11
+          ? cleanPhone.substring(3, 7)
+          : cleanPhone.substring(3, 6);
+      p3 = cleanPhone.substring(cleanPhone.length - 4);
     }
 
     setEditData({
@@ -376,19 +382,12 @@ const EditInfoContent = ({ onVerifyReset }) => {
                 />
               </div>
 
-              {/* 💡 전문 분야 다중 선택 버튼 UI 적용 */}
+              {/* 💡 전문 분야 다중 선택 버튼 UI 적용 (인라인 CSS 제거 및 클래스 추가) */}
               <div className="form-group">
                 <label className="form-label">
                   주요 전문 분야 (다중 선택 가능)
                 </label>
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: "8px",
-                    marginTop: "8px",
-                  }}
-                >
+                <div className="specialty-btn-group">
                   {SPECIALTIES.map((spec) => {
                     const isSelected = editData.specialty
                       ? editData.specialty.split(",").includes(spec)
@@ -398,18 +397,7 @@ const EditInfoContent = ({ onVerifyReset }) => {
                         type="button"
                         key={spec}
                         onClick={() => handleSpecialtyToggle(spec)}
-                        style={{
-                          padding: "8px 16px",
-                          borderRadius: "20px",
-                          border: isSelected
-                            ? "1px solid #007BFF"
-                            : "1px solid #ddd",
-                          backgroundColor: isSelected ? "#007BFF" : "#fff",
-                          color: isSelected ? "#fff" : "#555",
-                          cursor: "pointer",
-                          fontWeight: isSelected ? "bold" : "normal",
-                          transition: "all 0.2s ease-in-out",
-                        }}
+                        className={`specialty-toggle-btn ${isSelected ? "active" : ""}`}
                       >
                         {spec}
                       </button>

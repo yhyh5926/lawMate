@@ -1,6 +1,8 @@
 /**
  * 파일 위치: src/pages/member/LawyerJoinFormPage.jsx
- * 수정사항: 사무소 기본 주소와 함께 사무소 상세 주소(officeDetailAddress) 항목에도 빈칸 검증 로직을 적용했습니다.
+ * 수정사항: 
+ * 1. 전문 분야 카테고리 고정 (8개)
+ * 2. 자격증 증빙서류 미첨부 시 400 에러 방지를 위한 필수 첨부 검증 로직 추가
  */
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,8 +12,8 @@ import { memberApi } from "../../api/memberApi.js";
 import { validateId, validatePassword } from "../../utils/validationUtil.js";
 import "../../styles/member/LawyerJoinFormPage.css";
 
-// 💡 [수정] 전문 분야 목록을 사건 관리 탭 및 이미지와 동일하게 맞췄습니다.
-const SPECIALTIES = ["민사", "형사", "가사", "행정", "헌법", "기업법무", "세무", "국제", "기타"];
+// 💡 [수정] 요청하신 8개 카테고리로 완벽 고정
+const SPECIALTIES = ["민사", "형사", "가사", "이혼", "노동", "행정", "기업", "부동산"];
 
 const useLawyerJoinStore = create((set) => ({
   formData: {
@@ -158,7 +160,6 @@ const LawyerJoinFormPage = () => {
     if (!formData.officeName) newErrors.officeName = true;
     if (!formData.specialty) newErrors.specialty = true;
     if (!formData.officeAddress) newErrors.officeAddress = true;
-    // 💡 사무소 상세 주소 검증 추가
     if (!formData.officeDetailAddress) newErrors.officeDetailAddress = true;
 
     if (Object.keys(newErrors).length > 0) {
@@ -171,6 +172,11 @@ const LawyerJoinFormPage = () => {
       return alert("비밀번호는 8~20자의 영문, 숫자, 특수문자를 포함해야 합니다.");
     if (formData.password !== formData.passwordConfirm)
       return alert("비밀번호가 일치하지 않습니다.");
+
+    // 💡 400 Bad Request 방지용 파일 유무 검증 로직
+    if (files.length === 0) {
+      return alert("자격증 증빙서류를 최소 1개 이상 업로드해주세요.");
+    }
 
     const phone = `${formData.phone1}-${formData.phone2}-${formData.phone3}`;
     const email = `${formData.emailId}@${formData.emailDomain}`;
@@ -198,7 +204,8 @@ const LawyerJoinFormPage = () => {
         navigate("/member/lawyer/complete");
       }
     } catch (error) {
-      alert("전문회원 가입 중 오류가 발생했습니다.");
+      console.error(error);
+      alert("전문회원 가입 중 오류가 발생했습니다. (파일 용량이 크면 실패할 수 있습니다)");
     }
   };
 
@@ -402,7 +409,6 @@ const LawyerJoinFormPage = () => {
           />
         </div>
         
-        {/* 💡 사무소 상세 주소 라벨 및 인풋에 에러 하이라이트 적용 */}
         <div className="lawyer-join-group">
           <label className={`lawyer-join-label ${errors.officeDetailAddress ? "error" : ""}`}>
             사무소 상세 주소 {errors.officeDetailAddress && "[상세 주소 입력]"}

@@ -1,18 +1,14 @@
 /**
  * 파일 위치: src/components/mypage/EditInfoTab.jsx
- * 수정사항:
- * 1. memberApi 임포트 추가
- * 2. handleEditSubmit에 폼 데이터를 백엔드로 전송하는 API 연동 로직 추가
  */
 import React, { useState, useRef } from "react";
 import { useAuthStore } from "../../store/authStore.js";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
-import { memberApi } from "../../api/memberApi.js"; // 💡 API 연동을 위해 임포트 추가
+import { memberApi } from "../../api/memberApi.js"; 
 
 const GOOGLE_CLIENT_ID =
   "244554224995-kcgsjp47k8flns89ldv9stpfga219kut.apps.googleusercontent.com";
 
-// 💡 전문 분야 카테고리 배열 ("전체" 제외)
 const SPECIALTIES = [
   "민사",
   "형사",
@@ -47,7 +43,6 @@ const EditInfoContent = ({ onVerifyReset }) => {
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
 
-  // 1. 일반 로그인 본인 인증
   const handleLocalVerify = (e) => {
     e.preventDefault();
     if (!verifyPassword) return alert("비밀번호를 입력해주세요.");
@@ -56,7 +51,6 @@ const EditInfoContent = ({ onVerifyReset }) => {
     initEditForm();
   };
 
-  // 2. 구글 로그인 본인 인증
   const handleGoogleVerify = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
@@ -64,7 +58,7 @@ const EditInfoContent = ({ onVerifyReset }) => {
           "https://www.googleapis.com/oauth2/v3/userinfo",
           {
             headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-          },
+          }
         ).then((res) => res.json());
 
         if (userInfo.email === user.email) {
@@ -81,7 +75,6 @@ const EditInfoContent = ({ onVerifyReset }) => {
     onError: () => alert("구글 인증을 취소하셨거나 실패했습니다."),
   });
 
-  // 3. 인증 완료 시 폼 초기 세팅
   const initEditForm = () => {
     const rawPhone = user.phone || "";
     let p1 = "010",
@@ -107,22 +100,21 @@ const EditInfoContent = ({ onVerifyReset }) => {
       detailAddress: user.detailAddress || "",
       licenseNo: user.licenseNo || "",
       specialty: user.specialty || "",
-      officeAddress: user.officeAddr || "",
-      officeDetailAddress: user.officeDetailAddr || "",
+      officeAddress: user.officeAddr || "", // DB 필드명 매핑
+      officeDetailAddress: user.officeDetailAddr || "", // DB 필드명 매핑
     });
   };
 
   const handleEditChange = (e) =>
     setEditData({ ...editData, [e.target.name]: e.target.value });
 
-  // 💡 전문 분야 다중 선택 토글 핸들러 추가
   const handleSpecialtyToggle = (spec) => {
     let currentList = editData.specialty ? editData.specialty.split(",") : [];
 
     if (currentList.includes(spec)) {
-      currentList = currentList.filter((item) => item !== spec); // 이미 선택되어 있으면 제거
+      currentList = currentList.filter((item) => item !== spec);
     } else {
-      currentList.push(spec); // 선택되어 있지 않으면 추가
+      currentList.push(spec);
     }
 
     setEditData({ ...editData, specialty: currentList.join(",") });
@@ -134,7 +126,6 @@ const EditInfoContent = ({ onVerifyReset }) => {
     if (val.length === 4 && nextRef) nextRef.current.focus();
   };
 
-  // 💡 API 호출 로직으로 교체
   const handleEditSubmit = async (e) => {
     e.preventDefault();
 
@@ -143,22 +134,22 @@ const EditInfoContent = ({ onVerifyReset }) => {
     }
 
     try {
-      // 1. 전화번호 3칸을 하나의 문자열로 합침
       const fullPhone = `${editData.phone1}${editData.phone2}${editData.phone3}`;
 
-      // 2. 백엔드로 보낼 데이터 조립
+      // 💡 [수정] officeName 오타를 수정하고, officeAddr와 officeDetailAddr를 명확하게 전달
       const submitData = {
-        loginId: user.loginId, // 업데이트할 회원의 ID 필수 포함
+        loginId: user.loginId,
         name: editData.name,
-        password: editData.password || null, // 비밀번호를 변경하지 않으면 null
+        password: editData.password || null,
         phone: fullPhone,
         email: user.email,
         address: editData.address,
         detailAddress: editData.detailAddress,
-        // 아래는 변호사 전용 데이터 (백엔드에서 조건부 처리)
+        
         licenseNo: editData.licenseNo,
         specialty: editData.specialty,
-        officeName: editData.officeAddress, // 기획에 따라 필드명 매핑 확인 필요
+        officeAddr: editData.officeAddress, 
+        officeDetailAddr: editData.officeDetailAddress, 
       };
 
       const response = await memberApi.editProfile(submitData);
@@ -168,18 +159,16 @@ const EditInfoContent = ({ onVerifyReset }) => {
         phone: fullPhone,
         address: editData.address,
         detailAddress: editData.detailAddress,
-        // 변호사라면 아래도 갱신
         licenseNo: editData.licenseNo,
         specialty: editData.specialty,
         officeAddr: editData.officeAddress,
+        officeDetailAddr: editData.officeDetailAddress,
       });
 
       if (response.data.success) {
         alert("정보 수정이 완료되었습니다.");
-
         window.location.reload();
       }
-      // 필요 시 여기서 전역 user 정보를 갱신하거나 창을 새로고침 할 수 있습니다.
     } catch (error) {
       console.error("정보 수정 실패:", error);
       alert("정보 수정 중 문제가 발생했습니다. 다시 시도해주세요.");
@@ -391,7 +380,6 @@ const EditInfoContent = ({ onVerifyReset }) => {
                 />
               </div>
 
-              {/* 💡 전문 분야 다중 선택 버튼 UI 적용 */}
               <div className="form-group">
                 <label className="form-label">
                   주요 전문 분야 (다중 선택 가능)

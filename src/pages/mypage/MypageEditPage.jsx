@@ -22,7 +22,9 @@ const MypageEditPage = () => {
 
   useEffect(() => {
     if (user) {
-      const phoneMatch = user.phone?.match(/^(\d{3})(\d{3,4})(\d{4})$/);
+      // 💡 DB에서 가져온 번호의 하이픈(-)을 우선 제거한 후 정규식 매칭을 수행합니다.
+      const cleanPhone = user.phone?.replace(/-/g, "") || "";
+      const phoneMatch = cleanPhone.match(/^(\d{3})(\d{3,4})(\d{4})$/);
       const emailParts = user.email?.split("@") || ["", "naver.com"];
 
       setFormData({

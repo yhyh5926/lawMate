@@ -1,3 +1,4 @@
+// src/pages/lawyer/LawyerDetailPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import lawyerApi from "../../api/lawyerApi";
@@ -162,7 +163,11 @@ const LawyerDetailPage = () => {
                   </div>
                   <div className="ld-contact-item">
                     <dt>주소</dt>
-                    <dd className="ld-address">{lawyer.officeAddr || "-"}</dd>
+                    <dd className="ld-address">
+                      {lawyer.officeAddr 
+                        ? `${lawyer.officeAddr} ${lawyer.officeDetailAddr || ""}`.trim() 
+                        : "-"}
+                    </dd>
                   </div>
                 </dl>
                 <div className="ld-fee-box">
