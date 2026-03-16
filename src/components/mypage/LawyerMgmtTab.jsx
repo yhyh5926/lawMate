@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import lawyerApi from "../../api/lawyerApi";
+import lawyerApi from "../../api/lawyerApi.js";
 import { useAuthStore } from "../../store/authStore.js";
-import { DEFAULT_IMAGE } from "../../pages/lawyer/LawyerListPage";
+import { DEFAULT_IMAGE } from "../../pages/lawyer/LawyerListPage.jsx";
 import { baseURL } from "../../constants/baseURL.js";
 
-import "../../styles/lawyer/LawyerDetailPage.css"; 
-import "../../styles/mypage/LawyerMgmtTab.css"; 
+import "../../styles/lawyer/LawyerDetailPage.css";
+import "../../styles/mypage/LawyerMgmtTab.css";
 import { categories } from "../../constants/categories.js";
 
 const SPECIALTIES = categories.slice(1, categories.length - 1);
@@ -31,7 +31,7 @@ const LawyerMgmtTab = () => {
   const [formData, setFormData] = useState({
     officeName: "",
     officeAddr: "",
-    officeDetailAddr: "", // 💡 [추가] 상세주소 상태 추가
+    officeDetailAddr: "",
     specialty: "",
     intro: "",
     career: "",
@@ -49,7 +49,7 @@ const LawyerMgmtTab = () => {
         setFormData({
           officeName: data.officeName || "",
           officeAddr: data.officeAddr || "",
-          officeDetailAddr: data.officeDetailAddr || "", // 💡 [추가] 데이터 바인딩
+          officeDetailAddr: data.officeDetailAddr || "",
           specialty: data.specialty || "",
           intro: data.intro || "",
           career: data.career || "",
@@ -131,20 +131,12 @@ const LawyerMgmtTab = () => {
     );
 
   return (
-    <div
-      className="lawyer-mgmt-wrapper ld-root"
-      style={{ minHeight: "auto", paddingBottom: "0" }}
-    >
+    <div className="lawyer-mgmt-wrapper ld-root mgmt-dark-section">
       <div className="mgmt-info-notice">
-        💡 <strong>프로필 편집 모드:</strong> 수정하신 내용은 즉시 서비스 상세
-        페이지에 반영됩니다.
+        💡 <strong>프로필 편집 모드:</strong> 수정하신 내용은 즉시 서비스 상세 페이지에 반영됩니다.
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="ld-container"
-        style={{ padding: "0" }}
-      >
+      <form onSubmit={handleSubmit} className="ld-container">
         <header className="ld-header-card">
           <div className="ld-header-glow" />
           <div className="ld-header-content">
@@ -174,10 +166,7 @@ const LawyerMgmtTab = () => {
                 <label className="mgmt-label-small">
                   전문 분야 설정 (클릭하여 토글)
                 </label>
-                <div
-                  className="mgmt-spec-group"
-                  style={{ marginBottom: "15px" }}
-                >
+                <div className="mgmt-spec-group">
                   {SPECIALTIES.map((spec) => (
                     <button
                       key={spec}
@@ -190,12 +179,13 @@ const LawyerMgmtTab = () => {
                   ))}
                 </div>
 
-                <h1 className="ld-name">
-                  {readOnlyData.name}{" "}
-                  <span className="ld-name-suffix">변호사</span>
-                </h1>
+                <div className="ld-name">
+                  <h1 style={{ color: '#fff', margin: 0 }}>
+                    {readOnlyData.name} <span className="ld-name-suffix">변호사</span>
+                  </h1>
+                </div>
 
-                <div className="ld-office" style={{ marginTop: "10px" }}>
+                <div className="ld-office">
                   <label className="mgmt-label-small">사무소 명칭</label>
                   <input
                     type="text"
@@ -207,7 +197,7 @@ const LawyerMgmtTab = () => {
                   />
                 </div>
 
-                <div className="ld-rating-row" style={{ marginTop: "12px" }}>
+                <div className="ld-rating-row">
                   <span className="ld-score">
                     ★ {readOnlyData.avgRating.toFixed(1)}
                   </span>
@@ -218,13 +208,10 @@ const LawyerMgmtTab = () => {
               </div>
             </div>
 
-            <div
-              className="ld-intro-quote"
-              style={{ flexDirection: "column", alignItems: "flex-start" }}
-            >
+            <div className="ld-intro-quote">
               <label className="mgmt-label-small">핵심 한 줄 소개</label>
-              <div style={{ display: "flex", width: "100%", gap: "10px" }}>
-                <span className="quote-mark">“</span>
+              <div className="quote-input-row" style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                <span className="quote-mark" style={{ marginRight: '8px' }}>“</span>
                 <input
                   type="text"
                   name="intro"
@@ -232,14 +219,8 @@ const LawyerMgmtTab = () => {
                   onChange={handleChange}
                   className="mgmt-edit-input"
                   placeholder="의뢰인에게 보여질 신뢰감 있는 한 줄 소개를 적어주세요."
-                  style={{
-                    fontStyle: "italic",
-                    border: "none",
-                    background: "transparent",
-                    padding: "0",
-                    fontSize: "16px",
-                  }}
                 />
+                <span className="quote-mark" style={{ marginLeft: '8px' }}>”</span>
               </div>
             </div>
           </div>
@@ -257,7 +238,6 @@ const LawyerMgmtTab = () => {
                 className="mgmt-edit-textarea"
                 placeholder="• 주요 경력을 줄바꿈하여 작성해주세요."
                 rows={15}
-                style={{ lineHeight: "1.8", border: "none", padding: "0" }}
               />
             </section>
           </div>
@@ -269,91 +249,58 @@ const LawyerMgmtTab = () => {
 
               <dl className="ld-contact-list">
                 <div className="ld-contact-item">
-                  <dt>자격번호 (수정불가)</dt>
-                  <dd>{readOnlyData.licenseNo}</dd>
+                  <dt className="mgmt-label-small">자격번호 (수정불가)</dt>
+                  <dd style={{ color: '#1a1a2e', fontWeight: '700' }}>{readOnlyData.licenseNo}</dd>
                 </div>
-                
-                <div className="ld-contact-item" style={{ display: "flex", flexDirection: "column", gap: "8px", alignItems: "flex-start" }}>
-                  <dt style={{ width: "100%", color: "#666" }}>사무소 기본 주소</dt>
-                  <dd style={{ width: "100%", margin: "0" }}>
+
+                <div className="ld-contact-item">
+                  <dt className="mgmt-label-small">사무소 기본 주소</dt>
+                  <dd>
                     <input
                       type="text"
                       name="officeAddr"
                       value={formData.officeAddr}
                       onChange={handleChange}
                       className="mgmt-edit-input"
+                      style={{ color: '#1a1a2e', borderBottomColor: '#e2e8f0' }}
                       placeholder="기본 주소를 입력하세요"
-                      style={{ 
-                        width: "100%", 
-                        padding: "12px", 
-                        boxSizing: "border-box", 
-                        border: "1px solid #ddd", 
-                        borderRadius: "6px",
-                        fontSize: "15px",
-                        color: "#333",
-                        backgroundColor: "#fff"
-                      }}
                     />
                   </dd>
                 </div>
 
-                {/* 💡 [추가] 상세 주소 입력칸 UI */}
-                <div className="ld-contact-item" style={{ display: "flex", flexDirection: "column", gap: "8px", alignItems: "flex-start", marginTop: "10px" }}>
-                  <dt style={{ width: "100%", color: "#666" }}>사무소 상세 주소</dt>
-                  <dd style={{ width: "100%", margin: "0" }}>
+                <div className="ld-contact-item">
+                  <dt className="mgmt-label-small">사무소 상세 주소</dt>
+                  <dd>
                     <input
                       type="text"
                       name="officeDetailAddr"
                       value={formData.officeDetailAddr}
                       onChange={handleChange}
                       className="mgmt-edit-input"
+                      style={{ color: '#1a1a2e', borderBottomColor: '#e2e8f0' }}
                       placeholder="상세 주소 (예: 101동 202호)"
-                      style={{ 
-                        width: "100%", 
-                        padding: "12px", 
-                        boxSizing: "border-box", 
-                        border: "1px solid #ddd", 
-                        borderRadius: "6px",
-                        fontSize: "15px",
-                        color: "#333",
-                        backgroundColor: "#fff"
-                      }}
                     />
                   </dd>
                 </div>
               </dl>
 
-              <div className="ld-fee-box" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "nowrap" }}>
-                <span className="ld-fee-label" style={{ whiteSpace: "nowrap", flexShrink: 0, color: "#555" }}>
-                  30분 기준 상담료
-                </span>
-                <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+              <div className="ld-fee-box">
+                <span className="mgmt-label-small">30분 기준 상담료</span>
+                <div className="fee-input-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <input
                     type="number"
                     name="consultFee"
                     value={formData.consultFee}
                     onChange={handleChange}
                     className="mgmt-edit-input"
-                    style={{
-                      fontSize: "18px",
-                      fontWeight: "700",
-                      textAlign: "right",
-                      width: "120px",
-                      padding: "8px",
-                      border: "1px solid #ccc",
-                      borderRadius: "6px",
-                      color: "#333",
-                      backgroundColor: "#fff"
-                    }}
+                    style={{ color: '#1a1a2e', textAlign: 'right', fontSize: '18px', fontWeight: '800' }}
                   />
-                  <span className="ld-fee-value" style={{ color: "#333", fontWeight: "bold", whiteSpace: "nowrap" }}>
-                    원
-                  </span>
+                  <span style={{ fontWeight: '800', color: '#1a1a2e' }}>원</span>
                 </div>
               </div>
 
-              <div className="ld-actions" style={{ marginTop: "20px" }}>
-                <button type="submit" className="ld-btn-reserve" style={{ width: "100%" }}>
+              <div className="ld-actions">
+                <button type="submit" className="ld-btn-save">
                   설정 내용 저장하기
                 </button>
               </div>
