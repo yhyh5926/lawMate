@@ -9,7 +9,7 @@ const LawyerJoinTermsPage = () => {
 
   const handleNext = () => {
     if (!agreed) return alert("필수 약관에 동의해주세요.");
-    navigate("/member/lawyer/form");w
+    navigate("/member/lawyer/form");
   };
 
   return (

@@ -75,7 +75,8 @@ const JoinFormPage = () => {
       setIdChecked(false, "");
       setIdSuccess("");
       setIdError("");
-      if (errors.loginIdCheck) setErrors((prev) => ({ ...prev, loginIdCheck: false }));
+      if (errors.loginIdCheck)
+        setErrors((prev) => ({ ...prev, loginIdCheck: false }));
     }
   };
 
@@ -103,7 +104,8 @@ const JoinFormPage = () => {
         setIdSuccess("사용 가능한 아이디입니다.");
         setIdError("");
         setIdChecked(true, formData.loginId);
-        if (errors.loginIdCheck) setErrors((prev) => ({ ...prev, loginIdCheck: false }));
+        if (errors.loginIdCheck)
+          setErrors((prev) => ({ ...prev, loginIdCheck: false }));
       } else {
         setIdError("이미 사용 중인 아이디입니다.");
         setIdSuccess("");
@@ -118,7 +120,8 @@ const JoinFormPage = () => {
     e.preventDefault();
     const newErrors = {};
     if (!formData.loginId) newErrors.loginId = true;
-    if (!isIdChecked || formData.loginId !== checkedId) newErrors.loginIdCheck = true;
+    if (!isIdChecked || formData.loginId !== checkedId)
+      newErrors.loginIdCheck = true;
     if (!formData.password) newErrors.password = true;
     if (!formData.passwordConfirm) newErrors.passwordConfirm = true;
     if (!formData.name) newErrors.name = true;
@@ -128,7 +131,7 @@ const JoinFormPage = () => {
     if (!formData.address) newErrors.address = true;
     // 💡 상세 주소 검증 추가
     if (!formData.detailAddress) newErrors.detailAddress = true;
-    
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       alert("필수 항목을 모두 확인해주세요.");
@@ -136,7 +139,9 @@ const JoinFormPage = () => {
     }
 
     if (!validatePassword(formData.password))
-      return alert("비밀번호는 8~20자의 영문, 숫자, 특수문자를 포함해야 합니다.");
+      return alert(
+        "비밀번호는 8~20자의 영문, 숫자, 특수문자를 포함해야 합니다.",
+      );
     if (formData.password !== formData.passwordConfirm)
       return alert("비밀번호가 일치하지 않습니다.");
 
@@ -172,8 +177,15 @@ const JoinFormPage = () => {
 
       <form onSubmit={handleSubmit}>
         <div className="join-form-group">
-          <label className={`join-label ${errors.loginId || errors.loginIdCheck ? "error" : ""}`}>
-            아이디 {errors.loginIdCheck ? "[중복 확인 필요]" : (errors.loginId ? "[아이디 입력]" : "")}
+          <label
+            className={`join-label ${errors.loginId || errors.loginIdCheck ? "error" : ""}`}
+          >
+            아이디{" "}
+            {errors.loginIdCheck
+              ? "[중복 확인 필요]"
+              : errors.loginId
+                ? "[아이디 입력]"
+                : ""}
           </label>
           <div className="join-flex-row">
             <input
@@ -210,7 +222,9 @@ const JoinFormPage = () => {
           />
         </div>
         <div className="join-form-group">
-          <label className={`join-label ${errors.passwordConfirm ? "error" : ""}`}>
+          <label
+            className={`join-label ${errors.passwordConfirm ? "error" : ""}`}
+          >
             비밀번호 확인 {errors.passwordConfirm && "[비밀번호 다시 입력]"}
           </label>
           <input
@@ -237,7 +251,9 @@ const JoinFormPage = () => {
         </div>
 
         <div className="join-form-group">
-          <label className={`join-label ${errors.phone2 || errors.phone3 ? "error" : ""}`}>
+          <label
+            className={`join-label ${errors.phone2 || errors.phone3 ? "error" : ""}`}
+          >
             휴대전화 {(errors.phone2 || errors.phone3) && "[전화번호 입력]"}
           </label>
           <div className="join-flex-row">
@@ -314,10 +330,12 @@ const JoinFormPage = () => {
             className={`join-input ${errors.address ? "input-error" : ""}`}
           />
         </div>
-        
+
         {/* 💡 상세 주소 라벨 및 인풋에 에러 하이라이트 적용 */}
         <div className="join-form-group">
-          <label className={`join-label ${errors.detailAddress ? "error" : ""}`}>
+          <label
+            className={`join-label ${errors.detailAddress ? "error" : ""}`}
+          >
             상세 주소 {errors.detailAddress && "[상세 주소 입력]"}
           </label>
           <input

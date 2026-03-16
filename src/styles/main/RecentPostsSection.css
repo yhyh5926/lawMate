@@ -1,0 +1,152 @@
+/* ── 섹션 ── */
+.rps-section {
+  padding: 52px 0 0;
+}
+
+.rps-section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.rps-section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.rps-section-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* 3열 그리드 */
+.rps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+/* ── 리스트 버튼 ── */
+.rps-list-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  padding: 12px 18px;
+  background: none;
+  border: none;
+  font-family: var(--font);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.rps-list-btn:hover {
+  background: #f7faff;
+}
+
+.rps-item-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.rps-item-title {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-main);
+  line-height: 1.4;
+  transition: color 0.15s;
+}
+
+.rps-list-btn:hover .rps-item-title {
+  color: var(--primary);
+}
+
+.rps-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+
+.rps-item-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.rps-item-date {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* 카테고리 pill */
+.rps-pill {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: #ebf4ff;
+  color: var(--primary);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* 답변 상태 */
+.rps-status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.rps-status--done {
+  background: #e6fffa;
+  color: #276749;
+}
+
+.rps-status--wait {
+  background: #fefcbf;
+  color: #744210;
+}
+
+/* 투표 상태 뱃지 */
+.rps-poll-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.rps-poll-badge--open {
+  background: #ebf8ff;
+  color: #2b6cb0;
+}
+
+.rps-poll-badge--closed {
+  background: #f7fafc;
+  color: var(--text-muted);
+}
+
+/* ── 반응형 ── */
+@media (max-width: 900px) {
+  .rps-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 580px) {
+  .rps-grid {
+    grid-template-columns: 1fr;
+  }
+}

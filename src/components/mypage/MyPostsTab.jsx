@@ -43,8 +43,8 @@ const MyPostsTab = () => {
     const routeMap = {
       question: "/question/detail/",
       community: "/community/detail/",
-      // 💡 [수정] 어드민 페이지 및 타 팀원의 경로에 맞게 상세 페이지 링크를 /poll/detail/ 로 수정했습니다.
-      mockTrial: "/poll/detail/", 
+      // 💡 [수정 완료] 의견 조사 상세 페이지 경로를 /community/poll/detail/ 로 수정하여 404 에러 해결
+      mockTrial: "/community/poll/detail/", 
     };
     navigate(`${routeMap[subTab]}${id}`);
   };

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import precedentApi from "../../api/precedentApi";
 import "../../styles/precedent/PrecedentSearchPage.css";
+import { scrollToTop } from "../../utils/windowUtils";
 
 const categories = [
   "금융보험",
@@ -29,7 +30,7 @@ const categories = [
 
 const PAGE_GROUP_SIZE = 5;
 
-const PrecedentSearchPage = () => {
+const PrecedentListPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const listRef = useRef(null);
@@ -68,6 +69,7 @@ const PrecedentSearchPage = () => {
       }
     };
     fetchList();
+    scrollToTop();
   }, [page, searchQuery, caseType]);
 
   const updateParams = (newParams) => {
@@ -268,4 +270,4 @@ const PrecedentSearchPage = () => {
   );
 };
 
-export default PrecedentSearchPage;
+export default PrecedentListPage;

@@ -6,6 +6,7 @@ import { DEFAULT_IMAGE } from "../lawyer/LawyerListPage";
 import { baseURL } from "../../constants/baseURL";
 import axiosInstance from "../../api/axiosInstance";
 import "../../styles/consult/ConsultReservePage.css";
+import { scrollToTop } from "../../utils/windowUtils";
 
 const ConsultReservePage = () => {
   const [searchParams] = useSearchParams();
@@ -32,6 +33,7 @@ const ConsultReservePage = () => {
       }
     };
     fetchLawyer();
+    scrollToTop();
   }, [lawyerId]);
 
   useEffect(() => {
@@ -80,7 +82,6 @@ const ConsultReservePage = () => {
 
       alert("상담 예약이 접수되었습니다. 변호사 승인 후 결제가 가능합니다.");
       navigate("/mypage/main");
-
     } catch (e) {
       alert(e.response?.data?.message || "예약 신청 중 오류가 발생했습니다.");
     } finally {
