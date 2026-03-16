@@ -75,6 +75,8 @@ const ChatBubble = ({
   const handleDelete = async () => {
     if (!window.confirm("메시지를 삭제하시겠습니까?")) return;
     const msgNo = message.msgNo || message.msgId;
+    console.log("삭제 시도 msgNo:", msgNo);
+    console.log("message 전체:", message);
     if (onDelete) await onDelete(msgNo);
     setShowMenu(false);
   };
@@ -263,9 +265,11 @@ const ChatBubble = ({
                     </span>
                   </div>
                 </div>
-                <button className="btn-profile-view" onClick={goToProfile}>
-                  프로필 보기
-                </button>
+               {targetRole === "LAWYER" && (
+                  <button className="btn-profile-view" onClick={goToProfile}>
+                    프로필 보기
+                  </button>
+                )}
               </div>
             </>
           )}

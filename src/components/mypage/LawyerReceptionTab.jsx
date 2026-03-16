@@ -1,6 +1,6 @@
-// 파일 위치: src/components/mypage/LawyerReceptionTab.jsx
 import React, { useState, useEffect } from "react";
 import { getLawyerConsults, confirmConsult, rejectConsult, deleteDoneConsult } from "../../api/consultApi";
+import axiosInstance from "../../api/axiosInstance";
 
 const STATUS_META = {
   PENDING:   { label: "대기중",    color: "#FF9500", bg: "#FFF3E0" },
@@ -18,11 +18,12 @@ const STATUS_TABS = [
 ];
 
 const LawyerReceptionTab = () => {
-  const [consults,    setConsults]    = useState([]);
-  const [loading,     setLoading]     = useState(true);
-  const [activeTab,   setActiveTab]   = useState("");
-  const [rejectModal, setRejectModal] = useState({ open: false, consultId: null });
+  const [consults,     setConsults]     = useState([]);
+  const [loading,      setLoading]      = useState(true);
+  const [activeTab,    setActiveTab]    = useState("");
+  const [rejectModal,  setRejectModal]  = useState({ open: false, consultId: null });
   const [rejectReason, setRejectReason] = useState("");
+  const [attachments,  setAttachments]  = useState({});
 
   useEffect(() => { fetchConsults(); }, []);
 
@@ -30,7 +31,20 @@ const LawyerReceptionTab = () => {
     try {
       setLoading(true);
       const res = await getLawyerConsults();
-      setConsults(res.data.data || []);
+      const list = res.data.data || [];
+      setConsults(list);
+
+      // 각 상담의 첨부파일 조회
+      const attachMap = {};
+      for (const c of list) {
+        try {
+          const r = await axiosInstance.get(`/attachment/list`, {
+            params: { refType: "CONSULT", refId: c.consultId }
+          });
+          attachMap[c.consultId] = r.data.data || [];
+        } catch (e) {}
+      }
+      setAttachments(attachMap);
     } catch (e) {
       console.error(e);
     } finally {
@@ -90,7 +104,6 @@ const LawyerReceptionTab = () => {
         접수 관리
       </h2>
 
-      {/* 탭 */}
       <div style={{ display: "flex", gap: "4px", marginBottom: "24px", background: "#F0F2F5", borderRadius: "10px", padding: "4px" }}>
         {STATUS_TABS.map((tab) => (
           <button
@@ -147,14 +160,25 @@ const LawyerReceptionTab = () => {
                   </p>
                 )}
 
-                {/* 거절 사유 표시 */}
+                {/* 첨부파일 */}
+                {attachments[c.consultId]?.length > 0 && (
+                  <div style={{ margin: "0 0 12px", fontSize: "13px", color: "#555", background: "#F0F4FF", padding: "8px 12px", borderRadius: "8px" }}>
+                    📎 첨부파일:
+                    {attachments[c.consultId].map((a) => (
+                      <a key={a.attachId} href={"http://localhost:8080" + a.savePath} target="_blank" rel="noreferrer" style={{ display: "block", color: "#1A6DFF", marginTop: "4px", cursor: "pointer" }}>
+                        {a.origName}
+                      </a>
+                    ))}
+                  </div>
+                )}
+
+                {/* 거절 사유 */}
                 {c.rejectReason && (
                   <p style={{ margin: "0 0 12px", fontSize: "13px", color: "#FF3B30", background: "#FFE8E8", padding: "8px 12px", borderRadius: "8px" }}>
                     ❌ 거절 사유: {c.rejectReason}
                   </p>
                 )}
 
-                {/* 대기 상태일 때만 승인/거절 버튼 */}
                 {c.status === "PENDING" && (
                   <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
                     <button onClick={() => handleConfirm(c.consultId)} style={btnStyle("#1A6DFF", "#fff")}>
@@ -165,7 +189,6 @@ const LawyerReceptionTab = () => {
                     </button>
                   </div>
                 )}
-                {/* 완료 상태 삭제 버튼 */}
                 {c.status === "DONE" && (
                   <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
                     <button onClick={() => handleDoneDelete(c.consultId)} style={btnStyle("#fff", "#FF3B30", "1px solid #FF3B30")}>
@@ -173,7 +196,6 @@ const LawyerReceptionTab = () => {
                     </button>
                   </div>
                 )}
-                {/* 취소/거절 상태 삭제 버튼 */}
                 {c.status === "CANCELLED" && (
                   <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
                     <button onClick={() => handleDoneDelete(c.consultId)} style={btnStyle("#fff", "#FF3B30", "1px solid #FF3B30")}>
@@ -187,7 +209,6 @@ const LawyerReceptionTab = () => {
         </div>
       )}
 
-      {/* 거절 사유 입력 모달 */}
       {rejectModal.open && (
         <div style={{
           position: "fixed", top: 0, left: 0, right: 0, bottom: 0,

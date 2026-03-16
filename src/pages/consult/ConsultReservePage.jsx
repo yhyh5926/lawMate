@@ -4,7 +4,8 @@ import { createConsult } from "../../api/consultApi";
 import lawyerApi from "../../api/lawyerApi";
 import { DEFAULT_IMAGE } from "../lawyer/LawyerListPage";
 import { baseURL } from "../../constants/baseURL";
-import "../../styles/consult/ConsultReservePage.css"; // 💡 분리된 CSS 임포트
+import axiosInstance from "../../api/axiosInstance";
+import "../../styles/consult/ConsultReservePage.css";
 
 const ConsultReservePage = () => {
   const [searchParams] = useSearchParams();
@@ -35,17 +36,7 @@ const ConsultReservePage = () => {
 
   useEffect(() => {
     if (!selectedDate) return;
-    // 임시 시간 데이터 (실제로는 API에서 해당 날짜의 예약 가능 시간을 받아와야 함)
-    const times = [
-      "09:00",
-      "10:00",
-      "11:00",
-      "13:00",
-      "14:00",
-      "15:00",
-      "16:00",
-      "17:00",
-    ];
+    const times = ["09:00","10:00","11:00","13:00","14:00","15:00","16:00","17:00"];
     setAvailableTimes(times);
     setSelectedTime("");
   }, [selectedDate]);
@@ -73,9 +64,21 @@ const ConsultReservePage = () => {
       };
 
       const res = await createConsult(consultData);
-      alert("상담 예약이 접수되었습니다. 변호사 승인 후 결제가 가능합니다.");
+      const consultId = res.data?.data?.consultId;
 
-      // 결제 페이지 대신 마이페이지로 이동
+      // 파일 업로드
+      if (files.length > 0 && consultId) {
+        for (const file of files) {
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("consultId", consultId);
+          await axiosInstance.post("/attachment/upload", formData, {
+            headers: { "Content-Type": "multipart/form-data" }
+          });
+        }
+      }
+
+      alert("상담 예약이 접수되었습니다. 변호사 승인 후 결제가 가능합니다.");
       navigate("/mypage/main");
 
     } catch (e) {
@@ -87,7 +90,6 @@ const ConsultReservePage = () => {
 
   return (
     <div className="reserve-wrapper">
-      {/* 변호사 정보 카드 */}
       {lawyer && (
         <div className="reserve-lawyer-card">
           <img
@@ -114,7 +116,6 @@ const ConsultReservePage = () => {
 
       <h2 className="reserve-main-title">상담 예약 신청</h2>
 
-      {/* 날짜 선택 */}
       <div className="reserve-field">
         <label className="reserve-label">상담 날짜 *</label>
         <input
@@ -126,14 +127,11 @@ const ConsultReservePage = () => {
         />
       </div>
 
-      {/* 시간 선택 */}
       <div className="reserve-field">
         <label className="reserve-label">상담 시간 *</label>
         {availableTimes.length === 0 ? (
           <p className="reserve-empty-msg">
-            {selectedDate
-              ? "예약 가능한 시간이 없습니다."
-              : "날짜를 먼저 선택해주세요."}
+            {selectedDate ? "예약 가능한 시간이 없습니다." : "날짜를 먼저 선택해주세요."}
           </p>
         ) : (
           <div className="reserve-time-grid">
@@ -150,7 +148,6 @@ const ConsultReservePage = () => {
         )}
       </div>
 
-      {/* 상담 시간(분) 선택 */}
       <div className="reserve-field">
         <label className="reserve-label">상담 희망 시간</label>
         <select
@@ -164,7 +161,6 @@ const ConsultReservePage = () => {
         </select>
       </div>
 
-      {/* 요청 사항 작성 */}
       <div className="reserve-field">
         <label className="reserve-label">의뢰인 요청 사항 (참고 내용)</label>
         <textarea
@@ -176,7 +172,6 @@ const ConsultReservePage = () => {
         />
       </div>
 
-      {/* 파일 첨부 */}
       <div className="reserve-field">
         <label className="reserve-label">참고 서류 첨부 (선택)</label>
         <input
@@ -185,9 +180,13 @@ const ConsultReservePage = () => {
           onChange={handleFileChange}
           className="reserve-file-input"
         />
+        {files.length > 0 && (
+          <p style={{ fontSize: "12px", color: "#888", marginTop: "4px" }}>
+            {files.length}개 파일 선택됨
+          </p>
+        )}
       </div>
 
-      {/* 최종 금액 안내 */}
       {lawyer && (
         <div className="reserve-price-box">
           <span className="label">최종 결제 예정 금액</span>

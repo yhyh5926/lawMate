@@ -68,6 +68,7 @@ export const useChat = (roomNo) => {
 
           // ── 삭제 이벤트: 상대방 화면에도 삭제됨 표시 ──
           if (msg.type === "DELETE") {
+            console.log("DELETE 이벤트 수신:", msg);
             setMessages((prev) =>
               prev.map((m) =>
                 Number(m.msgNo) === Number(msg.msgNo)
@@ -79,8 +80,10 @@ export const useChat = (roomNo) => {
           }
 
           // ── 일반 메시지 수신 ──
+          console.log("수신 메시지 raw:", msg);
           const normalized = {
             ...msg,
+            msgNo: msg.msgNo || msg.msgId || msg.MSG_ID,
             sentAt: msg.sentAt || msg.createdAt || new Date().toISOString(),
             fileUrl: msg.fileUrl || msg.savePath || null,
             type: msg.type || msg.msgType,
