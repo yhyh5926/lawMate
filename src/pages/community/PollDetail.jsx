@@ -7,12 +7,13 @@ import {
   getPollOptions,
   votePoll,
   checkVoted,
-  deletePoll
+  deletePoll,
 } from "../../api/communityApi";
 import "../../styles/community/PollDetail.css";
 
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { scrollToTop } from "../../utils/windowUtils";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -31,23 +32,24 @@ const PollDetail = () => {
   const memberId = user?.memberId;
 
   useEffect(() => {
-    getPollDetail(pollId).then(data => {
+    getPollDetail(pollId).then((data) => {
       console.log("poll detail 응답:", data);
       console.log("postId 값:", data.postId);
       setPoll(data);
     });
 
-    getPollOptions(pollId).then(data => {
+    getPollOptions(pollId).then((data) => {
       setOptions(data);
       const total = data.reduce((sum, opt) => sum + opt.voteCnt, 0);
       setTotalVotes(total);
     });
 
     if (memberId) {
-      checkVoted(pollId, memberId).then(res => {
+      checkVoted(pollId, memberId).then((res) => {
         setAlreadyVoted(res);
       });
     }
+    scrollToTop();
   }, [pollId, memberId]);
 
   const handleVote = async () => {
@@ -67,7 +69,7 @@ const PollDetail = () => {
       await votePoll({
         pollId,
         optionId: selectedOption,
-        memberId
+        memberId,
       });
 
       alert("투표 완료!");
@@ -107,22 +109,31 @@ const PollDetail = () => {
 
   const isWriter = isAuthenticated && memberId === poll.memberId;
 
-  const labels = options.map(o => o.optionText);
-  const values = options.map(o => o.voteCnt);
-  const safeValues = values.every(v => v === 0) ? values.map(() => 1) : values;
+  const labels = options.map((o) => o.optionText);
+  const values = options.map((o) => o.voteCnt);
+  const safeValues = values.every((v) => v === 0)
+    ? values.map(() => 1)
+    : values;
 
   const doughnutData = {
     labels,
     datasets: [
       {
         data: safeValues,
-        backgroundColor: ["#4f6ef7", "#f97316", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"],
+        backgroundColor: [
+          "#4f6ef7",
+          "#f97316",
+          "#10b981",
+          "#f59e0b",
+          "#8b5cf6",
+          "#ec4899",
+        ],
         borderColor: "#ffffff",
         borderWidth: 3,
         hoverOffset: 6,
         cutout: "65%",
-      }
-    ]
+      },
+    ],
   };
 
   const doughnutOptions = {
@@ -135,17 +146,16 @@ const PollDetail = () => {
           usePointStyle: true,
           font: { size: 13 },
           color: "#444869",
-        }
+        },
       },
-      tooltip: { enabled: true }
-    }
+      tooltip: { enabled: true },
+    },
   };
 
   return (
     <div className="poll-wrapper">
       <div className="poll-container">
         <div className="poll-card">
-
           <div className="poll-header">
             <h2 className="poll-title">{poll.title}</h2>
 
@@ -180,9 +190,11 @@ const PollDetail = () => {
             <div className="poll-vote-section">
               <h3 className="poll-vote-title">투표하기</h3>
 
-              {options.map(opt => {
+              {options.map((opt) => {
                 const percent =
-                  totalVotes === 0 ? 0 : ((opt.voteCnt / totalVotes) * 100).toFixed(1);
+                  totalVotes === 0
+                    ? 0
+                    : ((opt.voteCnt / totalVotes) * 100).toFixed(1);
 
                 return (
                   <div key={opt.optionId} className="poll-option">
@@ -198,7 +210,10 @@ const PollDetail = () => {
 
                     <div className="poll-bar-wrap">
                       <div className="poll-bar-bg">
-                        <div className="poll-bar-fill" style={{ width: `${percent}%` }} />
+                        <div
+                          className="poll-bar-fill"
+                          style={{ width: `${percent}%` }}
+                        />
                       </div>
                       <span className="poll-bar-label">
                         {opt.voteCnt}표 ({percent}%)

@@ -9,7 +9,7 @@ export const getOrCreateChatRoom = (targetMemberNo) =>
   axiosInstance.post('/chat/rooms', { targetMemberNo });
 
 // 채팅방 메시지 목록 조회 (페이징)
-export const getChatMessages = (roomNo, page = 0, size = 30) =>
+export const getChatMessages = (roomNo, page = 0, size = 200) =>
   axiosInstance.get(`/chat/rooms/${roomNo}/messages`, { params: { page, size } });
 
 // 메시지 읽음 처리

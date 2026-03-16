@@ -5,6 +5,7 @@ import lawyerApi from "../../api/lawyerApi";
 import { DEFAULT_IMAGE } from "../lawyer/LawyerListPage";
 import { baseURL } from "../../constants/baseURL";
 import "../../styles/consult/ConsultReservePage.css"; // 💡 분리된 CSS 임포트
+import { scrollToTop } from "../../utils/windowUtils";
 
 const ConsultReservePage = () => {
   const [searchParams] = useSearchParams();
@@ -31,6 +32,7 @@ const ConsultReservePage = () => {
       }
     };
     fetchLawyer();
+    scrollToTop();
   }, [lawyerId]);
 
   useEffect(() => {
@@ -77,7 +79,6 @@ const ConsultReservePage = () => {
 
       // 결제 페이지 대신 마이페이지로 이동
       navigate("/mypage/main");
-
     } catch (e) {
       alert(e.response?.data?.message || "예약 신청 중 오류가 발생했습니다.");
     } finally {

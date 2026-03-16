@@ -15,11 +15,7 @@ const QuestionRoutes = [
     element={<QuestionDetailPage />}
   />,
 
-  // 질문 작성은 로그인이 필요하므로 보호합니다.
-  <Route key="q-write-guard" element={<PrivateRoute />}>
-    <Route path="/question/write" element={<QuestionWritePage />} />
-  </Route>,
-  
+  <Route path="/question/write" element={<QuestionWritePage />} />,
 ];
 
 export default QuestionRoutes;

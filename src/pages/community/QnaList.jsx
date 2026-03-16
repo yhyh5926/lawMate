@@ -7,7 +7,7 @@ import '../../styles/community/Qnalist.css';
 const QnaList = () => {
   const [posts, setPosts] = useState([]);
   const [topLikedPosts, setTopLikedPosts] = useState([]);
-  const [sortType, setSortType] = useState('latest');
+  const [sortType, setSortType] = useState("latest");
   const navigate = useNavigate();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
@@ -40,6 +40,7 @@ const QnaList = () => {
   useEffect(() => {
     fetchPosts();
     fetchTopLikedPosts();
+    scrollToTop();
   }, [sortType, currentPage]);
 
   const topLikedList = topLikedPosts.map((post, idx) => (
@@ -55,7 +56,7 @@ const QnaList = () => {
   let postTr = posts.map((post, idx) => (
     <tr key={post.postId} style={{ animationDelay: `${idx * 0.04}s` }}>
       <td className="td-no col-no">
-        {totalCount - ((currentPage - 1) * pageSize) - idx}
+        {totalCount - (currentPage - 1) * pageSize - idx}
       </td>
       <td>{post.caseType}</td>
       <td className="col-title">
@@ -63,14 +64,20 @@ const QnaList = () => {
           {post.title}
         </Link>
       </td>
-      <td><span className="comment-badge">{post.commentCnt}</span></td>
+      <td>
+        <span className="comment-badge">{post.commentCnt}</span>
+      </td>
       <td className="td-author">{post.name}</td>
       <td className="td-views col-views">{post.viewCnt}</td>
       <td className="td-date">
-        {post.updatedAt === null
-          ? post.createdAt
-          : <>{post.updatedAt}<span className="edited-tag">수정됨</span></>
-        }
+        {post.updatedAt === null ? (
+          post.createdAt
+        ) : (
+          <>
+            {post.updatedAt}
+            <span className="edited-tag">수정됨</span>
+          </>
+        )}
       </td>
     </tr>
   ));
@@ -86,7 +93,7 @@ const QnaList = () => {
         onClick={() => setCurrentPage(i)}
       >
         {i}
-      </button>
+      </button>,
     );
   }
 
@@ -132,14 +139,14 @@ const QnaList = () => {
         {topLikedPosts.length > 0 && (
           <div className="top-liked-box">
             <h3 className="top-liked-title">인기글 TOP 3</h3>
-            <ul className="top-liked-list">
-              {topLikedList}
-            </ul>
+            <ul className="top-liked-list">{topLikedList}</ul>
           </div>
         )}
 
         {posts.length > 0 && (
-          <p className="board-stats">총 <span>{posts.length}</span>개의 게시물</p>
+          <p className="board-stats">
+            총 <span>{posts.length}</span>개의 게시물
+          </p>
         )}
 
         {posts.length === 0 ? (
@@ -167,24 +174,24 @@ const QnaList = () => {
         )}
       </div>
       <div className="paging-box">
-      <button
-        className="page-btn"
-        onClick={() => setCurrentPage(currentPage - 1)}
-        disabled={currentPage === 1}
-      >
-        이전
-      </button>
+        <button
+          className="page-btn"
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          이전
+        </button>
 
-      {pageButtons}
+        {pageButtons}
 
-      <button
-        className="page-btn"
-        onClick={() => setCurrentPage(currentPage + 1)}
-        disabled={currentPage === totalPage || totalPage === 0}
-      >
-        다음
-      </button>
-    </div>
+        <button
+          className="page-btn"
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === totalPage || totalPage === 0}
+        >
+          다음
+        </button>
+      </div>
     </div>
   );
 };

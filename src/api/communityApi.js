@@ -1,8 +1,8 @@
-import axiosInstance from './axiosInstance';
+import axiosInstance from "./axiosInstance";
 
 export const getPostList = async (sortType = "latest", page = 1) => {
   const response = await axiosInstance.get("/posts", {
-    params: { sortType, page }
+    params: { sortType, page },
   });
   return response.data;
 };
@@ -40,7 +40,7 @@ export const getTopLikedPosts = async () => {
 
 export const togglePostLike = async (postId, memberId) => {
   const response = await axiosInstance.post(`/posts/${postId}/like`, {
-    memberId
+    memberId,
   });
   return response.data;
 };
@@ -53,7 +53,7 @@ export const getPostLikeStatus = async (postId, memberId) => {
 // 댓글
 export const getComments = async (postId, boardType) => {
   const response = await axiosInstance.get(`/comment/list/${postId}`, {
-    params: { boardType }
+    params: { boardType },
   });
   return response.data; // 받은 객체에서 json만 꺼내온 것
 };
@@ -71,7 +71,7 @@ export const deleteComment = async (commentId) => {
 // 투표게시물
 export const getPollList = async (sortType = "latest", page = 1) => {
   const response = await axiosInstance.get("/polls", {
-    params: { sortType, page }
+    params: { sortType, page },
   });
   return response.data;
 };

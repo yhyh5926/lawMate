@@ -1,0 +1,43 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap");
+
+:root {
+  --primary: #1a375a;
+  --primary-mid: #2c5282;
+  --secondary: #7fb3d5;
+  --secondary-lt: #b8d8ed;
+  --bg: #f8fbff;
+  --white: #ffffff;
+  --border: #e2e8f0;
+  --text-main: #2d3748;
+  --text-muted: #718096;
+  --font: "Noto Sans KR", "Pretendard", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.lm-page {
+  min-height: 100vh;
+  background: var(--bg);
+  font-family: var(--font);
+  color: var(--text-main);
+}
+
+.lm-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+.lm-error {
+  margin: 20px 0;
+  padding: 14px 18px;
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 10px;
+  color: #c53030;
+  font-size: 14px;
+}
