@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faImages } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../../utils/formatDate.js";
 import "../../styles/question/QuestionListPage.css";
+import { scrollToTop } from "../../utils/windowUtils.js";
 
 const QuestionListPage = () => {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ const QuestionListPage = () => {
 
   useEffect(() => {
     fetchQuestions();
+    scrollToTop();
   }, [searchQuery, caseTypeFilter, currentPage]);
 
   const fetchQuestions = async () => {

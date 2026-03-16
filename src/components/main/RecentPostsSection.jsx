@@ -15,7 +15,7 @@ export default function RecentPostsSection({
   const goCommunityDetail = (item) => {
     const pollId = item?.pollId;
     if (pollId) {
-      navigate(`/community/pollList/${pollId}`);
+      navigate(`/community/poll/detail/${pollId}`);
       return;
     }
     const postId = item?.postId ?? item?.id;

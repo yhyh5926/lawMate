@@ -4,6 +4,7 @@ import lawyerApi from "../../api/lawyerApi";
 import defaultLawyerImg from "../../styles/images/Lawyers.png";
 import "../../styles/lawyer/LawyerListPage.css";
 import { baseURL } from "../../constants/baseURL";
+import { scrollToTop } from "../../utils/windowUtils";
 
 export const DEFAULT_IMAGE = defaultLawyerImg;
 
@@ -47,6 +48,7 @@ const LawyerListPage = () => {
       }
     };
     fetchInitialData();
+    scrollToTop();
   }, []);
 
   const handleClearInput = () => {

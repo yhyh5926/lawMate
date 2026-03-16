@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { memberApi } from "../../api/memberApi.js";
 import { useAuthStore } from "../../store/authStore.js";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import "../../styles/member/LoginPage.css"; // CSS 임포트
+import { scrollToTop } from "../../utils/windowUtils.js";
 
 const GOOGLE_CLIENT_ID =
   "244554224995-kcgsjp47k8flns89ldv9stpfga219kut.apps.googleusercontent.com";
@@ -17,6 +18,10 @@ const LoginContent = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  useEffect(() => {
+    scrollToTop();
+  }, []);
 
   const onSubmit = async (e) => {
     e.preventDefault();

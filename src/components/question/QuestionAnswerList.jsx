@@ -94,6 +94,8 @@ const QuestionAnswerList = ({
           ans.answerCnt > 0
             ? ((ans.adoptCnt / ans.answerCnt) * 100).toFixed(1)
             : 0;
+
+        // 💡 로그인 여부 및 작성자 본인 여부 확인
         const isAuthor = user && Number(user.memberId) === Number(ans.memberId);
 
         return (
@@ -106,7 +108,6 @@ const QuestionAnswerList = ({
             )}
 
             <div className="answer-header">
-              {/* 변호사 프로필 섹션: 클릭 직관성 강화 */}
               <div
                 className="lawyer-profile-box"
                 onClick={() => navigate(`/lawyer/detail/${ans.lawyerId}`)}
@@ -183,7 +184,9 @@ const QuestionAnswerList = ({
               ) : (
                 <>
                   <div className="content-text">{ans.content}</div>
-                  {ans.isAdopted === "Y" && (
+
+                  {/* 💡 핵심: 채택된 답변 + 로그인한 사용자 + 작성자 본인이 아님 */}
+                  {ans.isAdopted === "Y" && user && !isAuthor && (
                     <div className="action-guide-box">
                       <p className="guide-msg">
                         변호사님과 직접 상담을 해보세요!

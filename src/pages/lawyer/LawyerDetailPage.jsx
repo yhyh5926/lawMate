@@ -1,7 +1,7 @@
-// src/pages/lawyer/LawyerDetailPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import lawyerApi from "../../api/lawyerApi";
+import { useAuthStore } from "../../store/authStore"; // 인증 스토어 임포트
 import { DEFAULT_IMAGE } from "./LawyerListPage";
 import { getOrCreateChatRoom } from "../../api/chatApi";
 import { baseURL } from "../../constants/baseURL";
@@ -12,9 +12,14 @@ import { scrollToTop } from "../../utils/windowUtils";
 const LawyerDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  // 인증 상태 및 사용자 정보 추출
+  const { isAuthenticated, user } = useAuthStore();
+
   const [lawyer, setLawyer] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // 상세 데이터 페칭
   const fetchDetail = async () => {
     try {
       setLoading(true);
@@ -31,6 +36,53 @@ const LawyerDetailPage = () => {
     if (id) fetchDetail();
     scrollToTop();
   }, [id]);
+
+  // 1:1 채팅 신청 핸들러
+  const handleChatClick = async () => {
+    if (!isAuthenticated) {
+      if (
+        window.confirm(
+          "로그인이 필요한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?",
+        )
+      ) {
+        navigate("/member/login");
+      }
+      return;
+    }
+
+    // 본인 계정(변호사)일 경우 채팅 제한
+    if (user?.memberId === lawyer?.memberId) {
+      alert("본인과는 채팅을 진행할 수 없습니다.");
+      return;
+    }
+
+    try {
+      const res = await getOrCreateChatRoom(lawyer.memberId);
+      // API 응답 구조에 맞춰 roomNo 추출 (res.data.data.roomNo 등 구조 확인 필요)
+      const roomNo = res.data?.data?.roomNo || res.data?.roomNo;
+      if (roomNo) {
+        navigate(`/chat/room?roomNo=${roomNo}`);
+      }
+    } catch (error) {
+      console.error("채팅 연결 실패:", error);
+      alert("채팅방 연결 중 오류가 발생했습니다.");
+    }
+  };
+
+  // 상담 예약 신청 핸들러
+  const handleReserveClick = () => {
+    if (!isAuthenticated) {
+      if (
+        window.confirm(
+          "상담 예약은 로그인이 필요합니다.\n로그인 페이지로 이동하시겠습니까?",
+        )
+      ) {
+        navigate("/lmember/ogin");
+      }
+      return;
+    }
+    navigate(`/consult/reserve?lawyerId=${lawyer.lawyerId}`);
+  };
 
   if (loading)
     return (
@@ -164,8 +216,8 @@ const LawyerDetailPage = () => {
                   <div className="ld-contact-item">
                     <dt>주소</dt>
                     <dd className="ld-address">
-                      {lawyer.officeAddr 
-                        ? `${lawyer.officeAddr} ${lawyer.officeDetailAddr || ""}`.trim() 
+                      {lawyer.officeAddr
+                        ? `${lawyer.officeAddr} ${lawyer.officeDetailAddr || ""}`.trim()
                         : "-"}
                     </dd>
                   </div>
@@ -179,24 +231,12 @@ const LawyerDetailPage = () => {
                   </span>
                 </div>
                 <div className="ld-actions">
-                  <button
-                    className="ld-btn-chat"
-                    onClick={async () => {
-                      try {
-                        const res = await getOrCreateChatRoom(lawyer.memberId);
-                        navigate(`/chat/room?roomNo=${res.data?.data?.roomNo}`);
-                      } catch (error) {
-                        alert("채팅 연결 실패", error);
-                      }
-                    }}
-                  >
+                  <button className="ld-btn-chat" onClick={handleChatClick}>
                     💬 실시간 채팅 문의
                   </button>
                   <button
                     className="ld-btn-reserve"
-                    onClick={() =>
-                      navigate(`/consult/reserve?lawyerId=${lawyer.lawyerId}`)
-                    }
+                    onClick={handleReserveClick}
                   >
                     상담 예약 신청하기
                   </button>
@@ -206,10 +246,10 @@ const LawyerDetailPage = () => {
           </aside>
         </div>
 
-        {/* ── 3. BOTTOM BACK ACTION (Centering) ── */}
+        {/* ── 3. BOTTOM BACK ACTION ── */}
         <div className="ld-bottom-action">
           <button className="ld-list-back-center" onClick={() => navigate(-1)}>
-            목록으로 돌아가기
+            목으로 돌아가기
           </button>
         </div>
       </div>

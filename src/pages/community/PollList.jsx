@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { getPollList } from '../../api/communityApi';
-import '../../styles/community/Qnalist.css';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { getPollList } from "../../api/communityApi";
+import "../../styles/community/Qnalist.css";
+import { scrollToTop } from "../../utils/windowUtils";
 
 const PollList = () => {
   const [polls, setPolls] = useState([]);
-  const [sortType, setSortType] = useState('latest');
+  const [sortType, setSortType] = useState("latest");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
@@ -25,6 +26,7 @@ const PollList = () => {
 
   useEffect(() => {
     fetchPolls();
+    scrollToTop();
   }, [sortType, currentPage]);
 
   const totalPage = Math.ceil(totalCount / pageSize);
@@ -38,14 +40,14 @@ const PollList = () => {
         onClick={() => setCurrentPage(i)}
       >
         {i}
-      </button>
+      </button>,
     );
   }
 
   const pollTr = polls.map((poll, idx) => (
     <tr key={poll.pollId} style={{ animationDelay: `${idx * 0.04}s` }}>
       <td className="td-no col-no">
-        {totalCount - ((currentPage - 1) * pageSize) - idx}
+        {totalCount - (currentPage - 1) * pageSize - idx}
       </td>
 
       <td className="col-title">
@@ -60,10 +62,10 @@ const PollList = () => {
       <td>{poll.name}</td>
 
       <td>
-        {poll.status === 'OPEN' ? (
-          <span style={{ color: '#2ecc71' }}>진행중</span>
+        {poll.status === "OPEN" ? (
+          <span style={{ color: "#2ecc71" }}>진행중</span>
         ) : (
-          <span style={{ color: '#e74c3c' }}>종료</span>
+          <span style={{ color: "#e74c3c" }}>종료</span>
         )}
       </td>
 
@@ -94,7 +96,7 @@ const PollList = () => {
 
             <button
               className="write-btn"
-              onClick={() => navigate('/community/poll/write')}
+              onClick={() => navigate("/community/poll/write")}
             >
               ✏️ 의견조사 생성
             </button>
@@ -110,9 +112,7 @@ const PollList = () => {
         {polls.length === 0 ? (
           <div className="empty-state">
             <div className="empty-state-icon">📋</div>
-            <p className="empty-state-text">
-              아직 등록된 의견조사가 없습니다.
-            </p>
+            <p className="empty-state-text">아직 등록된 의견조사가 없습니다.</p>
           </div>
         ) : (
           <>
