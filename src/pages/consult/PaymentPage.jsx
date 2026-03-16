@@ -31,6 +31,14 @@ const PaymentPage = () => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
+
+      // localStorage에 결제 완료 저장
+      const paidList = JSON.parse(localStorage.getItem('paid_consults') || '[]');
+      if (!paidList.includes(Number(consultNo))) {
+        paidList.push(Number(consultNo));
+        localStorage.setItem('paid_consults', JSON.stringify(paidList));
+      }
+
       setPaid(true);
     }, 1500);
   };

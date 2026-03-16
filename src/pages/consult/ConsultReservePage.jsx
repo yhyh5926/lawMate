@@ -73,10 +73,11 @@ const ConsultReservePage = () => {
       };
 
       const res = await createConsult(consultData);
-      alert("상담 예약이 접수되었습니다.");
+      alert("상담 예약이 접수되었습니다. 변호사 승인 후 결제가 가능합니다.");
 
-      const consultId = res.data?.consultId || res.data?.data?.consultId;
-      navigate(`/payment/pay?consultId=${consultId}`);
+      // 결제 페이지 대신 마이페이지로 이동
+      navigate("/mypage/main");
+
     } catch (e) {
       alert(e.response?.data?.message || "예약 신청 중 오류가 발생했습니다.");
     } finally {
@@ -201,7 +202,7 @@ const ConsultReservePage = () => {
         onClick={handleSubmit}
         disabled={loading}
       >
-        {loading ? "예약 처리 중..." : "예약 신청 및 결제하기"}
+        {loading ? "예약 처리 중..." : "예약 신청하기"}
       </button>
     </div>
   );

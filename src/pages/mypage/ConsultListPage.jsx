@@ -160,7 +160,7 @@ const ConsultListPage = () => {
 
                 <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end", alignItems: "center" }}>
                   {/* 결제 이동 (확정 + 미결제) */}
-                  {c.status === "CONFIRMED" && !c.paid && (
+                  {c.status === "CONFIRMED" && !JSON.parse(localStorage.getItem('paid_consults') || '[]').includes(c.consultId) && (
                     <button
                       onClick={() => navigate(`/payment/pay?consultId=${c.consultId}`)}
                       style={btnStyle("#1A6DFF", "#fff")}
