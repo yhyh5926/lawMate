@@ -7,8 +7,9 @@ import { faImage, faImages } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../../utils/formatDate.js";
 import "../../styles/question/QuestionListPage.css";
 import { scrollToTop } from "../../utils/windowUtils.js";
+import { useAuthStore } from "../../store/authStore.js";
 
-const QuestionListPage = ({ user }) => {
+const QuestionListPage = () => {
   // 💡 접근 제어를 위해 user 프롭스 추가
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -21,6 +22,8 @@ const QuestionListPage = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [tempQuery, setTempQuery] = useState(searchQuery);
   const [totalPages, setTotalPages] = useState(1);
+
+  const { user } = useAuthStore();
 
   const fetchQuestions = useCallback(async () => {
     try {
