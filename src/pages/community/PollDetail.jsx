@@ -57,17 +57,14 @@ const PollDetail = () => {
       alert("로그인이 필요합니다.");
       return;
     }
-
     if (alreadyVoted) {
       alert("이미 투표했습니다.");
       return;
     }
-
     if (!selectedOption) {
       alert("선택지를 선택하세요.");
       return;
     }
-
     try {
       await votePoll({
         pollId,

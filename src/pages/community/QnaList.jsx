@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { getPostList, getTopLikedPosts } from "../../api/communityApi";
-import "../../styles/community/Qnalist.css";
-import { scrollToTop } from "../../utils/windowUtils";
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { getPostList, getTopLikedPosts } from '../../api/communityApi';
+import { useAuthStore } from "../../store/authStore";
+import '../../styles/community/Qnalist.css';
 
 const QnaList = () => {
   const [posts, setPosts] = useState([]);
   const [topLikedPosts, setTopLikedPosts] = useState([]);
   const [sortType, setSortType] = useState("latest");
   const navigate = useNavigate();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -39,7 +40,6 @@ const QnaList = () => {
   useEffect(() => {
     fetchPosts();
     fetchTopLikedPosts();
-    scrollToTop();
   }, [sortType, currentPage]);
 
   const topLikedList = topLikedPosts.map((post, idx) => (
@@ -96,6 +96,16 @@ const QnaList = () => {
     );
   }
 
+  const handleWrite = () => {
+    if (!isAuthenticated) {
+      alert("로그인이 필요합니다.");
+      navigate("/community/qnalist");
+      return;
+    }
+
+    navigate("/community/write");
+  };
+
   return (
     <div className="qna-wrapper">
       <div className="qna-container">
@@ -118,7 +128,7 @@ const QnaList = () => {
 
             <button
               className="write-btn"
-              onClick={() => navigate("/community/write")}
+              onClick={handleWrite}
             >
               ✏️ 글쓰기
             </button>

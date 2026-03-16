@@ -54,18 +54,18 @@ const AdminApp = () => {
       icon: <MessageSquare size={18} />,
       path: "/admin/community/list",
     }, // 사건 모니터링 -> 커뮤니티 관리로 교체
-    {
-      id: "payments",
-      name: "결제 및 정산",
-      icon: <CreditCard size={18} />,
-      path: "/admin/payment/list",
-    },
-    {
-      id: "reports",
-      name: "신고 관리 센터",
-      icon: <AlertTriangle size={18} />,
-      path: "/admin/report/list",
-    },
+    // {
+    //   id: "payments",
+    //   name: "결제 및 정산",
+    //   icon: <CreditCard size={18} />,
+    //   path: "/admin/payment/list",
+    // },
+    // {
+    //   id: "reports",
+    //   name: "신고 관리 센터",
+    //   icon: <AlertTriangle size={18} />,
+    //   path: "/admin/report/list",
+    // },
     {
       id: "stats",
       name: "서비스 지표통계",
@@ -148,7 +148,7 @@ const AdminApp = () => {
               if (window.confirm("메인으로 나가시겠습니까?")) navigate("/main");
             }}
           >
-            <LogOut size={15} /> 시스템 나가기
+            <LogOut size={15} /> 메인으로
           </button>
         </div>
       </aside>
