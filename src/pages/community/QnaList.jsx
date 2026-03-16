@@ -40,7 +40,6 @@ const QnaList = () => {
   useEffect(() => {
     fetchPosts();
     fetchTopLikedPosts();
-    scrollToTop();
   }, [sortType, currentPage]);
 
   const topLikedList = topLikedPosts.map((post, idx) => (
