@@ -1,9 +1,16 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { getPost, getPostWithoutView, deletePost, togglePostLike, getPostLikeStatus } from '../../api/communityApi';
-import CommentList from '../../components/community/CommentList';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  getPost,
+  getPostWithoutView,
+  deletePost,
+  togglePostLike,
+  getPostLikeStatus,
+} from "../../api/communityApi";
+import CommentList from "../../components/community/CommentList";
 import { useAuthStore } from "../../store/authStore";
-import '../../styles/community/QnaDetail.css';
+import "../../styles/community/QnaDetail.css";
+import { scrollToTop } from "./../../utils/windowUtils";
 
 const QnaDetail = () => {
   const { postId } = useParams();
@@ -17,16 +24,17 @@ const QnaDetail = () => {
   const memberId = user?.memberId;
 
   useEffect(() => {
-    getPost(postId).then(data => {
+    getPost(postId).then((data) => {
       console.log(data);
       setQnaDetail(data);
     });
     // 좋아요 상태
     if (memberId) {
-      getPostLikeStatus(postId, memberId).then(count => {
+      getPostLikeStatus(postId, memberId).then((count) => {
         setLiked(count > 0);
       });
     }
+    scrollToTop();
   }, [postId, memberId]);
 
   if (!qnaDetail) return <div className="detail-loading">불러오는 중...</div>;
@@ -53,25 +61,25 @@ const QnaDetail = () => {
   };
 
   const handleLike = async () => {
-  if (!isAuthenticated || !memberId) {
-    alert("로그인이 필요합니다.");
-    return;
-  }
+    if (!isAuthenticated || !memberId) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
 
-  try {
-    await togglePostLike(postId, memberId);
+    try {
+      await togglePostLike(postId, memberId);
 
-    const data = await getPostWithoutView(postId);
-    setQnaDetail(data);
+      const data = await getPostWithoutView(postId);
+      setQnaDetail(data);
 
-    const count = await getPostLikeStatus(postId, memberId);
-    setLiked(count > 0);
-  } catch (error) {
-    console.error("좋아요 처리 실패:", error);
-    console.error("응답 데이터:", error.response?.data);
-    alert("좋아요 처리 실패");
-  }
-};
+      const count = await getPostLikeStatus(postId, memberId);
+      setLiked(count > 0);
+    } catch (error) {
+      console.error("좋아요 처리 실패:", error);
+      console.error("응답 데이터:", error.response?.data);
+      alert("좋아요 처리 실패");
+    }
+  };
 
   return (
     <div className="detail-wrapper">
@@ -109,9 +117,7 @@ const QnaDetail = () => {
             )}
           </div>
 
-          <div className="detail-body">
-            {qnaDetail.content}
-          </div>
+          <div className="detail-body">{qnaDetail.content}</div>
 
           <div className="detail-like-box">
             <button className="detail-like-btn" onClick={handleLike}>
