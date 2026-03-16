@@ -37,7 +37,6 @@ export default function ChatbotButton() {
         body: new URLSearchParams({ question: text }),
       });
 
-      // SSE 스트리밍 읽기
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let reply = "";
@@ -49,7 +48,15 @@ export default function ChatbotButton() {
         const { done, value } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value, { stream: true });
+        const raw = decoder.decode(value, { stream: true });
+
+        // SSE "data: 텍스트" 파싱 — "data:" prefix 제거
+        const chunk = raw
+          .split("\n")
+          .filter((line) => line.startsWith("data:"))
+          .map((line) => line.slice(5))
+          .join("");
+
         reply += chunk;
 
         // 마지막 bot 메시지를 실시간으로 업데이트

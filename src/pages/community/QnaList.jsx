@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { getPostList, getTopLikedPosts } from '../../api/communityApi';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { getPostList, getTopLikedPosts } from "../../api/communityApi";
 import { useAuthStore } from "../../store/authStore";
-import '../../styles/community/Qnalist.css';
+import "../../styles/community/Qnalist.css";
+import { scrollToTop } from "../../utils/windowUtils";
 
 const QnaList = () => {
   const [posts, setPosts] = useState([]);
@@ -40,6 +41,7 @@ const QnaList = () => {
   useEffect(() => {
     fetchPosts();
     fetchTopLikedPosts();
+    scrollToTop();
   }, [sortType, currentPage]);
 
   const topLikedList = topLikedPosts.map((post, idx) => (
@@ -126,10 +128,7 @@ const QnaList = () => {
               <option value="comments">댓글순</option>
             </select>
 
-            <button
-              className="write-btn"
-              onClick={handleWrite}
-            >
+            <button className="write-btn" onClick={handleWrite}>
               ✏️ 글쓰기
             </button>
           </div>

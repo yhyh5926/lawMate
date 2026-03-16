@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { mainApi } from "../api/mainApi";
 
 export function useMainData() {
@@ -6,55 +6,51 @@ export function useMainData() {
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(true);
 
-  console.log(data);
+  // 💡 1. 데이터 호출 로직을 독립적인 함수로 분리
+  const fetchMainData = useCallback(async (isAlive) => {
+    try {
+      setLoading(true);
+      setErr("");
+      const response = await mainApi.getMainData();
+
+      if (isAlive) {
+        setData(response.data || response);
+      }
+    } catch (e) {
+      console.error("MainPage load error:", e);
+      if (isAlive) setErr("메인 데이터를 불러오지 못했습니다.");
+    } finally {
+      if (isAlive) setLoading(false);
+    }
+  }, []);
+
+  // 💡 2. 생명주기 및 이벤트 리스너 관리
   useEffect(() => {
     let alive = true;
 
-    (async () => {
-      try {
-        setLoading(true);
-        setErr("");
+    // 초기 로드
+    fetchMainData(alive);
 
-        const response = await mainApi.getMainData();
-        if (!alive) return;
-
-        // 백엔드 MainResponseDTO 구조에 맞춰 데이터 저장
-        setData(response.data || response);
-      } catch (e) {
-        console.error("MainPage load error:", e);
-        if (alive) setErr("메인 데이터를 불러오지 못했습니다.");
-      } finally {
-        if (alive) setLoading(false);
-      }
-    })();
+    // 사용자가 다른 탭/창에 갔다가 다시 메인으로 돌아왔을 때 자동 갱신
+    // (다른 곳에서 글 삭제 후 메인 탭으로 돌아오면 바로 반영됨)
+    const handleFocus = () => fetchMainData(alive);
+    window.addEventListener("focus", handleFocus);
 
     return () => {
       alive = false;
+      window.removeEventListener("focus", handleFocus);
     };
-  }, []);
+  }, [fetchMainData]);
 
-  // --- [데이터 가공 섹션] ---
-
-  // 1. 공지사항 (최신 3건)
+  // --- [데이터 가공 섹션] --- (기존 로직 유지)
   const topNotices = useMemo(() => data?.topNotices ?? [], [data]);
-
-  // 2. 일반 게시글 (최신 5건)
   const recentPosts = useMemo(() => data?.recentPosts ?? [], [data]);
-
-  // 3. 최근 판례
   const recentPrecedents = useMemo(() => data?.precedents ?? [], [data]);
-
-  // 4. 최근 등록 변호사
   const recentLawyers = useMemo(() => data?.lawyers ?? [], [data]);
-
-  // 5. 최근 모의 판결 (polls)
   const recentPolls = useMemo(() => data?.polls ?? [], [data]);
-
-  // 6. 최근 법률 질문 (questions)
-  // 컴포넌트에서 사용하는 이름인 'recentQuestions'로 내보냅니다.
   const recentQuestions = useMemo(() => data?.questions ?? [], [data]);
 
-  // --- [통계/차트 로직] ---
+  // --- [통계/차트 로직] --- (기존 로직 유지)
   const stats = data?.stats ?? { todayCount: 0, weeklyCount: 0, series: [] };
   const series = useMemo(() => {
     const raw = Array.isArray(stats.series) ? stats.series : [];
@@ -108,5 +104,6 @@ export function useMainData() {
     recentLawyers,
     recentPolls,
     recentQuestions,
+    refresh: () => fetchMainData(true), // 💡 필요시 수동 새로고침용 함수 제공
   };
 }
