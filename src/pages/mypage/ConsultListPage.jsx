@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getMyConsults, cancelConsult, restoreConsult, deleteConsult, deleteDoneConsult } from "../../api/consultApi";
 
 const STATUS_TABS = [
-  { value: "",          label: "전체" },
+  { value: "",         label: "전체" },
   { value: "PENDING",   label: "대기" },
   { value: "CONFIRMED", label: "확정" },
   { value: "DONE",      label: "완료" },
@@ -103,7 +103,7 @@ const ConsultListPage = () => {
             style={{
               flex: 1, padding: "8px", border: "none", borderRadius: "8px",
               background: activeTab === tab.value ? "#fff" : "transparent",
-              color:      activeTab === tab.value ? "#1A6DFF" : "#888",
+              color:       activeTab === tab.value ? "#1A6DFF" : "#888",
               fontWeight: activeTab === tab.value ? "700" : "500",
               fontSize: "13px", cursor: "pointer",
               boxShadow: activeTab === tab.value ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
@@ -168,15 +168,7 @@ const ConsultListPage = () => {
                       결제하기
                     </button>
                   )}
-                  {/* 후기 작성 (완료) */}
-                  {c.status === "DONE" && !c.reviewed && (
-                    <button
-                      onClick={() => navigate(`/lawyer/review/write?consultId=${c.consultId}`)}
-                      style={btnStyle("#34C759", "#fff")}
-                    >
-                      후기 작성
-                    </button>
-                  )}
+
                   {/* 삭제 (완료) */}
                   {c.status === "DONE" && (
                     <button
@@ -195,7 +187,6 @@ const ConsultListPage = () => {
                       예약 취소
                     </button>
                   )}
-                  {/* 복구 / 즉시삭제 (취소) */}
                   {c.status === "CANCELLED" && (
                     <>
                       <span style={{ fontSize: "11px", color: "#FF3B30", alignSelf: "center" }}>
