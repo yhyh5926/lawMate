@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { questionApi } from "../../api/questionApi.js";
 import { categories } from "../../constants/categories.js";
@@ -8,7 +8,8 @@ import { formatDate } from "../../utils/formatDate.js";
 import "../../styles/question/QuestionListPage.css";
 import { scrollToTop } from "../../utils/windowUtils.js";
 
-const QuestionListPage = () => {
+const QuestionListPage = ({ user }) => {
+  // 💡 접근 제어를 위해 user 프롭스 추가
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -21,12 +22,7 @@ const QuestionListPage = () => {
   const [tempQuery, setTempQuery] = useState(searchQuery);
   const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    fetchQuestions();
-    scrollToTop();
-  }, [searchQuery, caseTypeFilter, currentPage]);
-
-  const fetchQuestions = async () => {
+  const fetchQuestions = useCallback(async () => {
     try {
       setLoading(true);
       const response = await questionApi.getQuestionList({
@@ -45,7 +41,12 @@ const QuestionListPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery, caseTypeFilter, currentPage]);
+
+  useEffect(() => {
+    fetchQuestions();
+    scrollToTop();
+  }, [fetchQuestions]);
 
   const updateParams = (newParams) => {
     const nextParams = {
@@ -79,6 +80,21 @@ const QuestionListPage = () => {
   const handleResetAll = () => {
     setTempQuery("");
     setSearchParams({});
+  };
+
+  // 💡 [접근 제어] 질문하기 버튼 클릭 핸들러
+  const handleWriteClick = () => {
+    if (!user) {
+      if (
+        window.confirm(
+          "질문 작성은 로그인이 필요합니다.\n로그인 페이지로 이동하시겠습니까?",
+        )
+      ) {
+        navigate("/member/login");
+      }
+      return;
+    }
+    navigate("/question/write");
   };
 
   const renderPagination = () =>
@@ -240,7 +256,9 @@ const QuestionListPage = () => {
                         <td className="qlp-date">{formatDate(q.createdAt)}</td>
                         <td>
                           <span
-                            className={`qlp-status-badge ${q.status === "ADOPTED" ? "adopted" : "waiting"}`}
+                            className={`qlp-status-badge ${
+                              q.status === "ADOPTED" ? "adopted" : "waiting"
+                            }`}
                           >
                             <span className="qlp-status-dot" />
                             {q.status === "ADOPTED" ? "채택완료" : "채택대기"}
@@ -264,7 +282,7 @@ const QuestionListPage = () => {
               </table>
             </div>
 
-            {/* ── FOOTer (Pagination + Write Button) ── */}
+            {/* ── FOOTER (Pagination + Write Button) ── */}
             <div className="qlp-footer-wrapper">
               <div className="qlp-pagination">
                 <button
@@ -283,10 +301,9 @@ const QuestionListPage = () => {
                   &gt;
                 </button>
               </div>
-              <button
-                className="qlp-write-btn"
-                onClick={() => navigate("/question/write")}
-              >
+
+              {/* 💡 변경된 부분: 접근 제어 핸들러 연결 */}
+              <button className="qlp-write-btn" onClick={handleWriteClick}>
                 + 질문하기
               </button>
             </div>
