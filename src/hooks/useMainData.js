@@ -1,15 +1,23 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import { mainApi } from "../api/mainApi";
 
 export function useMainData() {
   const [data, setData] = useState(null);
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
 
-  // 💡 1. 데이터 호출 로직을 독립적인 함수로 분리
+  // 💡 데이터 호출 함수
   const fetchMainData = useCallback(async (isAlive) => {
     try {
-      setLoading(true);
+      // 💡 무한 로딩 방지: 데이터가 없을 때만 전체 로딩 스피너 표시
+      // 이미 데이터가 있다면 백그라운드에서 조용히 업데이트함
+      setData((prev) => {
+        if (!prev) setLoading(true);
+        return prev;
+      });
+
       setErr("");
       const response = await mainApi.getMainData();
 
@@ -24,15 +32,13 @@ export function useMainData() {
     }
   }, []);
 
-  // 💡 2. 생명주기 및 이벤트 리스너 관리
   useEffect(() => {
     let alive = true;
 
-    // 초기 로드
+    // 💡 경로가 변경될 때마다(메인 복귀 포함) 호출
     fetchMainData(alive);
 
-    // 사용자가 다른 탭/창에 갔다가 다시 메인으로 돌아왔을 때 자동 갱신
-    // (다른 곳에서 글 삭제 후 메인 탭으로 돌아오면 바로 반영됨)
+    // 탭 전환 시 갱신 로직
     const handleFocus = () => fetchMainData(alive);
     window.addEventListener("focus", handleFocus);
 
@@ -40,9 +46,9 @@ export function useMainData() {
       alive = false;
       window.removeEventListener("focus", handleFocus);
     };
-  }, [fetchMainData]);
+  }, [fetchMainData, location.pathname]); // 💡 여기서 모든 갱신을 제어함
 
-  // --- [데이터 가공 섹션] --- (기존 로직 유지)
+  // --- [데이터 가공 섹션] ---
   const topNotices = useMemo(() => data?.topNotices ?? [], [data]);
   const recentPosts = useMemo(() => data?.recentPosts ?? [], [data]);
   const recentPrecedents = useMemo(() => data?.precedents ?? [], [data]);
@@ -50,7 +56,7 @@ export function useMainData() {
   const recentPolls = useMemo(() => data?.polls ?? [], [data]);
   const recentQuestions = useMemo(() => data?.questions ?? [], [data]);
 
-  // --- [통계/차트 로직] --- (기존 로직 유지)
+  // --- [통계/차트 로직] ---
   const stats = data?.stats ?? { todayCount: 0, weeklyCount: 0, series: [] };
   const series = useMemo(() => {
     const raw = Array.isArray(stats.series) ? stats.series : [];
@@ -61,7 +67,6 @@ export function useMainData() {
 
   const last = series[series.length - 1];
   const prev = series[series.length - 2];
-
   const todayCount = stats.todayCount || (last?.count ?? 0);
   const weeklyCount = stats.weeklyCount || 0;
 
@@ -104,6 +109,5 @@ export function useMainData() {
     recentLawyers,
     recentPolls,
     recentQuestions,
-    refresh: () => fetchMainData(true), // 💡 필요시 수동 새로고침용 함수 제공
   };
 }

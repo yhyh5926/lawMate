@@ -7,6 +7,7 @@ import RecentPostsSection from "../../components/main/RecentPostsSection";
 import RecentResourcesSection from "../../components/main/RecentResourcesSection";
 
 export default function MainPage() {
+  // 💡 훅 내부의 useEffect가 location.pathname을 감시하므로 여기서 따로 부를 필요 없음
   const {
     loading,
     err,
