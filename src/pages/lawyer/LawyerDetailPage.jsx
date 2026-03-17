@@ -249,7 +249,7 @@ const LawyerDetailPage = () => {
         {/* ── 3. BOTTOM BACK ACTION ── */}
         <div className="ld-bottom-action">
           <button className="ld-list-back-center" onClick={() => navigate(-1)}>
-            목으로 돌아가기
+            목록으로 돌아가기
           </button>
         </div>
       </div>
