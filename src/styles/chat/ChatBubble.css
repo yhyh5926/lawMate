@@ -136,8 +136,11 @@
 }
 .bubble-box.mine {
   background: #1a6dff;
-  color: #fff;
   border-radius: 18px 4px 18px 18px;
+}
+
+.bubble-box.mine .content-text {
+  color: #fff;
 }
 .bubble-box.other {
   background: #f0f2f5;

@@ -8,6 +8,7 @@ export function useMainData() {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
 
+  console.log(data);
   // 💡 데이터 호출 함수
   const fetchMainData = useCallback(async (isAlive) => {
     try {
