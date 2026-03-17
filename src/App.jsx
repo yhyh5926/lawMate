@@ -2,12 +2,11 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Header from "./components/common/Header";
 import Footer from "./components/common/Footer";
+import ChatbotButton from "./components/common/ChatbotButton";
 
 import "./App.css";
-// ✅ 추가된 부분: AuthContext에서 AuthProvider 임포트
 import { AuthProvider } from "./context/AuthContext";
 
-// 모듈별 라우트 Import
 import MainRoutes from "./pages/main/MainRoutes";
 import MemberRoutes from "./pages/member/MemberRoutes";
 import MyCaseRoutes from "./pages/mypage/MyCaseRoutes";
@@ -21,7 +20,6 @@ import ConsultRoutes from "./pages/consult/ConsultRoutes";
 
 function App() {
   return (
-    // ✅ 추가된 부분: 앱 전체를 AuthProvider로 감싸주어 전역 상태 접근 가능하게 수정
     <AuthProvider>
       <BrowserRouter>
         <Header />
@@ -49,6 +47,7 @@ function App() {
           </Routes>
         </main>
         <Footer />
+        <ChatbotButton />
       </BrowserRouter>
     </AuthProvider>
   );

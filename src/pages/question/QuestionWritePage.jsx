@@ -5,6 +5,7 @@ import precedentApi from "../../api/precedentApi";
 import { categories } from "../../constants/categories.js";
 import "../../styles/question/QuestionWritePage.css";
 import { useAuthStore } from "../../store/authStore.js";
+import { scrollToTop } from "./../../utils/windowUtils";
 
 const QuestionWritePage = () => {
   const navigate = useNavigate();
@@ -35,6 +36,9 @@ const QuestionWritePage = () => {
     return file.type.startsWith("image/");
   };
 
+  useEffect(() => {
+    scrollToTop();
+  }, []);
   // 💡 파일 처리 공통 로직 (미리보기 생성)
   const handleFiles = (files) => {
     const nextFiles = files.map((file) => ({
