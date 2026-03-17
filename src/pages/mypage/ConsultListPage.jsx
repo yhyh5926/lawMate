@@ -169,6 +169,23 @@ const ConsultListPage = () => {
                     </button>
                   )}
 
+                  {/* 환불 신청 (결제 완료된 경우) */}
+                  {c.status === "CONFIRMED" && 
+                    JSON.parse(localStorage.getItem('paid_consults') || '[]').includes(c.consultId) && (
+                    <button
+                      onClick={() => {
+                        if (!window.confirm("환불을 신청하시겠습니까?")) return;
+                        const paid = JSON.parse(localStorage.getItem('paid_consults') || '[]');
+                        localStorage.setItem('paid_consults', JSON.stringify(paid.filter(id => id !== c.consultId)));
+                        alert("환불이 신청되었습니다.");
+                        fetchConsults();
+                      }}
+                      style={btnStyle("#fff", "#FF9500", "1px solid #FF9500")}
+                    >
+                      환불 신청
+                    </button>
+                  )}
+
                   {/* 삭제 (완료) */}
                   {c.status === "DONE" && (
                     <button
