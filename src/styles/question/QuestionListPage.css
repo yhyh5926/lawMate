@@ -1,0 +1,408 @@
+/* QuestionListPage.css */
+
+/* ── Root & Variables ── (기존 유지) */
+:root {
+  --q-primary: #1a375a; /* LawMate 남색 */
+  --q-secondary: #7fb3d5; /* LawMate 하늘색 */
+  --q-accent: #f6ad55; /* 평점/별 포인트 */
+  --q-bg-body: #f4f7fa;
+  --q-bg-white: #ffffff;
+  --q-text-main: #2d3748;
+  --q-text-sub: #4a5568;
+  --q-border: #e2e8f0;
+}
+
+.qlp-root {
+  background-color: var(--q-bg-body);
+  min-height: 100vh;
+  font-family: "Pretendard", sans-serif;
+  color: var(--q-text-main);
+}
+
+/* ── HERO SECTION ── */
+.qlp-hero {
+  background: linear-gradient(135deg, var(--q-primary) 0%, #2c5282 100%);
+  padding: 80px 20px;
+  text-align: center;
+  color: var(--q-bg-white);
+  position: relative;
+  overflow: hidden;
+}
+
+.qlp-hero-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.qlp-hero-eyebrow-line {
+  width: 40px;
+  height: 2px;
+  background-color: var(--q-secondary);
+}
+
+.qlp-hero-eyebrow-text {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--q-secondary);
+}
+
+.qlp-hero-title {
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 25px;
+}
+
+.qlp-hero-title span {
+  color: var(--q-secondary);
+}
+
+.qlp-hero-desc {
+  font-size: 18px;
+  line-height: 1.6;
+  opacity: 0.9;
+  max-width: 700px;
+  margin: 0 auto 40px;
+}
+
+.qlp-badges {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.qlp-badge {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(127, 179, 213, 0.3);
+}
+
+.qlp-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--q-secondary);
+  display: inline-block;
+  margin-right: 8px;
+}
+
+/* 히어로 버튼 제거됨 - 하단 버튼으로 대체 */
+
+/* ── FILTER BAR ── */
+.qlp-filter-bar {
+  background-color: var(--q-bg-white);
+  border-bottom: 1px solid var(--q-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.qlp-filter-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 15px 40px;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.qlp-category-select {
+  height: 42px;
+  padding: 0 12px;
+  border: 2px solid var(--q-border);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--q-text-main);
+  outline: none;
+}
+
+.qlp-category-select:focus {
+  border-color: var(--q-secondary);
+}
+
+.qlp-search-form {
+  flex: 1;
+  display: flex;
+  gap: 10px;
+}
+
+.qlp-search-input-wrap {
+  flex: 1;
+  position: relative;
+}
+
+.qlp-search-input {
+  width: 100%;
+  height: 42px;
+  padding: 0 40px 0 14px;
+  border: 2px solid var(--q-border);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.qlp-search-input:focus {
+  border-color: var(--q-secondary);
+}
+
+.qlp-search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--q-text-sub);
+  cursor: pointer;
+}
+
+.qlp-search-btn {
+  background-color: var(--q-primary);
+  color: var(--q-bg-white);
+  padding: 0 24px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.qlp-reset-btn {
+  width: 42px;
+  height: 42px;
+  background-color: var(--q-bg-body);
+  border: 2px solid var(--q-border);
+  border-radius: 8px;
+  color: var(--q-text-sub);
+  cursor: pointer;
+}
+
+/* ── MAIN CONTENT ── */
+.qlp-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 40px 100px;
+}
+
+.qlp-table-wrap {
+  background-color: var(--q-bg-white);
+  border-radius: 12px;
+  border: 1px solid var(--q-border);
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(26, 55, 90, 0.05);
+}
+
+.qlp-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.qlp-table thead {
+  background-color: var(--q-primary);
+}
+
+.qlp-table th {
+  color: var(--q-bg-white);
+  padding: 16px;
+  font-size: 13px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.qlp-table td {
+  padding: 18px 16px;
+  border-bottom: 1px solid var(--q-border);
+  font-size: 15px;
+}
+
+.qlp-table tbody tr:hover {
+  background-color: #f8fbff;
+}
+
+.qlp-type-badge {
+  background-color: #ebf4ff;
+  color: var(--q-primary);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.qlp-title-link {
+  text-decoration: none;
+  color: var(--q-text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qlp-title-link:hover .qlp-title-text {
+  color: var(--q-secondary);
+  text-decoration: underline;
+}
+
+.qlp-title-text {
+  font-weight: 500;
+}
+
+.qlp-title-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--q-text-sub);
+  font-size: 13px;
+}
+
+.qlp-answer-count {
+  color: var(--q-secondary);
+  font-weight: 700;
+}
+
+.qlp-author,
+.qlp-date {
+  color: var(--q-text-sub);
+  font-size: 14px;
+}
+
+.qlp-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.qlp-status-badge.adopted {
+  background-color: #e6fffa;
+  color: #1a7a4a;
+}
+
+.qlp-status-badge.waiting {
+  background-color: #fffaf0;
+  color: #b07a10;
+}
+
+.qlp-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.adopted .qlp-status-dot {
+  background-color: #1a7a4a;
+}
+
+.waiting .qlp-status-dot {
+  background-color: #b07a10;
+}
+
+/* ── FOOTER (Pagination & Write Button) ── */
+.qlp-footer-wrapper {
+  display: flex;
+  justify-content: center; /* 중앙 정렬 */
+  align-items: center;
+  position: relative; /* 버튼의 우측 배치를 위한 기준 */
+  margin-top: 50px;
+  min-height: 50px;
+}
+
+.qlp-pagination {
+  display: flex;
+  gap: 8px;
+}
+
+.qlp-page-btn,
+.qlp-page-arrow {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--q-border);
+  background-color: var(--q-bg-white);
+  color: var(--q-primary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.qlp-page-btn.active {
+  background-color: var(--q-primary);
+  color: var(--q-bg-white);
+  border-color: var(--q-primary);
+}
+
+.qlp-page-btn:hover:not(.active),
+.qlp-page-arrow:hover:not(:disabled) {
+  background-color: #f8fbff;
+  border-color: var(--q-secondary);
+  color: var(--q-secondary);
+}
+
+.qlp-page-arrow:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* 질문하기 버튼 - 리스트 하단 우측 배치 */
+.qlp-write-btn {
+  position: absolute;
+  right: 0;
+  background-color: var(--q-secondary);
+  color: var(--q-bg-white);
+  border: none;
+  padding: 0 24px;
+  height: 42px; /* 검색 버튼들과 높이 통일 */
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(127, 179, 213, 0.3);
+  transition: all 0.2s;
+}
+
+.qlp-write-btn:hover {
+  background-color: #5d97bd;
+  transform: translateY(-2px);
+}
+
+.qlp-write-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .col-author,
+  .col-date {
+    display: none;
+  }
+  .qlp-filter-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .qlp-hero-title {
+    font-size: 32px;
+  }
+
+  /* 모바일에서는 버튼을 하단에 가득 차게 */
+  .qlp-footer-wrapper {
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 20px;
+  }
+  .qlp-write-btn {
+    position: static;
+    width: 100%;
+    height: 48px;
+  }
+}

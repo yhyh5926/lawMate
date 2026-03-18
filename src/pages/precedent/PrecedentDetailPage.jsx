@@ -1,136 +1,273 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import precedentApi from "../../api/precedentApi";
-import LegalTooltip from "./LegalTooltip"; // 💡 공통 툴팁 컴포넌트 임포트
+import LegalTooltip from "./LegalTooltip";
+import "../../styles/precedent/PrecedentDetailPage.css";
+import { scrollToTop } from "../../utils/windowUtils";
+
+// Font Awesome 도입
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faFileLines,
+  faQuestionCircle,
+  faScaleBalanced,
+  faLightbulb,
+  faMagnifyingGlass,
+  faArrowLeft,
+  faArrowRight,
+  faCircleNotch,
+} from "@fortawesome/free-solid-svg-icons";
 
 const PrecedentDetailPage = () => {
   const { id } = useParams();
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const handleBack = () => {
+    const page = searchParams.get("page");
+    const query = searchParams.get("query");
+    const caseType = searchParams.get("caseType");
+    const params = new URLSearchParams();
+    if (page) params.set("page", page);
+    if (query) params.set("query", query);
+    if (caseType) params.set("caseType", caseType);
+    const qs = params.toString();
+    navigate(`/precedent/search${qs ? `?${qs}` : ""}`);
+  };
+
+  const [data, setData] = useState(null);
+  const [relatedList, setRelatedList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDetail = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         const result = await precedentApi.getPrecedentDetail(id);
         setData(result);
+        if (result) {
+          const related = await precedentApi.getRelatedPrecedents(
+            result.caseType,
+            result.keywordCsv,
+            id,
+          );
+          setRelatedList(related);
+          scrollToTop();
+        }
       } catch (err) {
-        console.error("상세 정보 로드 에러:", err);
+        console.error("데이터 로드 에러:", err);
       } finally {
         setLoading(false);
       }
     };
-    if (id) fetchDetail();
+    if (id) fetchData();
   }, [id]);
 
-  if (loading) return <div style={msgStyle}>상세 정보 로딩 중...</div>;
-  if (!data) return <div style={msgStyle}>데이터를 찾을 수 없습니다.</div>;
+  if (loading) {
+    return (
+      <div className="pd-state-screen">
+        <FontAwesomeIcon
+          icon={faCircleNotch}
+          spin
+          className="pd-spinner-icon"
+        />
+        <p className="pd-state-text">판례를 분석하고 있습니다...</p>
+        <p className="pd-state-sub">복잡한 법률 내용을 쉽게 풀어드릴게요</p>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="pd-state-screen">
+        <FontAwesomeIcon
+          icon={faMagnifyingGlass}
+          className="pd-state-empty-icon"
+        />
+        <p className="pd-state-text">해당 판례를 찾을 수 없습니다.</p>
+        <button className="pd-back-btn" onClick={handleBack}>
+          <FontAwesomeIcon icon={faArrowLeft} /> 목록으로 돌아가기
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div style={containerStyle}>
-      <button onClick={() => navigate(-1)} style={backBtnStyle}>
-        ← 뒤로가기
-      </button>
-
-      <header>
-        <div style={{ color: "#007bff", fontWeight: "bold" }}>
-          {data.caseType} · {data.judgment}
-        </div>
-        <h1 style={{ fontSize: "2rem", margin: "10px 0" }}>{data.title}</h1>
-        {/* 💡 한 줄 요약에 툴팁 적용 */}
-        <p style={{ color: "#666", fontSize: "1.1rem" }}>
-          <LegalTooltip text={data.oneLine} />
-        </p>
-        <hr style={{ margin: "20px 0", border: "0.5px solid #eee" }} />
-      </header>
-
-      {/* AI 요약 정보 섹션 */}
-      {data.aiSummary && (
-        <section style={aiSectionStyle}>
-          <h2 style={aiTitleStyle}>AI 사건 요약</h2>
-
-          <div style={{ marginTop: "20px" }}>
-            <h4 style={{ color: "#555" }}>📝 사건의 시작</h4>
-            <p>
-              <LegalTooltip text={data.aiSummary.story?.start} />
-            </p>
+    <div className="pd-root">
+      <div className="pd-body">
+        {/* ── 헤더 ── */}
+        <header className="pd-header-card">
+          <div className="pd-header-glow" />
+          <div className="pd-header-content">
+            <div className="pd-badge-row">
+              {data.caseType && (
+                <span className="pd-badge pd-badge--type">{data.caseType}</span>
+              )}
+              {data.judgment && (
+                <span className="pd-badge pd-badge--judgment">
+                  {data.judgment}
+                </span>
+              )}
+            </div>
+            <h1 className="pd-title">{data.title}</h1>
+            {data.oneLine && (
+              <div className="pd-summary-box">
+                <span className="pd-summary-label">한 줄 요약</span>
+                <p className="pd-summary-text">
+                  <LegalTooltip text={data.oneLine} />
+                </p>
+              </div>
+            )}
           </div>
+        </header>
 
-          <div style={{ marginTop: "20px" }}>
-            <h4 style={{ color: "#555" }}>⚖️ 핵심 쟁점</h4>
-            <p>
-              <LegalTooltip text={data.aiSummary.story?.issue} />
+        {/* ── AI 분석 ── */}
+        {data.aiSummary && (
+          <section className="pd-card">
+            <h2 className="pd-card-title">이 사건, 어떤 내용인가요?</h2>
+
+            <div className="pd-story-wrap">
+              <div className="pd-story-block">
+                <div className="pd-story-icon-wrap">
+                  <FontAwesomeIcon icon={faFileLines} className="pd-fa-icon" />
+                </div>
+                <div className="pd-story-body">
+                  <h3 className="pd-story-heading">무슨 일이 있었나요?</h3>
+                  <p className="pd-story-text">
+                    <LegalTooltip
+                      text={data.aiSummary.story?.start || "내용이 없습니다."}
+                    />
+                  </p>
+                </div>
+              </div>
+
+              <div className="pd-story-block">
+                <div className="pd-story-icon-wrap">
+                  <FontAwesomeIcon
+                    icon={faQuestionCircle}
+                    className="pd-fa-icon"
+                  />
+                </div>
+                <div className="pd-story-body">
+                  <h3 className="pd-story-heading">무엇이 문제였나요?</h3>
+                  <p className="pd-story-text">
+                    <LegalTooltip
+                      text={data.aiSummary.story?.issue || "내용이 없습니다."}
+                    />
+                  </p>
+                </div>
+              </div>
+
+              {data.aiSummary.logic?.length > 0 && (
+                <div className="pd-story-block">
+                  <div className="pd-story-icon-wrap">
+                    <FontAwesomeIcon
+                      icon={faScaleBalanced}
+                      className="pd-fa-icon"
+                    />
+                  </div>
+                  <div className="pd-story-body">
+                    <h3 className="pd-story-heading">
+                      법원은 어떻게 결론 냈나요?
+                    </h3>
+                    <ol className="pd-logic-list">
+                      {data.aiSummary.logic.map((text, i) => (
+                        <li key={i} className="pd-logic-item">
+                          <LegalTooltip text={text} />
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {data.aiSummary.tip && (
+              <div className="pd-tip-box">
+                <div className="pd-tip-icon-wrap">
+                  <FontAwesomeIcon icon={faLightbulb} />
+                </div>
+                <div className="pd-tip-right">
+                  <strong className="pd-tip-label">전문가 조언</strong>
+                  <p className="pd-tip-text">
+                    <LegalTooltip text={data.aiSummary.tip} />
+                  </p>
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* ── 사건 기본 정보 ── */}
+        <section className="pd-card">
+          <h2 className="pd-card-title">사건 기본 정보</h2>
+          <dl className="pd-meta-grid">
+            <div className="pd-meta-item">
+              <dt>사건번호</dt>
+              <dd>{data.caseNo || "-"}</dd>
+            </div>
+            <div className="pd-meta-item">
+              <dt>담당 법원</dt>
+              <dd>{data.court || "-"}</dd>
+            </div>
+            <div className="pd-meta-item">
+              <dt>판결 날짜</dt>
+              <dd>{data.judgeDate || "-"}</dd>
+            </div>
+          </dl>
+          {data.keywordCsv && (
+            <div className="pd-keywords">
+              <span className="pd-keywords-label">관련 키워드</span>
+              <span className="pd-keywords-text">{data.keywordCsv}</span>
+            </div>
+          )}
+        </section>
+
+        {/* ── 유사 판례 ── */}
+        {relatedList.length > 0 && (
+          <section className="pd-card">
+            <h2 className="pd-card-title">비슷한 사건도 살펴보세요</h2>
+            <p className="pd-card-desc">
+              이 판례와 유사한 키워드를 가진 사건들이에요
             </p>
-          </div>
-
-          <div style={{ marginTop: "20px" }}>
-            <h4 style={{ color: "#555" }}>🏛️ 법원의 판단 로직</h4>
-            <ul style={{ paddingLeft: "20px" }}>
-              {data.aiSummary.logic?.map((text, index) => (
-                <li key={index} style={{ marginBottom: "8px" }}>
-                  <LegalTooltip text={text} />
+            <ul className="pd-related-list">
+              {relatedList.map((item) => (
+                <li
+                  key={item.precId}
+                  className="pd-related-item"
+                  onClick={() => {
+                    navigate(`/precedent/detail/${item.precId}`);
+                    window.scrollTo(0, 0);
+                  }}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className="pd-related-top">
+                    <span className="pd-badge pd-badge--type pd-badge--sm">
+                      {item.caseType}
+                    </span>
+                    <span className="pd-related-judgment">{item.judgment}</span>
+                  </div>
+                  <p className="pd-related-title">{item.title}</p>
+                  <p className="pd-related-case-no">{item.caseNo}</p>
+                  <span className="pd-related-arrow">
+                    <FontAwesomeIcon icon={faArrowRight} />
+                  </span>
                 </li>
               ))}
             </ul>
-          </div>
+          </section>
+        )}
 
-          <div style={tipBoxStyle}>
-            <strong>💡 전문가의 한 줄 팁:</strong>{" "}
-            <LegalTooltip text={data.aiSummary.tip} />
-          </div>
-        </section>
-      )}
-
-      <footer style={footerStyle}>
-        <p>
-          사건번호: {data.caseNo} | 법원: {data.court}
-        </p>
-        <p>선고일자: {data.judgeDate}</p>
-        <p>키워드: {data.keywordCsv}</p>
-      </footer>
+        {/* ── 뒤로가기 ── */}
+        <div className="pd-footer-nav">
+          <button className="pd-back-btn" onClick={handleBack}>
+            <FontAwesomeIcon icon={faArrowLeft} /> 목록으로 돌아가기
+          </button>
+        </div>
+      </div>
     </div>
   );
-};
-
-// --- 스타일 객체 ---
-const containerStyle = {
-  padding: "30px",
-  maxWidth: "800px",
-  margin: "0 auto",
-  lineHeight: "1.6",
-};
-const msgStyle = { textAlign: "center", padding: "50px" };
-const backBtnStyle = {
-  marginBottom: "20px",
-  padding: "8px 16px",
-  cursor: "pointer",
-  border: "1px solid #ddd",
-  borderRadius: "5px",
-  backgroundColor: "#fff",
-};
-const aiSectionStyle = {
-  backgroundColor: "#f8f9fa",
-  padding: "25px",
-  borderRadius: "15px",
-};
-const aiTitleStyle = {
-  color: "#333",
-  borderLeft: "4px solid #007bff",
-  paddingLeft: "10px",
-};
-const tipBoxStyle = {
-  marginTop: "20px",
-  padding: "15px",
-  backgroundColor: "#fff3cd",
-  borderRadius: "8px",
-};
-const footerStyle = {
-  marginTop: "40px",
-  paddingTop: "20px",
-  borderTop: "1px solid #eee",
-  color: "#888",
-  fontSize: "0.9rem",
 };
 
 export default PrecedentDetailPage;

@@ -1,6 +1,6 @@
-// src/pages/member/JoinTypePage.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../../styles/member/JoinTypePage.css"; // CSS 임포트
 
 const JoinTypePage = () => {
   const navigate = useNavigate();
@@ -14,37 +14,83 @@ const JoinTypePage = () => {
 
   const handleMethodSelect = (method) => {
     if (method === "form") {
-      navigate(memberType === "PERSONAL" ? "/member/join/terms.do" : "/member/lawyer/terms.do");
+      navigate(
+        memberType === "PERSONAL"
+          ? "/member/join/terms"
+          : "/member/lawyer/terms",
+      );
     } else {
-      if (method === "kakao" || method === "naver") return alert("구글로 해주세요");
-      if (method === "google") navigate(`/member/join/social/google.do?type=${memberType}`);
+      if (method === "kakao" || method === "naver") {
+        return alert(
+          "현재 구글 가입만 지원하고 있습니다. 구글 가입을 이용해 주세요.",
+        );
+      }
+      if (method === "google") {
+        navigate(`/member/join/social/google?type=${memberType}`);
+      }
     }
   };
 
-  const containerStyle = { maxWidth: "500px", margin: "80px auto", padding: "40px", background: "#fff", borderRadius: "16px", boxShadow: "0 10px 30px rgba(0,0,0,0.08)", textAlign: "center" };
-  const cardStyle = { padding: "25px", border: "1px solid #eee", borderRadius: "12px", marginBottom: "20px", cursor: "pointer" };
-  const btnStyle = { width: "100%", padding: "14px", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "bold", marginBottom: "10px" };
-
   return (
-    <div style={containerStyle}>
+    <div className="join-type-container">
       <h2>회원가입</h2>
+
       {step === 1 ? (
         <>
-          <p>회원 유형을 선택해주세요.</p>
-          <div style={cardStyle} onClick={() => handleRoleSelect("PERSONAL")}><h3>🙋‍♂️ 일반 회원</h3></div>
-          <div style={cardStyle} onClick={() => handleRoleSelect("LAWYER")}><h3>⚖️ 변호사 회원</h3></div>
+          <p className="join-type-subtitle">
+            LawMate에 오신 것을 환영합니다.
+            <br />
+            회원 유형을 선택해주세요.
+          </p>
+          <div
+            className="role-card"
+            onClick={() => handleRoleSelect("PERSONAL")}
+          >
+            <h3>🙋‍♂️ 일반 회원</h3>
+          </div>
+          <div className="role-card" onClick={() => handleRoleSelect("LAWYER")}>
+            <h3>⚖️ 변호사 회원</h3>
+          </div>
         </>
       ) : (
         <>
-          <p>{memberType === "PERSONAL" ? "일반" : "변호사"} 가입 방식을 선택해주세요.</p>
-          <button onClick={() => handleMethodSelect("form")} style={{ ...btnStyle, background: "#333", color: "#fff" }}>직접 가입하기</button>
-          <button onClick={() => handleMethodSelect("google")} style={{ ...btnStyle, background: "#fff", border: "1px solid #ddd" }}>Google로 가입</button>
-          <button onClick={() => handleMethodSelect("kakao")} style={{ ...btnStyle, background: "#FEE500" }}>카카오 가입</button>
-          <button onClick={() => handleMethodSelect("naver")} style={{ ...btnStyle, background: "#03C75A", color: "#fff" }}>네이버 가입</button>
-          <button onClick={() => setStep(1)} style={{ background: "none", color: "#999", textDecoration: "underline", border: "none", cursor: "pointer" }}>이전으로</button>
+          <p className="join-type-subtitle">
+            <strong>{memberType === "PERSONAL" ? "일반" : "변호사"}</strong>{" "}
+            가입 방식을 선택해주세요.
+          </p>
+          <div className="method-group">
+            <button
+              className="method-btn btn-form"
+              onClick={() => handleMethodSelect("form")}
+            >
+              이메일로 직접 가입
+            </button>
+            <button
+              className="method-btn btn-google"
+              onClick={() => handleMethodSelect("google")}
+            >
+              Google 계정으로 시작
+            </button>
+            <button
+              className="method-btn btn-kakao"
+              onClick={() => handleMethodSelect("kakao")}
+            >
+              카카오로 시작
+            </button>
+            <button
+              className="method-btn btn-naver"
+              onClick={() => handleMethodSelect("naver")}
+            >
+              네이버로 시작
+            </button>
+          </div>
+          <button className="btn-back" onClick={() => setStep(1)}>
+            회원 유형 다시 선택하기
+          </button>
         </>
       )}
     </div>
   );
 };
+
 export default JoinTypePage;

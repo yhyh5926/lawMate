@@ -5,10 +5,10 @@ import PaymentPage from "./PaymentPage";
 const ConsultRoutes = [
   <Route
     key="prec-s"
-    path="/consult/researve.do"
+    path="/consult/researve"
     element={<ConsultReservePage />}
   />,
-  <Route key="prec-d" path="/payment/pay.do" element={<PaymentPage />} />,
+  <Route key="prec-d" path="/payment/pay" element={<PaymentPage />} />,
 ];
 
 export default ConsultRoutes;

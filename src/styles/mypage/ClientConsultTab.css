@@ -1,0 +1,189 @@
+/* ClientConsultTab.css — LawMate Design System */
+
+.consult-list-container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 4px;
+  font-family: "Pretendard", -apple-system, sans-serif;
+  color: #1a1a2e;
+}
+
+.consult-list-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 24px;
+  letter-spacing: -0.5px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #1a1a2e;
+}
+
+/* 상태 필터 탭 */
+.consult-tabs-container {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 24px;
+  background: #f0f2f5;
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.consult-tab-btn {
+  flex: 1;
+  padding: 9px 0;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #888;
+  transition: all 0.15s ease;
+}
+
+.consult-tab-btn:hover {
+  color: #1a1a2e;
+}
+
+.consult-tab-btn.active {
+  background: #fff;
+  color: #1a6dff;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* 카드 리스트 */
+.consult-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.consult-card {
+  background: #fff;
+  border: 1px solid #e8ecf0;
+  border-radius: 14px;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s, transform 0.2s;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.consult-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(26, 109, 255, 0.08);
+  border-color: #c8d8ff;
+}
+
+/* 카드 상단 */
+.consult-card-top {
+  margin-bottom: 12px;
+}
+
+.consult-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.2px;
+}
+
+.badge-pending   { background: #fff3e0; color: #ff9500; }
+.badge-confirmed { background: #e8f0ff; color: #1a6dff; }
+.badge-done      { background: #e8f8ed; color: #34c759; }
+.badge-cancelled { background: #ffe8e8; color: #ff3b30; }
+
+/* 카드 본문 */
+.consult-card-body { flex: 1; }
+
+.consult-lawyer-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+
+.consult-datetime {
+  font-size: 13px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.consult-memo {
+  font-size: 13px;
+  background: #f7f9fb;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin: 12px 0 0;
+  color: #555;
+  line-height: 1.6;
+  border-left: 3px solid #c8d8ff;
+}
+
+/* 카드 푸터 */
+.consult-card-footer {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #f0f2f5;
+  display: flex;
+  align-items: center;
+}
+
+.delete-dday-text {
+  font-size: 11px;
+  color: #ff3b30;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.consult-btns-group {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.consult-btns-group button {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.btn-pay     { background: #1a1a2e !important; color: #fff !important; }
+.btn-pay:hover { background: #2d2d4d !important; }
+
+.btn-review  { background: #1a6dff !important; color: #fff !important; }
+.btn-review:hover { background: #0056e0 !important; }
+
+.btn-cancel  { background: #fff !important; color: #64748b !important; border: 1px solid #e2e8f0 !important; }
+.btn-cancel:hover { color: #ff3b30 !important; border-color: #ffb3b0 !important; }
+
+.btn-restore { background: #e8f8ed !important; color: #34c759 !important; border: 1px solid #b6edc5 !important; }
+.btn-restore:hover { background: #b6edc5 !important; }
+
+.btn-delete  { background: #fff !important; color: #ff3b30 !important; border: 1px solid #ffb3b0 !important; }
+.btn-delete:hover { background: #ffe8e8 !important; }
+
+/* 빈 상태 */
+.consult-empty-state {
+  text-align: center;
+  padding: 80px 0;
+  background: #f7f9fb;
+  border-radius: 14px;
+  border: 2px dashed #e2e8f0;
+  color: #aaa;
+  font-weight: 600;
+  font-size: 14px;
+}

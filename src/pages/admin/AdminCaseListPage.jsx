@@ -7,17 +7,19 @@ import React, { useEffect, useState } from "react";
 import { adminApi } from "../../api/adminApi";
 
 const STEP_CONFIG = {
-  IN_PROGRESS: { label: "진행중",   bg: "#dcfce7", color: "#15803d" },
-  RECEIVED:    { label: "접수됨",   bg: "#dbeafe", color: "#1d4ed8" },
-  COMPLETED:   { label: "완료",     bg: "#f1f5f9", color: "#475569" },
-  PENDING:     { label: "대기중",   bg: "#fef9c3", color: "#a16207" },
+  IN_PROGRESS: { label: "진행중", bg: "#dcfce7", color: "#15803d" },
+  RECEIVED: { label: "접수됨", bg: "#dbeafe", color: "#1d4ed8" },
+  COMPLETED: { label: "완료", bg: "#f1f5f9", color: "#475569" },
+  PENDING: { label: "대기중", bg: "#fef9c3", color: "#a16207" },
 };
 
 const AdminCaseListPage = () => {
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => { fetchCases(); }, []);
+  useEffect(() => {
+    fetchCases();
+  }, []);
 
   const fetchCases = async () => {
     setLoading(true);
@@ -65,7 +67,9 @@ const AdminCaseListPage = () => {
 
       <div className="cl-wrap">
         {loading ? (
-          <div className="cl-loading">서버에서 사건 데이터를 가져오는 중입니다...</div>
+          <div className="cl-loading">
+            서버에서 사건 데이터를 가져오는 중입니다...
+          </div>
         ) : (
           <div className="cl-card">
             <table className="cl-table">
@@ -73,29 +77,52 @@ const AdminCaseListPage = () => {
                 <tr>
                   <th>번호</th>
                   <th>유형</th>
-                  <th style={{ textAlign: 'left' }}>사건제목</th>
+                  <th style={{ textAlign: "left" }}>사건제목</th>
                   <th>진행단계</th>
                   <th>접수일</th>
                 </tr>
               </thead>
               <tbody>
-                {cases.length > 0 ? cases.map((c) => {
-                  const step = STEP_CONFIG[c.step] || { label: c.step, bg: "#f1f5f9", color: "#64748b" };
-                  return (
-                    <tr key={c.caseId}>
-                      <td><span className="cl-id">#{c.caseId}</span></td>
-                      <td><span className="cl-type-badge">{c.caseType}</span></td>
-                      <td><span className="cl-title">{c.title}</span></td>
-                      <td>
-                        <span className="cl-step-badge" style={{ background: step.bg, color: step.color }}>
-                          {step.label}
-                        </span>
-                      </td>
-                      <td><span className="cl-date">{c.createdAt?.split('T')[0]}</span></td>
-                    </tr>
-                  );
-                }) : (
-                  <tr><td colSpan="5" className="cl-empty">DB에 등록된 사건 내역이 없습니다.</td></tr>
+                {cases.length > 0 ? (
+                  cases.map((c) => {
+                    const step = STEP_CONFIG[c.step] || {
+                      label: c.step,
+                      bg: "#f1f5f9",
+                      color: "#64748b",
+                    };
+                    return (
+                      <tr key={c.caseId}>
+                        <td>
+                          <span className="cl-id">#{c.caseId}</span>
+                        </td>
+                        <td>
+                          <span className="cl-type-badge">{c.caseType}</span>
+                        </td>
+                        <td>
+                          <span className="cl-title">{c.title}</span>
+                        </td>
+                        <td>
+                          <span
+                            className="cl-step-badge"
+                            style={{ background: step.bg, color: step.color }}
+                          >
+                            {step.label}
+                          </span>
+                        </td>
+                        <td>
+                          <span className="cl-date">
+                            {c.createdAt?.split("T")[0]}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="cl-empty">
+                      DB에 등록된 사건 내역이 없습니다.
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>

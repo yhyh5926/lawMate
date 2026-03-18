@@ -5,12 +5,14 @@
 export const validateId = (id) => {
   // 4자 이상 영문, 숫자
   const regex = /^[a-zA-Z0-9]{4,20}$/;
-  return regex.test(id);
+  // 💡 방어막: id가 undefined일 경우 빈 문자열로 처리
+  return regex.test(id || "");
 };
 
 export const validatePassword = (password) => {
   // 4자 이상 (기본)
-  return password.length >= 4;
+  // 💡 방어막: password가 undefined일 경우 빈 문자열의 길이를 체크하도록 처리
+  return (password || "").length >= 4;
 };
 
 export const validateEmail = (email) => {
@@ -20,7 +22,11 @@ export const validateEmail = (email) => {
 };
 
 export const validatePhone = (phone) => {
+  // 💡 방어막: phone 값이 없으면 바로 false 반환 (replace 에러 방지)
+  if (!phone) return false; 
+  
   // 하이픈 제외 숫자만 10~11자리
   const regex = /^[0-9]{10,11}$/;
-  return regex.test(phone.replace(/-/g, ""));
+  // 전화번호가 숫자 타입으로 들어올 수도 있으므로 String으로 강제 변환 후 replace
+  return regex.test(String(phone).replace(/-/g, ""));
 };

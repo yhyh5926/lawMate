@@ -1,0 +1,227 @@
+/* ConsultMgmtTab.css — LawMate Design System */
+
+.consult-mgmt-wrapper {
+  padding: 4px;
+  font-family: "Pretendard", sans-serif;
+}
+
+.content-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #1a1a2e;
+  letter-spacing: -0.3px;
+}
+
+.consult-info-notice {
+  background: #e8f0ff;
+  color: #1a6dff;
+  padding: 13px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  border: 1px solid #c8d8ff;
+}
+
+.consult-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.consult-card {
+  background: #fff;
+  border: 1px solid #e8ecf0;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s;
+}
+
+.consult-card:hover {
+  box-shadow: 0 6px 20px rgba(26, 109, 255, 0.08);
+  border-color: #c8d8ff;
+}
+
+/* 카드 헤더 */
+.consult-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.client-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.client-phone {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-left: 8px;
+}
+
+.consult-datetime {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a6dff;
+  background: #e8f0ff;
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+
+.consult-issue {
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.6;
+  background: #f7f9fb;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border-left: 3px solid #c8d8ff;
+}
+
+/* 액션 버튼 */
+.consult-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn-accept {
+  padding: 9px 22px;
+  background: #1a6dff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-accept:hover { background: #0056e0; }
+
+.btn-reject {
+  padding: 9px 22px;
+  background: #fff;
+  color: #ff3b30;
+  border: 1px solid #ff3b30;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-reject:hover { background: #ffe8e8; }
+
+/* 거절 폼 */
+.reject-form-box {
+  background: #fff5f5;
+  border: 1px solid #ffd0ce;
+  padding: 16px;
+  border-radius: 10px;
+  margin-top: 12px;
+}
+
+.reject-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ff3b30;
+  margin-bottom: 8px;
+}
+
+.reject-textarea {
+  width: 100%;
+  height: 80px;
+  padding: 10px 12px;
+  border: 1px solid #ffb3b0;
+  border-radius: 8px;
+  font-size: 13px;
+  resize: none;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  font-family: "Pretendard", sans-serif;
+}
+
+.reject-textarea:focus {
+  outline: none;
+  border-color: #ff3b30;
+}
+
+.reject-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.reject-actions button {
+  flex: 1;
+  max-width: 120px;
+  padding: 9px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+}
+
+.btn-submit-reject {
+  background: #ff3b30;
+  color: #fff;
+  border: none;
+}
+.btn-submit-reject:hover { background: #d93025; }
+
+/* 상태 배지 */
+.status-badge {
+  text-align: center;
+  padding: 13px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.badge-accepted {
+  background: #e8f8ed;
+  color: #34c759;
+  border: 1px solid #b6edc5;
+}
+
+.badge-rejected {
+  background: #ffe8e8;
+  color: #ff3b30;
+  border: 1px solid #ffd0ce;
+  text-align: left;
+}
+
+.reject-reason-text {
+  display: block;
+  margin-top: 6px;
+  font-weight: 500;
+  color: #c0392b;
+  font-size: 13px;
+}
+
+.empty-tab-content {
+  text-align: center;
+  padding: 60px 0;
+  color: #aaa;
+  font-size: 14px;
+  font-weight: 600;
+  background: #f7f9fb;
+  border-radius: 14px;
+  border: 2px dashed #e2e8f0;
+}

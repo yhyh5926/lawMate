@@ -1,0 +1,22 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+main {
+  /* 페이지 전환 시 최소 높이를 확보하여 푸터가 붕 뜨지 않게 조절 */
+  min-height: calc(100vh - 85px);
+
+  /* 배경색이나 폰트 설정이 필요하다면 추가 */
+  background-color: #ffffff;
+}

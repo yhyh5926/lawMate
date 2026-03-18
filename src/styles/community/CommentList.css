@@ -1,86 +1,194 @@
-/* Comment Section */
+/* CommentList.css */
+
+:root {
+  --lm-navy: #1a375a;
+  --lm-blue: #7fb3d5;
+  --lm-bg-light: #f8fbff;
+  --lm-border: #e2e8f0;
+  --lm-text-main: #2d3748;
+  --lm-text-sub: #718096;
+  --lm-white: #ffffff;
+}
+
 .comment-section {
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 2px 16px rgba(30, 36, 68, 0.07);
-  padding: 24px 32px;
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
 }
 
 .comment-title {
-  font-size: 15px;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #1a1d2e;
-  margin: 0 0 20px;
+  color: var(--lm-navy);
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .comment-count {
-  font-size: 13px;
-  font-weight: 600;
-  color: #4f6ef7;
-  background: #eef1ff;
-  border-radius: 20px;
-  padding: 1px 9px;
+  color: var(--lm-blue);
 }
 
-/* Comment item */
+/* ── 댓글 작성 박스 ── */
+.comment-write-box {
+  background: var(--lm-white);
+  border: 2px solid var(--lm-border);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 30px;
+  transition: border-color 0.2s;
+}
+
+.comment-write-box:focus-within {
+  border-color: var(--lm-blue);
+}
+
+.comment-textarea {
+  width: 100%;
+  min-height: 80px;
+  border: none;
+  resize: none;
+  outline: none;
+  font-size: 15px;
+  color: var(--lm-text-main);
+}
+
+.comment-write-btn {
+  display: block;
+  margin-left: auto;
+  background-color: var(--lm-navy);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.comment-write-btn:hover {
+  opacity: 0.9;
+}
+
+/* ── 댓글 아이템 목록 ── */
 .comment-item {
-  padding: 16px 0;
-  border-bottom: 1px solid #f0f2fb;
-  animation: fadeUp 0.25s ease both;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--lm-border);
+  animation: fadeIn 0.4s ease forwards;
+  opacity: 0;
 }
 
-.comment-item:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .comment-meta {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 
 .comment-author {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: #444869;
+  font-weight: 700;
+  color: var(--lm-navy);
+  font-size: 15px;
 }
 
 .comment-date {
-  font-size: 12px;
-  color: #b0b5cc;
+  font-size: 13px;
+  color: var(--lm-text-sub);
 }
 
 .comment-edited-tag {
   font-size: 11px;
-  color: #b0b5cc;
-  background: #f3f4fb;
+  background: #edf2f7;
+  color: var(--lm-text-sub);
+  padding: 2px 6px;
   border-radius: 4px;
-  padding: 1px 5px;
 }
 
 .comment-content {
-  font-size: 14px;
-  color: #2c3050;
-  line-height: 1.7;
-  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--lm-text-main);
+  margin-bottom: 12px;
   white-space: pre-wrap;
-  word-break: break-word;
 }
 
-/* Empty state */
+/* ── 답글(대댓글) 관련 ── */
+.reply-toggle-btn {
+  background: none;
+  border: none;
+  color: var(--lm-text-sub);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.reply-toggle-btn:hover {
+  color: var(--lm-blue);
+}
+
+.reply-list {
+  margin-top: 15px;
+  margin-left: 40px; /* 대댓글 들여쓰기 */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  border-left: 2px solid var(--lm-bg-light);
+  padding-left: 20px;
+}
+
+.reply-item {
+  padding: 10px 0;
+}
+
+.reply-write-box {
+  margin-left: 40px;
+  margin-top: 10px;
+  background: var(--lm-bg-light);
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.reply-textarea {
+  width: 100%;
+  min-height: 60px;
+  background: transparent;
+  border: 1px solid var(--lm-border);
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+  resize: none;
+  outline: none;
+  font-size: 14px;
+}
+
+.reply-write-btn {
+  background-color: var(--lm-blue);
+  color: white;
+  border: none;
+  padding: 6px 15px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .comment-empty {
   text-align: center;
-  padding: 30px 0;
-  color: #b0b5cc;
-  font-size: 14px;
+  padding: 50px 0;
+  color: var(--lm-text-sub);
+  font-size: 15px;
 }

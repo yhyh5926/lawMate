@@ -1,0 +1,157 @@
+/* SocialJoinFormPage.css */
+
+.social-join-container {
+  max-width: 550px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+.social-join-title {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-top: 40px;
+  margin-bottom: 30px;
+}
+
+/* 구글 연동 버튼 */
+.social-join-btn-google {
+  width: 100%;
+  padding: 16px;
+  background-color: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 30px;
+}
+
+.social-join-btn-google:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+/* 연동 성공 안내 박스 */
+.social-join-info-box {
+  padding: 18px;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  color: #166534;
+  font-size: 15px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* 입력 그룹 */
+.social-join-group {
+  margin-bottom: 20px;
+}
+
+.social-join-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+.social-join-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 15px;
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.social-join-input:focus {
+  border-color: #1a6dff;
+  box-shadow: 0 0 0 3px rgba(26, 109, 255, 0.1);
+}
+
+/* 연락처 가로 배열 */
+.social-join-flex-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.social-join-flex-row span {
+  color: #cbd5e1;
+}
+
+/* 💡 전문 분야 다중 선택 버튼 스타일 */
+.lawyer-join-specialty-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.lawyer-join-specialty-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+}
+
+.lawyer-join-specialty-btn.active {
+  background-color: #1a6dff;
+  border-color: #1a6dff;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* 파일 업로드 스타일 */
+.social-join-file-input {
+  width: 100%;
+  padding: 12px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+/* 제출 버튼 */
+.social-join-btn-primary {
+  width: 100%;
+  padding: 18px;
+  background-color: #1a1a2e;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 40px;
+  transition: background-color 0.2s;
+}
+
+/* 전문가 섹션 구분 */
+.expert-info-divider {
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 2px solid #f1f5f9;
+}
+
+.expert-info-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1a6dff;
+  margin-bottom: 20px;
+}

@@ -1,0 +1,128 @@
+/* MyPostsTab.css — LawMate Design System */
+
+.mypost-wrapper { padding: 4px; }
+
+/* 서브 탭 */
+.mypost-subtabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 22px;
+  border-bottom: 2px solid #e8ecf0;
+}
+
+.mypost-subtab-btn {
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #94a3b8;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s;
+}
+
+.mypost-subtab-btn:hover { color: #1a1a2e; }
+
+.mypost-subtab-btn.active {
+  color: #1a1a2e;
+  border-bottom-color: #1a1a2e;
+  font-weight: 700;
+}
+
+/* 게시글 리스트 */
+.mypost-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mypost-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  background: #fff;
+  border: 1px solid #e8ecf0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.mypost-item:hover {
+  border-color: #1a6dff;
+  box-shadow: 0 4px 14px rgba(26, 109, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.mypost-item-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.mypost-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 500px;
+}
+
+/* 상태 배지 */
+.mypost-badge {
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.badge-success { background: #e8f8ed; color: #34c759; }
+.badge-pending { background: #fff3e0; color: #ff9500; }
+.badge-normal  { background: #f1f5f9; color: #64748b; }
+
+/* 메타 정보 */
+.mypost-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 13px;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.mypost-comments {
+  font-weight: 700;
+  color: #1a6dff;
+}
+
+/* 빈 상태 */
+.empty-tab-content {
+  padding: 80px 0;
+  text-align: center;
+  color: #aaa;
+  font-size: 14px;
+  font-weight: 600;
+  background: #f7f9fb;
+  border-radius: 14px;
+  border: 2px dashed #e2e8f0;
+}
+
+@media (max-width: 768px) {
+  .mypost-item { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .mypost-item-main { width: 100%; }
+  .mypost-title { max-width: 100%; }
+  .mypost-item-meta { width: 100%; justify-content: flex-end; }
+}

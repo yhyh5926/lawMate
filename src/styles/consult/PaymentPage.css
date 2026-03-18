@@ -1,0 +1,172 @@
+/* PaymentPage.css */
+
+.payment-wrapper {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.payment-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 28px;
+}
+
+/* 요약 정보 박스 */
+.payment-info-card {
+  background: #f8faff;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 30px;
+  border: 1px solid #eef2ff;
+}
+
+.payment-info-card h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #94a3b8;
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.payment-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.payment-row .label {
+  color: #64748b;
+}
+
+.payment-row .value {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.payment-total-row {
+  border-top: 1px dashed #cbd5e1;
+  margin-top: 16px;
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.payment-total-row .label {
+  font-weight: 700;
+  font-size: 16px;
+  color: #1e293b;
+}
+
+.payment-total-row .price {
+  font-weight: 800;
+  font-size: 22px;
+  color: #1a6dff;
+}
+
+/* 결제 수단 선택 */
+.method-section {
+  margin-bottom: 30px;
+}
+
+.method-section h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 12px;
+}
+
+.method-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.method-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #fff;
+}
+
+.method-item:hover {
+  border-color: #cbd5e1;
+}
+
+.method-item.active {
+  border-color: #1a6dff;
+  background: #f0f7ff;
+}
+
+.method-item input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #1a6dff;
+}
+
+.method-item span {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* 안내 문구 */
+.payment-notice {
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+/* 결제 성공 화면 전용 */
+.payment-success {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.success-icon {
+  font-size: 64px;
+  margin-bottom: 24px;
+  display: block;
+}
+
+.success-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 12px;
+}
+
+.success-desc {
+  font-size: 15px;
+  color: #64748b;
+  margin-bottom: 32px;
+}
+
+/* 공통 버튼 */
+.payment-btn {
+  width: 100%;
+  padding: 18px;
+  border-radius: 14px;
+  border: none;
+  background: #1a6dff;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.payment-btn:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}

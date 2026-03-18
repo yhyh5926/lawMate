@@ -1,0 +1,209 @@
+/* QuestionEditForm.css */
+
+:root {
+  --lm-navy: #1a375a;
+  --lm-blue: #7fb3d5;
+  --lm-bg: #f8fbff;
+  --lm-border: #e2e8f0;
+  --lm-white: #ffffff;
+  --lm-danger: #e53e3e;
+  --lm-success: #38a169;
+}
+
+.inline-edit-form {
+  background-color: var(--lm-white);
+  border: 2px solid var(--lm-blue);
+  border-radius: 12px;
+  padding: 25px;
+  margin: 20px 0;
+  box-shadow: 0 4px 15px rgba(127, 179, 213, 0.1);
+}
+
+/* ── 상단 필드 (카테고리 & 제목) ── */
+.edit-field {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.edit-select {
+  flex: 0 0 150px;
+  padding: 10px;
+  border: 1px solid var(--lm-border);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--lm-navy);
+  background-color: var(--lm-bg);
+  outline: none;
+}
+
+.edit-select:focus {
+  border-color: var(--lm-blue);
+}
+
+.edit-title-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid var(--lm-border);
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  outline: none;
+}
+
+.edit-title-input:focus {
+  border-color: var(--lm-blue);
+}
+
+/* ── 본문 ── */
+.edit-content-textarea {
+  width: 100%;
+  min-height: 250px;
+  padding: 15px;
+  border: 1px solid var(--lm-border);
+  border-radius: 6px;
+  font-size: 15px;
+  line-height: 1.6;
+  resize: vertical;
+  margin-bottom: 20px;
+  outline: none;
+}
+
+.edit-content-textarea:focus {
+  border-color: var(--lm-blue);
+}
+
+/* ── 파일 관리 섹션 ── */
+.edit-file-section {
+  background-color: var(--lm-bg);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+}
+
+.file-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--lm-navy);
+  margin-bottom: 12px;
+}
+
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: var(--lm-white);
+  border: 1px solid var(--lm-border);
+  border-radius: 6px;
+}
+
+.file-item.existing {
+  border-left: 4px solid var(--lm-navy);
+}
+.file-item.new {
+  border-left: 4px solid var(--lm-success);
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.edit-preview-img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--lm-border);
+}
+
+.file-name {
+  font-size: 13px;
+  color: #4a5568;
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-del-btn {
+  background: none;
+  border: 1px solid var(--lm-danger);
+  color: var(--lm-danger);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.file-del-btn:hover {
+  background-color: var(--lm-danger);
+  color: white;
+}
+
+/* 업로드 존 */
+.file-upload-zone {
+  border: 2px dashed var(--lm-blue);
+  padding: 15px;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--lm-blue);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s;
+  margin-bottom: 15px;
+}
+
+.file-upload-zone:hover {
+  background-color: rgba(127, 179, 213, 0.1);
+}
+
+/* ── 하단 버튼 ── */
+.edit-control-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.action-btn {
+  padding: 12px 25px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.action-btn.save {
+  background-color: var(--lm-navy);
+  color: white;
+}
+
+.action-btn.cancel {
+  background-color: #edf2f7;
+  color: #4a5568;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+@media (max-width: 640px) {
+  .edit-field {
+    flex-direction: column;
+  }
+  .edit-select {
+    flex: 1;
+  }
+}

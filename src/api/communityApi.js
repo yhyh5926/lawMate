@@ -1,8 +1,10 @@
-import axiosInstance from './axiosInstance';
+import axiosInstance from "./axiosInstance";
 
-export const getPostList = async () => {
-  const response = await axiosInstance.get("/posts");
-  return response.data; // 받은 객체에서 json만 꺼내온 것
+export const getPostList = async (sortType = "latest", page = 1) => {
+  const response = await axiosInstance.get("/posts", {
+    params: { sortType, page },
+  });
+  return response.data;
 };
 
 export const getPost = async (postId) => {
@@ -10,14 +12,68 @@ export const getPost = async (postId) => {
   return response.data; // 받은 객체에서 json만 꺼내온 것
 };
 
-export const getComments = async (postId) => {
-  const response = await axiosInstance.get(`/comment/list/${postId}`);
+export const getPostWithoutView = async (postId) => {
+  const response = await axiosInstance.get(`/detail/viewless/${postId}`);
+  return response.data; // 좋아요 누른 후 새로고침 조회수 안들어가게
+};
+
+export const writePost = async (payload) => {
+  const response = await axiosInstance.post("/write", payload);
+  return response.data;
+};
+
+export const updatePost = async (payload) => {
+  const response = await axiosInstance.put("/edit", payload);
+  return response.data;
+};
+
+export const deletePost = async (postId) => {
+  const response = await axiosInstance.delete(`/posts/${postId}`);
+  return response.data;
+};
+
+// 좋아요
+export const getTopLikedPosts = async () => {
+  const response = await axiosInstance.get("/posts/topLiked");
+  return response.data;
+};
+
+export const togglePostLike = async (postId, memberId) => {
+  const response = await axiosInstance.post(`/posts/${postId}/like`, {
+    memberId,
+  });
+  return response.data;
+};
+
+export const getPostLikeStatus = async (postId, memberId) => {
+  const response = await axiosInstance.get(`/posts/${postId}/like/${memberId}`);
+  return response.data;
+};
+
+// 댓글
+export const getComments = async (postId, boardType) => {
+  const response = await axiosInstance.get(`/comment/list/${postId}`, {
+    params: { boardType },
+  });
   return response.data; // 받은 객체에서 json만 꺼내온 것
 };
 
-export const getPollList = async () => {
-  const response = await axiosInstance.get("/polls");
-  return response.data; // 받은 객체에서 json만 꺼내온 것
+export const writeComment = async (payload) => {
+  const response = await axiosInstance.post("/comments", payload);
+  return response.data;
+};
+
+export const deleteComment = async (commentId) => {
+  const response = await axiosInstance.delete(`/comments/${commentId}`);
+  return response.data;
+};
+
+// 투표게시물
+export const getPollList = async (sortType = "latest", page = 1) => {
+  const response = await axiosInstance.get("/polls", {
+    params: { sortType, page },
+  });
+  return response.data;
 };
 
 export const getPollDetail = async (pollId) => {
@@ -30,7 +86,27 @@ export const getPollOptions = async (pollId) => {
   return response.data;
 };
 
+export const writePoll = async (payload) => {
+  const response = await axiosInstance.post("/polls/write", payload);
+  return response.data;
+};
+
 export const votePoll = async (voteData) => {
   const response = await axiosInstance.post(`/poll/vote`, voteData);
+  return response.data;
+};
+
+export const checkVoted = async (pollId, memberId) => {
+  const res = await axiosInstance.get(`/poll/${pollId}/check/${memberId}`);
+  return res.data;
+};
+
+export const deletePoll = async (pollId) => {
+  const response = await axiosInstance.delete(`/polls/${pollId}`);
+  return response.data;
+};
+
+export const updatePoll = async (payload) => {
+  const response = await axiosInstance.post("/polls/edit", payload);
   return response.data;
 };

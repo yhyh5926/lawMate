@@ -1,28 +1,40 @@
-// src/pages/member/SocialJoinFormPage.jsx
 /**
  * 파일 위치: src/pages/member/SocialJoinFormPage.jsx
- * 기능: 구글 계정 인증 후 추가 정보를 입력받아 가입을 완료합니다.
  */
-
 import React, { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import { memberApi } from "../../api/memberApi.js";
 import JoinStepIndicator from "../../components/member/JoinStepIndicator.jsx";
+import "../../styles/member/SocialJoinFormPage.css";
 
-const GOOGLE_CLIENT_ID = "244554224995-kcgsjp47k8flns89ldv9stpfga219kut.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID =
+  "244554224995-kcgsjp47k8flns89ldv9stpfga219kut.apps.googleusercontent.com";
+
+// 💡 [수정] 요청하신 8개 카테고리로 완벽 고정
+const SPECIALTIES_LIST = ["민사", "형사", "가사", "이혼", "노동", "행정", "기업", "부동산"];
 
 const SocialJoinContent = () => {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(useLocation().search);
   const memberType = queryParams.get("type") || "PERSONAL";
 
-  const [googleUser, setGoogleUser] = useState(null); 
+  const [googleUser, setGoogleUser] = useState(null);
   const [formData, setFormData] = useState({
+    loginId: "",
     name: "",
-    phone1: "010", phone2: "", phone3: "",
-    licenseNo: "", officeName: "", specialty: ""
+    phone1: "010",
+    phone2: "",
+    phone3: "",
+    address: "",
+    detailAddress: "",
+    licenseNo: "",
+    officeName: "",
+    specialty: "",
+    officeAddress: "",
+    officeDetailAddress: "",
   });
+  const [files, setFiles] = useState([]);
 
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
@@ -30,119 +42,310 @@ const SocialJoinContent = () => {
   const handleGoogleAuth = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        const res = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-        });
-        const userInfo = await res.json();
-        setGoogleUser(userInfo);
-        setFormData((prev) => ({ ...prev, name: userInfo.name || "" }));
-      } catch (err) { alert("구글 인증 정보를 가져오는데 실패했습니다."); }
+        const userInfo = await fetch(
+          "https://www.googleapis.com/oauth2/v3/userinfo",
+          {
+            headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+          }
+        ).then((res) => res.json());
+
+        const generatedLoginId = userInfo.email.split("@")[0];
+
+        const checkRes = await memberApi.checkId(generatedLoginId);
+        if (!checkRes.data.available) {
+          alert("이미 가입된 구글 계정입니다. 로그인 페이지로 이동합니다.");
+          navigate("/member/login");
+          return;
+        }
+
+        setGoogleUser({ email: userInfo.email, googleId: userInfo.sub });
+        setFormData((prev) => ({
+          ...prev,
+          name: memberType === "PERSONAL" ? userInfo.name : "",
+          loginId: generatedLoginId,
+        }));
+      } catch (error) {
+        alert("구글 정보 로드 실패");
+      }
     },
-    onError: () => alert("구글 인증에 실패했습니다.")
+    onError: () => alert("구글 연동 실패"),
   });
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handlePhoneChange = (e, nextRef, field) => {
     const val = e.target.value.replace(/[^0-9]/g, "");
-    setFormData((prev) => ({ ...prev, [field]: val }));
+    setFormData({ ...formData, [field]: val });
     if (val.length === 4 && nextRef) nextRef.current.focus();
+  };
+
+  const handleSpecialtyToggle = (spec) => {
+    let currentList = formData.specialty ? formData.specialty.split(",") : [];
+    if (currentList.includes(spec)) {
+      currentList = currentList.filter((item) => item !== spec);
+    } else {
+      currentList.push(spec);
+    }
+    setFormData({ ...formData, specialty: currentList.join(",") });
+  };
+
+  const handleFileChange = (e) => {
+    setFiles(Array.from(e.target.files));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!googleUser) return alert("먼저 구글 계정 인증을 진행해주세요.");
-    
-    if (memberType === "LAWYER" && !formData.name.trim()) {
-      return alert("변호사 가입은 실명 입력이 필수입니다.");
+    if (!googleUser) return alert("먼저 구글 계정을 연동해주세요.");
+    if (!formData.name || !formData.phone2 || !formData.phone3)
+      return alert("기본 정보를 모두 입력해주세요.");
+
+    const phone = `${formData.phone1}-${formData.phone2}-${formData.phone3}`;
+    const submitData = new FormData();
+    submitData.append("loginId", formData.loginId);
+    submitData.append("password", googleUser.googleId);
+    submitData.append("memberType", memberType);
+    submitData.append("name", formData.name);
+    submitData.append("phone", phone);
+    submitData.append("email", googleUser.email);
+    submitData.append("provider", "GOOGLE");
+
+    if (memberType === "PERSONAL") {
+      submitData.append("address", formData.address);
+      submitData.append("detailAddress", formData.detailAddress);
+    } else if (memberType === "LAWYER") {
+      if (
+        !formData.licenseNo ||
+        !formData.officeName ||
+        !formData.specialty ||
+        !formData.officeAddress
+      ) {
+        return alert("전문가 필수 정보를 모두 입력해주세요.");
+      }
+      
+      // 💡 400 Bad Request 방지용 파일 첨부 검증
+      if (files.length === 0) {
+        return alert("자격증 증빙서류를 최소 1개 이상 업로드해주세요.");
+      }
+
+      submitData.append("licenseNo", formData.licenseNo);
+      submitData.append("officeName", formData.officeName);
+      submitData.append("specialty", formData.specialty);
+      submitData.append("officeAddress", formData.officeAddress);
+      submitData.append("officeDetailAddr", formData.officeDetailAddress);
+      files.forEach((file) => submitData.append("files", file));
     }
 
-    const fullPhone = `${formData.phone1}${formData.phone2}${formData.phone3}`;
-    if (fullPhone.length < 10) return alert("연락처를 정확히 입력해주세요.");
-
-    const submitData = {
-      loginId: googleUser.email, 
-      email: googleUser.email,
-      password: "SOCIAL_PASSWORD_PRESET",
-      name: formData.name || googleUser.name,
-      phone: fullPhone,
-      memberType: memberType,
-      provider: "GOOGLE",
-      licenseNo: formData.licenseNo,
-      officeName: formData.officeName,
-      specialty: formData.specialty
-    };
-
     try {
-      const response = await memberApi.join(submitData);
-      if (response.data.success) {
-        alert("구글 회원가입이 완료되었습니다!");
-        navigate(memberType === "PERSONAL" ? "/member/join/complete.do" : "/member/lawyer/complete.do");
+      const res = await memberApi.socialJoin(submitData);
+      if (res.data.success) {
+        navigate(
+          memberType === "PERSONAL"
+            ? "/member/join/complete"
+            : "/member/lawyer/complete"
+        );
       }
-    } catch (err) { alert("가입 도중 오류가 발생했습니다."); }
+    } catch (error) {
+      console.error(error);
+      alert("소셜 가입 중 오류가 발생했습니다. (파일 용량이 크면 실패할 수 있습니다)");
+    }
   };
 
-  const inputStyle = { width: "100%", padding: "12px", border: "1px solid #ccc", borderRadius: "4px", boxSizing: "border-box", fontSize: "14px" };
-  const labelStyle = { fontSize: "14px", color: "#555", display: "block", marginBottom: "8px", fontWeight: "600" };
-
   return (
-    <div style={{ maxWidth: "500px", margin: "60px auto", padding: "20px" }}>
+    <div className="social-join-container">
       <JoinStepIndicator currentStep={2} />
-      <h2 style={{ textAlign: "center", marginBottom: "40px", fontWeight: "bold" }}>
-        Google {memberType === "PERSONAL" ? "일반회원" : "전문회원"} 정보 입력
-      </h2>
+      <h2 className="social-join-title">구글 연동 정보 입력</h2>
 
       {!googleUser ? (
-        <div style={{ textAlign: "center", padding: "50px 20px", border: "2px dashed #e1e8ed", borderRadius: "12px", backgroundColor: "#f8fafc" }}>
-          <p style={{ marginBottom: "25px", color: "#64748b", fontSize: "15px" }}>가입을 위해 구글 계정 인증이 필요합니다.</p>
-          <button onClick={() => handleGoogleAuth()} style={{ padding: "12px 30px", backgroundColor: "#fff", border: "1px solid #cbd5e1", borderRadius: "8px", cursor: "pointer", fontWeight: "bold" }}>
-            Google 인증하기
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => handleGoogleAuth()}
+          className="social-join-btn-google"
+        >
+          <img
+            src="https://developers.google.com/identity/images/g-logo.png"
+            alt="G"
+            style={{ width: "20px" }}
+          />
+          구글 계정 연동하기
+        </button>
       ) : (
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "25px" }}>
-          <div>
-            <label style={labelStyle}>아이디 (구글 이메일)</label>
-            <input type="text" value={googleUser.email} disabled style={{ ...inputStyle, backgroundColor: "#f1f5f9" }} />
-          </div>
-
-          <div>
-            <label style={labelStyle}>이름</label>
-            <input 
-              type="text" 
-              name="name" 
-              value={formData.name} 
-              onChange={handleChange} 
-              placeholder={memberType === "PERSONAL" && !formData.name ? "구글 닉네임으로 정해집니다" : "실명 입력"} 
-              style={inputStyle} 
-            />
-            {memberType === "LAWYER" && !formData.name.trim() && (
-              <span style={{ fontSize: "12px", color: "red", marginTop: "5px", display: "block" }}>실명을 입력해주세요.</span>
-            )}
-          </div>
-
-          <div>
-            <label style={labelStyle}>연락처</label>
-            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-              <input type="text" value={formData.phone1} readOnly style={{ ...inputStyle, textAlign: "center", flex: 0.8 }} />
-              <input type="text" ref={phone2Ref} value={formData.phone2} onChange={(e) => handlePhoneChange(e, phone3Ref, "phone2")} maxLength={4} style={{ ...inputStyle, textAlign: "center", flex: 1 }} />
-              <input type="text" ref={phone3Ref} value={formData.phone3} onChange={(e) => handlePhoneChange(e, null, "phone3")} maxLength={4} style={{ ...inputStyle, textAlign: "center", flex: 1 }} />
-            </div>
-          </div>
-
-          {memberType === "LAWYER" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "20px", padding: "20px", backgroundColor: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-              <input type="text" name="licenseNo" placeholder="변호사 자격번호" onChange={handleChange} required style={inputStyle} />
-              <input type="text" name="officeName" placeholder="사무실 위치 (소속)" onChange={handleChange} required style={inputStyle} />
-              <input type="text" name="specialty" placeholder="변호 카테고리 (전문분야)" onChange={handleChange} required style={inputStyle} />
-            </div>
-          )}
-
-          <button type="submit" style={{ padding: "16px", backgroundColor: "#007BFF", color: "#fff", border: "none", borderRadius: "8px", fontWeight: "bold", fontSize: "16px", cursor: "pointer", marginTop: "10px" }}>
-            가입 완료하기
-          </button>
-        </form>
+        <div className="social-join-info-box">
+          ✅ <strong>{googleUser.email}</strong> 계정이 연동되었습니다.
+        </div>
       )}
+
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: googleUser ? "block" : "none" }}
+      >
+        <div className="social-join-group">
+          <label className="social-join-label">아이디</label>
+          <input
+            type="text"
+            name="loginId"
+            value={formData.loginId}
+            readOnly
+            className="social-join-input"
+            style={{ backgroundColor: "#f9f9f9" }}
+          />
+        </div>
+        <div className="social-join-group">
+          <label className="social-join-label">
+            이름 {memberType === "LAWYER" && "(실명 필수)"}
+          </label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="실명을 입력해주세요"
+            className="social-join-input"
+          />
+        </div>
+
+        <div className="social-join-group">
+          <label className="social-join-label">연락처</label>
+          <div className="social-join-flex-row">
+            <input
+              type="text"
+              value={formData.phone1}
+              readOnly
+              className="social-join-input"
+              style={{
+                flex: 1,
+                textAlign: "center",
+                backgroundColor: "#f9f9f9",
+              }}
+            />
+            <span>-</span>
+            <input
+              type="text"
+              name="phone2"
+              value={formData.phone2}
+              onChange={(e) => handlePhoneChange(e, phone3Ref, "phone2")}
+              maxLength={4}
+              className="social-join-input"
+              style={{ flex: 1, textAlign: "center" }}
+            />
+            <span>-</span>
+            <input
+              type="text"
+              name="phone3"
+              ref={phone3Ref}
+              value={formData.phone3}
+              onChange={(e) => handlePhoneChange(e, null, "phone3")}
+              maxLength={4}
+              className="social-join-input"
+              style={{ flex: 1, textAlign: "center" }}
+            />
+          </div>
+        </div>
+
+        {memberType === "PERSONAL" ? (
+          <>
+            <div className="social-join-group">
+              <label className="social-join-label">기본 주소</label>
+              <input
+                type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="예: 서울시 강남구 테헤란로"
+                className="social-join-input"
+              />
+            </div>
+            <div className="social-join-group">
+              <label className="social-join-label">상세 주소</label>
+              <input
+                type="text"
+                name="detailAddress"
+                value={formData.detailAddress}
+                onChange={handleChange}
+                placeholder="예: 101동 202호"
+                className="social-join-input"
+              />
+            </div>
+          </>
+        ) : (
+          <div className="expert-info-divider">
+            <div className="expert-info-title">전문가 필수 정보</div>
+            
+            <div className="social-join-group">
+              <label className="social-join-label">변호사 자격번호</label>
+              <input
+                type="text"
+                name="licenseNo"
+                value={formData.licenseNo}
+                onChange={handleChange}
+                className="social-join-input"
+              />
+            </div>
+            <div className="social-join-group">
+              <label className="social-join-label">소속 법무법인 / 사무소명</label>
+              <input
+                type="text"
+                name="officeName"
+                value={formData.officeName}
+                onChange={handleChange}
+                className="social-join-input"
+              />
+            </div>
+
+            <div className="social-join-group">
+              <label className="social-join-label">주요 전문 분야 (다중 선택 가능)</label>
+              <div className="lawyer-join-specialty-container">
+                {SPECIALTIES_LIST.map((spec) => {
+                  const isSelected = formData.specialty.split(",").includes(spec);
+                  return (
+                    <button
+                      type="button"
+                      key={spec}
+                      onClick={() => handleSpecialtyToggle(spec)}
+                      className={`lawyer-join-specialty-btn ${isSelected ? "active" : ""}`}
+                    >
+                      {spec}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="social-join-group">
+              <label className="social-join-label">사무소 기본 주소</label>
+              <input
+                type="text"
+                name="officeAddress"
+                value={formData.officeAddress}
+                onChange={handleChange}
+                className="social-join-input"
+              />
+            </div>
+            <div className="social-join-group">
+              <label className="social-join-label">사무소 상세 주소</label>
+              <input
+                type="text"
+                name="officeDetailAddress"
+                value={formData.officeDetailAddress}
+                onChange={handleChange}
+                className="social-join-input"
+              />
+            </div>
+            <div className="social-join-group">
+              <label className="social-join-label">자격증 증빙서류</label>
+              <input
+                type="file"
+                multiple
+                onChange={handleFileChange}
+                className="social-join-file-input"
+              />
+            </div>
+          </div>
+        )}
+        <button type="submit" className="social-join-btn-primary">
+          가입 완료하기
+        </button>
+      </form>
     </div>
   );
 };
@@ -152,5 +355,4 @@ const SocialJoinFormPage = () => (
     <SocialJoinContent />
   </GoogleOAuthProvider>
 );
-
 export default SocialJoinFormPage;

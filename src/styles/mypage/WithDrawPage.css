@@ -1,0 +1,128 @@
+/* WithdrawPage.css — LawMate Design System */
+
+.withdraw-container {
+  max-width: 480px;
+  margin: 80px auto;
+  padding: 40px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgba(220, 53, 69, 0.06);
+  border: 1px solid #e8ecf0;
+  font-family: "Pretendard", sans-serif;
+}
+
+.withdraw-title {
+  color: #e11d48;
+  text-align: center;
+  margin-bottom: 28px;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+/* 경고 박스 */
+.withdraw-warning-box {
+  border: 1px solid #fecdd3;
+  padding: 20px 22px;
+  border-radius: 12px;
+  background: #fff1f2;
+  margin-bottom: 26px;
+}
+
+.withdraw-warning-box h4 {
+  color: #e11d48;
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.withdraw-warning-list {
+  font-size: 13px;
+  color: #475569;
+  padding-left: 18px;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.withdraw-warning-list li { margin-bottom: 5px; }
+
+/* 체크박스 영역 */
+.withdraw-agreement {
+  margin-bottom: 28px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+
+.withdraw-agreement:hover {
+  background: #f7f9fb;
+  border-color: #e2e8f0;
+}
+
+.withdraw-agreement input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  cursor: pointer;
+  accent-color: #e11d48;
+  flex-shrink: 0;
+}
+
+.withdraw-agreement span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a2e;
+  line-height: 1.5;
+}
+
+/* 버튼 영역 */
+.withdraw-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-back {
+  flex: 1;
+  padding: 14px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-back:hover { background: #e2e8f0; }
+
+.btn-withdraw {
+  flex: 1.5;
+  padding: 14px;
+  background: #e11d48;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-withdraw:hover {
+  background: #be123c;
+  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.2);
+}
+
+.btn-withdraw:disabled {
+  background: #fda4af;
+  cursor: not-allowed;
+  box-shadow: none;
+}

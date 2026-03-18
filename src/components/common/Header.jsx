@@ -1,250 +1,321 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
+import "../../styles/common/Header.css";
+import { scrollToTop } from "../../utils/windowUtils";
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, isAuthenticated, logout } = useAuthStore();
+
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isCommunityHover, setIsCommunityHover] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isMobileCommunity, setIsMobileCommunity] = useState(false);
+  const communityTimer = useRef(null);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const closeMobile = () => setIsMobileOpen(false);
 
   const handleLogout = () => {
     if (window.confirm("로그아웃 하시겠습니까?")) {
       logout();
-      navigate("/main.do");
+      navigate("/main");
     }
   };
 
-  return (
-    <header
-      style={{
-        ...headerStyle,
-        boxShadow: isScrolled ? "0 10px 30px rgba(0,0,0,0.05)" : "none",
-        borderBottom: isScrolled ? "none" : "1px solid #f1f5f9",
-      }}
-    >
-      <div style={innerContainerStyle}>
-        {/* 1. 로고 영역: 크기 최적화 및 정렬 */}
-        <div style={logoWrapperStyle}>
-          <Link to="/main.do" style={logoLinkStyle}>
-            <img
-              src="/lawMateLogo.png"
-              alt="LawMate Logo"
-              style={logoImageStyle}
-            />
-          </Link>
-        </div>
+  const handleCommunityEnter = () => {
+    clearTimeout(communityTimer.current);
+    setIsCommunityHover(true);
+  };
+  const handleCommunityLeave = () => {
+    communityTimer.current = setTimeout(() => setIsCommunityHover(false), 120);
+  };
+  const isActive = (path) => location.pathname.startsWith(path);
 
-        {/* 2. 메인 네비게이션: 간격 및 폰트 개선 */}
-        <nav style={navStyle}>
-          <NavLink to="/main.do">메인</NavLink>
-          <NavLink to="/precedent/search.do">판례검색</NavLink>
-          <NavLink to="/lawyer/list.do">변호사찾기</NavLink>
-          <NavLink to="/question/list.do">법률질문</NavLink>
-          <NavLink to="/community/home">커뮤니티</NavLink>
-          {isAuthenticated && <NavLink to="/chat/list.do">채팅상담</NavLink>}
+  return (
+    <>
+      <header className={`hd-root ${isScrolled ? "hd-scrolled" : "hd-top"}`}>
+        <div className="hd-inner">
+          {/* 로고 */}
+          <Link to="/main" className="hd-logo" onClick={scrollToTop}>
+            <img src="/lawMateLogo.png" alt="LawMate" className="hd-logo-img" />
+          </Link>
+
+          {/* 데스크탑 네비 */}
+          <nav className="hd-nav" aria-label="주요 메뉴">
+            <NavItem to="/main" active={isActive("/main")}>
+              메인
+            </NavItem>
+            <NavItem to="/precedent/search" active={isActive("/precedent")}>
+              판례검색
+            </NavItem>
+            <NavItem to="/lawyer/list" active={isActive("/lawyer")}>
+              변호사찾기
+            </NavItem>
+            <NavItem to="/question/list" active={isActive("/question")}>
+              법률질문
+            </NavItem>
+
+            <div
+              className="hd-dropdown-wrap"
+              onMouseEnter={handleCommunityEnter}
+              onMouseLeave={handleCommunityLeave}
+            >
+              <NavItem to="/community/home" active={isActive("/community")}>
+                커뮤니티
+                <svg
+                  className={`hd-chevron ${isCommunityHover ? "hd-chevron--up" : ""}`}
+                  viewBox="0 0 12 12"
+                  fill="none"
+                >
+                  <path
+                    d="M2 4l4 4 4-4"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </NavItem>
+              {isCommunityHover && (
+                <ul className="hd-dropdown">
+                  <li>
+                    <Link
+                      to="/community/qnalist"
+                      className="hd-dropdown-item"
+                      onClick={scrollToTop}
+                    >
+                      자유게시판
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/community/pollList"
+                      className="hd-dropdown-item"
+                      onClick={scrollToTop}
+                    >
+                      의견 조사
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </div>
+
+            {isAuthenticated && (
+              <NavItem to="/chat/list" active={isActive("/chat")}>
+                채팅상담
+              </NavItem>
+            )}
+          </nav>
+
+          {/* 인증 영역 */}
+          <div className="hd-auth">
+            {isAuthenticated ? (
+              <div className="hd-user">
+                <div className="hd-user-info">
+                  <span className="hd-user-name">
+                    <strong>{user?.name || user?.loginId}</strong>님
+                  </span>
+                  {user?.role === "ADMIN" && (
+                    <span className="hd-admin-badge">ADMIN</span>
+                  )}
+                </div>
+                <div className="hd-user-actions">
+                  <Link
+                    to="/mypage/main"
+                    className="hd-icon-btn"
+                    title="마이페이지"
+                  >
+                    MY
+                  </Link>
+                  {user?.loginId === "admin" && (
+                    <Link
+                      to="/admin/stats"
+                      className="hd-icon-btn hd-icon-btn--admin"
+                      title="관리자"
+                    >
+                      ⚙️
+                    </Link>
+                  )}
+                  <button className="hd-logout-btn" onClick={handleLogout}>
+                    로그아웃
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="hd-guest">
+                <Link to="/member/join/type" className="hd-join-link">
+                  회원가입
+                </Link>
+                <Link to="/member/login" className="hd-login-btn">
+                  로그인
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* 햄버거 */}
+          <button
+            className={`hd-hamburger ${isMobileOpen ? "hd-hamburger--open" : ""}`}
+            onClick={() => setIsMobileOpen((v) => !v)}
+            aria-label="메뉴"
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+        </div>
+      </header>
+
+      {/* 모바일 드로어 */}
+      <div
+        className={`hd-drawer ${isMobileOpen ? "hd-drawer--open" : ""}`}
+        aria-hidden={!isMobileOpen}
+      >
+        <nav className="hd-drawer-nav">
+          <MobileNavItem to="/main" onClose={closeMobile}>
+            메인
+          </MobileNavItem>
+          <MobileNavItem to="/precedent/search" onClose={closeMobile}>
+            판례검색
+          </MobileNavItem>
+          <MobileNavItem to="/lawyer/list" onClose={closeMobile}>
+            변호사찾기
+          </MobileNavItem>
+          <MobileNavItem to="/question/list" onClose={closeMobile}>
+            법률질문
+          </MobileNavItem>
+
+          <div className="hd-mobile-accordion">
+            <button
+              className="hd-mobile-accordion-btn"
+              onClick={() => setIsMobileCommunity((v) => !v)}
+            >
+              커뮤니티
+              <svg
+                className={`hd-chevron ${isMobileCommunity ? "hd-chevron--up" : ""}`}
+                viewBox="0 0 12 12"
+                fill="none"
+              >
+                <path
+                  d="M2 4l4 4 4-4"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+            {isMobileCommunity && (
+              <div className="hd-mobile-sub">
+                <MobileNavItem
+                  to="/community/qnalist"
+                  sub
+                  onClose={closeMobile}
+                >
+                  자유게시판
+                </MobileNavItem>
+                <MobileNavItem
+                  to="/community/pollList"
+                  sub
+                  onClose={closeMobile}
+                >
+                  의견 조사
+                </MobileNavItem>
+              </div>
+            )}
+          </div>
+
+          {isAuthenticated && (
+            <MobileNavItem to="/chat/list" onClose={closeMobile}>
+              채팅상담
+            </MobileNavItem>
+          )}
         </nav>
 
-        {/* 3. 유저 액션 영역: 버튼 디자인 고도화 */}
-        <div style={authContainerStyle}>
+        <div className="hd-drawer-auth">
           {isAuthenticated ? (
-            <div style={userProfileStyle}>
-              <div style={userInfoStyle}>
-                <span style={userNameStyle}>
+            <>
+              <div className="hd-drawer-user">
+                <span className="hd-drawer-name">
                   <strong>{user?.name || user?.loginId}</strong>님
                 </span>
                 {user?.role === "ADMIN" && (
-                  <span style={adminBadgeStyle}>관리자</span>
+                  <span className="hd-admin-badge">ADMIN</span>
                 )}
               </div>
-
-              <div style={actionGroupStyle}>
+              <div className="hd-drawer-actions">
                 <Link
-                  to="/mypage/edit.do"
-                  style={myPageIconStyle}
-                  title="마이페이지"
+                  to="/mypage/main"
+                  className="hd-drawer-btn"
+                  onClick={closeMobile}
                 >
-                  MY
+                  마이페이지
                 </Link>
-                {user?.loginId === "admin" && (
-                  <Link
-                    to="/admin/stats.do"
-                    style={adminIconStyle}
-                    title="관리자 대시보드"
-                  >
-                    <span style={{ fontSize: "18px" }}>⚙️</span>
-                  </Link>
-                )}
-                <button onClick={handleLogout} style={logoutBtnStyle}>
+                <button
+                  className="hd-drawer-btn hd-drawer-btn--logout"
+                  onClick={handleLogout}
+                >
                   로그아웃
                 </button>
               </div>
-            </div>
+            </>
           ) : (
-            <div style={guestGroupStyle}>
-              {/* 💡 주소 수정: /member/join/terms.do -> /member/join/type.do */}
-              <Link to="/member/join/type.do" style={joinLinkStyle}>
-                회원가입
-              </Link>
-              <Link to="/member/login.do" style={loginBtnStyle}>
+            <div className="hd-drawer-guest">
+              <Link
+                to="/member/login"
+                className="hd-drawer-login-btn"
+                onClick={closeMobile}
+              >
                 로그인
+              </Link>
+              <Link
+                to="/member/join/type"
+                className="hd-drawer-join-btn"
+                onClick={closeMobile}
+              >
+                회원가입
               </Link>
             </div>
           )}
         </div>
       </div>
-    </header>
+
+      {isMobileOpen && (
+        <div className="hd-overlay" onClick={() => setIsMobileOpen(false)} />
+      )}
+    </>
   );
 };
 
-// --- 공통 컴포넌트 (호버 효과 포함) ---
-const NavLink = ({ to, children }) => {
-  const [isHover, setIsHover] = useState(false);
-  return (
-    <Link
-      to={to}
-      onMouseEnter={() => setIsHover(true)}
-      onMouseLeave={() => setIsHover(false)}
-      style={{
-        ...linkStyle,
-        color: isHover ? "#007BFF" : "#334155",
-      }}
-    >
-      {children}
-      <div style={{ ...underlineStyle, width: isHover ? "100%" : "0" }} />
-    </Link>
-  );
-};
+const NavItem = ({ to, children, active }) => (
+  <Link
+    to={to}
+    className={`hd-nav-link ${active ? "hd-nav-link--active" : ""}`}
+    onClick={scrollToTop}
+  >
+    {children}
+  </Link>
+);
 
-// --- 스타일 정의 ---
-const headerStyle = {
-  width: "100%",
-  height: "80px", // 높이를 조금 더 여유있게 조정
-  position: "sticky",
-  top: 0,
-  backgroundColor: "rgba(255, 255, 255, 0.98)",
-  backdropFilter: "blur(15px)",
-  zIndex: 1000,
-  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-  display: "flex",
-  justifyContent: "center",
-};
-
-const innerContainerStyle = {
-  width: "100%",
-  maxWidth: "1200px",
-  padding: "0 24px",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-};
-
-const logoWrapperStyle = {
-  display: "flex",
-  alignItems: "center",
-  height: "100%",
-};
-const logoImageStyle = {
-  height: "100px", // 로고 크기를 명확하게 지정
-  width: "auto",
-  display: "block",
-  transition: "transform 0.2s ease",
-};
-const logoLinkStyle = { textDecoration: "none" };
-
-const navStyle = { display: "flex", gap: "32px", alignItems: "center" };
-const linkStyle = {
-  position: "relative",
-  textDecoration: "none",
-  fontWeight: "700",
-  fontSize: "15px",
-  padding: "8px 0",
-  transition: "color 0.2s ease",
-};
-const underlineStyle = {
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  height: "2px",
-  backgroundColor: "#007BFF",
-  transition: "width 0.3s ease",
-};
-
-const authContainerStyle = { display: "flex", alignItems: "center" };
-const userProfileStyle = { display: "flex", alignItems: "center", gap: "20px" };
-const userInfoStyle = {
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-end",
-};
-const userNameStyle = {
-  fontSize: "14px",
-  color: "#1e293b",
-  marginBottom: "2px",
-};
-
-const adminBadgeStyle = {
-  fontSize: "10px",
-  backgroundColor: "#eff6ff",
-  color: "#2563eb",
-  padding: "2px 8px",
-  borderRadius: "6px",
-  fontWeight: "800",
-  border: "1px solid #dbeafe",
-};
-
-const actionGroupStyle = { display: "flex", alignItems: "center", gap: "12px" };
-
-const myPageIconStyle = {
-  textDecoration: "none",
-  color: "#475569",
-  fontSize: "11px",
-  fontWeight: "800",
-  width: "36px",
-  height: "36px",
-  borderRadius: "10px",
-  backgroundColor: "#f1f5f9",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  transition: "background-color 0.2s",
-};
-
-const adminIconStyle = { ...myPageIconStyle, backgroundColor: "#fffbeb" };
-
-const logoutBtnStyle = {
-  backgroundColor: "transparent",
-  color: "#94a3b8",
-  border: "none",
-  padding: "8px 12px",
-  cursor: "pointer",
-  fontSize: "13px",
-  fontWeight: "600",
-  transition: "color 0.2s",
-};
-
-const guestGroupStyle = { display: "flex", alignItems: "center", gap: "20px" };
-const joinLinkStyle = {
-  textDecoration: "none",
-  color: "#64748b",
-  fontSize: "14px",
-  fontWeight: "600",
-};
-const loginBtnStyle = {
-  backgroundColor: "#007BFF",
-  color: "#fff",
-  padding: "10px 24px",
-  borderRadius: "12px",
-  textDecoration: "none",
-  fontSize: "14px",
-  fontWeight: "800",
-  boxShadow: "0 4px 14px rgba(0,123,255,0.2)",
-  transition: "all 0.2s ease",
-};
+const MobileNavItem = ({ to, children, sub, onClose }) => (
+  <Link
+    to={to}
+    className={`hd-mobile-link ${sub ? "hd-mobile-link--sub" : ""}`}
+    onClick={() => {
+      scrollToTop();
+      onClose?.();
+    }}
+  >
+    {children}
+  </Link>
+);
 
 export default Header;

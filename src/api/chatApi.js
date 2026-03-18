@@ -9,7 +9,7 @@ export const getOrCreateChatRoom = (targetMemberNo) =>
   axiosInstance.post('/chat/rooms', { targetMemberNo });
 
 // 채팅방 메시지 목록 조회 (페이징)
-export const getChatMessages = (roomNo, page = 0, size = 30) =>
+export const getChatMessages = (roomNo, page = 0, size = 200) =>
   axiosInstance.get(`/chat/rooms/${roomNo}/messages`, { params: { page, size } });
 
 // 메시지 읽음 처리
@@ -19,3 +19,13 @@ export const markMessagesRead = (roomNo) =>
 // 채팅방 나가기
 export const leaveChatRoom = (roomNo) =>
   axiosInstance.delete(`/chat/rooms/${roomNo}`);
+
+// 채팅방 삭제
+export const deleteChatRoom = (roomNo) =>
+  axiosInstance.delete(`/chat/rooms/${roomNo}`);
+
+export const deleteChatMsg = (msgNo) =>
+  axiosInstance.delete(`/chat/messages/${msgNo}`);
+
+export const updateChatMsg = (msgNo, content) =>
+  axiosInstance.put(`/chat/messages/${msgNo}`, { content });

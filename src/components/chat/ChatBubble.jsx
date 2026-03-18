@@ -1,169 +1,298 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import "../../styles/chat/ChatBubble.css";
 
-const ChatBubble = ({ message, myNo, targetRole, targetMemberNo }) => {
-  const isMine = message.senderNo === myNo;
+const ChatBubble = ({
+  message,
+  myNo,
+  targetRole,
+  targetMemberNo,
+  onDelete,
+  onUpdate,
+}) => {
+  const isMine = Number(message.senderNo) === Number(myNo);
   const [showPopup, setShowPopup] = useState(false);
+  const [imageModal, setImageModal] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
+  const [editing, setEditing] = useState(false);
+  const [editText, setEditText] = useState(message.content);
+  const menuBtnRef = useRef(null);
   const navigate = useNavigate();
 
   const time = message.sentAt
-    ? new Date(message.sentAt).toLocaleTimeString('ko-KR', {
-        hour: '2-digit', minute: '2-digit',
+    ? new Date(message.sentAt).toLocaleTimeString("ko-KR", {
+        hour: "2-digit",
+        minute: "2-digit",
       })
-    : '';
+    : "";
+
+  const canEdit =
+    isMine &&
+    (message.type === "TEXT" || !message.type) &&
+    message.sentAt &&
+    Date.now() - new Date(message.sentAt) < 30 * 60 * 1000;
+
+  const isDeleted = message.deletedYn === "Y";
+  const isEdited = message.editedYn === "Y";
 
   const goToProfile = () => {
-    if (targetRole === 'LAWYER') {
-      navigate(`/lawyer/detail.do/${targetMemberNo}`);
-    }
+    if (targetRole === "LAWYER") navigate("/lawyer/detail/" + targetMemberNo);
     setShowPopup(false);
   };
 
-  return (
-    <div style={{
-      display: 'flex',
-      flexDirection: isMine ? 'row-reverse' : 'row',
-      alignItems: 'flex-end',
-      gap: '8px',
-      marginBottom: '12px',
-    }}>
-      {/* 상대방 아바타 */}
-      {!isMine && (
-        <div style={{ position: 'relative' }}>
-          <div
-            onClick={() => setShowPopup(!showPopup)}
-            style={{
-              width: '36px', height: '36px',
-              borderRadius: '8px',
-              background: '#4A90D9',
-              color: '#fff',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontWeight: '700', fontSize: '14px',
-              flexShrink: 0, cursor: 'pointer',
-              boxShadow: '0 2px 6px rgba(74,144,217,0.3)',
-            }}
-          >
-            {message.senderName?.[0] ?? '?'}
-          </div>
+  const handleDownload = async (url, filename) => {
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename || "download";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (e) {
+      alert("다운로드에 실패했습니다.");
+    }
+  };
 
-          {/* 미니 프로필 팝업 */}
+  const handleMenuOpen = () => {
+    if (menuBtnRef.current) {
+      const rect = menuBtnRef.current.getBoundingClientRect();
+      const menuHeight = 80;
+      const spaceBelow = window.innerHeight - rect.bottom;
+      if (spaceBelow < menuHeight) {
+        setMenuPos({ top: rect.top - menuHeight, left: rect.right - 90 });
+      } else {
+        setMenuPos({ top: rect.bottom + 4, left: rect.right - 90 });
+      }
+    }
+    setShowMenu((prev) => !prev);
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("메시지를 삭제하시겠습니까?")) return;
+    const msgNo = message.msgNo || message.msgId;
+    console.log("삭제 시도 msgNo:", msgNo);
+    console.log("message 전체:", message);
+    if (onDelete) await onDelete(msgNo);
+    setShowMenu(false);
+  };
+
+  const handleEdit = async () => {
+    if (!editText.trim()) return;
+    const msgNo = message.msgNo || message.msgId;
+    if (onUpdate) await onUpdate(msgNo, editText.trim());
+    setEditing(false);
+  };
+
+  const renderMenu = () => {
+    if (!isMine || isDeleted) return null;
+    return (
+      <div className="menu-wrapper">
+        <button
+          ref={menuBtnRef}
+          onClick={handleMenuOpen}
+          className="menu-btn-trigger"
+        >
+          ...
+        </button>
+        {showMenu && (
+          <>
+            <div className="menu-overlay" onClick={() => setShowMenu(false)} />
+            <div
+              className="menu-dropdown"
+              style={{ top: menuPos.top, left: menuPos.left }}
+            >
+              {canEdit ? (
+                <button
+                  className="menu-item"
+                  onClick={() => {
+                    setEditing(true);
+                    setShowMenu(false);
+                  }}
+                >
+                  수정
+                </button>
+              ) : (
+                (message.type === "TEXT" || !message.type) && (
+                  <button className="menu-item disabled" disabled>
+                    수정 불가
+                  </button>
+                )
+              )}
+              <button className="menu-item delete" onClick={handleDelete}>
+                삭제
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    );
+  };
+
+  const renderContent = () => {
+    if (isDeleted) {
+      return (
+        <span className={`content-deleted ${isMine ? "mine" : ""}`}>
+          삭제된 메시지입니다
+        </span>
+      );
+    }
+
+    if (message.type === "IMAGE") {
+      return (
+        <div className="content-image-wrapper">
+          <img
+            src={message.fileUrl}
+            alt="첨부이미지"
+            className="content-image"
+            onClick={() => setImageModal(true)}
+          />
+          {imageModal && (
+            <div className="modal-overlay" onClick={() => setImageModal(false)}>
+              <img
+                src={message.fileUrl}
+                alt="첨부이미지"
+                className="modal-image"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <div
+                className="modal-actions"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  className="btn-download"
+                  onClick={() =>
+                    handleDownload(message.fileUrl, message.content)
+                  }
+                >
+                  다운로드
+                </button>
+                <button
+                  className="btn-close"
+                  onClick={() => setImageModal(false)}
+                >
+                  닫기
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (message.type === "FILE") {
+      return (
+        <span
+          className={`content-file ${isMine ? "mine" : ""}`}
+          onClick={() => handleDownload(message.fileUrl, message.content)}
+        >
+          {message.content}
+        </span>
+      );
+    }
+
+    if (editing) {
+      return (
+        <div className="edit-mode-container">
+          <textarea
+            className="edit-textarea"
+            value={editText}
+            onChange={(e) => setEditText(e.target.value)}
+            rows={2}
+          />
+          <div className="edit-actions">
+            <button className="btn-save" onClick={handleEdit}>
+              저장
+            </button>
+            <button
+              className="btn-cancel"
+              onClick={() => {
+                setEditing(false);
+                setEditText(message.content);
+              }}
+            >
+              취소
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <span className="content-text">
+        {message.content}
+        {isEdited && (
+          <span
+            className={`edited-tag ${isMine ? "mine" : ""}`}
+            style={{ opacity: 1, color: isMine ? "#cce0ff" : "#666", fontSize: "11px" }}
+          >
+            수정됨
+          </span>
+        )}
+      </span>
+    );
+  };
+
+  return (
+    <div className={`bubble-row ${isMine ? "mine" : "other"}`}>
+      {!isMine && (
+        <div className="avatar-wrapper">
+          <div
+            className="avatar-circle"
+            onClick={() => setShowPopup(!showPopup)}
+          >
+            {message.senderName ? message.senderName[0] : "?"}
+          </div>
           {showPopup && (
             <>
-              {/* 외부 클릭 시 닫기 */}
               <div
+                className="popup-overlay"
                 onClick={() => setShowPopup(false)}
-                style={{
-                  position: 'fixed', inset: 0, zIndex: 99,
-                }}
               />
-              <div style={{
-                position: 'absolute',
-                left: '44px', bottom: '0',
-                background: '#fff',
-                borderRadius: '14px',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                padding: '16px',
-                minWidth: '180px',
-                zIndex: 100,
-                border: '1px solid #E8ECF0',
-              }}>
-                {/* 프로필 아바타 */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                  <div style={{
-                    width: '44px', height: '44px',
-                    borderRadius: '10px',
-                    background: 'linear-gradient(135deg, #1A6DFF, #4A90D9)',
-                    color: '#fff',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontWeight: '700', fontSize: '18px',
-                  }}>
-                    {message.senderName?.[0] ?? '?'}
+              <div className="profile-popup">
+                <div className="popup-header">
+                  <div className="popup-avatar">
+                    {message.senderName ? message.senderName[0] : "?"}
                   </div>
-                  <div>
-                    <div style={{ fontWeight: '700', fontSize: '14px', color: '#1A1A2E' }}>
-                      {message.senderName}
-                    </div>
-                    <span style={{
-                      fontSize: '11px',
-                      background: targetRole === 'LAWYER' ? '#E8F0FF' : '#F0F4F8',
-                      color: targetRole === 'LAWYER' ? '#1A6DFF' : '#666',
-                      padding: '2px 7px',
-                      borderRadius: '4px',
-                      fontWeight: '600',
-                    }}>
-                      {targetRole === 'LAWYER' ? '변호사' : '일반회원'}
+                  <div className="popup-info">
+                    <div className="popup-name">{message.senderName}</div>
+                    <span className={`role-badge ${targetRole}`}>
+                      {targetRole === "LAWYER" ? "변호사" : "일반회원"}
                     </span>
                   </div>
                 </div>
-
-                {/* 프로필 보기 버튼 */}
-                <button
-                  onClick={goToProfile}
-                  style={{
-                    width: '100%',
-                    padding: '8px',
-                    background: '#1A6DFF',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                  }}
-                >
-                  프로필 보기
-                </button>
+               {targetRole === "LAWYER" && (
+                  <button className="btn-profile-view" onClick={goToProfile}>
+                    프로필 보기
+                  </button>
+                )}
               </div>
             </>
           )}
         </div>
       )}
 
-      <div style={{
-        display: 'flex', flexDirection: 'column',
-        alignItems: isMine ? 'flex-end' : 'flex-start',
-        maxWidth: '65%',
-      }}>
-        {!isMine && (
-          <span style={{ fontSize: '12px', color: '#888', marginBottom: '4px', fontWeight: '600' }}>
-            {message.senderName}
-          </span>
-        )}
+      <div className={`message-container ${isMine ? "mine" : "other"}`}>
+        {!isMine && <span className="sender-name">{message.senderName}</span>}
 
-        <div style={{
-          display: 'flex', alignItems: 'flex-end', gap: '6px',
-          flexDirection: isMine ? 'row-reverse' : 'row',
-        }}>
-          <div style={{
-            padding: '10px 14px',
-            borderRadius: isMine ? '18px 4px 18px 18px' : '4px 18px 18px 18px',
-            background: isMine ? '#1A6DFF' : '#F0F2F5',
-            color: isMine ? '#fff' : '#1A1A2E',
-            fontSize: '14px', lineHeight: '1.5',
-            wordBreak: 'break-word',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.08)',
-          }}>
-            {message.type === 'FILE' || message.type === 'IMAGE' ? (
-              <a href={message.fileUrl} target="_blank" rel="noreferrer"
-                style={{ color: isMine ? '#cce0ff' : '#1A6DFF', textDecoration: 'underline' }}>
-                {message.type === 'IMAGE' ? (
-                  <img src={message.fileUrl} alt="첨부이미지"
-                    style={{ maxWidth: '200px', borderRadius: '8px' }} />
-                ) : `📎 ${message.content}`}
-              </a>
-            ) : message.content}
+        <div className={`bubble-content-row ${isMine ? "mine" : "other"}`}>
+          {!isDeleted && renderMenu()}
+          <div
+            className={`bubble-box ${isMine ? "mine" : "other"} ${message.type === "IMAGE" ? "type-image" : ""} ${isDeleted ? "deleted" : ""}`}
+          >
+            {renderContent()}
           </div>
-
-          <div style={{
-            display: 'flex', flexDirection: 'column',
-            alignItems: isMine ? 'flex-end' : 'flex-start', gap: '2px',
-          }}>
+          <div className={`status-container ${isMine ? "mine" : "other"}`}>
             {isMine && (
-              <span style={{ fontSize: '10px', color: message.readYn === 'Y' ? '#1A6DFF' : '#bbb' }}>
-                {message.readYn === 'Y' ? '읽음' : ''}
+              <span className="read-status">
+                {message.readYn === "Y" ? "읽음" : ""}
               </span>
             )}
-            <span style={{ fontSize: '11px', color: '#aaa', whiteSpace: 'nowrap' }}>{time}</span>
+            <span className="sent-time">{time}</span>
           </div>
         </div>
       </div>

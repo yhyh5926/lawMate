@@ -1,10 +1,7 @@
-// vs코드
-// 파일 위치: src/pages/mypage/CaseListPage.jsx
-// 설명: 마이페이지 - 의뢰인이 접수한 내 사건 목록 화면
-
 import React, { useEffect, useState } from "react";
 import { caseApi } from "../../api/caseApi";
 import CaseCard from "../../components/case/CaseCard";
+import "../../styles/mypage/CaseListPage.css"; // CSS 연결
 
 const CaseListPage = () => {
   const [cases, setCases] = useState([]);
@@ -16,16 +13,25 @@ const CaseListPage = () => {
 
   const fetchMyCases = async () => {
     try {
-      // 실제 환경에서는 현재 로그인한 유저의 ID를 넘기거나, 백엔드에서 JWT를 통해 식별합니다.
-      // 여기서는 임시로 memberId 1을 넘기는 형태로 작성합니다.
       const response = await caseApi.getMyCaseList(1);
       setCases(response.data || []);
     } catch (error) {
-      console.error("사건 목록을 불러오는데 실패했습니다.", error);
-      // API 연결 실패 시 보여줄 임시 모의 데이터 (테스트용)
+      console.error("사건 목록 조회 실패", error);
       setCases([
-        { caseId: 1, title: "전세금 반환 청구 소송", caseType: "민사", step: "IN_PROGRESS", createdAt: "2026-02-20" },
-        { caseId: 2, title: "명예훼손 고소건", caseType: "형사", step: "RECEIVED", createdAt: "2026-02-25" }
+        {
+          caseId: 1,
+          title: "전세금 반환 청구 소송",
+          caseType: "민사",
+          step: "IN_PROGRESS",
+          createdAt: "2026-02-20",
+        },
+        {
+          caseId: 2,
+          title: "명예훼손 고소건",
+          caseType: "형사",
+          step: "RECEIVED",
+          createdAt: "2026-02-25",
+        },
       ]);
     } finally {
       setLoading(false);
@@ -33,15 +39,22 @@ const CaseListPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: "800px", margin: "40px auto", padding: "20px" }}>
-      <h2 style={{ marginBottom: "30px", borderBottom: "2px solid #333", paddingBottom: "10px" }}>내 사건 목록</h2>
-      
+    <div className="case-list-container">
+      <div className="case-list-header">
+        <h2>내 사건 목록</h2>
+        <span className="case-count">
+          총 <b>{cases.length}</b>건의 사건이 있습니다.
+        </span>
+      </div>
+
       {loading ? (
-        <div style={{ textAlign: "center", padding: "50px 0" }}>불러오는 중...</div>
+        <div className="case-list-loading">
+          ⚖️ 사건 정보를 불러오는 중입니다...
+        </div>
       ) : cases.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "50px 0", color: "#888" }}>등록된 사건이 없습니다.</div>
+        <div className="case-list-empty">등록된 사건이 없습니다.</div>
       ) : (
-        <div style={{ display: "grid", gap: "15px" }}>
+        <div className="case-grid">
           {cases.map((c) => (
             <CaseCard key={c.caseId} caseItem={c} />
           ))}

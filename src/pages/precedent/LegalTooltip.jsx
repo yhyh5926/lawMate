@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import { legalDictionary } from "./legalDictionary";
+import "../../styles/precedent/LegalTooltip.css";
+
+// Font Awesome 관련 임포트
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faScaleBalanced } from "@fortawesome/free-solid-svg-icons";
 
 const LegalTooltip = ({ text }) => {
   const [hoveredWord, setHoveredWord] = useState(null);
@@ -8,64 +13,49 @@ const LegalTooltip = ({ text }) => {
   if (!text) return null;
 
   const keywords = Object.keys(legalDictionary);
-  const regex = new RegExp(`(${keywords.join("|")})`, "g");
+  const sortedKeywords = [...keywords].sort((a, b) => b.length - a.length);
+  const regex = new RegExp(`(${sortedKeywords.join("|")})`, "g");
   const parts = text.split(regex);
 
   return (
-    <span>
-      {parts.map((part, i) => {
-        if (legalDictionary[part]) {
-          return (
-            <span
-              key={i}
-              onMouseEnter={(e) => {
-                setHoveredWord(part);
-                setMousePos({ x: e.clientX, y: e.clientY });
-              }}
-              onMouseLeave={() => setHoveredWord(null)}
-              style={highlightStyle}
-            >
-              {part}
-            </span>
-          );
-        }
-        return part;
-      })}
+    <span className="lt-wrap">
+      {parts.map((part, i) =>
+        legalDictionary[part] ? (
+          <mark
+            key={i}
+            className="lt-keyword"
+            onMouseMove={(e) => {
+              setHoveredWord(part);
+              setMousePos({ x: e.clientX, y: e.clientY });
+            }}
+            onMouseLeave={() => setHoveredWord(null)}
+          >
+            {part}
+          </mark>
+        ) : (
+          <React.Fragment key={i}>{part}</React.Fragment>
+        ),
+      )}
 
       {hoveredWord && (
-        <div
-          style={{
-            ...tooltipStyle,
-            top: mousePos.y + 15,
-            left: mousePos.x + 15,
-          }}
+        <aside
+          className="lt-tooltip"
+          role="tooltip"
+          style={{ top: mousePos.y + 15, left: mousePos.x + 15 }}
         >
-          <strong>{hoveredWord}</strong>: {legalDictionary[hoveredWord]}
-        </div>
+          <header className="lt-tooltip-header">
+            {/* FontAwesomeIcon 컴포넌트로 교체 */}
+            <FontAwesomeIcon
+              icon={faScaleBalanced}
+              className="lt-tooltip-icon"
+            />
+            <strong className="lt-tooltip-term">{hoveredWord}</strong>
+          </header>
+          <p className="lt-tooltip-desc">{legalDictionary[hoveredWord]}</p>
+        </aside>
       )}
     </span>
   );
 };
 
-// 스타일은 컴포넌트 파일 안에 묶어서 관리합니다.
-const highlightStyle = {
-  textDecoration: "underline dotted #007bff",
-  cursor: "help",
-  color: "#0056b3",
-  fontWeight: "500",
-};
-
-const tooltipStyle = {
-  position: "fixed",
-  backgroundColor: "#333",
-  color: "#fff",
-  padding: "10px",
-  borderRadius: "6px",
-  fontSize: "0.85rem",
-  zIndex: 1000,
-  maxWidth: "280px",
-  boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-  lineHeight: "1.4",
-};
-
-export default LegalTooltip; // 💡 여기서 export!
+export default LegalTooltip;

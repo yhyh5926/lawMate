@@ -1,29 +1,36 @@
 import axiosInstance from "./axiosInstance";
 
 export const questionApi = {
-  // 1. 전체 질문 목록 조회
+  /** 1. 전체 질문 목록 조회 */
   getQuestionList: (params) =>
-    axiosInstance.get("/question/list.do", { params }),
+    axiosInstance.get("/question/list", {
+      params: {
+        page: params.page || 1,
+        size: params.size || 10,
+        caseType: params.caseType || undefined,
+        title: params.title || undefined,
+      },
+    }),
 
-  // 2. 특정 질문 상세 내용 및 변호사 답변 조회
+  /** 2. 특정 질문 상세 내용 조회 */
   getQuestionDetail: (questionId) =>
-    axiosInstance.get(`/question/detail.do?questionId=${questionId}`),
+    axiosInstance.get("/question/detail", { params: { questionId } }),
 
-  // 3. 새로운 법률 질문 작성 (TB_QUESTION)
-  writeQuestion: (data) => axiosInstance.post("/question/write.do", data),
+  /** 3. 새로운 법률 질문 작성 */
+  writeQuestion: (formData) =>
+    axiosInstance.post("/question/write", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
 
-  // --- 추가된 API ---
+  /** 4. 법률 질문 수정 */
+  updateQuestion: (formData) => {
+    const questionId = formData.get("questionId");
+    return axiosInstance.put(`/question/update/${questionId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
 
-  // 4. 변호사 답변 등록 (TB_ANSWER)
-  // data: { questionId, content } -> lawyerId는 서버 세션/토큰에서 추출 권장
-  writeAnswer: (data) => axiosInstance.post("/question/answer/write.do", data),
-
-  // 5. 답변 채택 (TB_ANSWER.IS_ADOPTED = 'Y')
-  // answerId를 통해 특정 답변을 채택하고 질문 상태를 CLOSED로 변경 유도
-  adoptAnswer: (answerId) =>
-    axiosInstance.post(`/question/answer/adopt.do`, { answerId }),
-
-  // 6. 질문 삭제 (필요 시)
+  /** 5. 법률 질문 삭제 */
   deleteQuestion: (questionId) =>
-    axiosInstance.post(`/question/delete.do`, { questionId }),
+    axiosInstance.delete(`/question/delete/${questionId}`),
 };
